@@ -60,15 +60,15 @@ button, .option-card { touch-action: manipulation; }
   --navy:    #06205D;
   --cyan:    #0C97F3;
   --white:   #F0F8FF;
-  --dark-bg: #000B34;
+  --dark-bg: #040C26;
   --tech:    #174D9F;
   --lgray:   #E8EDF5;
   --cyan10:  rgba(12,151,243,0.10);
   --cyan20:  rgba(12,151,243,0.20);
   --cyan40:  rgba(12,151,243,0.40);
   --cyan60:  rgba(12,151,243,0.60);
-  --glow:    0 0 24px rgba(99,229,253,0.55);
-  --glow-lg: 0 0 48px rgba(99,229,253,0.40), 0 0 96px rgba(99,229,253,0.15);
+  --glow:    0 0 16px rgba(99,229,253,0.28);
+  --glow-lg: 0 0 28px rgba(99,229,253,0.20), 0 0 56px rgba(99,229,253,0.08);
   --font-display: 'Orbitron', monospace;
   --font-ui:      'Exo 2', sans-serif;
   --font-body:    'Inter', sans-serif;
@@ -127,7 +127,7 @@ body {
     linear-gradient(var(--tech) 1px, transparent 1px),
     linear-gradient(90deg, var(--tech) 1px, transparent 1px);
   background-size: 60px 60px;
-  opacity: 0.06;
+  opacity: 0.04;
   pointer-events: none;
   z-index: 0;
   animation: grid-drift 40s linear infinite;
@@ -158,8 +158,8 @@ body {
 }
 @keyframes float-up {
   0%   { transform: translateY(100vh) scale(0); opacity: 0; }
-  10%  { opacity: 0.6; }
-  90%  { opacity: 0.3; }
+  10%  { opacity: 0.3; }
+  90%  { opacity: 0.12; }
   100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
 }
 
@@ -197,7 +197,7 @@ header {
 .logo-mark span { color: var(--cyan); text-shadow: var(--glow); }
 .logo-hex {
   width: 36px; height: 36px;
-  filter: drop-shadow(0 0 8px rgba(12,151,243,0.7));
+  filter: drop-shadow(0 0 5px rgba(12,151,243,0.35));
 }
 .logo-text {
   display: flex;
@@ -220,7 +220,7 @@ header {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.15em;
-  color: rgba(0, 200, 255, 0.7);
+  color: rgba(0, 180, 235, 0.6);
   text-transform: uppercase;
 }
 .header-tag {
@@ -300,7 +300,7 @@ header {
   font-family: var(--font-body);
   font-size: clamp(16px, 2vw, 19px);
   font-weight: 300;
-  color: rgba(240,248,255,0.65);
+  color: rgba(240,248,255,0.72);
   max-width: 560px;
   line-height: 1.7;
   margin-bottom: 56px;
@@ -522,8 +522,8 @@ header {
 .trust-item:nth-child(2) .trust-icon { animation-delay: 1s; }
 .trust-item:nth-child(3) .trust-icon { animation-delay: 2s; }
 @keyframes trust-icon-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(12,151,243,0.08); }
-  50%      { box-shadow: 0 0 20px rgba(12,151,243,0.25), 0 0 40px rgba(12,151,243,0.08); }
+  0%, 100% { box-shadow: 0 0 6px rgba(12,151,243,0.06); }
+  50%      { box-shadow: 0 0 14px rgba(12,151,243,0.18), 0 0 28px rgba(12,151,243,0.06); }
 }
 
 .trust-number {
@@ -531,7 +531,7 @@ header {
   font-size: 28px;
   font-weight: 900;
   color: var(--cyan);
-  text-shadow: 0 0 18px rgba(12,151,243,0.5);
+  text-shadow: 0 0 12px rgba(12,151,243,0.28);
   line-height: 1;
 }
 .trust-label {
@@ -630,7 +630,7 @@ header {
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 300;
-  color: rgba(240,248,255,0.55);
+  color: rgba(240,248,255,0.65);
   line-height: 1.7;
   margin-bottom: 44px;
 }
@@ -705,7 +705,7 @@ header {
 .option-sub {
   font-family: var(--font-body);
   font-size: 12px;
-  color: rgba(240,248,255,0.45);
+  color: rgba(240,248,255,0.55);
   font-weight: 300;
 }
 .option-check {
@@ -849,7 +849,7 @@ header {
   border-top: 2px solid var(--cyan);
   border-radius: 50%;
   animation: spin 1.2s linear infinite;
-  box-shadow: 0 -4px 12px var(--cyan60);
+  box-shadow: 0 -4px 8px var(--cyan40);
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes orb-pulse {
@@ -923,8 +923,8 @@ header {
   color: var(--white);
 }
 @keyframes pulse-icon {
-  0%, 100% { box-shadow: 0 0 8px var(--cyan40); }
-  50%       { box-shadow: 0 0 20px var(--cyan60); }
+  0%, 100% { box-shadow: 0 0 6px var(--cyan40); }
+  50%       { box-shadow: 0 0 14px var(--cyan60); }
 }
 
 /* ═══════════════════════════════════════════
@@ -973,7 +973,7 @@ header {
   font-family: var(--font-body);
   font-size: 16px;
   font-weight: 300;
-  color: rgba(240,248,255,0.6);
+  color: rgba(240,248,255,0.68);
   line-height: 1.75;
   max-width: 600px;
   margin: 0 auto;
@@ -1021,7 +1021,8 @@ header {
   stroke-dasharray: 314;
   stroke-dashoffset: 314;
   transition: stroke-dashoffset 2s var(--ease-out-expo) 0.5s;
-  filter: drop-shadow(0 0 4px rgba(12,151,243,0.7));
+  filter: drop-shadow(0 0 3px rgba(12,151,243,0.5));
+  animation: score-pulse 2.5s ease-in-out 2.5s infinite;
 }
 .score-number {
   position: absolute;
@@ -1064,7 +1065,7 @@ header {
 .score-text {
   font-family: var(--font-body);
   font-size: 14px;
-  color: rgba(240,248,255,0.55);
+  color: rgba(240,248,255,0.65);
   line-height: 1.65;
 }
 
@@ -1117,7 +1118,7 @@ header {
 .insight-card-text {
   font-family: var(--font-body);
   font-size: 13px;
-  color: rgba(240,248,255,0.5);
+  color: rgba(240,248,255,0.62);
   line-height: 1.6;
 }
 
@@ -1170,7 +1171,8 @@ header {
 .opp-bar {
   height: 100%;
   border-radius: 2px;
-  animation: bar-fill 1.5s var(--ease-out-expo) 1s forwards;
+  animation: bar-fill 1.5s var(--ease-out-expo) forwards;
+  animation-play-state: paused;
   transform-origin: left;
   transform: scaleX(0);
 }
@@ -1227,7 +1229,7 @@ header {
 .cta-sub {
   font-family: var(--font-body);
   font-size: 14px;
-  color: rgba(240,248,255,0.55);
+  color: rgba(240,248,255,0.68);
   line-height: 1.65;
 }
 .cta-action { display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -1271,16 +1273,16 @@ header {
    TRANSIÇÕES DE TELA
 ═══════════════════════════════════════════ */
 .screen {
-  transition: opacity 0.4s ease, transform 0.4s var(--ease-out-expo);
+  transition: opacity 0.5s ease, transform 0.5s var(--ease-out-expo);
 }
 .screen.exiting {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(-20px) scale(0.98);
   pointer-events: none;
 }
 .screen.entering {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(30px) scale(0.98);
 }
 
 /* ═══════════════════════════════════════════
@@ -1336,6 +1338,8 @@ header {
   #screen-intro { padding: 90px 16px 60px; }
   #screen-quiz, #screen-loading, #screen-result { padding: 90px 16px 60px; }
 
+  #screen-result { overflow-wrap: break-word; word-wrap: break-word; }
+
   .scan-card { padding: 24px 16px; }
 
   .scan-item { flex-wrap: wrap; gap: 10px; }
@@ -1385,9 +1389,15 @@ header {
 
   .opportunities { padding: 24px 16px; }
 
-  .result-cta { grid-template-columns: 1fr; padding: 24px 16px; gap: 20px; text-align: center; }
+  .result-cta { grid-template-columns: 1fr; padding: 24px 16px; gap: 20px; text-align: center; overflow-wrap: break-word; word-wrap: break-word; }
+  .cta-heading { font-size: clamp(16px, 4vw, 22px); word-wrap: break-word; overflow-wrap: break-word; }
+  .cta-sub { word-wrap: break-word; overflow-wrap: break-word; }
   .cta-action { width: 100%; }
-  .btn-cta-final { width: 100%; padding: 18px 24px; font-size: 14px; }
+  .btn-cta-final { width: 100%; padding: 18px 24px; font-size: 14px; white-space: normal; word-wrap: break-word; }
+  .cta-trust { word-wrap: break-word; overflow-wrap: break-word; }
+  .score-desc { word-wrap: break-word; overflow-wrap: break-word; }
+  .score-text { word-wrap: break-word; overflow-wrap: break-word; }
+  .opp-name { word-wrap: break-word; overflow-wrap: break-word; }
 
   .toast { left: 16px; right: 16px; bottom: 16px; }
 
@@ -1420,6 +1430,48 @@ header {
   .btn-next:not(:disabled):active,
   .btn-cta-final:active { transform: scale(0.97); }
   .option-card:active { background: rgba(12,151,243,0.06); border-color: var(--cyan40); }
+}
+
+/* ─── Reveal on scroll ───────────────────── */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+}
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Keyframes for new animations ──────── */
+@keyframes float-icon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes score-pulse {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(12,151,243,0.5)); }
+  50% { filter: drop-shadow(0 0 10px rgba(12,151,243,0.85)) drop-shadow(0 0 20px rgba(12,151,243,0.28)); }
+}
+@keyframes opp-icon-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; filter: drop-shadow(0 0 5px rgba(12,151,243,0.9)); }
+}
+
+/* ─── Scan icon float ────────────────────── */
+.scan-item:nth-child(1) .scan-icon { animation: float-icon 3s ease-in-out 0.0s infinite; }
+.scan-item:nth-child(2) .scan-icon { animation: float-icon 3s ease-in-out 0.4s infinite; }
+.scan-item:nth-child(3) .scan-icon { animation: float-icon 3s ease-in-out 0.8s infinite; }
+.scan-item:nth-child(4) .scan-icon { animation: float-icon 3s ease-in-out 1.2s infinite; }
+
+/* ─── Opp icon pulse glow ────────────────── */
+.opp-icon { animation: opp-icon-glow 3s ease-in-out infinite; }
+
+/* ─── Insight card desktop hover ─────────── */
+@media (hover: hover) {
+  .insight-card:hover {
+    border-color: var(--cyan40);
+    box-shadow: 0 0 24px rgba(12,151,243,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
 }
 
 /* ─── Prefer reduced motion: collapse animations/transitions ─── */
@@ -2032,7 +2084,7 @@ function showResult() {
   // Oportunidades
   const opps = buildOpportunities(answers);
   document.getElementById('opp-list').innerHTML = opps.map(o => `
-    <div class="opp-item">
+    <div class="opp-item reveal-on-scroll">
       <div class="opp-icon">${o.icon}</div>
       <div class="opp-info">
         <div class="opp-name">${o.name}</div>
@@ -2040,15 +2092,44 @@ function showResult() {
           <div class="opp-bar ${o.level}" style="width:${o.pct}%;animation-delay:${o.delay}s"></div>
         </div>
       </div>
-      <div class="opp-percent">${o.pct}%</div>
+      <div class="opp-percent" data-target="${o.pct}">0%</div>
     </div>
   `).join('');
+
+  // Stagger opp-item reveals and trigger bar + percent counter via IntersectionObserver
+  document.querySelectorAll('#opp-list .opp-item').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.1}s`;
+    revealObserver.observe(el);
+    const bar = el.querySelector('.opp-bar');
+    const pctEl = el.querySelector('.opp-percent');
+    const target = parseInt(pctEl.dataset.target);
+    const barObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          bar.style.animationPlayState = 'running';
+          let cur = 0;
+          const inc = setInterval(() => {
+            cur = Math.min(cur + Math.ceil((target - cur) / 8), target);
+            pctEl.textContent = cur + '%';
+            if (cur >= target) { clearInterval(inc); }
+          }, 40);
+          barObserver.unobserve(entry.target);
+          barObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    barObserver.observe(el);
+  });
 
   // CTA
   document.getElementById('cta-heading').textContent =
     `${nome}, vamos entender a fundo os problemas da sua empresa.`;
   document.getElementById('cta-sub').textContent =
     `Um especialista da BG Tech vai te ligar em até 24h úteis. Nosso objetivo nessa conversa é entender profundamente suas principais dores, mapear os obstáculos operacionais da ${empresa} e, juntos, encontrarmos a solução ideal para recuperar sua eficiência e lucro.`;
+
+  // Add reveal-on-scroll to result-cta
+  const ctaEl = document.querySelector('.result-cta');
+  if (ctaEl) { ctaEl.classList.add('reveal-on-scroll'); revealObserver.observe(ctaEl); }
 
   // Cursor
   setTimeout(() => {
@@ -2195,6 +2276,18 @@ function animateTrustCounters() {
 
 // Start counters after the cards animate in (delay matches last card animation)
 setTimeout(animateTrustCounters, 2400);
+
+// ═══════════════════════════════════════════
+// SCROLL REVEAL — Intersection Observer
+// ═══════════════════════════════════════════
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
 
 // ─── Iniciar ─────────────────────────────
 show('intro');
