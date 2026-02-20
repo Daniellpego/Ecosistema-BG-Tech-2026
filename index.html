@@ -34,7 +34,7 @@
   --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   font-family: var(--font-body);
@@ -177,7 +177,7 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 100px 48px 60px;
+  padding: 100px 48px 80px;
   text-align: center;
   position: relative;
 }
@@ -369,30 +369,116 @@ header {
 
 /* ─── Trust indicators ──────────────────── */
 .trust-strip {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
-  gap: 40px;
-  opacity: 0;
-  animation: reveal 0.8s ease 1.8s forwards;
-  white-space: nowrap;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 52px;
+  width: 100%;
+  max-width: 860px;
+  perspective: 900px;
+  flex-wrap: wrap;
 }
 .trust-item {
+  flex: 1 1 220px;
+  max-width: 270px;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 8px;
   font-family: var(--font-ui);
-  font-size: 12px;
-  color: rgba(240,248,255,0.4);
-  font-weight: 400;
+  background: linear-gradient(145deg, rgba(13,27,75,0.7) 0%, rgba(8,16,46,0.85) 100%);
+  border: 1px solid var(--cyan20);
+  border-radius: 6px;
+  padding: 28px 18px 22px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(28px) rotateX(8deg);
+  transform-origin: center bottom;
+  animation: trust-card-in 0.9s var(--ease-out-expo) forwards;
+  transition: transform 0.4s var(--ease-out-expo),
+              border-color 0.3s ease,
+              box-shadow 0.4s ease;
 }
-.trust-dot {
-  width: 5px; height: 5px;
-  background: var(--cyan);
+.trust-item:nth-child(1) { animation-delay: 1.8s; }
+.trust-item:nth-child(2) { animation-delay: 2.05s; }
+.trust-item:nth-child(3) { animation-delay: 2.3s; }
+@keyframes trust-card-in {
+  to { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+
+/* top accent line */
+.trust-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.7;
+}
+/* shimmer sweep */
+.trust-item::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(105deg, transparent 40%, rgba(0,200,255,0.07) 50%, transparent 60%);
+  animation: trust-shimmer 4s ease-in-out infinite;
+}
+.trust-item:nth-child(2)::after { animation-delay: 1.3s; }
+.trust-item:nth-child(3)::after { animation-delay: 2.6s; }
+@keyframes trust-shimmer {
+  0%   { left: -75%; }
+  100% { left: 125%; }
+}
+
+.trust-item:hover {
+  transform: translateY(-6px) rotateX(-2deg) scale(1.03);
+  border-color: var(--cyan60);
+  box-shadow: 0 12px 36px rgba(0,200,255,0.15), 0 0 20px rgba(0,200,255,0.1);
+}
+
+.trust-icon {
+  width: 40px; height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border: 1px solid var(--cyan20);
   border-radius: 50%;
-  box-shadow: 0 0 6px var(--cyan);
+  background: rgba(0,200,255,0.06);
+  margin-bottom: 4px;
+  box-shadow: 0 0 12px rgba(0,200,255,0.1);
+  animation: trust-icon-glow 3s ease-in-out infinite;
+}
+.trust-item:nth-child(2) .trust-icon { animation-delay: 1s; }
+.trust-item:nth-child(3) .trust-icon { animation-delay: 2s; }
+@keyframes trust-icon-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(0,200,255,0.08); }
+  50%      { box-shadow: 0 0 20px rgba(0,200,255,0.25), 0 0 40px rgba(0,200,255,0.08); }
+}
+
+.trust-number {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--cyan);
+  text-shadow: 0 0 18px rgba(0,200,255,0.5);
+  line-height: 1;
+}
+.trust-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(240,248,255,0.55);
+  line-height: 1.35;
+}
+.trust-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* ═══════════════════════════════════════════
@@ -610,6 +696,8 @@ header {
   align-items: center;
   justify-content: space-between;
   margin-top: 36px;
+  width: 100%;
+  max-width: 680px;
 }
 .btn-back {
   font-family: var(--font-ui);
@@ -1154,17 +1242,85 @@ header {
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast-dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; box-shadow: var(--glow); }
 
-/* Responsive */
+/* ─── Touch devices: restore default cursor ─── */
+@media (hover: none), (pointer: coarse) {
+  *, *::before, *::after { cursor: auto !important; }
+  body { cursor: auto; }
+  .cursor, .cursor-ring { display: none !important; }
+}
+
+/* ─── Tablet breakpoint ─── */
+@media (max-width: 900px) {
+  header { padding: 20px 28px; }
+  #screen-intro, #screen-quiz, #screen-loading, #screen-result { padding: 100px 28px 80px; }
+  .score-banner { gap: 28px; padding: 28px; }
+  .result-cta { padding: 28px; gap: 24px; }
+}
+
+/* ─── Mobile breakpoint ─── */
 @media (max-width: 640px) {
-  header { padding: 16px 20px; }
-  #screen-intro, #screen-quiz, #screen-loading, #screen-result { padding: 90px 20px 60px; }
-  .scan-card { padding: 24px 20px; }
+  header { padding: 14px 16px; }
+  .logo-mark { font-size: 15px; gap: 8px; }
+  .logo-hex { width: 28px; height: 28px; }
+  .header-tag { font-size: 9px; padding: 5px 10px; letter-spacing: 0.15em; }
+
+  #screen-intro { padding: 90px 16px 60px; }
+  #screen-quiz, #screen-loading, #screen-result { padding: 90px 16px 60px; }
+
+  .scan-card { padding: 24px 16px; }
+
+  .scan-item { flex-wrap: wrap; gap: 10px; }
+  .scan-bar { width: 100%; flex: none; }
+
+  .trust-strip {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 36px;
+    align-items: stretch;
+    perspective: none;
+  }
+  .trust-item {
+    flex: none;
+    max-width: 100%;
+    padding: 20px 16px 16px;
+    flex-direction: row;
+    text-align: left;
+    gap: 14px;
+  }
+  .trust-item:hover { transform: translateY(-3px) scale(1.01); }
+  .trust-icon { width: 36px; height: 36px; font-size: 17px; margin-bottom: 0; flex-shrink: 0; }
+  .trust-number { font-size: 22px; }
+  .trust-label { font-size: 10px; }
+
+  .btn-primary { padding: 16px 32px; font-size: 13px; width: 100%; text-align: center; }
+
+  .step-indicator { gap: 4px; flex-wrap: wrap; justify-content: center; margin-bottom: 36px; }
+  .step-line { width: 16px; }
+
+  .question-wrap { max-width: 100%; }
+  .question-desc { margin-bottom: 28px; }
+  .options-grid { gap: 10px; }
+  .option-card { padding: 16px; gap: 12px; }
+  .option-icon { width: 36px; height: 36px; font-size: 16px; }
+  .option-check { width: 20px; height: 20px; font-size: 10px; }
+
+  .nav-row { flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .btn-next { padding: 14px 28px; font-size: 12px; width: 100%; justify-content: center; }
+  .btn-back { font-size: 12px; width: 100%; justify-content: center; order: 2; }
+
   .insights-grid { grid-template-columns: 1fr; }
-  .result-cta { grid-template-columns: 1fr; }
-  .score-banner { flex-direction: column; gap: 24px; text-align: center; }
-  .trust-strip { flex-direction: column; gap: 16px; }
+  .insight-card { padding: 20px; }
+
+  .score-banner { flex-direction: column; gap: 20px; text-align: center; padding: 24px 16px; }
+  .score-circle { width: 100px; height: 100px; }
+
+  .opportunities { padding: 24px 16px; }
+
+  .result-cta { grid-template-columns: 1fr; padding: 24px 16px; gap: 20px; text-align: center; }
   .cta-action { width: 100%; }
-  .btn-cta-final { width: 100%; }
+  .btn-cta-final { width: 100%; padding: 16px 24px; font-size: 12px; }
+
+  .toast { left: 16px; right: 16px; bottom: 16px; }
 }
 </style>
 </head>
@@ -1250,10 +1406,28 @@ header {
     </button>
     <p class="btn-hint">Sem compromisso · Sem cartão · Resultado imediato</p>
 
-    <div class="trust-strip">
-      <div class="trust-item"><div class="trust-dot"></div>Mais de 47 empresas atendidas</div>
-      <div class="trust-item"><div class="trust-dot"></div>R$ 4,8M em economia gerada</div>
-      <div class="trust-item"><div class="trust-dot"></div>Implementação em até 7 dias</div>
+    <div class="trust-strip" id="trust-strip">
+      <div class="trust-item">
+        <div class="trust-icon" aria-hidden="true">🏢</div>
+        <div class="trust-content">
+          <span class="trust-number" data-target="47" data-suffix="+">0</span>
+          <span class="trust-label">empresas atendidas</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon" aria-hidden="true">💰</div>
+        <div class="trust-content">
+          <span class="trust-number" data-target="4.8" data-prefix="R$ " data-suffix="M" data-decimals="1">0</span>
+          <span class="trust-label">em economia gerada</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon" aria-hidden="true">⚡</div>
+        <div class="trust-content">
+          <span class="trust-number" data-target="7" data-suffix=" dias">0</span>
+          <span class="trust-label">implementação em até</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1811,6 +1985,34 @@ function showToast() {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 4000);
 }
+
+// ═══════════════════════════════════════════
+// TRUST COUNTER ANIMATION
+// ═══════════════════════════════════════════
+function animateTrustCounters() {
+  document.querySelectorAll('.trust-number[data-target]').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const decimals = parseInt(el.dataset.decimals) || 0;
+    const duration = 1800;
+    const startTime = performance.now();
+
+    function update(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out-expo curve
+      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const current = target * ease;
+      el.textContent = prefix + current.toFixed(decimals).replace('.', ',') + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  });
+}
+
+// Start counters after the cards animate in (delay matches last card animation)
+setTimeout(animateTrustCounters, 2400);
 
 // ─── Iniciar ─────────────────────────────
 show('intro');
