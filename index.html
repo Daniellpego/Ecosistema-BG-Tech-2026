@@ -1542,7 +1542,7 @@ header {
         <p class="cta-sub" id="cta-sub">Nosso time entra em contato em até 24h úteis para apresentar as soluções específicas para o seu negócio, sem compromisso.</p>
       </div>
       <div class="cta-action">
-        <button type="button" class="btn-cta-final" onclick="showToast()">Quero conversar com um especialista</button>
+        <button type="button" class="btn-cta-final" onclick="submitLead()">Quero conversar com um especialista</button>
         <span class="cta-trust">Você recebe contato em até 24h · Sem compromisso de compra</span>
       </div>
     </div>
@@ -1557,6 +1557,16 @@ header {
 </div>
 
 <script>
+// ═══════════════════════════════════════════
+// CONFIGURAÇÃO — edite o número antes de publicar
+// ═══════════════════════════════════════════
+const CONFIG = {
+  // ⚠️  OBRIGATÓRIO: substitua pelo número real da BG Tech antes de publicar.
+  // Formato: código do país + DDD + número, sem + ou espaços.
+  // Exemplo: '5511999998888'  →  +55 (11) 99999-8888
+  whatsappNumber: '5511999998888',
+};
+
 // ═══════════════════════════════════════════
 // CURSOR CUSTOMIZADO
 // ═══════════════════════════════════════════
@@ -2025,7 +2035,47 @@ function buildOpportunities(ans) {
 }
 
 // ═══════════════════════════════════════════
-// TOAST
+// ENVIO DO LEAD — abre WhatsApp com todos os dados
+// ═══════════════════════════════════════════
+function submitLead() {
+  const nome    = textValues.nome     || 'Lead';
+  const empresa = textValues.empresa  || '—';
+  const wpp     = textValues.whatsapp || '—';
+
+  const setorIdx   = answers['setor'];
+  const tamanhoIdx = answers['tamanho'];
+  const dorIdx     = answers['dor'];
+  const fatIdx     = answers['faturamento'];
+  const tecIdx     = answers['tecnologia'];
+
+  const setor   = setorIdx   !== undefined ? QUESTIONS[0].options[setorIdx].label   : '—';
+  const tamanho = tamanhoIdx !== undefined ? QUESTIONS[1].options[tamanhoIdx].label  : '—';
+  const dor     = dorIdx     !== undefined ? QUESTIONS[2].options[dorIdx].label     : '—';
+  const fat     = fatIdx     !== undefined ? QUESTIONS[3].options[fatIdx].label     : '—';
+  const tec     = tecIdx     !== undefined ? QUESTIONS[4].options[tecIdx].label     : '—';
+
+  const msg = [
+    '🔔 *Novo Lead — BG Tech Diagnóstico*',
+    '',
+    `👤 *Nome:* ${nome}`,
+    `🏢 *Empresa:* ${empresa}`,
+    `📱 *WhatsApp do lead:* ${wpp}`,
+    '',
+    `📊 *Segmento:* ${setor}`,
+    `👥 *Tamanho da equipe:* ${tamanho}`,
+    `⚡ *Principal dor:* ${dor}`,
+    `💰 *Faturamento mensal:* ${fat}`,
+    `🖥️ *Maturidade tech:* ${tec}`,
+  ].join('\n');
+
+  const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+
+  showToast();
+}
+
+// ═══════════════════════════════════════════
+// TOAST NOTIFICATION
 // ═══════════════════════════════════════════
 function showToast() {
   const t = document.getElementById('toast');
