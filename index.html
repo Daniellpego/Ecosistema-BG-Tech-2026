@@ -1022,6 +1022,7 @@ header {
   stroke-dashoffset: 314;
   transition: stroke-dashoffset 2s var(--ease-out-expo) 0.5s;
   filter: drop-shadow(0 0 4px rgba(12,151,243,0.7));
+  animation: score-pulse 2.5s ease-in-out 2.5s infinite;
 }
 .score-number {
   position: absolute;
@@ -1170,7 +1171,8 @@ header {
 .opp-bar {
   height: 100%;
   border-radius: 2px;
-  animation: bar-fill 1.5s var(--ease-out-expo) 1s forwards;
+  animation: bar-fill 1.5s var(--ease-out-expo) forwards;
+  animation-play-state: paused;
   transform-origin: left;
   transform: scaleX(0);
 }
@@ -1271,16 +1273,16 @@ header {
    TRANSIÇÕES DE TELA
 ═══════════════════════════════════════════ */
 .screen {
-  transition: opacity 0.4s ease, transform 0.4s var(--ease-out-expo);
+  transition: opacity 0.5s ease, transform 0.5s var(--ease-out-expo);
 }
 .screen.exiting {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(-20px) scale(0.98);
   pointer-events: none;
 }
 .screen.entering {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(30px) scale(0.98);
 }
 
 /* ═══════════════════════════════════════════
@@ -1336,6 +1338,8 @@ header {
   #screen-intro { padding: 90px 16px 60px; }
   #screen-quiz, #screen-loading, #screen-result { padding: 90px 16px 60px; }
 
+  #screen-result { overflow-wrap: break-word; word-wrap: break-word; }
+
   .scan-card { padding: 24px 16px; }
 
   .scan-item { flex-wrap: wrap; gap: 10px; }
@@ -1385,9 +1389,15 @@ header {
 
   .opportunities { padding: 24px 16px; }
 
-  .result-cta { grid-template-columns: 1fr; padding: 24px 16px; gap: 20px; text-align: center; }
+  .result-cta { grid-template-columns: 1fr; padding: 24px 16px; gap: 20px; text-align: center; overflow-wrap: break-word; word-wrap: break-word; }
+  .cta-heading { font-size: clamp(16px, 4vw, 22px); word-wrap: break-word; overflow-wrap: break-word; }
+  .cta-sub { word-wrap: break-word; overflow-wrap: break-word; }
   .cta-action { width: 100%; }
-  .btn-cta-final { width: 100%; padding: 18px 24px; font-size: 14px; }
+  .btn-cta-final { width: 100%; padding: 18px 24px; font-size: 14px; white-space: normal; word-wrap: break-word; }
+  .cta-trust { word-wrap: break-word; overflow-wrap: break-word; }
+  .score-desc { word-wrap: break-word; overflow-wrap: break-word; }
+  .score-text { word-wrap: break-word; overflow-wrap: break-word; }
+  .opp-name { word-wrap: break-word; overflow-wrap: break-word; }
 
   .toast { left: 16px; right: 16px; bottom: 16px; }
 
@@ -1420,6 +1430,48 @@ header {
   .btn-next:not(:disabled):active,
   .btn-cta-final:active { transform: scale(0.97); }
   .option-card:active { background: rgba(12,151,243,0.06); border-color: var(--cyan40); }
+}
+
+/* ─── Reveal on scroll ───────────────────── */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+}
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Keyframes for new animations ──────── */
+@keyframes float-icon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes score-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(12,151,243,0.7)); }
+  50% { filter: drop-shadow(0 0 16px rgba(12,151,243,1.0)) drop-shadow(0 0 32px rgba(12,151,243,0.4)); }
+}
+@keyframes opp-icon-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; filter: drop-shadow(0 0 5px rgba(12,151,243,0.9)); }
+}
+
+/* ─── Scan icon float ────────────────────── */
+.scan-item:nth-child(1) .scan-icon { animation: float-icon 3s ease-in-out 0.0s infinite; }
+.scan-item:nth-child(2) .scan-icon { animation: float-icon 3s ease-in-out 0.4s infinite; }
+.scan-item:nth-child(3) .scan-icon { animation: float-icon 3s ease-in-out 0.8s infinite; }
+.scan-item:nth-child(4) .scan-icon { animation: float-icon 3s ease-in-out 1.2s infinite; }
+
+/* ─── Opp icon pulse glow ────────────────── */
+.opp-icon { animation: opp-icon-glow 3s ease-in-out infinite; }
+
+/* ─── Insight card desktop hover ─────────── */
+@media (hover: hover) {
+  .insight-card:hover {
+    border-color: var(--cyan40);
+    box-shadow: 0 0 24px rgba(12,151,243,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
 }
 
 /* ─── Prefer reduced motion: collapse animations/transitions ─── */
@@ -2032,7 +2084,7 @@ function showResult() {
   // Oportunidades
   const opps = buildOpportunities(answers);
   document.getElementById('opp-list').innerHTML = opps.map(o => `
-    <div class="opp-item">
+    <div class="opp-item reveal-on-scroll">
       <div class="opp-icon">${o.icon}</div>
       <div class="opp-info">
         <div class="opp-name">${o.name}</div>
@@ -2040,15 +2092,44 @@ function showResult() {
           <div class="opp-bar ${o.level}" style="width:${o.pct}%;animation-delay:${o.delay}s"></div>
         </div>
       </div>
-      <div class="opp-percent">${o.pct}%</div>
+      <div class="opp-percent" data-target="${o.pct}">0%</div>
     </div>
   `).join('');
+
+  // Stagger opp-item reveals and trigger bar + percent counter via IntersectionObserver
+  document.querySelectorAll('#opp-list .opp-item').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.1}s`;
+    revealObserver.observe(el);
+    const bar = el.querySelector('.opp-bar');
+    const pctEl = el.querySelector('.opp-percent');
+    const target = parseInt(pctEl.dataset.target);
+    const barObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          bar.style.animationPlayState = 'running';
+          let cur = 0;
+          const inc = setInterval(() => {
+            cur = Math.min(cur + Math.ceil((target - cur) / 8), target);
+            pctEl.textContent = cur + '%';
+            if (cur >= target) { clearInterval(inc); }
+          }, 40);
+          barObserver.unobserve(entry.target);
+          barObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    barObserver.observe(el);
+  });
 
   // CTA
   document.getElementById('cta-heading').textContent =
     `${nome}, vamos entender a fundo os problemas da sua empresa.`;
   document.getElementById('cta-sub').textContent =
     `Um especialista da BG Tech vai te ligar em até 24h úteis. Nosso objetivo nessa conversa é entender profundamente suas principais dores, mapear os obstáculos operacionais da ${empresa} e, juntos, encontrarmos a solução ideal para recuperar sua eficiência e lucro.`;
+
+  // Add reveal-on-scroll to result-cta
+  const ctaEl = document.querySelector('.result-cta');
+  if (ctaEl) { ctaEl.classList.add('reveal-on-scroll'); revealObserver.observe(ctaEl); }
 
   // Cursor
   setTimeout(() => {
@@ -2195,6 +2276,18 @@ function animateTrustCounters() {
 
 // Start counters after the cards animate in (delay matches last card animation)
 setTimeout(animateTrustCounters, 2400);
+
+// ═══════════════════════════════════════════
+// SCROLL REVEAL — Intersection Observer
+// ═══════════════════════════════════════════
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
 
 // ─── Iniciar ─────────────────────────────
 show('intro');
