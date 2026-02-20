@@ -162,6 +162,30 @@ header {
   width: 36px; height: 36px;
   filter: drop-shadow(0 0 8px rgba(12,151,243,0.7));
 }
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.logo-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--white);
+}
+.logo-name span {
+  color: var(--cyan);
+  text-shadow: var(--glow);
+}
+.logo-tagline {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: rgba(0, 200, 255, 0.7);
+  text-transform: uppercase;
+}
 .header-tag {
   font-family: var(--font-ui);
   font-size: 11px;
@@ -1268,6 +1292,8 @@ header {
   header { padding: 14px 16px; }
   .logo-mark { font-size: 15px; gap: 8px; }
   .logo-hex { width: 28px; height: 28px; }
+  .logo-name { font-size: 16px; }
+  .logo-tagline { font-size: 9px; letter-spacing: 0.1em; }
   .header-tag { font-size: 9px; padding: 5px 10px; letter-spacing: 0.15em; }
 
   #screen-intro { padding: 90px 16px 60px; }
@@ -1393,7 +1419,11 @@ header {
 <!-- Header -->
 <header>
   <div class="logo-mark">
-    <img src="logo%20vetorizada.png" alt="BG Tech Logo" style="height: 36px; width: auto; object-fit: contain;">
+    <img src="logo%20vetorizada.png" alt="BG Tech Logo" style="height: 52px; width: auto; object-fit: contain;">
+    <div class="logo-text">
+      <span class="logo-name">BG <span>Tech</span></span>
+      <span class="logo-tagline">Sistemas &amp; Automações</span>
+    </div>
   </div>
   <div class="header-tag">Diagnóstico Estratégico</div>
 </header>
