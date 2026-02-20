@@ -1873,7 +1873,7 @@ header {
           <div class="testimonial-card">
             <p class="testimonial-text">Em 2 semanas já tínhamos processos automatizados que economizaram mais de 40 horas por mês da equipe. O diagnóstico acertou em cheio.</p>
             <div class="testimonial-author">
-              <div class="testimonial-avatar">👤</div>
+              <div class="testimonial-avatar" role="img" aria-label="Avatar de Carlos M.">👤</div>
               <div class="testimonial-info">
                 <span class="testimonial-name">Carlos M.</span>
                 <span class="testimonial-role">Diretor Operacional — Comércio Varejista</span>
@@ -1883,7 +1883,7 @@ header {
           <div class="testimonial-card">
             <p class="testimonial-text">Nossos sistemas não se comunicavam e perdíamos dados todo dia. A BG Tech integrou tudo e reduziu nossos erros em 90%.</p>
             <div class="testimonial-author">
-              <div class="testimonial-avatar">👤</div>
+              <div class="testimonial-avatar" role="img" aria-label="Avatar de Fernanda L.">👤</div>
               <div class="testimonial-info">
                 <span class="testimonial-name">Fernanda L.</span>
                 <span class="testimonial-role">Sócia-proprietária — Clínica de Saúde</span>
@@ -1893,7 +1893,7 @@ header {
           <div class="testimonial-card">
             <p class="testimonial-text">O atendimento foi consultivo de verdade. Entenderam nossas dores antes de propor qualquer solução. Recomendo para qualquer PME.</p>
             <div class="testimonial-author">
-              <div class="testimonial-avatar">👤</div>
+              <div class="testimonial-avatar" role="img" aria-label="Avatar de Ricardo A.">👤</div>
               <div class="testimonial-info">
                 <span class="testimonial-name">Ricardo A.</span>
                 <span class="testimonial-role">CEO — Escritório de Contabilidade</span>
@@ -1981,20 +1981,20 @@ header {
        TELA 5 — OBRIGADO
   ═══════════════════════════════════ -->
   <section id="screen-thankyou" class="screen">
-    <div class="thankyou-icon">✅</div>
+    <div class="thankyou-icon" role="img" aria-label="Sucesso">✅</div>
     <h2 class="thankyou-title">Pronto, <span class="accent" id="thankyou-name">seu diagnóstico</span> foi enviado!</h2>
     <p class="thankyou-sub">Nosso time já recebeu os dados e um especialista da BG Tech vai entrar em contato em até 24h úteis.</p>
     <div class="thankyou-steps">
       <div class="thankyou-step">
-        <div class="thankyou-step-icon">📱</div>
+        <div class="thankyou-step-icon" aria-hidden="true">📱</div>
         <div class="thankyou-step-text">Você vai receber uma mensagem no WhatsApp com os próximos passos</div>
       </div>
       <div class="thankyou-step">
-        <div class="thankyou-step-icon">🗓️</div>
+        <div class="thankyou-step-icon" aria-hidden="true">🗓️</div>
         <div class="thankyou-step-text">O especialista vai agendar uma conversa rápida de 15 min — sem compromisso</div>
       </div>
       <div class="thankyou-step">
-        <div class="thankyou-step-icon">🎯</div>
+        <div class="thankyou-step-icon" aria-hidden="true">🎯</div>
         <div class="thankyou-step-text">Juntos, vamos encontrar a melhor solução para a sua empresa</div>
       </div>
     </div>
@@ -2196,7 +2196,7 @@ function renderQuestion() {
 
   // Indicator — progress bar with label
   const ind = document.getElementById('step-indicator');
-  const pctDone = Math.round(((currentStep) / QUESTIONS.length) * 100);
+  const pctDone = Math.round(((currentStep + 1) / QUESTIONS.length) * 100);
   ind.innerHTML = `
     <span class="step-progress-label">Etapa ${currentStep + 1} de ${QUESTIONS.length}</span>
     <div class="step-progress-track">
