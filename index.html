@@ -2155,15 +2155,15 @@ header {
       <p class="team-sub">Somos especialistas em automação e tecnologia para PMEs. Nosso time combina experiência técnica com visão de negócio.</p>
       <div class="team-grid">
         <div class="team-card">
-          <div class="team-avatar" role="img" aria-label="Foto de Bruno">
-            <img src="https://ui-avatars.com/api/?name=Bruno&background=0C97F3&color=fff&size=160&font-size=0.4&bold=true" alt="Bruno — Co-fundador">
+          <div class="team-avatar">
+            <img src="https://ui-avatars.com/api/?name=Bruno&background=0C97F3&color=fff&size=160&font-size=0.4&bold=true" alt="Bruno — Co-fundador e Tecnologia">
           </div>
           <span class="team-name">Bruno</span>
           <span class="team-role">Co-fundador &amp; Tecnologia</span>
         </div>
         <div class="team-card">
-          <div class="team-avatar" role="img" aria-label="Foto de Gabriel">
-            <img src="https://ui-avatars.com/api/?name=Gabriel&background=174D9F&color=fff&size=160&font-size=0.4&bold=true" alt="Gabriel — Co-fundador">
+          <div class="team-avatar">
+            <img src="https://ui-avatars.com/api/?name=Gabriel&background=174D9F&color=fff&size=160&font-size=0.4&bold=true" alt="Gabriel — Co-fundador e Estratégia">
           </div>
           <span class="team-name">Gabriel</span>
           <span class="team-role">Co-fundador &amp; Estratégia</span>
@@ -2183,7 +2183,7 @@ header {
             <div class="testimonial-stars" aria-label="5 estrelas">★★★★★</div>
             <p class="testimonial-text">Em 2 semanas já tínhamos processos automatizados que economizaram mais de 40 horas por mês da equipe. O diagnóstico acertou em cheio.</p>
             <div class="testimonial-author">
-              <div class="testimonial-avatar" role="img" aria-label="Avatar de Carlos M.">
+              <div class="testimonial-avatar">
                 <img src="https://ui-avatars.com/api/?name=Carlos+M&background=0C97F3&color=fff&size=96&font-size=0.4&bold=true" alt="Carlos M.">
               </div>
               <div class="testimonial-info">
@@ -2196,7 +2196,7 @@ header {
             <div class="testimonial-stars" aria-label="5 estrelas">★★★★★</div>
             <p class="testimonial-text">Nossos sistemas não se comunicavam e perdíamos dados todo dia. A BG Tech integrou tudo e reduziu nossos erros em 90%.</p>
             <div class="testimonial-author">
-              <div class="testimonial-avatar" role="img" aria-label="Avatar de Fernanda L.">
+              <div class="testimonial-avatar">
                 <img src="https://ui-avatars.com/api/?name=Fernanda+L&background=174D9F&color=fff&size=96&font-size=0.4&bold=true" alt="Fernanda L.">
               </div>
               <div class="testimonial-info">
@@ -2209,7 +2209,7 @@ header {
             <div class="testimonial-stars" aria-label="5 estrelas">★★★★★</div>
             <p class="testimonial-text">O atendimento foi consultivo de verdade. Entenderam nossas dores antes de propor qualquer solução. Recomendo para qualquer PME.</p>
             <div class="testimonial-author">
-              <div class="testimonial-avatar" role="img" aria-label="Avatar de Ricardo A.">
+              <div class="testimonial-avatar">
                 <img src="https://ui-avatars.com/api/?name=Ricardo+A&background=06205D&color=0CF&size=96&font-size=0.4&bold=true" alt="Ricardo A.">
               </div>
               <div class="testimonial-info">
@@ -2749,7 +2749,7 @@ function showResult() {
       count++;
     }
   });
-  const score = count > 0 ? Math.min(99, Math.max(55, Math.round(total / weightSum))) : 75;
+  const score = weightSum > 0 ? Math.min(99, Math.max(55, Math.round(total / weightSum))) : 75;
 
   // Animar score
   const fillEl = document.getElementById('score-fill');
@@ -3035,10 +3035,11 @@ function contactSpecialist() {
 if (window.innerWidth <= 768) {
   const stickyCta = document.getElementById('sticky-cta');
   const introSection = document.getElementById('screen-intro');
+  const heroCta = introSection.querySelector('.btn-primary');
   let stickyVisible = false;
 
   window.addEventListener('scroll', () => {
-    const heroBottom = introSection.querySelector('.btn-primary')?.getBoundingClientRect().bottom ?? 0;
+    const heroBottom = heroCta?.getBoundingClientRect().bottom ?? 0;
     const isIntroVisible = getScreen('intro').style.display !== 'none';
     if (heroBottom < 0 && isIntroVisible && !stickyVisible) {
       stickyCta.classList.add('visible');
