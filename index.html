@@ -13,8 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   
   <script src="https://unpkg.com/lucide@latest"></script>
-  
-  </head>
+</head>
 <body>
   <div class="reading-progress" id="reading-progress"></div>
 
@@ -31,7 +30,7 @@
       <a href="#founders" class="nav-link">Sobre Nós</a>
     </nav>
     <button class="header-cta js-open-quiz">Diagnóstico Gratuito</button>
-    <button class="hamburger js-toggle-menu" aria-label="Menu">
+    <button class="hamburger js-toggle-menu">
       <span></span><span></span><span></span>
     </button>
   </header>
@@ -40,33 +39,31 @@
     <a href="#services" class="mobile-link js-close-menu">Serviços</a>
     <a href="#process" class="mobile-link js-close-menu">Como Funciona</a>
     <a href="#founders" class="mobile-link js-close-menu">Sobre Nós</a>
-    <button class="btn-primary js-open-quiz js-close-menu" style="margin-top: 24px;">Diagnóstico Gratuito</button>
+    <button class="btn-primary js-open-quiz js-close-menu" style="margin-top: 32px;">Fazer Diagnóstico</button>
   </div>
 
   <section id="hero">
     <div class="grid-bg"></div>
-    <div class="hero-glow"></div>
+    <div class="hero-orb"></div>
     
-    <div class="hero-content reveal">
-      <div class="hero-badge">
-        <span class="pulse-dot"></span>
-        DIAGNÓSTICO GRATUITO · RESULTADO EM 3 MINUTOS
-      </div>
+    <div class="hero-badge reveal">
+      <span class="pulse-dot"></span>
+      DIAGNÓSTICO GRATUITO · RESULTADO EM 3 MINUTOS
+    </div>
 
-      <h1 class="hero-title">
-        Sua empresa perde<br>dinheiro onde você<br><span class="accent">não percebe.</span>
-      </h1>
+    <h1 class="hero-title reveal delay-1">
+      Sua empresa perde<br>dinheiro onde você<br><span class="accent">não percebe.</span>
+    </h1>
 
-      <p class="hero-subtitle">
-        Em 3 minutos, nosso time mapeia os gargalos da sua operação e mostra, em reais, o que você está deixando na mesa — e a arquitetura exata para recuperar.
-      </p>
+    <p class="hero-subtitle reveal delay-2">
+      Em 3 minutos, nosso time mapeia os gargalos da sua operação e mostra, em reais, o que você está deixando na mesa — e a arquitetura exata para recuperar.
+    </p>
 
-      <div class="hero-actions">
-        <button class="btn-primary js-open-quiz">
-          Quero meu diagnóstico gratuito <i data-lucide="arrow-right"></i>
-        </button>
-        <span class="hero-hint">Sem compromisso · Análise instantânea</span>
-      </div>
+    <div class="reveal delay-3" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+      <button class="btn-primary js-open-quiz">
+        Quero meu diagnóstico gratuito <i data-lucide="arrow-right" style="width: 18px;"></i>
+      </button>
+      <span class="hero-hint">Sem compromisso · Sem cartão · Resultado imediato</span>
     </div>
   </section>
 
@@ -75,61 +72,57 @@
       <div class="trust-item">
         <div class="trust-number"><span class="counter" data-target="47">0</span>+</div>
         <div class="trust-label">Empresas Atendidas</div>
-        <div class="trust-context">Operações otimizadas</div>
+        <div class="trust-context">desde 2022</div>
       </div>
       <div class="trust-item">
         <div class="trust-number">R$ <span class="counter" data-target="4.8">0</span>M</div>
-        <div class="trust-label">Valor Gerenciado</div>
-        <div class="trust-context">Em contratos ativos</div>
+        <div class="trust-label">Em Contratos Ativos</div>
+        <div class="trust-context">soma gerenciada</div>
       </div>
       <div class="trust-item">
         <div class="trust-number"><span class="counter" data-target="7">0</span> dias</div>
-        <div class="trust-label">Go-Live Rápido</div>
-        <div class="trust-context">Para automações base</div>
+        <div class="trust-label">Prazo de Implementação</div>
+        <div class="trust-context">máximo garantido</div>
       </div>
     </div>
   </section>
 
   <section id="partners">
-    <div class="partners-inner reveal">
-      <p class="partners-label">Tecnologias & Plataformas que dominamos</p>
-      <div class="partners-row">
-        <span class="partner-chip"><i data-lucide="layers"></i> Make.com</span>
-        <span class="partner-chip"><i data-lucide="git-branch"></i> n8n</span>
-        <span class="partner-chip"><i data-lucide="cloud"></i> Google Cloud</span>
-        <span class="partner-chip"><i data-lucide="server"></i> Microsoft Azure</span>
-        <span class="partner-chip"><i data-lucide="zap"></i> Zapier</span>
-        <span class="partner-chip"><i data-lucide="bar-chart-2"></i> Power BI</span>
-      </div>
+    <p class="partners-label">Tecnologias & Plataformas</p>
+    <div class="partners-row">
+      <span class="partner-chip"><i data-lucide="layers" width="18"></i> Make.com</span>
+      <span class="partner-chip"><i data-lucide="git-branch" width="18"></i> n8n</span>
+      <span class="partner-chip"><i data-lucide="cloud" width="18"></i> Google Cloud</span>
+      <span class="partner-chip"><i data-lucide="server" width="18"></i> Microsoft Azure</span>
+      <span class="partner-chip"><i data-lucide="zap" width="18"></i> Zapier</span>
+      <span class="partner-chip"><i data-lucide="bar-chart-2" width="18"></i> Power BI</span>
     </div>
   </section>
 
   <section id="problems">
     <div class="section-inner">
-      <div class="section-header reveal">
-        <span class="eyebrow">A SANGRIA OPERACIONAL</span>
-        <h2 class="section-title">Sua empresa está perdendo dinheiro.<br>E você sabe disso.</h2>
-        <p class="section-subtitle">Estes três problemas silenciosos destroem até 40% da capacidade de lucro de operações B2B todos os dias.</p>
-      </div>
+      <span class="eyebrow reveal">A SANGRIA OPERACIONAL</span>
+      <h2 class="section-title reveal">Sua empresa está perdendo dinheiro. E você sabe disso.</h2>
+      <p class="section-subtitle reveal">Três problemas silenciosos destroem até 40% da capacidade de lucro das PMEs todos os dias.</p>
 
       <div class="problems-grid">
         <div class="problem-card reveal">
           <div class="problem-icon"><i data-lucide="clock"></i></div>
-          <h3 class="problem-title">Sua equipe está presa no manual</h3>
-          <p class="problem-desc">Processos repetitivos consomem horas cruciais. Cada planilha preenchida à mão é dinheiro e produtividade parados.</p>
-          <span class="problem-stat">Perda média: 40h/mês por setor</span>
+          <h3 class="problem-title">Equipe presa no manual</h3>
+          <p class="problem-desc">Processos manuais consomem horas que poderiam ser investidas em crescimento. Planilha preenchida à mão é dinheiro parado.</p>
+          <span class="problem-stat">Perda de 40h/mês por setor</span>
         </div>
         <div class="problem-card reveal delay-1">
           <div class="problem-icon"><i data-lucide="users"></i></div>
-          <h3 class="problem-title">Leads bons esfriando</h3>
-          <p class="problem-desc">Enquanto sua equipe demora para responder e qualificar, o concorrente fechou. Velocidade de resposta é o novo diferencial.</p>
-          <span class="problem-stat">67% compram de quem responde 1º</span>
+          <h3 class="problem-title">Leads bons indo embora</h3>
+          <p class="problem-desc">Enquanto sua equipe demora para responder, o concorrente já fechou. Velocidade de resposta é o novo diferencial.</p>
+          <span class="problem-stat">67% compram de quem responde antes</span>
         </div>
         <div class="problem-card reveal delay-2">
           <div class="problem-icon"><i data-lucide="cable"></i></div>
           <h3 class="problem-title">Sistemas que não se falam</h3>
-          <p class="problem-desc">Dados duplicados e retrabalho criam ilhas de informação. Decisões erradas são tomadas com base em dados incompletos.</p>
-          <span class="problem-stat">Custo operacional 23% maior</span>
+          <p class="problem-desc">Dados duplicados, retrabalho e decisões baseadas em informações incompletas. A falta de integração custa caro.</p>
+          <span class="problem-stat">Custos operacionais 23% maiores</span>
         </div>
       </div>
     </div>
@@ -137,112 +130,33 @@
 
   <section id="services">
     <div class="section-inner">
-      <div class="section-header reveal">
-        <span class="eyebrow">TECNOLOGIA 360°</span>
-        <h2 class="section-title">A arquitetura que sua operação precisa.</h2>
-      </div>
+      <span class="eyebrow reveal">TECNOLOGIA 360°</span>
+      <h2 class="section-title reveal">A arquitetura exata para o seu negócio.</h2>
 
       <div class="services-grid">
         <div class="service-card reveal">
-          <span class="service-badge">ESTABILIDADE</span>
-          <div class="service-header">
-            <div class="service-icon"><i data-lucide="shield-check"></i></div>
-            <h3 class="service-title">Suporte TI Gerenciado</h3>
-          </div>
-          <p class="service-desc">Monitoramento contínuo, manutenção preventiva e suporte técnico focado em garantir que sua operação não pare um segundo sequer.</p>
+          <span class="service-badge">CONTRATO RECORRENTE</span>
+          <div class="service-icon"><i data-lucide="shield-check"></i></div>
+          <h3 class="service-title">Suporte TI Gerenciado</h3>
+          <p class="service-desc">Monitoramento, manutenção preventiva e suporte técnico focado em manter sua operação rodando sem travas.</p>
         </div>
-        
         <div class="service-card reveal delay-1">
-          <span class="service-badge">SOB MEDIDA</span>
-          <div class="service-header">
-            <div class="service-icon"><i data-lucide="code-2"></i></div>
-            <h3 class="service-title">Desenvolvimento Back-end</h3>
-          </div>
-          <p class="service-desc">Sistemas desenhados exclusivamente para a sua regra de negócio. Sem gambiarras, software limpo e escalável.</p>
+          <span class="service-badge">PROJETO SOB MEDIDA</span>
+          <div class="service-icon"><i data-lucide="code-2"></i></div>
+          <h3 class="service-title">Desenvolvimento de Software</h3>
+          <p class="service-desc">Sistemas sob medida que resolvem problemas reais. Software feito exclusivamente para a sua regra de negócio.</p>
         </div>
-
         <div class="service-card reveal">
-          <span class="service-badge">EFICIÊNCIA</span>
-          <div class="service-header">
-            <div class="service-icon"><i data-lucide="cpu"></i></div>
-            <h3 class="service-title">Automações Inteligentes</h3>
-          </div>
-          <p class="service-desc">Conectamos seus CRMs, ERPs e ferramentas. Eliminamos o copia-e-cola e deixamos os robôs trabalharem enquanto sua equipe foca em receita.</p>
+          <span class="service-badge">ALTO IMPACTO</span>
+          <div class="service-icon"><i data-lucide="cpu"></i></div>
+          <h3 class="service-title">Automações Inteligentes</h3>
+          <p class="service-desc">Conectamos seus sistemas e eliminamos tarefas repetitivas. Sua equipe foca apenas no que gera receita.</p>
         </div>
-
         <div class="service-card reveal delay-1">
           <span class="service-badge">ESTRATÉGICO</span>
-          <div class="service-header">
-            <div class="service-icon"><i data-lucide="compass"></i></div>
-            <h3 class="service-title">Consultoria C-Level</h3>
-          </div>
-          <p class="service-desc">Mapeamento completo e roadmap tecnológico. Ajudamos a diretoria a decidir onde investir em tecnologia para ter o maior ROI.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="process">
-    <div class="section-inner">
-      <div class="section-header reveal">
-        <span class="eyebrow">A JORNADA</span>
-        <h2 class="section-title">Do diagnóstico ao Go-Live.</h2>
-      </div>
-      
-      <div class="process-steps reveal">
-        <div class="process-line"></div>
-        
-        <div class="process-step">
-          <div class="process-circle">1</div>
-          <h3 class="process-step-title">Mapeamento</h3>
-          <p class="process-step-desc">Você faz o diagnóstico rápido online. Nós processamos seus dados operacionais.</p>
-        </div>
-        
-        <div class="process-step">
-          <div class="process-circle">2</div>
-          <h3 class="process-step-title">Arquitetura</h3>
-          <p class="process-step-desc">Desenhamos a solução sob medida em uma reunião executiva direta ao ponto.</p>
-        </div>
-        
-        <div class="process-step">
-          <div class="process-circle">3</div>
-          <h3 class="process-step-title">Execução</h3>
-          <p class="process-step-desc">Implementamos a tecnologia e treinamos seu time para o ganho de eficiência imediato.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="founders">
-    <div class="section-inner">
-      <div class="founders-layout">
-        <div class="founders-content reveal">
-          <span class="eyebrow">QUEM EXECUTA</span>
-          <h2 class="section-title" style="text-align: left;">Engenharia técnica com visão de negócios.</h2>
-          <p class="section-subtitle" style="text-align: left; margin-left: 0; max-width: 100%;">Não somos apenas desenvolvedores, somos parceiros de crescimento. A BG Tech nasceu para traduzir a complexidade do código em lucro e estabilidade para a sua empresa.</p>
-          
-          <ul class="founders-list">
-            <li><i data-lucide="check-circle-2"></i> Orientação agressiva a resultados e ROI.</li>
-            <li><i data-lucide="check-circle-2"></i> Comunicação transparente, sem jargões técnicos.</li>
-            <li><i data-lucide="check-circle-2"></i> Parceria de longo prazo na evolução do software.</li>
-          </ul>
-        </div>
-
-        <div class="founders-cards reveal delay-1">
-          <div class="founder-card">
-            <div class="founder-avatar">B</div>
-            <div class="founder-info">
-              <span class="founder-name">Bruno</span>
-              <span class="founder-role">Head de Tecnologia & Infraestrutura</span>
-            </div>
-          </div>
-          <div class="founder-card">
-            <div class="founder-avatar">G</div>
-            <div class="founder-info">
-              <span class="founder-name">Gabriel</span>
-              <span class="founder-role">Head de Estratégia & Automação</span>
-            </div>
-          </div>
+          <div class="service-icon"><i data-lucide="compass"></i></div>
+          <h3 class="service-title">Consultoria de TI</h3>
+          <p class="service-desc">Roadmap tecnológico para sua empresa. Identificamos onde investir e o que priorizar para crescer com segurança.</p>
         </div>
       </div>
     </div>
@@ -250,44 +164,34 @@
 
   <section id="cta-final">
     <div class="cta-glow"></div>
-    <div class="section-inner reveal" style="position: relative; z-index: 2;">
-      <span class="eyebrow" style="color: var(--blue-border)">A DECISÃO LÓGICA</span>
-      <h2 class="section-title" style="color: white;">Pronto para blindar sua operação?</h2>
-      <p class="section-subtitle" style="color: rgba(255,255,255,0.7);">Gaste 3 minutos agora para descobrir onde sua empresa está sangrando dinheiro e como recuperar isso nesta semana.</p>
-      
-      <button class="btn-primary btn-large js-open-quiz">
-        Fazer Diagnóstico Gratuito <i data-lucide="bar-chart"></i>
+    <div class="section-inner" style="position: relative; z-index: 2;">
+      <span class="eyebrow" style="color: var(--blue-border)">O PRÓXIMO PASSO</span>
+      <h2 class="section-title" style="color: white;">Pronto para estancar as perdas?</h2>
+      <p class="section-subtitle" style="color: rgba(255,255,255,0.7); margin: 0 auto 40px;">Em 3 minutos você vai descobrir exatamente onde focar seus esforços de tecnologia para o maior retorno financeiro.</p>
+      <button class="btn-primary js-open-quiz" style="padding: 20px 48px; font-size: 16px;">
+        Fazer Diagnóstico Gratuito <i data-lucide="arrow-right"></i>
       </button>
     </div>
   </section>
 
   <footer class="site-footer">
-    <div class="section-inner">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <span class="logo-name">BG <span class="blue">TECH</span></span>
-          <p>Tecnologia que move negócios.</p>
-        </div>
-        <div class="footer-links">
-          <p>© 2026 BG Tecnologia e Automação LTDA.</p>
-        </div>
+    <div class="section-inner" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+      <div>
+        <span class="logo-name" style="font-size: 20px;">BG <span class="blue">TECH</span></span>
+        <p style="color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 4px;">Tecnologia que move negócios.</p>
       </div>
+      <p style="color: rgba(255,255,255,0.3); font-size: 12px;">© 2026 BG Tecnologia e Automação LTDA.</p>
     </div>
   </footer>
 
   <div class="quiz-overlay" id="quiz-overlay">
     <div class="quiz-container">
       <div class="quiz-header">
-        <span class="logo-name">BG <span class="blue">TECH</span></span>
+        <span class="logo-name" style="font-size: 16px; color: var(--text-heading)">BG <span class="blue">TECH</span></span>
         <button class="quiz-close js-close-quiz"><i data-lucide="x"></i></button>
       </div>
-      
-      <div class="quiz-progress-bar">
-        <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
-      </div>
-
-      <div class="quiz-body" id="quiz-body">
-        </div>
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill"></div></div>
+      <div class="quiz-body" id="quiz-body"></div>
     </div>
   </div>
 
