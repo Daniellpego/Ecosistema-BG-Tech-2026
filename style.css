@@ -388,3 +388,105 @@ function sendPayload() {
     }).catch(e => console.error('Erro no envio do Webhook', e));
   }
 }
+/* ==========================================================================
+   DASHBOARD DE DIAGNÓSTICO (GRÁFICOS E DADOS)
+   ========================================================================== */
+.diag-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 32px;
+  margin-bottom: 40px;
+}
+
+.diag-widget {
+  background: rgba(13, 21, 38, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.diag-widget::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--blue);
+}
+
+.diag-widget.danger::before { background: #EF4444; }
+.diag-widget.warning::before { background: #F59E0B; }
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.widget-title {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-on-dark);
+}
+
+/* Gráfico de Barras CSS */
+.css-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chart-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-on-dark-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+.chart-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chart-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  width: 0%; /* Inicia zerado para animar */
+  transition: width 1.5s var(--ease-out-expo);
+}
+
+.chart-bar-fill.bad { background: linear-gradient(90deg, #EF4444, #B91C1C); }
+.chart-bar-fill.good { background: linear-gradient(90deg, var(--blue), #3B82F6); }
+
+/* Destaque Financeiro */
+.financial-bleed {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  color: #EF4444;
+  margin-top: 8px;
+}
+
+.financial-sub {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(241, 245, 249, 0.5);
+}
