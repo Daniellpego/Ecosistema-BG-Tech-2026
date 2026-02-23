@@ -401,7 +401,7 @@ function runLoading() {
 
   const steps = [
     { icon: 'briefcase', text: `Mapeando gargalos na área de ${segName}...` },
-    { icon: 'search', text: `Cruzando dados de empresas em ${leadLocation}...` },
+    { icon: 'search', text: `Cruzando dados com empresas em ${leadLocation}...` },
     { icon: 'dollar-sign', text: `Calculando horas perdidas e sangria financeira...`, special: true },
     { icon: 'target', text: 'Priorizando automações com maior retorno...' },
     { icon: 'file-check-2', text: 'Montando plano executivo...' }
