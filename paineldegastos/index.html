@@ -17,14 +17,26 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    body { margin: 0; padding: 0; background: #05070D; }
-    #root { min-height: 100vh; }
+    body { margin: 0; padding: 0; background: #05070D; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    #root { min-height: 100vh; display: flex; flex-direction: column; }
+    
+    /* ANIMAÇÃO DE PULSO PARA O LOADING */
+    @keyframes pulse-glow {
+      0% { text-shadow: 0 0 10px rgba(56, 216, 255, 0.2); transform: scale(1); }
+      50% { text-shadow: 0 0 30px rgba(56, 216, 255, 0.8); transform: scale(1.02); }
+      100% { text-shadow: 0 0 10px rgba(56, 216, 255, 0.2); transform: scale(1); }
+    }
+    .loading-text {
+      color: #38D8FF; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; letter-spacing: 0.15em;
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
   </style>
 </head>
 <body>
   <div id="root">
-    <div style="display:flex; height:100vh; align-items:center; justify-content:center; color:#38D8FF; font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; letter-spacing:0.1em;">
-      CARREGANDO PAINEL BG TECH...
+    <div style="display:flex; height:100vh; flex-direction:column; align-items:center; justify-content:center; background:#05070D;">
+      <img src="/logo-bgtech.png" alt="BG Tech" style="height:48px; margin-bottom:24px; opacity:0.8" onerror="this.style.display='none'" />
+      <div class="loading-text">CONECTANDO AO SUPABASE...</div>
     </div>
   </div>
 
@@ -32,16 +44,20 @@
     const { useState, useEffect, useCallback, useRef } = React;
     const { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } = window.Recharts;
 
-    // CREDENCIAIS DE ACESSO
+    // ============================================================================
+    // CONFIGURAÇÕES GERAIS E IDENTIDADE (Acesso da Equipe)
+    // ============================================================================
     const ADMIN = { user: "bgtech", pass: "admin2024" };
 
     const CATS_FIXO  = ["Infraestrutura", "Software/SaaS", "Marketing", "Pessoal", "Escritório", "Financeiro", "Outros"];
     const CATS_UNICO = ["Equipamento", "Serviço Pontual", "Licença", "Viagem", "Marketing", "Investimento", "Outros"];
 
+    // IDENTIDADE BG TECH (ULTRA PREMIUM)
     const TOKENS = {
-      bgMain: "#05070D", bgSurface: "#0A1F44", bgElevated: "#0d2859",
-      electric: "#00A8FF", neon: "#38D8FF", textHero: "#E6F2FF", textMuted: "rgba(230, 242, 255, 0.55)",
-      border: "rgba(0, 168, 255, 0.15)", red: "#ef4444", green: "#10b981",
+      bgMain: "#05070D", bgSurface: "rgba(10, 31, 68, 0.65)", bgElevated: "#0d2859",
+      electric: "#00A8FF", neon: "#38D8FF", textHero: "#E6F2FF", textMuted: "rgba(230, 242, 255, 0.5)",
+      border: "rgba(0, 168, 255, 0.15)", borderGlow: "rgba(0, 168, 255, 0.3)",
+      red: "#ef4444", green: "#10b981",
       chartColors: ["#00A8FF", "#38D8FF", "#8B5CF6", "#EC4899", "#F59E0B", "#10B981", "#E6F2FF"]
     };
 
@@ -51,8 +67,8 @@
     const fmtDate = d => new Date(d + "T12:00:00").toLocaleDateString("pt-BR");
     const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
-  // ============================================================================
-    // BANCO DE DADOS EM NUVEM (SUPABASE)
+    // ============================================================================
+    // MOTOR DO SUPABASE (Sincronização Nuvem Perfeita)
     // ============================================================================
     const DB_CONFIG = {
       URL: "https://urpuiznydrlwmaqhdids.supabase.co",
@@ -60,13 +76,13 @@
     };
 
     async function loadCloudData() {
-      if (!DB_CONFIG.URL || !DB_CONFIG.KEY) return { fixos: [], unicos: [] };
       try {
         const res = await fetch(`${DB_CONFIG.URL}/rest/v1/painel_gastos?id=eq.1`, {
           headers: { 'apikey': DB_CONFIG.KEY, 'Authorization': `Bearer ${DB_CONFIG.KEY}` }
         });
         const data = await res.json();
         if (data && data.length > 0) {
+          // Garante que se o banco estiver nulo, volta um array vazio
           return { fixos: data[0].fixos || [], unicos: data[0].unicos || [] };
         }
       } catch (err) {
@@ -76,7 +92,6 @@
     }
 
     async function saveCloudData(data) {
-      if (!DB_CONFIG.URL || !DB_CONFIG.KEY) return;
       try {
         await fetch(`${DB_CONFIG.URL}/rest/v1/painel_gastos?id=eq.1`, {
           method: 'PATCH',
@@ -97,39 +112,42 @@
       }
     }
 
+    // ============================================================================
+    // GERAÇÃO DE RELATÓRIO PDF
+    // ============================================================================
     function exportPDF(fixos, unicosFiltrados, totalFixos, totalUnicos, mes, ano) {
       const rows = arr => arr.map(i => `<tr><td>${i.nome}</td><td>${i.categoria}</td><td style="text-align:right;font-weight:700;color:${TOKENS.electric}">${fmt(i.valor)}</td><td>${fmtDate(i.data)}</td><td>${i.descricao || "-"}</td></tr>`).join("");
       const w = window.open("", "_blank");
       w.document.write(`
-        <!DOCTYPE html><html><head><meta charset="utf-8"><title>BG Tech — Engenharia de Gastos</title>
+        <!DOCTYPE html><html><head><meta charset="utf-8"><title>BG Tech — Relatório de Custos</title>
         <style>
-          body { font-family: 'Inter', sans-serif; padding: 48px; color: #111; font-size: 13px; }
+          body { font-family: 'Inter', sans-serif; padding: 48px; color: #111; font-size: 13px; background:#f8fafc; }
           h1 { font-size: 24px; font-weight: 900; margin: 0 0 4px; color: #0A1F44; }
           .sub { color: #666; font-size: 13px; margin: 0 0 32px; }
           .summary { display: flex; gap: 20px; margin-bottom: 32px; }
-          .card { border: 2px solid ${TOKENS.electric}; border-radius: 10px; padding: 16px 20px; flex: 1; background: #f8fafc; }
-          .card-val { font-size: 22px; font-weight: 900; color: ${TOKENS.electric}; }
-          .card-lbl { font-size: 11px; color: #666; margin-top: 4px; text-transform: uppercase; letter-spacing: .05em; }
+          .card { border: 1px solid #d0e3f7; border-radius: 12px; padding: 20px; flex: 1; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05);}
+          .card-val { font-size: 24px; font-weight: 900; color: ${TOKENS.electric}; }
+          .card-lbl { font-size: 11px; color: #64748b; margin-top: 4px; text-transform: uppercase; letter-spacing: .05em; }
           h2 { font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; border-bottom: 2px solid ${TOKENS.electric}; padding-bottom: 6px; margin: 32px 0 12px; color: #0A1F44; }
-          table { width: 100%; border-collapse: collapse; font-size: 12px; }
-          th { background: #0A1F44; color: white; padding: 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
-          td { padding: 10px; border-bottom: 1px solid #eee; }
-          tr:nth-child(even) td { background: #f8f9fa; }
-          .total { text-align: right; font-weight: 900; font-size: 16px; margin-top: 12px; color: #0A1F44; }
-          @media print { .no-print { display: none; } }
+          table { width: 100%; border-collapse: collapse; font-size: 13px; background:#fff; border-radius:8px; overflow:hidden;}
+          th { background: #0A1F44; color: white; padding: 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+          td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+          tr:last-child td { border-bottom: none; }
+          .total { text-align: right; font-weight: 900; font-size: 18px; margin-top: 16px; color: #0A1F44; }
+          @media print { .no-print { display: none; } body {background:#fff;} .card{box-shadow:none;} }
         </style></head><body>
-        <button class="no-print" onclick="window.print()" style="background:${TOKENS.electric};color:white;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;margin-bottom:28px">🖨️ Salvar Relatório como PDF</button>
+        <button class="no-print" onclick="window.print()" style="background:${TOKENS.electric};color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;margin-bottom:28px">🖨️ Salvar PDF Gerencial</button>
         <h1>BG Tech — Estrutura de Custos</h1>
-        <p class="sub">Gerado em ${new Date().toLocaleDateString("pt-BR")} às ${new Date().toLocaleTimeString("pt-BR")} · Período Referência: ${MONTHS[mes]}/${ano}</p>
+        <p class="sub">Período de Referência: ${MONTHS[mes]}/${ano} · Documento gerado em ${new Date().toLocaleDateString("pt-BR")}</p>
         <div class="summary">
-          <div class="card"><div class="card-val">${fmt(totalFixos)}</div><div class="card-lbl">Custo Fixo Mensal</div></div>
-          <div class="card"><div class="card-val">${fmt(totalUnicos)}</div><div class="card-lbl">Despesas Únicas (${MONTHS[mes]})</div></div>
-          <div class="card"><div class="card-val" style="color:#0A1F44;">${fmt(totalFixos + totalUnicos)}</div><div class="card-lbl">Saída Total no Período</div></div>
+          <div class="card"><div class="card-val">${fmt(totalFixos)}</div><div class="card-lbl">Custo Fixo Base</div></div>
+          <div class="card"><div class="card-val">${fmt(totalUnicos)}</div><div class="card-lbl">Gasto Variável (${MONTHS[mes]})</div></div>
+          <div class="card"><div class="card-val" style="color:#0A1F44;">${fmt(totalFixos + totalUnicos)}</div><div class="card-lbl">Saída Total Estimada</div></div>
         </div>
-        <h2>Carga Operacional Fixa (${fixos.length} registros)</h2>
-        <table><thead><tr><th>Recurso</th><th>Categoria</th><th>Valor</th><th>Data Ref.</th><th>Descrição</th></tr></thead><tbody>${rows(fixos)}</tbody></table>
+        <h2>Carga Operacional Fixa (${fixos.length} recursos)</h2>
+        <table><thead><tr><th>Recurso</th><th>Categoria</th><th>Valor</th><th>Data Base</th><th>Descrição</th></tr></thead><tbody>${rows(fixos)}</tbody></table>
         <p class="total">Total Fixo: ${fmt(totalFixos)}</p>
-        <h2>Gastos Variáveis / Pontuais (${unicosFiltrados.length} registros)</h2>
+        <h2>Gastos Variáveis / Pontuais (${unicosFiltrados.length} lançamentos)</h2>
         <table><thead><tr><th>Recurso</th><th>Categoria</th><th>Valor</th><th>Data</th><th>Descrição</th></tr></thead><tbody>${rows(unicosFiltrados)}</tbody></table>
         <p class="total">Total Variável: ${fmt(totalUnicos)}</p>
         </body></html>
@@ -137,27 +155,33 @@
       w.document.close();
     }
 
+    // ============================================================================
+    // ESTILOS E COMPONENTES (UX UI)
+    // ============================================================================
     const GlobalStyle = () => (
       <style dangerouslySetInnerHTML={{__html: `
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; background: ${TOKENS.bgMain}; color: ${TOKENS.textHero}; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .hex-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg width='40' height='69.28' viewBox='0 0 40 69.28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 17.32l-20 11.54L0 17.32V-5.77l20-11.54 20 11.54V17.32zM20 46.18l20-11.54V11.54L20 23.09 0 11.54v23.09L20 46.18zM0 63.5l20-11.54 20 11.54V86.6l-20 11.54-20-11.54V63.5z' fill='%2338D8FF' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E"); }
-        ::-webkit-scrollbar { width: 8px; }
+        .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hex-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg width='40' height='69.28' viewBox='0 0 40 69.28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 17.32l-20 11.54L0 17.32V-5.77l20-11.54 20 11.54V17.32zM20 46.18l20-11.54V11.54L20 23.09 0 11.54v23.09L20 46.18zM0 63.5l20-11.54 20 11.54V86.6l-20 11.54-20-11.54V63.5z' fill='%2338D8FF' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E"); }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: ${TOKENS.bgMain}; }
-        ::-webkit-scrollbar-thumb { background: ${TOKENS.bgSurface}; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: ${TOKENS.electric}; }
-        .btn-glow { transition: all 0.3s ease; }
-        .btn-glow:hover { box-shadow: 0 0 20px rgba(0, 168, 255, 0.4); transform: translateY(-2px); }
-        .table-row { transition: background 0.2s ease; }
-        .table-row:hover { background: rgba(0, 168, 255, 0.05); }
+        
+        .glass-panel { background: ${TOKENS.bgSurface}; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid ${TOKENS.border}; border-radius: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+        .btn-glow { transition: all 0.2s ease; position: relative; overflow: hidden; }
+        .btn-glow:hover { box-shadow: 0 0 20px rgba(0, 168, 255, 0.5); transform: translateY(-2px); }
+        .btn-glow:active { transform: translateY(0); }
+        
+        .table-row { transition: all 0.2s ease; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .table-row:hover { background: rgba(0, 168, 255, 0.08); border-left: 3px solid ${TOKENS.electric}; padding-left: 21px; }
       `}} />
     );
 
-    const InputStyle = { width: "100%", padding: "14px 16px", background: "rgba(0,0,0,0.2)", border: `1px solid ${TOKENS.border}`, borderRadius: 8, color: TOKENS.textHero, fontSize: 14, outline: "none", fontFamily: "inherit", transition: "border 0.2s" };
-    const PrimaryBtnStyle = { padding: "14px 28px", background: `linear-gradient(135deg, ${TOKENS.electric}, ${TOKENS.neon})`, border: "none", borderRadius: 8, color: TOKENS.bgMain, fontWeight: 800, fontSize: 14, cursor: "pointer", fontFamily: "inherit" };
+    const InputStyle = { width: "100%", padding: "14px 16px", background: "rgba(0,0,0,0.3)", border: `1px solid ${TOKENS.border}`, borderRadius: 10, color: TOKENS.textHero, fontSize: 15, outline: "none", fontFamily: "inherit", transition: "all 0.3s" };
+    const PrimaryBtnStyle = { padding: "14px 28px", background: `linear-gradient(135deg, ${TOKENS.electric}, ${TOKENS.neon})`, border: "none", borderRadius: 10, color: TOKENS.bgMain, fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.02em" };
 
-    function Lbl({ children }) { return <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: TOKENS.neon, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>{children}</label>; }
+    function Lbl({ children }) { return <label style={{ display: "block", fontSize: 11, fontWeight: 800, color: TOKENS.neon, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>{children}</label>; }
 
     function Modal({ title, onClose, children }) {
       useEffect(() => {
@@ -167,11 +191,11 @@
       }, [onClose]);
       
       return (
-        <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(5,7,13,0.85)", backdropFilter: "blur(8px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: TOKENS.bgSurface, border: `1px solid ${TOKENS.border}`, borderRadius: 16, padding: 32, width: "100%", maxWidth: 500, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 24px 80px rgba(0,0,0,0.8)" }}>
+        <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(2, 6, 15, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div className="glass-panel" onClick={e => e.stopPropagation()} style={{ padding: 40, width: "100%", maxWidth: 520, maxHeight: "90vh", overflowY: "auto", border: `1px solid ${TOKENS.borderGlow}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, borderBottom: `1px solid ${TOKENS.border}`, paddingBottom: 16 }}>
-              <h3 className="font-display" style={{ color: TOKENS.textHero, margin: 0, fontSize: 20, fontWeight: 800 }}>{title}</h3>
-              <button onClick={onClose} style={{ background: "transparent", border: "none", color: TOKENS.textMuted, cursor: "pointer", fontSize: 20 }}>✕</button>
+              <h3 className="font-display" style={{ color: TOKENS.textHero, margin: 0, fontSize: 22, fontWeight: 800 }}>{title}</h3>
+              <button onClick={onClose} style={{ background: "rgba(255,255,255,0.05)", border: "none", color: TOKENS.textMuted, cursor: "pointer", fontSize: 18, width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             </div>
             {children}
           </div>
@@ -185,30 +209,30 @@
       
       const up = k => v => setF(p => ({ ...p, [k]: v }));
       const go = () => {
-        if (!f.nome || !f.valor) return;
+        if (!f.nome || !f.valor) return alert("Preencha o Nome e o Valor.");
         const val = parseFloat(String(f.valor).replace(",", "."));
-        if(isNaN(val)) return alert("Valor inválido.");
+        if(isNaN(val)) return alert("O valor digitado é inválido.");
         onSave({ ...f, valor: val, id: f.id || uid(), createdAt: f.createdAt || new Date().toISOString() });
         onClose();
       };
       
       return (
         <React.Fragment>
-          <div style={{ marginBottom: 20 }}><Lbl>O que foi gasto? *</Lbl><input style={InputStyle} value={f.nome} onChange={e => up("nome")(e.target.value)} placeholder="Ex: Licença Make.com" autoFocus /></div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
-            <div><Lbl>Valor R$ *</Lbl><input style={InputStyle} type="number" step="0.01" value={f.valor} onChange={e => up("valor")(e.target.value)} placeholder="0.00" /></div>
+          <div style={{ marginBottom: 24 }}><Lbl>O que foi gasto? *</Lbl><input style={InputStyle} value={f.nome} onChange={e => up("nome")(e.target.value)} placeholder="Ex: Servidor AWS" autoFocus /></div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+            <div><Lbl>Valor (R$) *</Lbl><input style={InputStyle} type="number" step="0.01" value={f.valor} onChange={e => up("valor")(e.target.value)} placeholder="0.00" /></div>
             <div><Lbl>Data Base</Lbl><input style={InputStyle} type="date" value={f.data} onChange={e => up("data")(e.target.value)} /></div>
           </div>
-          <div style={{ marginBottom: 20 }}>
-            <Lbl>Classificação</Lbl>
+          <div style={{ marginBottom: 24 }}>
+            <Lbl>Classificação Estratégica</Lbl>
             <select style={{ ...InputStyle, cursor: "pointer" }} value={f.categoria} onChange={e => up("categoria")(e.target.value)}>
-              {cats.map(c => <option key={c} value={c} style={{background: TOKENS.bgSurface}}>{c}</option>)}
+              {cats.map(c => <option key={c} value={c} style={{background: "#0A1F44"}}>{c}</option>)}
             </select>
           </div>
-          <div style={{ marginBottom: 32 }}><Lbl>Contexto / Detalhes</Lbl><input style={InputStyle} value={f.descricao} onChange={e => up("descricao")(e.target.value)} placeholder="Justificativa ou nota fiscal..." /></div>
-          <div style={{ display: "flex", gap: 12 }}>
-            <button onClick={onClose} style={{ flex: 1, padding: "14px", background: "transparent", border: `1px solid ${TOKENS.textMuted}`, borderRadius: 8, color: TOKENS.textHero, fontWeight: 600, cursor: "pointer" }}>Cancelar</button>
-            <button onClick={go} className="btn-glow" style={{ ...PrimaryBtnStyle, flex: 2 }}>Registrar Gasto</button>
+          <div style={{ marginBottom: 40 }}><Lbl>Contexto / Justificativa</Lbl><input style={InputStyle} value={f.descricao} onChange={e => up("descricao")(e.target.value)} placeholder="Opcional. Ex: Upgrade de plano anual." /></div>
+          <div style={{ display: "flex", gap: 16 }}>
+            <button onClick={onClose} style={{ flex: 1, padding: "14px", background: "transparent", border: `1px solid rgba(255,255,255,0.15)`, borderRadius: 10, color: TOKENS.textHero, fontWeight: 600, cursor: "pointer" }}>Cancelar</button>
+            <button onClick={go} className="btn-glow" style={{ ...PrimaryBtnStyle, flex: 2 }}>Registrar no Banco</button>
           </div>
         </React.Fragment>
       );
@@ -216,14 +240,13 @@
 
     function StatCard({ label, value, sub, color = TOKENS.electric, icon }) {
       return (
-        <div style={{ background: TOKENS.bgSurface, border: `1px solid ${TOKENS.border}`, borderRadius: 16, padding: "24px", flex: 1, minWidth: 200, position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: color }} />
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 13, color: TOKENS.textMuted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</span>
-            <span style={{ fontSize: 20, filter: "grayscale(1)" }}>{icon}</span>
+        <div className="glass-panel" style={{ padding: "28px 24px", flex: 1, minWidth: 220, position: "relative", overflow: "hidden", borderLeft: `4px solid ${color}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+            <span style={{ fontSize: 13, color: TOKENS.textMuted, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</span>
+            <span style={{ fontSize: 20, filter: "sepia(1) hue-rotate(180deg) brightness(1.5)" }}>{icon}</span>
           </div>
-          <div className="font-display" style={{ fontSize: 28, fontWeight: 800, color: TOKENS.textHero, letterSpacing: "-0.02em", marginBottom: 4 }}>{value}</div>
-          {sub && <div style={{ fontSize: 12, color: TOKENS.textMuted }}>{sub}</div>}
+          <div className="font-display" style={{ fontSize: 32, fontWeight: 800, color: TOKENS.textHero, letterSpacing: "-0.02em", marginBottom: 4 }}>{value}</div>
+          {sub && <div style={{ fontSize: 13, color: "rgba(230,242,255,0.4)" }}>{sub}</div>}
         </div>
       );
     }
@@ -231,39 +254,42 @@
     function DataRow({ item, onEdit, onDelete }) {
       const [confirm, setConfirm] = useState(false);
       return (
-        <div className="table-row" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderBottom: `1px solid ${TOKENS.border}` }}>
+        <div className="table-row" style={{ display: "flex", alignItems: "center", gap: 16, padding: "18px 24px", borderLeft: "3px solid transparent" }}>
           <div style={{ flex: 1 }}>
-            <div style={{ color: TOKENS.textHero, fontWeight: 600, fontSize: 15 }}>{item.nome}</div>
-            <div style={{ color: TOKENS.textMuted, fontSize: 12, marginTop: 4, display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ background: "rgba(0,168,255,0.1)", color: TOKENS.neon, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 700, textTransform: "uppercase" }}>{item.categoria}</span>
+            <div style={{ color: TOKENS.textHero, fontWeight: 700, fontSize: 16 }}>{item.nome}</div>
+            <div style={{ color: TOKENS.textMuted, fontSize: 12, marginTop: 6, display: "flex", gap: 8, alignItems: "center" }}>
+              <span style={{ background: "rgba(0,168,255,0.1)", border: `1px solid rgba(0,168,255,0.2)`, color: TOKENS.neon, padding: "4px 8px", borderRadius: 4, fontSize: 10, fontWeight: 800, textTransform: "uppercase" }}>{item.categoria}</span>
               <span>•</span> <span>{fmtDate(item.data)}</span>
             </div>
-            {item.descricao && <div style={{ color: "rgba(230,242,255,0.4)", fontSize: 12, marginTop: 6, fontStyle: "italic" }}>{item.descricao}</div>}
+            {item.descricao && <div style={{ color: "rgba(230,242,255,0.4)", fontSize: 13, marginTop: 8, fontStyle: "italic" }}>"{item.descricao}"</div>}
           </div>
-          <div className="font-display" style={{ fontWeight: 800, color: TOKENS.textHero, fontSize: 16, minWidth: 120, textAlign: "right" }}>{fmt(item.valor)}</div>
-          <div style={{ display: "flex", gap: 8, flexShrink: 0, marginLeft: 16 }}>
-            <button onClick={() => onEdit(item)} style={{ background: "transparent", border: `1px solid ${TOKENS.electric}`, borderRadius: 6, color: TOKENS.electric, padding: "6px 12px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Editar</button>
+          <div className="font-display" style={{ fontWeight: 800, color: TOKENS.electric, fontSize: 18, minWidth: 130, textAlign: "right", letterSpacing: "-0.02em" }}>{fmt(item.valor)}</div>
+          <div style={{ display: "flex", gap: 8, flexShrink: 0, marginLeft: 24 }}>
+            <button onClick={() => onEdit(item)} style={{ background: "rgba(0,168,255,0.05)", border: `1px solid rgba(0,168,255,0.3)`, borderRadius: 8, color: TOKENS.electric, padding: "8px 16px", cursor: "pointer", fontSize: 12, fontWeight: 700, transition: "0.2s" }} onMouseEnter={e=>e.target.style.background="rgba(0,168,255,0.15)"} onMouseLeave={e=>e.target.style.background="rgba(0,168,255,0.05)"}>Editar</button>
             {confirm
-              ? <button onClick={() => { onDelete(item.id); setConfirm(false); }} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid #ef4444", borderRadius: 6, color: "#ef4444", padding: "6px 12px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Excluir!</button>
-              : <button onClick={() => setConfirm(true)} style={{ background: "transparent", border: `1px solid rgba(255,255,255,0.2)`, borderRadius: 6, color: TOKENS.textMuted, padding: "6px 12px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Del</button>}
+              ? <button onClick={() => { onDelete(item.id); setConfirm(false); }} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid #ef4444", borderRadius: 8, color: "#ef4444", padding: "8px 16px", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>Confirmar!</button>
+              : <button onClick={() => setConfirm(true)} style={{ background: "transparent", border: `1px solid rgba(255,255,255,0.15)`, borderRadius: 8, color: TOKENS.textMuted, padding: "8px 16px", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>Apagar</button>}
           </div>
         </div>
       );
     }
 
+    // ============================================================================
+    // TELA DE LOGIN (ESTÉTICA DO SITE OFICIAL)
+    // ============================================================================
     function Login({ onLogin }) {
       const [u, setU] = useState("");
       const [p, setP] = useState("");
       const [err, setErr] = useState("");
       const [load, setLoad] = useState(false);
-      
+
       const go = () => {
         setLoad(true);
         setTimeout(() => {
           if (u.trim().toLowerCase() === ADMIN.user && p === ADMIN.pass) {
             onLogin();
           } else {
-            setErr("Credenciais rejeitadas.");
+            setErr("Acesso Negado. Credenciais inválidas.");
             setLoad(false);
           }
         }, 800);
@@ -272,23 +298,37 @@
       return (
         <div style={{ minHeight: "100vh", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
           <div className="hex-bg" />
-          <div style={{ position: "absolute", width: 800, height: 800, background: `radial-gradient(circle, ${TOKENS.electric}22 0%, transparent 60%)`, filter: "blur(80px)", top: -200, left: -200, pointerEvents: "none" }} />
+          <div style={{ position: "absolute", width: 800, height: 800, background: `radial-gradient(circle, rgba(0,168,255,0.15) 0%, transparent 60%)`, filter: "blur(80px)", top: -200, left: -200, pointerEvents: "none" }} />
           
-          <div style={{ background: "rgba(10,31,68,0.4)", backdropFilter: "blur(16px)", border: `1px solid ${TOKENS.border}`, borderRadius: 24, padding: "48px", width: "100%", maxWidth: 420, zIndex: 10, boxShadow: "0 24px 80px rgba(0,0,0,0.8)" }}>
+          <div className="glass-panel" style={{ padding: "48px", width: "100%", maxWidth: 440, zIndex: 10, border: `1px solid rgba(0,168,255,0.3)` }}>
             <div style={{ textAlign: "center", marginBottom: 40 }}>
-              <img src="/logo-bgtech.png" alt="BG Tech" style={{ height: 48, marginBottom: 16, filter: "drop-shadow(0 0 10px rgba(56,216,255,0.3))" }} onError={(e)=>e.target.style.display='none'} />
-              <h1 className="font-display" style={{ color: "white", fontSize: 24, fontWeight: 800, margin: "0 0 8px" }}>BG <span style={{ color: TOKENS.electric }}>TECH</span></h1>
-              <p style={{ color: TOKENS.neon, fontSize: 11, fontWeight: 700, margin: 0, textTransform: "uppercase", letterSpacing: "0.2em" }}>Engenharia de Custos</p>
+              <img src="/logo-bgtech.png" alt="BG Tech" style={{ height: 56, marginBottom: 20, filter: "drop-shadow(0 0 16px rgba(0,168,255,0.4))" }} onError={(e)=>e.target.style.display='none'} />
+              <h1 className="font-display" style={{ color: "white", fontSize: 26, fontWeight: 800, margin: "0 0 8px" }}>BG <span style={{ color: TOKENS.electric }}>TECH</span></h1>
+              <p style={{ color: TOKENS.neon, fontSize: 11, fontWeight: 800, margin: 0, textTransform: "uppercase", letterSpacing: "0.25em" }}>Painel de Engenharia</p>
             </div>
-            <div style={{ marginBottom: 20 }}><Lbl>ID de Acesso</Lbl><input style={{...InputStyle, background: "rgba(0,0,0,0.4)"}} value={u} onChange={e => { setU(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} placeholder="Usuário root" autoFocus /></div>
-            <div style={{ marginBottom: 32 }}><Lbl>Chave de Segurança</Lbl><input style={{...InputStyle, background: "rgba(0,0,0,0.4)"}} type="password" value={p} onChange={e => { setP(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} placeholder="••••••••" /></div>
-            {err && <p style={{ color: TOKENS.red, fontSize: 13, textAlign: "center", marginBottom: 16, marginTop: -16, fontWeight: 600 }}>⚠️ {err}</p>}
-            <button onClick={go} disabled={load} className="btn-glow" style={{ ...PrimaryBtnStyle, width: "100%", padding: "16px", fontSize: 15, opacity: load ? 0.7 : 1 }}>{load ? "Autenticando..." : "Acessar Sistema"}</button>
+            
+            <div style={{ marginBottom: 24 }}>
+              <Lbl>ID de Acesso</Lbl>
+              <input style={{...InputStyle, background: "rgba(0,0,0,0.5)"}} value={u} onChange={e => { setU(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} placeholder="Usuário root" autoFocus />
+            </div>
+            <div style={{ marginBottom: 32 }}>
+              <Lbl>Chave de Segurança</Lbl>
+              <input style={{...InputStyle, background: "rgba(0,0,0,0.5)"}} type="password" value={p} onChange={e => { setP(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} placeholder="••••••••" />
+            </div>
+            
+            {err && <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: 12, color: TOKENS.red, fontSize: 13, textAlign: "center", marginBottom: 24, fontWeight: 700 }}>⚠️ {err}</div>}
+            
+            <button onClick={go} disabled={load} className="btn-glow" style={{ ...PrimaryBtnStyle, width: "100%", padding: "18px", fontSize: 16 }}>
+              {load ? "Autenticando Conexão..." : "Acessar Sistema"}
+            </button>
           </div>
         </div>
       );
     }
 
+    // ============================================================================
+    // DASHBOARD PRINCIPAL (MOTOR CENTRAL COM SYNC NUVEM)
+    // ============================================================================
     function Dashboard({ onLogout }) {
       const [tab, setTab] = useState("overview");
       const [fixos, setFixos] = useState([]);
@@ -296,21 +336,54 @@
       const [modal, setModal] = useState(null);
       const [mes, setMes] = useState(new Date().getMonth());
       const [ano, setAno] = useState(new Date().getFullYear());
+      
+      // ESTADOS DE CONTROLE CRÍTICOS
+      const [ready, setReady] = useState(false);
+      const [syncing, setSyncing] = useState(false);
+      const pollRef = useRef(null);
 
-      useEffect(() => {
-        setFixos(load("bgtech:fixos") || []);
-        setUnicos(load("bgtech:unicos") || []);
+      // Função Mestra de Leitura (Tratada para não quebrar a tela)
+      const refresh = useCallback(async (silent = false) => {
+        if(!silent) setSyncing(true);
+        const data = await loadCloudData();
+        setFixos(data.fixos || []);
+        setUnicos(data.unicos || []);
+        setReady(true);
+        setSyncing(false);
       }, []);
 
-      const persistF = arr => { setFixos(arr); save("bgtech:fixos", arr); };
-      const persistU = arr => { setUnicos(arr); save("bgtech:unicos", arr); };
-      
-      const saveFixo = item => { const arr = fixos.find(i => i.id === item.id) ? fixos.map(i => i.id === item.id ? item : i) : [...fixos, item]; persistF(arr); };
-      const saveUnico = item => { const arr = unicos.find(i => i.id === item.id) ? unicos.map(i => i.id === item.id ? item : i) : [...unicos, item]; persistU(arr); };
-      const delFixo = id => persistF(fixos.filter(i => i.id !== id));
-      const delUnico = id => persistU(unicos.filter(i => i.id !== id));
+      // Dispara ao carregar e configura o radar de 15 segundos
+      useEffect(() => { 
+        refresh(); 
+        pollRef.current = setInterval(() => refresh(true), 15000);
+        return () => clearInterval(pollRef.current);
+      }, [refresh]);
 
-      const uf = unicos.filter(u => { const d = new Date(u.data + "T12:00:00"); return d.getMonth() === mes && d.getFullYear() === ano; });
+      // Função Mestra de Gravação
+      const persist = async (newFixos, newUnicos) => {
+        setFixos(newFixos); // Atualiza a tela instantaneamente
+        setUnicos(newUnicos);
+        setSyncing(true);
+        await saveCloudData({ fixos: newFixos, unicos: newUnicos }); // Envia pro Supabase
+        setSyncing(false);
+      };
+      
+      const saveFixo = async item => {
+        const arr = fixos.find(i => i.id === item.id) ? fixos.map(i => i.id === item.id ? item : i) : [...fixos, item];
+        await persist(arr, unicos);
+      };
+      const saveUnico = async item => {
+        const arr = unicos.find(i => i.id === item.id) ? unicos.map(i => i.id === item.id ? item : i) : [...unicos, item];
+        await persist(fixos, arr);
+      };
+      const delFixo = async id => await persist(fixos.filter(i => i.id !== id), unicos);
+      const delUnico = async id => await persist(fixos, unicos.filter(i => i.id !== id));
+
+      const uf = unicos.filter(u => {
+        const d = new Date(u.data + "T12:00:00");
+        return d.getMonth() === mes && d.getFullYear() === ano;
+      });
+      
       const tF = fixos.reduce((a, b) => a + (b.valor || 0), 0);
       const tU = uf.reduce((a, b) => a + (b.valor || 0), 0);
 
@@ -320,124 +393,196 @@
       const bar = Array.from({ length: 6 }, (_, i) => {
         const d = new Date(); d.setMonth(d.getMonth() - (5 - i));
         const m = d.getMonth(), a = d.getFullYear();
-        return { name: MONTHS[m], Únicos: unicos.filter(u => { const dd = new Date(u.data + "T12:00:00"); return dd.getMonth() === m && dd.getFullYear() === a; }).reduce((s, u) => s + u.valor, 0), Fixos: tF };
+        return {
+          name: MONTHS[m],
+          Únicos: unicos.filter(u => { const dd = new Date(u.data + "T12:00:00"); return dd.getMonth() === m && dd.getFullYear() === a; }).reduce((s, u) => s + u.valor, 0),
+          Fixos: tF
+        };
       });
 
-      const TooltipStyle = { background: TOKENS.bgElevated, border: `1px solid ${TOKENS.border}`, borderRadius: 8, color: "white", padding: "12px", boxShadow: "0 10px 25px rgba(0,0,0,0.5)" };
-      const SelectStyle = { background: TOKENS.bgElevated, border: `1px solid ${TOKENS.border}`, borderRadius: 8, color: "white", padding: "10px 16px", fontSize: 14, fontFamily: "inherit", outline: "none", cursor: "pointer" };
+      const TooltipStyle = { background: "#020617", border: `1px solid ${TOKENS.border}`, borderRadius: 12, color: "white", padding: "16px", boxShadow: "0 20px 40px rgba(0,0,0,0.8)" };
+      const SelectStyle = { background: "rgba(0,0,0,0.3)", border: `1px solid ${TOKENS.border}`, borderRadius: 8, color: "white", padding: "12px 20px", fontSize: 14, fontFamily: "inherit", outline: "none", cursor: "pointer", fontWeight: 600 };
+
+      // TELA DE ESPERA SEGURA (Enquanto baixa os dados)
+      if (!ready) return (
+        <div style={{ minHeight: "100vh", position: "relative", display: "flex", flexDirection:"column", alignItems: "center", justifyContent: "center" }}>
+           <div className="hex-bg" />
+           <img src="/logo-bgtech.png" style={{ height: 40, marginBottom: 24, animation: "pulse-glow 2s infinite" }} onerror="this.style.display='none'" />
+           <div style={{ color: TOKENS.neon, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, letterSpacing: "0.2em", fontSize: 12 }}>
+             SINCRONIZANDO COM A NUVEM SUPABASE...
+           </div>
+        </div>
+      );
 
       return (
         <div style={{ minHeight: "100vh", display: "flex" }}>
           <div className="hex-bg" style={{position:"fixed"}}/>
           
-          <div style={{ width: 280, background: "rgba(5,7,13,0.95)", borderRight: `1px solid ${TOKENS.border}`, display: "flex", flexDirection: "column", position: "fixed", top: 0, bottom: 0, left: 0, zIndex: 100, backdropFilter:"blur(10px)" }}>
-            <div style={{ padding: "32px 24px 24px", borderBottom: `1px solid ${TOKENS.border}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                <img src="/logo-bgtech.png" alt="BG Tech" style={{ height: 28 }} onError={(e)=>e.target.style.display='none'}/>
-                <span className="font-display" style={{ fontSize: 20, fontWeight: 900, color: "white" }}>BG <span style={{ color: TOKENS.electric }}>TECH</span></span>
+          {/* SIDEBAR SaaS */}
+          <div style={{ width: 280, background: "rgba(2, 6, 15, 0.95)", borderRight: `1px solid rgba(255,255,255,0.05)`, display: "flex", flexDirection: "column", position: "fixed", top: 0, bottom: 0, left: 0, zIndex: 100, backdropFilter:"blur(20px)" }}>
+            <div style={{ padding: "40px 32px 32px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }}>
+                <img src="/logo-bgtech.png" alt="BG Tech" style={{ height: 32, filter: "drop-shadow(0 0 8px rgba(0,168,255,0.5))" }} onError={(e)=>e.target.style.display='none'}/>
+                <span className="font-display" style={{ fontSize: 24, fontWeight: 900, color: "white", letterSpacing: "-0.02em" }}>BG <span style={{ color: TOKENS.electric }}>TECH</span></span>
               </div>
-              <span style={{ color: TOKENS.neon, fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>Engenharia de Custos</span>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingLeft: 2 }}>
+                <span style={{ color: TOKENS.neon, fontSize: 10, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase" }}>Engenharia</span>
+                {syncing ? <span style={{ width: 8, height: 8, background: TOKENS.neon, borderRadius: "50%", boxShadow: `0 0 12px ${TOKENS.neon}`, animation: "pulse-glow 1s infinite" }} title="Sincronizando..."/> 
+                         : <span style={{ width: 8, height: 8, background: TOKENS.green, borderRadius: "50%", opacity: 0.5 }} title="Online"/>}
+              </div>
             </div>
             
-            <nav style={{ flex: 1, padding: "24px 16px" }}>
-              {[{ id: "overview", label: "Visão Arquitetural", icon: "📊" }, { id: "fixos", label: "Carga Fixa", icon: "🔄" }, { id: "unicos", label: "Variáveis", icon: "💸" }].map(n => (
-                <button key={n.id} onClick={() => setTab(n.id)} style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", padding: "14px 16px", borderRadius: 10, border: "none", background: tab === n.id ? "rgba(0,168,255,0.1)" : "transparent", color: tab === n.id ? TOKENS.textHero : TOKENS.textMuted, fontWeight: tab === n.id ? 700 : 500, fontSize: 14, cursor: "pointer", fontFamily: "inherit", marginBottom: 8, textAlign: "left", transition: "all 0.2s" }}>
-                  <span style={{ filter: tab === n.id ? "none" : "grayscale(1) opacity(0.5)" }}>{n.icon}</span> {n.label}
+            <nav style={{ flex: 1, padding: "0 20px" }}>
+              <Lbl style={{ paddingLeft: 12, marginBottom: 16, opacity: 0.6 }}>Menu de Controle</Lbl>
+              {[{ id: "overview", label: "Visão Arquitetural", icon: "📊" }, { id: "fixos", label: "Carga Fixa (Mês)", icon: "🏗️" }, { id: "unicos", label: "Custos Variáveis", icon: "⚡" }].map(n => (
+                <button key={n.id} onClick={() => setTab(n.id)} style={{ display: "flex", alignItems: "center", gap: 16, width: "100%", padding: "16px", borderRadius: 12, border: "none", background: tab === n.id ? "rgba(0,168,255,0.15)" : "transparent", color: tab === n.id ? "white" : TOKENS.textMuted, fontWeight: tab === n.id ? 700 : 600, fontSize: 14, cursor: "pointer", fontFamily: "inherit", marginBottom: 8, textAlign: "left", transition: "all 0.2s" }} onMouseEnter={e=> {if(tab!==n.id) e.target.style.color="white"}} onMouseLeave={e=> {if(tab!==n.id) e.target.style.color=TOKENS.textMuted}}>
+                  <span style={{ fontSize: 18, filter: tab === n.id ? "none" : "grayscale(1) opacity(0.5)" }}>{n.icon}</span> {n.label}
                 </button>
               ))}
             </nav>
             
-            <div style={{ padding: "20px 16px", borderTop: `1px solid ${TOKENS.border}` }}>
-              <Lbl>Exportar</Lbl>
-              <button onClick={() => exportPDF(fixos, uf, tF, tU, mes, ano)} style={{ width: "100%", padding: "10px", background: "transparent", border: `1px solid ${TOKENS.border}`, borderRadius: 8, color: TOKENS.textHero, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Gerar PDF</button>
+            <div style={{ padding: "24px", borderTop: `1px solid rgba(255,255,255,0.05)` }}>
+              <Lbl style={{ marginBottom: 12 }}>Relatórios C-Level</Lbl>
+              <button onClick={() => exportPDF(fixos, uf, tF, tU, mes, ano)} className="btn-glow" style={{ width: "100%", padding: "12px", background: "rgba(255,255,255,0.05)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 10, color: TOKENS.textHero, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                🖨️ Gerar PDF Mensal
+              </button>
             </div>
             
-            <div style={{ padding: "16px", borderTop: `1px solid ${TOKENS.border}` }}>
-              <button onClick={onLogout} style={{ width: "100%", padding: "12px", background: "transparent", border: "none", color: TOKENS.textMuted, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Sair</button>
+            <div style={{ padding: "24px", borderTop: `1px solid rgba(255,255,255,0.05)` }}>
+              <button onClick={onLogout} style={{ width: "100%", padding: "12px", background: "transparent", border: "none", color: TOKENS.textMuted, fontSize: 13, fontWeight: 700, cursor: "pointer", transition:"0.2s" }} onMouseEnter={e=>e.target.style.color=TOKENS.red} onMouseLeave={e=>e.target.style.color=TOKENS.textMuted}>Sair do Sistema</button>
             </div>
           </div>
 
-          <div style={{ marginLeft: 280, flex: 1, padding: "48px 56px", position: "relative", zIndex: 1 }}>
+          {/* PAINEL CENTRAL DE CONTEÚDO */}
+          <div style={{ marginLeft: 280, flex: 1, padding: "56px 64px", position: "relative", zIndex: 1, maxWidth: 1400 }}>
+            
+            {/* TELA 1: OVERVIEW */}
             {tab === "overview" && (
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 40 }}>
-                  <div><h1 className="font-display" style={{ color: "white", fontSize: 32, fontWeight: 800, margin: "0 0 8px" }}>Visão Arquitetural</h1><p style={{ color: TOKENS.textMuted, fontSize: 15, margin: 0 }}>Análise macro da estrutura de custos.</p></div>
+              <div className="reveal visible" style={{ animation: "fadeIn 0.4s ease-out" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48 }}>
+                  <div>
+                    <h1 className="font-display" style={{ color: "white", fontSize: 36, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>Visão Arquitetural</h1>
+                    <p style={{ color: TOKENS.textMuted, fontSize: 16, margin: 0 }}>Análise macro da saúde financeira da operação.</p>
+                  </div>
                   <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                     <select value={mes} onChange={e => setMes(Number(e.target.value))} style={SelectStyle}>{MONTHS.map((m, i) => <option key={i} value={i}>{m}</option>)}</select>
                     <select value={ano} onChange={e => setAno(Number(e.target.value))} style={SelectStyle}>{[2024, 2025, 2026, 2027].map(a => <option key={a} value={a}>{a}</option>)}</select>
+                    <button onClick={() => refresh(false)} className="btn-glow" style={{ padding: "12px 20px", background: "rgba(0,168,255,0.1)", border: `1px solid rgba(0,168,255,0.3)`, borderRadius: 8, color: TOKENS.electric, fontSize: 13, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+                      ↻ Sincronizar
+                    </button>
                   </div>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24, marginBottom: 40 }}>
-                  <StatCard label="Saída Total (Mês)" value={fmt(tF + tU)} sub={`${MONTHS[mes]}/${ano}`} icon="📉" color={TOKENS.neon} />
-                  <StatCard label="Carga Fixa Base" value={fmt(tF)} sub={`${fixos.length} recursos`} color={TOKENS.blue} icon="🏗️" />
-                  <StatCard label="Gasto Variável" value={fmt(tU)} sub={`${uf.length} despesas`} color="#8B5CF6" icon="⚡" />
-                  <StatCard label="Registros BD" value={fixos.length + unicos.length} sub="Total" color={TOKENS.textMuted} icon="🗄️" />
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 24, marginBottom: 48 }}>
+                  <StatCard label="Saída Total (Mês)" value={fmt(tF + tU)} sub={`Referência: ${MONTHS[mes]}/${ano}`} icon="📉" color={TOKENS.neon} />
+                  <StatCard label="Carga Fixa Base" value={fmt(tF)} sub={`${fixos.length} recursos estruturais`} color={TOKENS.blue} icon="🏗️" />
+                  <StatCard label="Gastos Variáveis" value={fmt(tU)} sub={`${uf.length} despesas no mês`} color="#8B5CF6" icon="⚡" />
+                  <StatCard label="Status DB" value="ONLINE" sub="Sincronizado via Supabase" color={TOKENS.green} icon="🗄️" />
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-                  <div style={{ background: TOKENS.bgSurface, border: `1px solid ${TOKENS.border}`, borderRadius: 16, padding: 32 }}>
-                    <h3 className="font-display" style={{ color: "white", margin: "0 0 24px", fontSize: 16, fontWeight: 700 }}>Distribuição Fixa</h3>
-                    {catF.length > 0 ? ( <ResponsiveContainer width="100%" height={240}><PieChart><Pie data={catF} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={4} dataKey="value" stroke="none">{catF.map((_, i) => <Cell key={i} fill={TOKENS.chartColors[i % TOKENS.chartColors.length]} />)}</Pie><Tooltip formatter={v => fmt(v)} contentStyle={TooltipStyle} itemStyle={{color:"white"}} /><Legend iconType="circle" wrapperStyle={{fontSize: 12, color: TOKENS.textMuted}} /></PieChart></ResponsiveContainer> ) : <p style={{ color: TOKENS.textMuted, textAlign: "center", padding: 40 }}>Aguardando...</p>}
+                  <div className="glass-panel" style={{ padding: 32 }}>
+                    <h3 className="font-display" style={{ color: "white", margin: "0 0 32px", fontSize: 18, fontWeight: 800, letterSpacing: "-0.01em" }}>Distribuição da Carga Fixa</h3>
+                    {catF.length > 0 ? ( <ResponsiveContainer width="100%" height={260}><PieChart><Pie data={catF} cx="50%" cy="50%" innerRadius={65} outerRadius={100} paddingAngle={4} dataKey="value" stroke="none">{catF.map((_, i) => <Cell key={i} fill={TOKENS.chartColors[i % TOKENS.chartColors.length]} />)}</Pie><Tooltip formatter={v => fmt(v)} contentStyle={TooltipStyle} itemStyle={{color:"white", fontWeight: 700}} /><Legend iconType="circle" wrapperStyle={{fontSize: 13, color: TOKENS.textMuted, paddingTop: 20}} /></PieChart></ResponsiveContainer> ) : <p style={{ color: TOKENS.textMuted, textAlign: "center", padding: "60px 0" }}>Sem registros fixos.</p>}
                   </div>
 
-                  <div style={{ background: TOKENS.bgSurface, border: `1px solid ${TOKENS.border}`, borderRadius: 16, padding: 32 }}>
-                    <h3 className="font-display" style={{ color: "white", margin: "0 0 24px", fontSize: 16, fontWeight: 700 }}>Histórico Variável</h3>
-                    {catU.length > 0 ? ( <ResponsiveContainer width="100%" height={240}><PieChart><Pie data={catU} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={4} dataKey="value" stroke="none">{catU.map((_, i) => <Cell key={i} fill={TOKENS.chartColors[i % TOKENS.chartColors.length]} />)}</Pie><Tooltip formatter={v => fmt(v)} contentStyle={TooltipStyle} itemStyle={{color:"white"}} /><Legend iconType="circle" wrapperStyle={{fontSize: 12, color: TOKENS.textMuted}} /></PieChart></ResponsiveContainer> ) : <p style={{ color: TOKENS.textMuted, textAlign: "center", padding: 40 }}>Aguardando...</p>}
+                  <div className="glass-panel" style={{ padding: 32 }}>
+                    <h3 className="font-display" style={{ color: "white", margin: "0 0 32px", fontSize: 18, fontWeight: 800, letterSpacing: "-0.01em" }}>Histórico de Variáveis</h3>
+                    {catU.length > 0 ? ( <ResponsiveContainer width="100%" height={260}><PieChart><Pie data={catU} cx="50%" cy="50%" innerRadius={65} outerRadius={100} paddingAngle={4} dataKey="value" stroke="none">{catU.map((_, i) => <Cell key={i} fill={TOKENS.chartColors[i % TOKENS.chartColors.length]} />)}</Pie><Tooltip formatter={v => fmt(v)} contentStyle={TooltipStyle} itemStyle={{color:"white", fontWeight: 700}} /><Legend iconType="circle" wrapperStyle={{fontSize: 13, color: TOKENS.textMuted, paddingTop: 20}} /></PieChart></ResponsiveContainer> ) : <p style={{ color: TOKENS.textMuted, textAlign: "center", padding: "60px 0" }}>Sem registros variáveis.</p>}
                   </div>
                 </div>
 
-                <div style={{ background: TOKENS.bgSurface, border: `1px solid ${TOKENS.border}`, borderRadius: 16, padding: 32 }}>
-                  <h3 className="font-display" style={{ color: "white", margin: "0 0 32px", fontSize: 16, fontWeight: 700 }}>Curva de Saída — Últimos 6 Meses</h3>
-                  <ResponsiveContainer width="100%" height={280}>
-                    <BarChart data={bar} barGap={6}>
-                      <XAxis dataKey="name" stroke={TOKENS.border} tick={{ fill: TOKENS.textMuted, fontSize: 12 }} tickMargin={12} />
-                      <YAxis stroke={TOKENS.border} tick={{ fill: TOKENS.textMuted, fontSize: 12 }} tickFormatter={v => `R$${(v / 1000).toFixed(0)}k`} />
-                      <Tooltip formatter={v => fmt(v)} contentStyle={TooltipStyle} cursor={{fill: "rgba(255,255,255,0.02)"}}/>
-                      <Legend wrapperStyle={{paddingTop: 20}}/>
-                      <Bar dataKey="Fixos" fill="rgba(0,168,255,0.3)" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="Únicos" fill={TOKENS.electric} radius={[4, 4, 0, 0]} />
+                <div className="glass-panel" style={{ padding: 32 }}>
+                  <h3 className="font-display" style={{ color: "white", margin: "0 0 40px", fontSize: 18, fontWeight: 800, letterSpacing: "-0.01em" }}>Curva de Saída — Últimos 6 Meses</h3>
+                  <ResponsiveContainer width="100%" height={320}>
+                    <BarChart data={bar} barGap={8} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                      <XAxis dataKey="name" stroke={TOKENS.border} tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 13, fontWeight: 600 }} tickMargin={16} />
+                      <YAxis stroke={TOKENS.border} tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 13, fontWeight: 600 }} tickFormatter={v => `R$ ${(v / 1000).toFixed(0)}k`} />
+                      <Tooltip formatter={v => fmt(v)} contentStyle={TooltipStyle} cursor={{fill: "rgba(255,255,255,0.03)"}}/>
+                      <Legend wrapperStyle={{paddingTop: 24, fontSize: 14, fontWeight: 600, color: "white"}}/>
+                      <Bar dataKey="Fixos" fill="rgba(0,168,255,0.25)" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="Únicos" fill={TOKENS.electric} radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
             )}
 
+            {/* TELA 2: FIXOS */}
             {tab === "fixos" && (
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
-                  <div><h1 className="font-display" style={{ color: "white", fontSize: 32, fontWeight: 800, margin: "0 0 8px" }}>Carga Fixa</h1><p style={{ color: TOKENS.textMuted, fontSize: 15, margin: 0 }}>Base estrutural. Custo atual: <strong style={{ color: TOKENS.neon }}>{fmt(tF)}/mês</strong></p></div>
-                  <button onClick={() => setModal({ type: "fixo", item: null })} className="btn-glow" style={PrimaryBtnStyle}>+ Registrar</button>
+              <div className="reveal visible" style={{ animation: "fadeIn 0.4s ease-out" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 40 }}>
+                  <div>
+                    <h1 className="font-display" style={{ color: "white", fontSize: 36, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>Carga Fixa Operacional</h1>
+                    <p style={{ color: TOKENS.textMuted, fontSize: 16, margin: 0 }}>A base estrutural da empresa. Sangria atual: <strong style={{ color: TOKENS.neon }}>{fmt(tF)}/mês</strong></p>
+                  </div>
+                  <button onClick={() => setModal({ type: "fixo", item: null })} className="btn-glow" style={{...PrimaryBtnStyle, padding: "16px 32px"}}>+ Registrar Novo Fixo</button>
                 </div>
-                {fixos.length === 0 ? <p style={{color: TOKENS.textMuted}}>Vazio.</p> : (
-                  <div style={{ background: TOKENS.bgSurface, border: `1px solid ${TOKENS.border}`, borderRadius: 16, overflow: "hidden" }}>
+                
+                {fixos.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "120px 0", border: `2px dashed rgba(255,255,255,0.1)`, borderRadius: 20 }}>
+                    <div style={{ fontSize: 48, filter:"grayscale(1)", marginBottom: 20, opacity: 0.5 }}>🏗️</div>
+                    <p style={{ color: TOKENS.textMuted, fontSize: 16, fontWeight: 600 }}>A infraestrutura ainda não possui custos fixos mapeados.</p>
+                  </div>
+                ) : (
+                  <div className="glass-panel" style={{ overflow: "hidden" }}>
+                    <div style={{ padding: "20px 32px", background: "rgba(0,0,0,0.4)", borderBottom: `1px solid rgba(255,255,255,0.05)`, display: "grid", gridTemplateColumns: "1fr 140px 160px" }}>
+                      {["Recurso / Escopo", "Impacto Mensal", "Ações de Controle"].map(t => <span key={t} style={{ fontSize: 12, fontWeight: 800, color: TOKENS.textMuted, textTransform: "uppercase", letterSpacing: "0.15em" }}>{t}</span>)}
+                    </div>
                     {fixos.map(item => <DataRow key={item.id} item={item} onEdit={item => setModal({ type: "fixo", item })} onDelete={delFixo} />)}
+                    <div style={{ padding: "24px 32px", background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 20 }}>
+                      <span style={{ color: TOKENS.textMuted, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 800 }}>Total Comprometido:</span>
+                      <span className="font-display" style={{ color: TOKENS.neon, fontSize: 28, fontWeight: 900, letterSpacing: "-0.02em" }}>{fmt(tF)}</span>
+                    </div>
                   </div>
                 )}
               </div>
             )}
 
+            {/* TELA 3: ÚNICOS */}
             {tab === "unicos" && (
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
-                  <div><h1 className="font-display" style={{ color: "white", fontSize: 32, fontWeight: 800, margin: "0 0 8px" }}>Despesas Variáveis</h1><p style={{ color: TOKENS.textMuted, fontSize: 15, margin: 0 }}>Saídas pontuais.</p></div>
-                  <button onClick={() => setModal({ type: "unico", item: null })} className="btn-glow" style={PrimaryBtnStyle}>+ Lançar</button>
+              <div className="reveal visible" style={{ animation: "fadeIn 0.4s ease-out" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 40 }}>
+                  <div>
+                    <h1 className="font-display" style={{ color: "white", fontSize: 36, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>Despesas Variáveis</h1>
+                    <p style={{ color: TOKENS.textMuted, fontSize: 16, margin: 0 }}>Investimentos e saídas pontuais.</p>
+                  </div>
+                  <button onClick={() => setModal({ type: "unico", item: null })} className="btn-glow" style={{...PrimaryBtnStyle, padding: "16px 32px"}}>+ Lançar Variável</button>
                 </div>
-                <div style={{ display: "flex", gap: 16, marginBottom: 24, alignItems: "center", background: TOKENS.bgSurface, border: `1px solid ${TOKENS.border}`, borderRadius: 12, padding: "16px 24px" }}>
-                  <select value={mes} onChange={e => setMes(Number(e.target.value))} style={{...SelectStyle, padding: "8px 12px", background: "rgba(0,0,0,0.3)"}}>{MONTHS.map((m, i) => <option key={i} value={i}>{m}</option>)}</select>
-                  <select value={ano} onChange={e => setAno(Number(e.target.value))} style={{...SelectStyle, padding: "8px 12px", background: "rgba(0,0,0,0.3)"}}>{[2024, 2025, 2026, 2027].map(a => <option key={a} value={a}>{a}</option>)}</select>
+                
+                <div className="glass-panel" style={{ display: "flex", gap: 20, marginBottom: 32, alignItems: "center", padding: "20px 32px" }}>
+                  <span style={{ color: TOKENS.neon, fontSize: 12, fontWeight: 800, textTransform:"uppercase", letterSpacing: "0.15em" }}>Filtro de Competência:</span>
+                  <select value={mes} onChange={e => setMes(Number(e.target.value))} style={{...SelectStyle, padding: "10px 16px"}}>{MONTHS.map((m, i) => <option key={i} value={i}>{m}</option>)}</select>
+                  <select value={ano} onChange={e => setAno(Number(e.target.value))} style={{...SelectStyle, padding: "10px 16px"}}>{[2024, 2025, 2026, 2027].map(a => <option key={a} value={a}>{a}</option>)}</select>
+                  <div style={{ marginLeft: "auto", display: "flex", alignItems:"center", gap: 12 }}>
+                    <span style={{ color: TOKENS.textHero, fontSize: 14, fontWeight: 700, padding: "8px 16px", background: "rgba(255,255,255,0.05)", borderRadius: 8 }}>{uf.length} registros exibidos</span>
+                  </div>
                 </div>
-                {uf.length === 0 ? <p style={{color: TOKENS.textMuted}}>Vazio.</p> : (
-                  <div style={{ background: TOKENS.bgSurface, border: `1px solid ${TOKENS.border}`, borderRadius: 16, overflow: "hidden" }}>
+
+                {uf.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "120px 0", border: `2px dashed rgba(255,255,255,0.1)`, borderRadius: 20 }}>
+                    <div style={{ fontSize: 48, filter:"grayscale(1)", marginBottom: 20, opacity: 0.5 }}>⚡</div>
+                    <p style={{ color: TOKENS.textMuted, fontSize: 16, fontWeight: 600 }}>Nenhuma saída variável registrada em {MONTHS[mes]}/{ano}.</p>
+                  </div>
+                ) : (
+                  <div className="glass-panel" style={{ overflow: "hidden" }}>
+                    <div style={{ padding: "20px 32px", background: "rgba(0,0,0,0.4)", borderBottom: `1px solid rgba(255,255,255,0.05)`, display: "grid", gridTemplateColumns: "1fr 140px 160px" }}>
+                      {["Histórico do Lançamento", "Impacto Real", "Ações de Controle"].map(t => <span key={t} style={{ fontSize: 12, fontWeight: 800, color: TOKENS.textMuted, textTransform: "uppercase", letterSpacing: "0.15em" }}>{t}</span>)}
+                    </div>
                     {[...uf].sort((a, b) => new Date(b.data) - new Date(a.data)).map(item => <DataRow key={item.id} item={item} onEdit={item => setModal({ type: "unico", item })} onDelete={delUnico} />)}
+                    <div style={{ padding: "24px 32px", background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 20 }}>
+                      <span style={{ color: TOKENS.textMuted, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 800 }}>Total no Período:</span>
+                      <span className="font-display" style={{ color: TOKENS.neon, fontSize: 28, fontWeight: 900, letterSpacing: "-0.02em" }}>{fmt(tU)}</span>
+                    </div>
                   </div>
                 )}
               </div>
             )}
           </div>
 
+          {/* GERENCIADOR DE MODAL */}
           {modal && (
-            <Modal title={modal.item ? "Editar" : "Adicionar"} onClose={() => setModal(null)}>
+            <Modal title={modal.item ? "Editar Lançamento" : modal.type === "fixo" ? "Configurar Custo Fixo" : "Lançar Despesa Variável"} onClose={() => setModal(null)}>
               <Form onSave={modal.type === "fixo" ? saveFixo : saveUnico} onClose={() => setModal(null)} initial={modal.item} cats={modal.type === "fixo" ? CATS_FIXO : CATS_UNICO} />
             </Modal>
           )}
@@ -445,9 +590,17 @@
       );
     }
 
+    // ============================================================================
+    // ROOT RENDER (INICIA A APLICAÇÃO)
+    // ============================================================================
     function App() {
       const [logged, setLogged] = useState(false);
-      return <React.Fragment><GlobalStyle />{logged ? <Dashboard onLogout={() => setLogged(false)} /> : <Login onLogin={() => setLogged(true)} />}</React.Fragment>;
+      return (
+        <React.Fragment>
+          <GlobalStyle />
+          {logged ? <Dashboard onLogout={() => setLogged(false)} /> : <Login onLogin={() => setLogged(true)} />}
+        </React.Fragment>
+      );
     }
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
