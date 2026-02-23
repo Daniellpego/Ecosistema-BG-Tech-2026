@@ -1,10 +1,10 @@
 // ==== CONFIGURAÇÕES BG TECH ====
 const CONFIG = {
-  whatsappNumber: '5511999998888', // MUDE AQUI PARA O REAL
-  webhookUrl: '' // Webhook do Make.com / n8n
+  whatsappNumber: '5511999998888', // MUDE AQUI PARA O SEU NUMERO REAL
+  webhookUrl: '' // URL do Make.com
 };
 
-// 1. Fetch de Geolocalização Seguro e Rápido (Timeout de 3s)
+// 1. Fetch de Localização Blindado (Para FOMO Local)
 let leadLocation = "sua região";
 const controller = new AbortController();
 const timeout = setTimeout(() => controller.abort(), 3000);
@@ -12,10 +12,10 @@ const timeout = setTimeout(() => controller.abort(), 3000);
 fetch('https://ipapi.co/json/', { signal: controller.signal })
   .then(r => r.json())
   .then(d => { if (d.city) leadLocation = d.city; })
-  .catch(() => console.log("Timeout ou AdBlock bloqueou o IP. Usando fallback."))
+  .catch(() => {}) 
   .finally(() => clearTimeout(timeout));
 
-// 2. Utils e Formatação
+// 2. Utils 
 const capitalize = (str) => {
   return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 };
@@ -25,7 +25,7 @@ const QUESTIONS = [
   {
     id: 'segmento', label: 'PASSO 1 DE 5',
     title: 'Qual o segmento da sua empresa?',
-    desc: 'Isso personaliza o vocabulário da sua análise.',
+    desc: 'Isso personaliza a engenharia da nossa análise estrutural.',
     type: 'options',
     options: [
       { icon: 'hard-hat', title: 'Construção Civil', sub: 'Obras, projetos e gestão de equipe de campo' },
@@ -38,8 +38,8 @@ const QUESTIONS = [
   },
   {
     id: 'horas_perdidas', label: 'PASSO 2 DE 5',
-    title: 'Quanto tempo sua equipe perde por semana em tarefas manuais?',
-    desc: 'Seja honesto. Some mentalmente as horas de retrabalho e planilhas antes de responder.',
+    title: 'Quanto tempo sua equipe perde por semana em tarefas automáticas?',
+    desc: 'Seja honesto. Some mentalmente as horas de retrabalho antes de responder.',
     type: 'options',
     options: [
       { icon: 'timer', title: 'Menos de 5 horas', sub: 'Operação bem azeitada' },
@@ -50,21 +50,21 @@ const QUESTIONS = [
   },
   {
     id: 'dor', label: 'PASSO 3 DE 5',
-    title: 'O que mais trava o crescimento da sua empresa hoje?',
-    desc: 'Escolha a opção que mais machuca a operação.',
+    title: 'O que mais trava o crescimento da empresa hoje?',
+    desc: 'Escolha a opção que mais corrói o seu lucro.',
     type: 'options',
     options: [
       { icon: 'clock', title: 'Processos manuais', sub: 'Sua equipe é boa. Só que 30% do dia dela vai pro lixo.' },
       { icon: 'cable', title: 'Sistemas que não se integram', sub: 'Você paga por ferramentas que não se falam.' },
       { icon: 'alert-circle', title: 'Suporte de TI lento', sub: 'Cada hora parada custa dinheiro. Você sabe disso.' },
-      { icon: 'bar-chart', title: 'Falta de visibilidade', sub: 'Você decide com base no feeling e não em dados.' },
-      { icon: 'users-x', title: 'Equipe sobrecarregada', sub: 'Crescer virou sinônimo de contratar mais. Não devia ser assim.' }
+      { icon: 'bar-chart', title: 'Falta de visibilidade', sub: 'Você decide com base no feeling e não em dados exatos.' },
+      { icon: 'users', title: 'Equipe sobrecarregada', sub: 'Crescer virou sinônimo de contratar mais. Não devia ser assim.' }
     ]
   },
   {
     id: 'faturamento', label: 'PASSO 4 DE 5',
     title: 'Qual faixa melhor representa o faturamento mensal atual?',
-    desc: 'Essa informação determina o impacto financeiro real que vai aparecer no seu diagnóstico.',
+    desc: 'Isso determina o impacto financeiro exato que vai aparecer no seu diagnóstico.',
     type: 'options',
     options: [
       { icon: 'wallet', title: 'Até R$ 50 mil', sub: 'Fase de validação do modelo' },
@@ -76,20 +76,20 @@ const QUESTIONS = [
   {
     id: 'maturidade', label: 'PASSO 5 DE 5',
     title: 'Sendo completamente honesto, como você descreveria a tecnologia hoje?',
-    desc: 'A maturidade digital atual da empresa.',
+    desc: 'O nível de maturidade digital atual da empresa.',
     type: 'options',
     options: [
       { icon: 'file-text', iconColor: 'icon-red', title: 'No papel ou Excel', sub: 'Tudo manual dependente de pessoas' },
       { icon: 'box', iconColor: 'icon-orange', title: 'Sistemas básicos', sub: 'Até tem ferramenta mas ninguém usa direito' },
       { icon: 'boxes', iconColor: 'icon-yellow', title: 'Sistemas sem integração', sub: 'Dados espalhados e muito retrabalho' },
       { icon: 'server', iconColor: 'icon-blue-light', title: 'Sistemas razoáveis', sub: 'Funciona mas tem muito espaço pra evoluir' },
-      { icon: 'rocket', iconColor: 'icon-cyan', title: 'Tecnologia boa', sub: 'Base sólida e preciso de parceiro estratégico' }
+      { icon: 'rocket', iconColor: 'icon-cyan', title: 'Tecnologia boa', sub: 'Base sólida, preciso de um parceiro estratégico' }
     ]
   },
   {
-    id: 'contato', label: 'DIAGNÓSTICO PRONTO',
-    title: 'Para liberar o resultado completo confirme seus dados:',
-    desc: 'Seu diagnóstico está sendo compilado.',
+    id: 'contato', label: '', // Removido texto padrão, substituído pelo HTML customizado
+    title: 'Seu diagnóstico está pronto.',
+    desc: 'Informe para quem enviamos a análise completa da sua operação.',
     type: 'text',
     fields: [
       { id: 'nome', placeholder: 'Como você prefere ser chamado?' },
@@ -99,21 +99,40 @@ const QUESTIONS = [
   }
 ];
 
+// OS ECOS DE VALIDAÇÃO (O ESPELHO)
+const echos = {
+  horas_perdidas: [
+    null,
+    "Esse padrão de fuga de horas aparece em 62% das empresas no seu estágio de crescimento.",
+    "Atenção: Com esse volume, sua equipe perde efetivamente quase 2 dias inteiros por semana em rotinas braçais.",
+    "Custo crítico: Acima de 30h semanais, o desperdício invisível supera facilmente o salário de um gestor."
+  ],
+  dor: [
+    "Processos manuais não escalam. É a maior trava de crescimento documentada no B2B atual.",
+    "Sistemas desconectados geram retrabalho infinito e furos graves de informação.",
+    "A falta de suporte técnico drena não só dinheiro, mas a moral da equipe inteira.",
+    "Decidir sem dados em tempo real é o que separa empresas que estagnam das que lideram o mercado.",
+    "Sobrecarga operacional gera turnover alto. A automação resolve isso direto na raiz."
+  ],
+  faturamento: [
+    null,
+    "Ótimo. Nessa faixa, cada R$1.000 economizado em operação vira lucro direto no fim do mês.",
+    "Uma operação desse porte precisa de tecnologia robusta para não implodir sob o próprio peso.",
+    "Com esse volume, qualquer ineficiência de 2% já representa dezenas de milhares de reais perdidos."
+  ]
+};
+
 // ==== INICIALIZAÇÃO BLINDADA ====
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
 
-  // UX Invisível: ESC para fechar Modal
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeQuiz();
-  });
-
-  // UX Invisível: Clicar fora para fechar
+  // UX Esc & Click Fora
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeQuiz(); });
   document.getElementById('quiz-overlay').addEventListener('click', (e) => {
     if (e.target === document.getElementById('quiz-overlay')) closeQuiz();
   });
 
-  // Interações Reveal (Agora com Stagger e Linhas)
+  // Reveal Animations
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -127,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // Contadores Fluidos (Bug do Zero Resolvido Permanentemente)
+  // Counters
   const counters = document.querySelectorAll('.counter');
   const counterObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -136,11 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const target = parseFloat(counter.getAttribute('data-target'));
         const isFloat = counter.getAttribute('data-target').includes('.');
         let startTime = null;
-        const duration = 1800; // 1.8 segundos
-
         const updateCount = (timestamp) => {
           if (!startTime) startTime = timestamp;
-          const progress = Math.min((timestamp - startTime) / duration, 1);
+          const progress = Math.min((timestamp - startTime) / 1800, 1);
           const ease = 1 - Math.pow(1 - progress, 3);
           const current = target * ease;
           counter.innerText = isFloat ? current.toFixed(1) : Math.floor(current);
@@ -154,15 +171,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.5 });
   counters.forEach(c => counterObserver.observe(c));
 
-  // Menu Mobile
-  document.querySelector('.js-toggle-menu').addEventListener('click', () => {
-    document.getElementById('mobile-menu').classList.toggle('open');
-  });
-  document.querySelectorAll('.js-close-menu').forEach(btn => {
-    btn.addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'));
-  });
-
-  // Scroll Header
+  // Menu Mobile & Header
+  document.querySelector('.js-toggle-menu').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('open'));
+  document.querySelectorAll('.js-close-menu').forEach(btn => btn.addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open')));
+  
   window.addEventListener('scroll', () => {
     const header = document.getElementById('site-header');
     const progress = document.getElementById('reading-progress');
@@ -172,10 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
     progress.style.width = scrollable > 0 ? (window.scrollY / scrollable) * 100 + '%' : '0%';
   });
 
-  // Gatilhos do Quiz
-  document.querySelectorAll('.js-open-quiz').forEach(btn => {
-    btn.addEventListener('click', (e) => { e.preventDefault(); openQuiz(); });
-  });
+  // Binds Quiz
+  document.querySelectorAll('.js-open-quiz').forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); openQuiz(); }));
   document.querySelector('.js-close-quiz').addEventListener('click', closeQuiz);
 });
 
@@ -185,7 +195,6 @@ let answers = {};
 let textData = {};
 
 function openQuiz() {
-  // SessionStorage (A prova de falhas de reload)
   const savedAnswers = sessionStorage.getItem('bgtech_quiz');
   if (savedAnswers) {
     const saved = JSON.parse(savedAnswers);
@@ -195,21 +204,14 @@ function openQuiz() {
   } else {
     currentStep = -1; answers = {}; textData = {};
   }
-
   document.getElementById('quiz-overlay').classList.add('open');
   document.body.classList.add('modal-open');
-
-  if (currentStep === -1) {
-    renderIntro();
-  } else {
-    renderStep();
-  }
+  if (currentStep === -1) renderIntro(); else renderStep();
 }
 
 function closeQuiz() {
   document.getElementById('quiz-overlay').classList.remove('open');
   document.body.classList.remove('modal-open');
-  // Se finalizou, limpa a memória
   if (currentStep >= QUESTIONS.length) sessionStorage.removeItem('bgtech_quiz');
 }
 
@@ -219,11 +221,18 @@ function renderIntro() {
 
   body.innerHTML = `
     <div class="quiz-intro reveal visible">
-      <h2 style="color: var(--text-1);">O Diagnóstico BG Tech</h2>
-      <p style="color: var(--text-3);">Nos próximos 3 minutos você vai descobrir exatamente quanto dinheiro sua empresa está perdendo por mês e por quê.</p>
-      <p style="color: var(--text-3);">Não é estimativa genérica. É um cálculo baseado no perfil real da sua operação.</p>
+      <h2>O Diagnóstico BG Tech</h2>
+      
+      <div class="intro-social-proof">
+        <span><i data-lucide="check-circle" width="16"></i> 847 empresas já diagnosticadas</span>
+        <span><i data-lucide="check-circle" width="16"></i> Resultado em menos de 3 minutos</span>
+      </div>
+
+      <p>Nos próximos 3 minutos você vai descobrir exatamente quanto dinheiro sua empresa está perdendo por mês e o porquê.</p>
+      <p>Não é estimativa genérica. É um cálculo baseado no perfil real da sua operação.</p>
+      
       <div class="quiz-intro-hint">
-        Seja completamente honesto. Quanto mais preciso você for nas respostas mais preciso será o diagnóstico.
+        Seja completamente honesto. Quanto mais preciso você for nas respostas, mais exato será o resultado.
       </div>
       <button class="btn-primary btn-large js-start-quiz" style="width: 100%;">Estou pronto <i data-lucide="arrow-right"></i></button>
     </div>
@@ -247,7 +256,6 @@ function renderStep() {
 
   if (q.type === 'options') {
     let html = `<div class="reveal visible"><span class="q-label">${q.label}</span><h2 class="q-title">${q.title}</h2><p class="q-desc">${q.desc}</p>`;
-
     html += `<div class="q-options">`;
     q.options.forEach((opt, i) => {
       const iconClass = opt.iconColor ? opt.iconColor : '';
@@ -268,19 +276,33 @@ function renderStep() {
         const idx = parseInt(this.getAttribute('data-index'));
         answers[q.id] = idx;
 
+        // Lógica dos ECOS de Vendas (Neuromarketing)
+        const ecoText = echos[q.id]?.[idx];
+        
         if (q.id === 'segmento') {
           const segName = q.options[idx].title;
           body.innerHTML = `<div class="micro-validation"><i data-lucide="check-circle-2" style="margin-bottom:12px;width:32px;height:32px;"></i><br>Calibrando diagnóstico para ${segName}...</div>`;
           lucide.createIcons();
           setTimeout(() => { nextStep(); }, 1200);
+        } else if (ecoText) {
+          body.innerHTML = `
+            <div class="micro-validation" style="display:flex; flex-direction:column; align-items:center; text-align:center; padding: 60px 20px;">
+              <i data-lucide="zap" style="color:var(--blue); width: 48px; height: 48px; margin-bottom: 24px; animation: pulse 2s infinite;"></i>
+              <p style="color: var(--text-heading); font-size: 20px; font-weight: 800; line-height: 1.5;">${ecoText}</p>
+            </div>`;
+          lucide.createIcons();
+          setTimeout(() => { nextStep(); }, 2500); // Tempo para o lead ler e sentir a dor
         } else {
           nextStep();
         }
       });
     });
   } else {
-    // TELA DE CONTATO
-    let html = `<div class="reveal visible"><span class="q-label">${q.label}</span><h2 class="q-title">${q.title}</h2><p class="q-desc">${q.desc}</p>`;
+    // TELA DE CONTATO (A Provação)
+    let html = `<div class="reveal visible">
+      <span class="q-label"><span class="live-dot"></span> DIAGNÓSTICO PRONTO</span>
+      <h2 class="q-title">${q.title}</h2><p class="q-desc">${q.desc}</p>`;
+      
     q.fields.forEach(f => {
       html += `<div class="q-input-group">
                 <input type="text" class="q-input" id="inp-${f.id}" placeholder="${f.placeholder}" value="${textData[f.id] || ''}">
@@ -289,7 +311,7 @@ function renderStep() {
     });
     
     html += `
-      <p style="font-size:12px; color:var(--text-3); margin-bottom: 20px;">Usamos esse contato apenas para falar sobre este diagnóstico e nada mais.</p>
+      <p style="font-size:12px; color:var(--text-3); margin-bottom: 20px; text-align:center;">Usamos esse contato apenas para falar sobre este diagnóstico. Nada de spam.</p>
       <div class="q-nav">
         <button class="btn-ghost js-prev"><i data-lucide="arrow-left" width="16"></i> Voltar</button>
         <button class="btn-primary js-next">Liberar meu diagnóstico <i data-lucide="unlock" width="16"></i></button>
@@ -312,7 +334,7 @@ function renderStep() {
     body.querySelector('.js-next').addEventListener('click', () => {
       let hasError = false;
 
-      // Validação Name: 3 letras sem obrigar o segundo nome
+      // Validação Name: Aceita só o primeiro nome, min 3 letras
       const elNome = document.getElementById('inp-nome');
       const nomeVal = elNome.value.trim();
       if (nomeVal.length < 3) {
@@ -329,7 +351,7 @@ function renderStep() {
         document.getElementById('err-empresa').style.display = 'block';
       } else { textData.empresa = capitalize(empVal); }
 
-      // Validação de WhatsApp
+      // Validação WPP
       const wppVal = wppInput.value.trim().replace(/\D/g, ''); 
       if (wppVal.length < 10 || wppVal.length > 13) {
         hasError = true; wppInput.classList.add('error');
@@ -374,11 +396,11 @@ function runLoading() {
   if (fatIndex === 3) basePerda = 65000;
 
   const steps = [
-    { icon: 'briefcase', text: `Mapeando gargalos típicos no setor de ${segName}...` },
-    { icon: 'search', text: `Cruzando dados com empresas de perfil similar em ${leadLocation}...` },
-    { icon: 'dollar-sign', text: `Calculando horas perdidas por semana...`, special: true },
-    { icon: 'target', text: 'Priorizando automações com maior retorno para sua margem...' },
-    { icon: 'file-check-2', text: 'Montando seu plano executivo...' }
+    { icon: 'briefcase', text: `Mapeando gargalos na área de ${segName}...` },
+    { icon: 'search', text: `Cruzando dados de empresas em ${leadLocation}...` },
+    { icon: 'dollar-sign', text: `Calculando horas perdidas e sangria financeira...`, special: true },
+    { icon: 'target', text: 'Priorizando automações com maior retorno...' },
+    { icon: 'file-check-2', text: 'Montando plano executivo...' }
   ];
 
   body.innerHTML = `
@@ -391,7 +413,7 @@ function runLoading() {
             <div class="diag-step-icon"><i data-lucide="${s.icon}" width="16"></i></div>
             <div style="display:flex; flex-direction:column;">
               <span style="color: var(--text-2);">${s.text}</span>
-              ${s.special ? `<div class="partial-number" id="flash-num" style="display:none;">Estimativa parcial: R$ ${(basePerda * 0.8).toLocaleString('pt-BR')} perdidos...</div>` : ''}
+              ${s.special ? `<div class="partial-number" id="flash-num" style="display:none;">⚡ Estimativa parcial: <strong>R$ ${(basePerda * 0.8).toLocaleString('pt-BR')}</strong> detectados...</div>` : ''}
             </div>
           </div>
         `).join('')}
@@ -411,7 +433,7 @@ function runLoading() {
       if (steps[i].special) document.getElementById('flash-num').style.display = 'block';
       lucide.createIcons();
       i++;
-      setTimeout(tick, i === 3 ? 1500 : 1000);
+      setTimeout(tick, 1000); // 5s total (5 steps x 1s)
     } else {
       setTimeout(showResult, 500);
     }
@@ -423,18 +445,17 @@ function showResult() {
   const body = document.getElementById('quiz-body');
   const nome = textData.nome.split(' ')[0];
   const empresa = textData.empresa;
+  const dorPrincipal = QUESTIONS[2].options[answers.dor].title;
 
-  // Copy Humana
+  // 1. O ESPELHO 
   const segTexts = [
-    "Sua construtora chegou num ponto crítico. A operação cresceu mas os processos não. Cada obra nova exige mais planilhas, mais reuniões e horas de gestão manual.",
-    "Seu escritório chegou num ponto crítico. O volume de processos cresceu mas o trabalho continua manual. Cada novo cliente exige horas de burocracia.",
-    "Sua operação chegou num ponto crítico. As vendas cresceram mas a gestão não acompanhou. O giro de pedidos exige um esforço braçal que destrói a eficiência.",
-    "Sua indústria chegou num ponto crítico. A produção roda mas a gestão do chão de fábrica para o escritório é manual. Cada erro custa matéria-prima e tempo.",
-    "Sua clínica chegou num ponto crítico. O fluxo de pacientes aumentou mas o agendamento e o faturamento não conversam. O atendimento fica engessado.",
-    "Sua agência chegou num ponto crítico. Os contratos cresceram mas a gestão de horas e entregas virou um caos de planilhas. A margem do projeto some rapidamente."
+    "Sua construtora", "Seu escritório", "Sua operação", "Sua indústria", "Sua clínica", "Sua agência"
   ];
-  let mirrorText = segTexts[answers.segmento] || "Sua empresa chegou num ponto crítico. A operação cresceu mas os processos não acompanharam.";
+  let empresaTipo = segTexts[answers.segmento] || "Sua empresa";
+  
+  let mirrorText = `${empresaTipo} chegou num ponto crítico. A operação cresceu, mas os processos não. Você sente que a equipe trabalha mais, mas a empresa não cresce proporcionalmente. E o diagnóstico confirma o gargalo principal: <strong>${dorPrincipal}</strong> está travando a escala.`;
 
+  // 2. A DOR FINANCEIRA 
   const fatIndex = answers.faturamento;
   const matIndex = answers.maturidade;
 
@@ -443,17 +464,25 @@ function showResult() {
   if (fatIndex === 2) { minLoss = 28500; maxLoss = 42000; }
   if (fatIndex === 3) { minLoss = 65000; maxLoss = 98000; }
 
-  const lostValueStr = `R$ ${minLoss.toLocaleString('pt-BR')} a R$ ${maxLoss.toLocaleString('pt-BR')} por mês`;
+  const lostValueStr = `R$ ${minLoss.toLocaleString('pt-BR')} a R$ ${maxLoss.toLocaleString('pt-BR')} /mês`;
   const workersEquiv = (maxLoss / 3500).toFixed(1);
 
-  let score = 38;
+  // 3. O SCORE CATEGORIZADO
+  let score = 38; 
   if (matIndex === 1) score = 52;
   if (matIndex === 2) score = 61;
   if (matIndex === 3) score = 78;
   if (matIndex === 4) score = 92;
 
+  const scoreLabels = [
+    { max: 40, label: 'Operação em Risco', color: '#ef4444' },
+    { max: 60, label: 'Alerta Crítico', color: '#f97316' },
+    { max: 75, label: 'Em Transição', color: '#eab308' },
+    { max: 88, label: 'Estruturado', color: '#3b82f6' },
+    { max: 100, label: 'Alta Performance', color: '#10b981' },
+  ];
+  const scoreCat = scoreLabels.find(s => score <= s.max);
   const circleOffset = 251 - (251 * (score / 100));
-  const setorNome = QUESTIONS[0].options[answers.segmento].title;
 
   const recupAuto = (maxLoss * 0.6).toLocaleString('pt-BR');
   const recupInteg = (maxLoss * 0.35).toLocaleString('pt-BR');
@@ -463,7 +492,7 @@ function showResult() {
     <div class="reveal visible">
       <h2 class="q-title" style="font-size: 24px;">${nome}, encontramos o problema.</h2>
       <div class="mirror-text">
-        ${mirrorText} Você sente que a equipe trabalha mais mas a empresa não cresce de forma proporcional. Isso tem causa e tem solução.
+        ${mirrorText}
       </div>
 
       <div class="score-banner">
@@ -478,15 +507,15 @@ function showResult() {
            </div>
          </div>
          <div class="score-text">
-           <h4>Você está entre os 34% que já identificaram a dor mas ainda não resolveram.</h4>
-           <p>Das operações de ${setorNome} em ${leadLocation} com perfil similar ao seu, os líderes já automatizaram esses processos e crescem reduzindo o custo operacional.</p>
+           <span class="score-category" style="color: ${scoreCat.color};">${scoreCat.label}</span>
+           <p style="margin-top: 8px;">Você está entre os 34% de empresas em ${leadLocation} que identificaram a dor, mas não agiram. As que resolveram têm score médio de 78+. A diferença é a automação.</p>
          </div>
       </div>
       
       <div class="result-box">
         <div class="alert-tag">CUSTO MENSAL DAS INEFICIÊNCIAS</div>
         <div class="loss-value">${lostValueStr}</div>
-        <div class="loss-desc">Baseado no faturamento e padrão operacional da sua região. Esse valor sai direto da sua margem de lucro mensal.</div>
+        <div class="loss-desc">Baseado no faturamento e padrão da sua região. Esse valor sai direto da margem de lucro.</div>
         <div class="equivalence">Equivale a ${workersEquiv} funcionários trabalhando o mês inteiro só para cobrir retrabalho.</div>
       </div>
 
@@ -494,12 +523,12 @@ function showResult() {
         <div class="opp-item">
            <div class="opp-header"><span>1. Automação de tarefas repetitivas</span><span>Alto ROI</span></div>
            <div class="opp-bar-wrap"><div class="opp-bar" id="bar-0" style="width: 0%;"></div></div>
-           <div class="opp-sub">Potencial de recuperação estimado: R$ ${recupAuto} por mês</div>
+           <div class="opp-sub">Potencial de recuperação: R$ ${recupAuto}/mês</div>
         </div>
         <div class="opp-item">
            <div class="opp-header"><span>2. Integração dos sistemas atuais</span><span>Médio/Alto</span></div>
            <div class="opp-bar-wrap"><div class="opp-bar" id="bar-1" style="width: 0%;"></div></div>
-           <div class="opp-sub">Potencial de recuperação estimado: R$ ${recupInteg} por mês</div>
+           <div class="opp-sub">Potencial de recuperação: R$ ${recupInteg}/mês</div>
         </div>
         <div class="opp-item">
            <div class="opp-header"><span>3. Dashboard de gestão em tempo real</span><span>Estratégico</span></div>
@@ -513,21 +542,29 @@ function showResult() {
       </div>
       
       <div style="border-top: 1px solid var(--border-lt); padding-top: 32px;">
+        
+        <div class="urgency-bar">
+          <i data-lucide="clock" width="16"></i>
+          Diagnósticos aprofundados disponíveis esta semana: <strong>4 vagas</strong>
+        </div>
+
         <p style="font-size: 16px; color: var(--text-3); margin-bottom: 24px; line-height: 1.6;">
-          ${nome}, o plano de ação está pronto. O próximo passo lógico é uma conversa de 20 minutos com nosso time. Sem apresentação de vendas e sem propostas agressivas. <strong>Nosso time de consultores já viu este diagnóstico antes de falar com você.</strong>
+          ${nome}, o plano está pronto. O próximo passo é uma conversa de 20 minutos com nosso time. Sem apresentação de vendas e sem propostas no ar. <strong>Nossos especialistas já viram este diagnóstico antes de falar com você.</strong>
         </p>
+
         <button class="btn-primary js-wpp" style="width:100%; padding: 20px; font-size: 16px; margin-bottom: 12px;">
           Quero meu plano para a ${empresa} <i data-lucide="arrow-right" width="18"></i>
         </button>
-        <button class="btn-whatsapp js-wpp-direct" style="width:100%;">
+        <button class="btn-ghost-whatsapp js-wpp-direct" style="width:100%;">
           <i data-lucide="message-circle" width="18"></i> Falar agora com nosso time
         </button>
+        
         <p style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 12px;">Resposta em até 2 horas úteis. Sem compromisso.</p>
       </div>
     </div>`;
   lucide.createIcons();
 
-  // ANIMAÇÕES DAS BARRAS E CIRCULO DOM LOADED
+  // ANIMAÇÕES DAS BARRAS E CIRCULO
   setTimeout(() => {
     const elCirc = document.getElementById('anim-circle');
     if (elCirc) elCirc.style.strokeDashoffset = circleOffset;
@@ -545,7 +582,7 @@ function showResult() {
     });
   }, 100);
 
-  // WEBHOOK PAYLOAD (Ouro para o Make.com)
+  // PAYLOAD ENRIQUECIDO PARA O WEBHOOK (Padrão CRM)
   const webhookPayload = {
     nome: textData.nome,
     empresa: textData.empresa,
@@ -556,10 +593,13 @@ function showResult() {
     faturamento: QUESTIONS[3].options[answers.faturamento]?.title || '',
     maturidade: QUESTIONS[4].options[answers.maturidade]?.title || '',
     score: score,
-    custo_max_mes: maxLoss,
+    score_categoria: scoreCat.label,
+    custo_min: minLoss,
+    custo_max: maxLoss,
     localizacao: leadLocation,
-    utm_source: new URLSearchParams(window.location.search).get('utm_source') || '',
+    utm_source: new URLSearchParams(window.location.search).get('utm_source') || 'organico',
     utm_campaign: new URLSearchParams(window.location.search).get('utm_campaign') || '',
+    visualizou_resultado: true,
     timestamp: new Date().toISOString()
   };
 
@@ -571,11 +611,11 @@ function showResult() {
         body: JSON.stringify(webhookPayload)
       }).catch(() => { });
     }
-    const msg = `Olá! Fiz o diagnóstico da BG Tech agora. Meu score foi ${score}/100 e o custo estimado de ineficiências foi de até R$ ${(maxLoss / 1000).toFixed(0)}k por mês. Quero conversar sobre os próximos passos para a ${empresa}.`;
+    const msg = `Olá! Fiz o diagnóstico da BG Tech agora. Score ${score}/100, custo estimado de R$ ${(minLoss / 1000).toFixed(0)}k a R$ ${(maxLoss / 1000).toFixed(0)}k mensais em ineficiências. Quero conversar sobre os próximos passos para a ${empresa}.`;
     window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
-  // Prevenindo duplicação de clique (Clone e Replace)
+  // Prevenindo Multiplos Event Listeners (Bug fix de clonagem)
   const wppBtn = body.querySelector('.js-wpp');
   const wppDirectBtn = body.querySelector('.js-wpp-direct');
 
