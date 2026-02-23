@@ -1,10 +1,10 @@
 // ==== CONFIGURAÇÕES BG TECH ====
 const CONFIG = {
-  whatsappNumber: '5511999998888', // MUDE AQUI PARA O SEU NUMERO REAL
+  whatsappNumber: '5511999998888', // MUDE AQUI
   webhookUrl: '' // Webhook do Make.com / n8n
 };
 
-// 1. Fetch de Localização Blindado (Para FOMO Local)
+// 1. Fetch de Localização (FOMO Local)
 let leadLocation = "sua região";
 const controller = new AbortController();
 const timeout = setTimeout(() => controller.abort(), 3000);
@@ -15,12 +15,11 @@ fetch('https://ipapi.co/json/', { signal: controller.signal })
   .catch(() => {}) 
   .finally(() => clearTimeout(timeout));
 
-// 2. Utils 
 const capitalize = (str) => {
   return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 };
 
-// ==== A MATRIZ DE VENDAS CIALDINI ====
+// ==== A MATRIZ DE VENDAS ====
 const QUESTIONS = [
   {
     id: 'segmento', label: 'PASSO 1 DE 5',
@@ -99,13 +98,12 @@ const QUESTIONS = [
   }
 ];
 
-// OS ECOS DE VALIDAÇÃO (O ESPELHO)
 const echos = {
   horas_perdidas: [
     null,
     "Esse padrão de fuga de horas aparece em 62% das empresas no seu estágio de crescimento.",
-    "Atenção: Com esse volume, sua equipe perde efetivamente quase 2 dias inteiros por semana em rotinas braçais.",
-    "Custo crítico: Acima de 30h semanais, o desperdício invisível supera facilmente o salário de um gestor."
+    "Atenção. Com esse volume sua equipe perde efetivamente quase 2 dias inteiros por semana em rotinas braçais.",
+    "Custo crítico. Acima de 30h semanais o desperdício invisível supera facilmente o salário de um gestor."
   ],
   dor: [
     "Processos manuais não escalam. É a maior trava de crescimento documentada no B2B atual.",
@@ -116,23 +114,20 @@ const echos = {
   ],
   faturamento: [
     null,
-    "Ótimo. Nessa faixa, cada R$1.000 economizado em operação vira lucro direto no fim do mês.",
+    "Ótimo. Nessa faixa cada R$1.000 economizado em operação vira lucro direto no fim do mês.",
     "Uma operação desse porte precisa de tecnologia robusta para não implodir sob o próprio peso.",
-    "Com esse volume, qualquer ineficiência de 2% já representa dezenas de milhares de reais perdidos."
+    "Com esse volume qualquer ineficiência de 2% já representa dezenas de milhares de reais perdidos."
   ]
 };
 
-// ==== INICIALIZAÇÃO BLINDADA ====
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
 
-  // UX Esc & Click Fora
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeQuiz(); });
   document.getElementById('quiz-overlay').addEventListener('click', (e) => {
     if (e.target === document.getElementById('quiz-overlay')) closeQuiz();
   });
 
-  // Reveal Animations
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -146,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // Counters Dinâmicos (Bug do 0 resolvido com observer permissivo)
   const counters = document.querySelectorAll('.counter');
   const counterObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -170,14 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
         counterObserver.unobserve(counter);
       }
     });
-  }, { threshold: 0 }); // Threshold 0 garante que dispare assim que entrar
+  }, { threshold: 0 }); 
   counters.forEach(c => counterObserver.observe(c));
 
-  // Menu Mobile
   document.querySelector('.js-toggle-menu').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('open'));
   document.querySelectorAll('.js-close-menu').forEach(btn => btn.addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open')));
   
-  // Header Scrolled
   window.addEventListener('scroll', () => {
     const header = document.getElementById('site-header');
     const progress = document.getElementById('reading-progress');
@@ -187,12 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
     progress.style.width = scrollable > 0 ? (window.scrollY / scrollable) * 100 + '%' : '0%';
   });
 
-  // Quiz Binds
   document.querySelectorAll('.js-open-quiz').forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); openQuiz(); }));
   document.querySelector('.js-close-quiz').addEventListener('click', closeQuiz);
 });
 
-// ==== MOTOR DO QUIZ ====
 let currentStep = -1;
 let answers = {};
 let textData = {};
@@ -224,15 +214,15 @@ function renderIntro() {
 
   body.innerHTML = `
     <div class="quiz-intro reveal visible">
-      <h2>O Diagnóstico BG Tech</h2>
+      <h2 style="color: var(--text-1);">O Diagnóstico BG Tech</h2>
       
       <div class="intro-social-proof">
         <span><i data-lucide="check-circle" width="16"></i> 847 empresas já diagnosticadas</span>
         <span><i data-lucide="check-circle" width="16"></i> Resultado em menos de 3 minutos</span>
       </div>
 
-      <p>Nos próximos 3 minutos você vai descobrir exatamente quanto dinheiro sua empresa está perdendo por mês e o porquê.</p>
-      <p>Não é estimativa genérica. É um cálculo baseado no perfil real da sua operação.</p>
+      <p style="color: var(--text-3);">Nos próximos 3 minutos você vai descobrir exatamente quanto dinheiro sua empresa está perdendo por mês e o porquê.</p>
+      <p style="color: var(--text-3);">Não é estimativa genérica. É um cálculo baseado no perfil real da sua operação.</p>
       
       <div class="quiz-intro-hint">
         Seja completamente honesto. Quanto mais preciso você for nas respostas, mais exato será o resultado.
@@ -279,7 +269,6 @@ function renderStep() {
         const idx = parseInt(this.getAttribute('data-index'));
         answers[q.id] = idx;
 
-        // Lógica dos ECOS de Vendas (Neuromarketing)
         const ecoText = echos[q.id]?.[idx];
         
         if (q.id === 'segmento') {
@@ -291,7 +280,7 @@ function renderStep() {
           body.innerHTML = `
             <div class="micro-validation" style="display:flex; flex-direction:column; align-items:center; text-align:center; padding: 60px 20px;">
               <i data-lucide="zap" style="color:var(--blue); width: 48px; height: 48px; margin-bottom: 24px; animation: pulse 2s infinite;"></i>
-              <p style="color: var(--text-heading); font-size: 20px; font-weight: 800; line-height: 1.5;">${ecoText}</p>
+              <p style="color: var(--text-1); font-size: 20px; font-weight: 800; line-height: 1.5;">${ecoText}</p>
             </div>`;
           lucide.createIcons();
           setTimeout(() => { nextStep(); }, 2500); 
@@ -301,7 +290,6 @@ function renderStep() {
       });
     });
   } else {
-    // TELA DE CONTATO (A Provação com Live Dot)
     let html = `<div class="reveal visible">
       <span class="q-label"><span class="live-dot"></span> DIAGNÓSTICO PRONTO</span>
       <h2 class="q-title">${q.title}</h2><p class="q-desc">${q.desc}</p>`;
@@ -314,14 +302,13 @@ function renderStep() {
     });
     
     html += `
-      <p style="font-size:12px; color:var(--text-3); margin-bottom: 20px; text-align:center;">Usamos esse contato apenas para falar sobre este diagnóstico. Nada de spam.</p>
+      <p style="font-size:12px; color:var(--text-3); margin-bottom: 20px; text-align:center;">Usamos esse contato apenas para enviar e debater o diagnóstico.</p>
       <div class="q-nav">
         <button class="btn-ghost js-prev"><i data-lucide="arrow-left" width="16"></i> Voltar</button>
         <button class="btn-primary js-next">Liberar meu diagnóstico <i data-lucide="unlock" width="16"></i></button>
       </div></div>`;
     body.innerHTML = html;
 
-    // Máscara WPP BR
     const wppInput = document.getElementById('inp-whatsapp');
     if(wppInput) {
       wppInput.addEventListener('input', function() {
@@ -337,7 +324,6 @@ function renderStep() {
     body.querySelector('.js-next').addEventListener('click', () => {
       let hasError = false;
 
-      // Validação Name: Aceita só o primeiro nome, min 3 letras
       const elNome = document.getElementById('inp-nome');
       const nomeVal = elNome.value.trim();
       if (nomeVal.length < 3) {
@@ -346,7 +332,6 @@ function renderStep() {
         document.getElementById('err-nome').style.display = 'block';
       } else { textData.nome = capitalize(nomeVal); }
 
-      // Validação Empresa (SEM CAPITALIZE para não quebrar Siglas)
       const elEmpresa = document.getElementById('inp-empresa');
       const empVal = elEmpresa.value.trim();
       if (empVal.length < 2) {
@@ -355,7 +340,6 @@ function renderStep() {
         document.getElementById('err-empresa').style.display = 'block';
       } else { textData.empresa = empVal; } 
 
-      // Validação WPP
       const wppVal = wppInput.value.trim().replace(/\D/g, ''); 
       if (wppVal.length < 10 || wppVal.length > 13) {
         hasError = true; wppInput.classList.add('error');
@@ -437,7 +421,7 @@ function runLoading() {
       if (steps[i].special) document.getElementById('flash-num').style.display = 'block';
       lucide.createIcons();
       i++;
-      setTimeout(tick, 1000); // 5s total (5 steps x 1s)
+      setTimeout(tick, 1000); 
     } else {
       setTimeout(showResult, 500);
     }
@@ -451,7 +435,6 @@ function showResult() {
   const empresa = textData.empresa;
   const dorPrincipal = QUESTIONS[2].options[answers.dor].title;
 
-  // 1. O ESPELHO 
   const segTexts = [
     "Sua construtora", "Seu escritório", "Sua operação", "Sua indústria", "Sua clínica", "Sua agência"
   ];
@@ -459,7 +442,6 @@ function showResult() {
   
   let mirrorText = `${empresaTipo} chegou num ponto crítico. A operação cresceu, mas os processos não. Você sente que a equipe trabalha mais, mas a empresa não cresce proporcionalmente. E o diagnóstico confirma o gargalo principal: <strong>${dorPrincipal}</strong> está travando a escala.`;
 
-  // 2. A DOR FINANCEIRA 
   const fatIndex = answers.faturamento;
   const matIndex = answers.maturidade;
 
@@ -471,7 +453,6 @@ function showResult() {
   const lostValueStr = `R$ ${minLoss.toLocaleString('pt-BR')} a R$ ${maxLoss.toLocaleString('pt-BR')} /mês`;
   const workersEquiv = (maxLoss / 3500).toFixed(1);
 
-  // 3. O SCORE CATEGORIZADO
   let score = 38; 
   if (matIndex === 1) score = 52;
   if (matIndex === 2) score = 61;
@@ -568,7 +549,6 @@ function showResult() {
     </div>`;
   lucide.createIcons();
 
-  // ANIMAÇÕES DAS BARRAS E CIRCULO
   setTimeout(() => {
     const elCirc = document.getElementById('anim-circle');
     if (elCirc) elCirc.style.strokeDashoffset = circleOffset;
@@ -586,7 +566,6 @@ function showResult() {
     });
   }, 100);
 
-  // PAYLOAD ENRIQUECIDO PARA O WEBHOOK (Padrão CRM)
   const webhookPayload = {
     nome: textData.nome,
     empresa: textData.empresa,
@@ -619,7 +598,6 @@ function showResult() {
     window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
-  // Prevenindo Multiplos Event Listeners (Bug fix de clonagem)
   const wppBtn = body.querySelector('.js-wpp');
   const wppDirectBtn = body.querySelector('.js-wpp-direct');
 
