@@ -279,7 +279,7 @@ function renderStep() {
         const idx = parseInt(this.getAttribute('data-index'));
         answers[q.id] = idx;
 
-        // ECOS de Vendas
+        // Lógica dos ECOS de Vendas (Neuromarketing)
         const ecoText = echos[q.id]?.[idx];
         
         if (q.id === 'segmento') {
@@ -337,7 +337,7 @@ function renderStep() {
     body.querySelector('.js-next').addEventListener('click', () => {
       let hasError = false;
 
-      // Validação Name: 3 letras
+      // Validação Name: Aceita só o primeiro nome, min 3 letras
       const elNome = document.getElementById('inp-nome');
       const nomeVal = elNome.value.trim();
       if (nomeVal.length < 3) {
@@ -401,7 +401,7 @@ function runLoading() {
 
   const steps = [
     { icon: 'briefcase', text: `Mapeando gargalos na área de ${segName}...` },
-    { icon: 'search', text: `Cruzando dados com empresas em ${leadLocation}...` },
+    { icon: 'search', text: `Cruzando dados de empresas em ${leadLocation}...` },
     { icon: 'dollar-sign', text: `Calculando horas perdidas e sangria financeira...`, special: true },
     { icon: 'target', text: 'Priorizando automações com maior retorno...' },
     { icon: 'file-check-2', text: 'Montando plano executivo...' }
@@ -437,7 +437,7 @@ function runLoading() {
       if (steps[i].special) document.getElementById('flash-num').style.display = 'block';
       lucide.createIcons();
       i++;
-      setTimeout(tick, 1000); 
+      setTimeout(tick, 1000); // 5s total (5 steps x 1s)
     } else {
       setTimeout(showResult, 500);
     }
@@ -457,7 +457,7 @@ function showResult() {
   ];
   let empresaTipo = segTexts[answers.segmento] || "Sua empresa";
   
-  let mirrorText = `${empresaTipo} chegou num ponto crítico. A operação cresceu, mas os processos não. Você sente que a equipe trabalha mais, mas a empresa não cresce proporcionalmente. E o diagnóstico confirma: <strong>${dorPrincipal}</strong> é o gargalo principal na sua operação.`;
+  let mirrorText = `${empresaTipo} chegou num ponto crítico. A operação cresceu, mas os processos não. Você sente que a equipe trabalha mais, mas a empresa não cresce proporcionalmente. E o diagnóstico confirma o gargalo principal: <strong>${dorPrincipal}</strong> está travando a escala.`;
 
   // 2. A DOR FINANCEIRA 
   const fatIndex = answers.faturamento;
@@ -586,7 +586,7 @@ function showResult() {
     });
   }, 100);
 
-  // PAYLOAD ENRIQUECIDO PARA O WEBHOOK
+  // PAYLOAD ENRIQUECIDO PARA O WEBHOOK (Padrão CRM)
   const webhookPayload = {
     nome: textData.nome,
     empresa: textData.empresa,
@@ -619,7 +619,7 @@ function showResult() {
     window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
-  // Prevenindo Multiplos Event Listeners 
+  // Prevenindo Multiplos Event Listeners (Bug fix de clonagem)
   const wppBtn = body.querySelector('.js-wpp');
   const wppDirectBtn = body.querySelector('.js-wpp-direct');
 
