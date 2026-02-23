@@ -4,7 +4,6 @@ const CONFIG = {
   webhookUrl: '' // Webhook do Make.com / n8n
 };
 
-// 1. Fetch de Localização (FOMO Local)
 let leadLocation = "sua região";
 const controller = new AbortController();
 const timeout = setTimeout(() => controller.abort(), 3000);
@@ -19,7 +18,6 @@ const capitalize = (str) => {
   return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 };
 
-// ==== A MATRIZ DE VENDAS ====
 const QUESTIONS = [
   {
     id: 'segmento', label: 'PASSO 1 DE 5',
