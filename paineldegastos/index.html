@@ -22,39 +22,32 @@
     h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
     #root { min-height: 100vh; display: flex; flex-direction: column; }
     
-    /* Fundo Elegante BG Tech */
     .hex-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg width='40' height='69.28' viewBox='0 0 40 69.28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 17.32l-20 11.54L0 17.32V-5.77l20-11.54 20 11.54V17.32zM20 46.18l20-11.54V11.54L20 23.09 0 11.54v23.09L20 46.18zM0 63.5l20-11.54 20 11.54V86.6l-20 11.54-20-11.54V63.5z' fill='%230ea5e9' fill-opacity='0.025' fill-rule='evenodd'/%3E%3C/svg%3E"); }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #030712; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
     
-    /* Vidro e Modais Premium */
     .glass-panel { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
     .modal-backdrop { position: fixed; inset: 0; background: rgba(3, 7, 18, 0.92); backdrop-filter: blur(12px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; animation: fadeIn 0.2s ease; }
     .modal-card { background: #0b1120; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; box-shadow: 0 24px 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05); width: 100%; max-width: 500px; padding: 36px; transform: scale(0.98); animation: popUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; max-height: 90vh; overflow-y: auto; }
     
-    /* Botões Otimizados */
     .btn-glow { transition: all 0.3s ease; position: relative; overflow: hidden; }
     .btn-glow:hover { box-shadow: 0 0 20px rgba(14, 165, 233, 0.4); transform: translateY(-2px); }
     .btn-cancelar { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); border-radius: 12px; padding: 14px 20px; font-weight: 600; font-size: 14px; transition: all 0.2s; cursor: pointer; }
     .btn-cancelar:hover { background: rgba(255,255,255,0.08); color: white; border-color: rgba(255,255,255,0.15); }
 
-    /* Inputs Limpos */
     .modal-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #f8fafc; padding: 16px; font-size: 15px; outline: none; font-family: inherit; transition: all 0.2s; width: 100%; }
     .modal-input:focus { border-color: #0ea5e9; background: rgba(14, 165, 233, 0.03); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
 
-    /* Estados Vazios Animados */
     .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.08); border-radius: 20px; animation: fadeIn 0.4s ease; background: rgba(255,255,255,0.01); }
     .empty-state svg { width: 48px; height: 48px; color: rgba(255,255,255,0.15); margin-bottom: 16px; }
     .empty-state h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; color: rgba(255,255,255,0.8); margin: 0 0 8px; font-weight: 700; }
     .empty-state p { font-size: 14px; color: rgba(255,255,255,0.4); margin: 0; }
 
-    /* Selectors */
     .select-periodo { appearance: none; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #f8fafc; padding: 12px 40px 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; transition: 0.2s; }
     .select-periodo:hover { border-color: rgba(14, 165, 233, 0.4); }
 
-    /* Linhas do Extrato */
     .extrato-row { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: all 0.2s ease; animation: fadeInSlide 0.3s ease forwards; }
     .extrato-row:hover { background: rgba(255,255,255,0.02); padding-left: 28px; border-left: 2px solid #0ea5e9; }
     .extrato-info { display: flex; flex-direction: column; gap: 6px; }
@@ -63,15 +56,11 @@
     .tag-category { background: rgba(14, 165, 233, 0.1); color: #38bdf8; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
     .tag-pending { background: rgba(245, 158, 11, 0.15); color: #fcd34d; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
 
-    /* LAYOUT DESKTOP */
     .layout-wrapper { display: flex; min-height: 100vh; }
     .sidebar { width: 280px; background: rgba(3, 7, 18, 0.8); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; backdrop-filter: blur(20px); }
     .main-content { margin-left: 280px; flex: 1; padding: 48px 56px 100px; position: relative; z-index: 1; max-width: 1400px; }
     .mobile-nav { display: none; }
 
-    /* ==========================================================================
-       RESPONSIVIDADE MOBILE TIPO APLICATIVO BANCÁRIO
-       ========================================================================== */
     @media (max-width: 900px) {
       .layout-wrapper { flex-direction: column; }
       .sidebar { display: none; }
@@ -87,7 +76,6 @@
       .charts-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
       .chart-container { padding: 20px !important; }
       
-      /* O Extrato vira Card Isolado no Celular */
       .extrato-row { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; background: rgba(255,255,255,0.02); margin-bottom: 12px; }
       .extrato-row:hover { padding-left: 20px; background: rgba(255,255,255,0.03); border-left: 1px solid rgba(255,255,255,0.05); }
       .row-value-box { width: 100%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px; margin-top: 4px; }
@@ -96,14 +84,12 @@
       .modal-card { max-width: 100%; height: 100%; border-radius: 0; padding: 24px 20px; border: none; }
       .form-grid-mobile { grid-template-columns: 1fr !important; gap: 16px !important; margin-bottom: 16px !important; }
 
-      /* Bottom Nav Fixa Perfeita */
       .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(3, 7, 18, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; padding: 12px 16px 24px; justify-content: space-around; box-shadow: 0 -10px 20px rgba(0,0,0,0.5); }
       .nav-btn-mobile { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #64748b; font-size: 11px; font-weight: 700; transition: 0.2s; background: transparent; border: none; padding: 8px; border-radius: 12px; }
       .nav-btn-mobile.active { color: #0ea5e9; }
       .nav-btn-mobile.active svg { color: #0ea5e9; transform: translateY(-2px); filter: drop-shadow(0 0 8px rgba(14,165,233,0.5)); }
     }
 
-    /* Animações e Magia */
     @keyframes pulse-glow { 0% { opacity: 0.5; filter: blur(2px); } 50% { opacity: 1; filter: blur(0px); } 100% { opacity: 0.5; filter: blur(2px); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes popUp { 0% { transform: scale(0.95) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
@@ -121,30 +107,38 @@
     const { useState, useEffect, useCallback, useRef } = React;
     const { PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } = window.Recharts;
 
-    // Acesso Exclusivo
     const ADMIN = { user: "bgtech", pass: "admin2024" };
     
-    // Categorias de CFO (Traduzidas pro mundo real)
     const CATS_FIXO  = ["Ferramentas e Nuvem", "Contabilidade/Jurídico", "Pró-labore e Equipe", "Marketing Base", "Estrutura Física", "Outros Custos Fixos"];
     const CATS_UNICO = ["Compra de Equipamento", "Serviço Terceirizado", "Anúncios/Tráfego", "Impostos Extras", "Taxas Bancárias", "Outros Gastos Pontuais"];
 
     const TOKENS = {
-      electric: "#0ea5e9", // Azul Ciano (Base da Empresa)
+      electric: "#0ea5e9",
       electricDark: "#0284c7",
-      red: "#ef4444",      // Vermelho (Alerta de Saída)
-      orange: "#f59e0b",   // Laranja (Imprevistos/Variáveis)
+      red: "#ef4444",
+      orange: "#f59e0b",
       textMuted: "#64748b",
       chartColors: ["#0ea5e9", "#ef4444", "#f59e0b", "#8b5cf6", "#10b981", "#64748b"]
     };
 
     const MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-    const fmt = v => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
-    const fmtDate = d => new Date(d + "T12:00:00").toLocaleDateString("pt-BR", {day: '2-digit', month: 'short'});
+    
+    // FORMATADOR BLINDADO
+    const fmt = v => {
+      try { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0); } 
+      catch (e) { return `R$ ${Number(v || 0).toFixed(2).replace('.', ',')}`; }
+    };
+    
+    // FORMATADOR DE DATA ANTI-CRASH (Evita "Invalid Date")
+    const fmtDate = d => {
+      if (!d) return "--";
+      const parts = d.split('-');
+      if (parts.length !== 3) return d;
+      return `${parts[2]}/${parts[1]}`;
+    };
+    
     const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
-    // ============================================================================
-    // ÍCONES NATIVOS BLINDADOS (Adeus Lucide Crash)
-    // ============================================================================
     const Icon = ({ name, color = "currentColor", size = 20, style }) => {
       const paths = {
         "layout-dashboard": <><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></>,
@@ -161,12 +155,15 @@
       return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{...style, transition: '0.2s'}}>{paths[name]}</svg>;
     };
 
-    // ============================================================================
-    // CONEXÃO SUPABASE
-    // ============================================================================
     const DB_CONFIG = {
       URL: "https://urpuiznydrlwmaqhdids.supabase.co",
       KEY: "sb_publishable_9G6JUKnfZ1mekk7qUKdTQA_TXbARtR0"
+    };
+
+    // PROCESSADOR DE ARRAYS SEGURO
+    const parseSafeArray = (arr) => {
+      if (Array.isArray(arr)) return arr;
+      try { return JSON.parse(arr) || []; } catch(e) { return []; }
     };
 
     async function loadCloudData() {
@@ -175,8 +172,8 @@
           headers: { 'apikey': DB_CONFIG.KEY, 'Authorization': `Bearer ${DB_CONFIG.KEY}` }
         });
         const data = await res.json();
-        if (data && data.length > 0) return { fixos: data[0].fixos || [], unicos: data[0].unicos || [] };
-      } catch (err) { console.error("Erro leitura Nuvem:", err); }
+        if (data && data.length > 0) return { fixos: parseSafeArray(data[0].fixos), unicos: parseSafeArray(data[0].unicos) };
+      } catch (err) { console.error("Erro Nuvem:", err); }
       return { fixos: [], unicos: [] };
     }
 
@@ -190,9 +187,6 @@
       } catch (err) {}
     }
 
-    // ============================================================================
-    // COMPONENTES HUMANIZADOS
-    // ============================================================================
     const PrimaryBtnStyle = { padding: "14px 24px", background: `linear-gradient(135deg, ${TOKENS.electric}, ${TOKENS.electricDark})`, border: "none", borderRadius: 12, color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, justifyContent: "center" };
     function Lbl({ children }) { return <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: TOKENS.textMuted, marginBottom: 8 }}>{children}</label>; }
 
@@ -204,29 +198,24 @@
       const go = () => {
         if (!f.nome || !f.valor) return alert("Aviso: O Nome e o Valor são obrigatórios.");
         
-        // BUGFIX 2: Blindagem Absoluta contra formatação errada
-        let numStr = String(f.valor).replace(/\./g, '').replace(',', '.'); 
-        const val = parseFloat(numStr);
-        if(isNaN(val)) return alert("Tem letras no valor. Digite apenas os números.");
+        // CONVERSOR DE NÚMERO BLINDADO
+        let valStr = String(f.valor).trim();
+        if (valStr.includes(',')) { valStr = valStr.replace(/\./g, '').replace(',', '.'); }
+        const val = parseFloat(valStr);
+        if(isNaN(val)) return alert("Valor inválido. Digite apenas números.");
         
         onSave({ ...f, valor: val, id: f.id || uid(), createdAt: f.createdAt || new Date().toISOString() });
         onClose();
-      };
-
-      const getNomePlaceholder = () => {
-        if (f.categoria === "Pró-labore e Equipe") return "Ex: Pagamento do Gabriel";
-        if (f.categoria === "Ferramentas e Nuvem") return "Ex: Servidor AWS, n8n";
-        return "Descreva a saída...";
       };
 
       return (
         <React.Fragment>
           <div style={{ marginBottom: 20 }}>
             <Lbl>Para onde foi esse dinheiro? *</Lbl>
-            <input className="modal-input" value={f.nome} onChange={e => up("nome")(e.target.value)} placeholder={getNomePlaceholder()} autoFocus />
+            <input className="modal-input" value={f.nome} onChange={e => up("nome")(e.target.value)} placeholder="Ex: Servidor AWS, Contador..." autoFocus />
           </div>
           <div className="form-grid-mobile" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
-            <div><Lbl>Valor Real (R$) *</Lbl><input className="modal-input" type="number" step="0.01" value={f.valor} onChange={e => up("valor")(e.target.value)} placeholder="0.00" /></div>
+            <div><Lbl>Valor Real (R$) *</Lbl><input className="modal-input" type="text" inputMode="decimal" value={f.valor} onChange={e => up("valor")(e.target.value)} placeholder="0,00" /></div>
             <div><Lbl>Data Base</Lbl><input className="modal-input" type="date" value={f.data} onChange={e => up("data")(e.target.value)} /></div>
           </div>
           <div className="form-grid-mobile" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
@@ -255,7 +244,6 @@
     }
 
     function StatCard({ label, value, sub, color, type }) {
-      const isDanger = type === "danger";
       return (
         <div className="glass-panel" style={{ padding: "32px 24px", flex: 1, minWidth: 200, position: "relative", overflow: "hidden", borderTop: `2px solid ${color}` }}>
           <div style={{ fontSize: 12, color: TOKENS.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>{label}</div>
@@ -274,11 +262,11 @@
         <div className="extrato-row" style={{ opacity: isPending ? 0.6 : 1 }}>
           <div className="extrato-info">
             <div className="extrato-title">
-              {item.nome}
+              {item.nome || "Registro"}
               {isPending && <span className="tag-pending">Programado</span>}
             </div>
             <div className="extrato-meta">
-              <span className="tag-category" style={{ color: mainColor, background: `${mainColor}20` }}>{item.categoria}</span>
+              <span className="tag-category" style={{ color: mainColor, background: `${mainColor}20` }}>{item.categoria || "Outros"}</span>
               <span>{fmtDate(item.data)}</span>
             </div>
             {item.descricao && <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>{item.descricao}</div>}
@@ -286,7 +274,7 @@
           
           <div className="row-value-box">
             <div className="font-display" style={{ fontWeight: 800, color: type === "fixo" ? TOKENS.electric : TOKENS.orange, fontSize: 18, textAlign: "right" }}>
-              R$ {fmt(item.valor).replace('R$', '').trim()}
+              {fmt(item.valor)}
             </div>
             <div className="row-actions-btns" style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: window.innerWidth < 900 ? 0 : 8 }}>
               <button onClick={() => onEdit(item)} style={{ background: "transparent", border: "none", color: TOKENS.textMuted, cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Editar</button>
@@ -299,9 +287,6 @@
       );
     }
 
-    // ============================================================================
-    // CÉREBRO DO DASHBOARD
-    // ============================================================================
     function Dashboard({ onLogout }) {
       const [tab, setTab] = useState("overview"); 
       const [fixos, setFixos] = useState([]); 
@@ -337,12 +322,14 @@
       const delFixo = async id => await persist(fixos.filter(i => i.id !== id), unicos);
       const delUnico = async id => await persist(fixos, unicos.filter(i => i.id !== id));
 
-      // BUGFIX 3: Blindagem de filtro de data contra arrays quebrados
+      // FILTRO DE DATAS BLINDADO COM STRINGS (Não usa new Date para evitar crash)
       const fMês = (arr) => arr.filter(u => { 
         if(!u.data) return false;
-        const d = new Date(u.data + "T12:00:00"); 
-        return d.getMonth() === mes && d.getFullYear() === ano; 
+        const parts = u.data.split('-');
+        if(parts.length !== 3) return false;
+        return parseInt(parts[1], 10) - 1 === mes && parseInt(parts[0], 10) === ano; 
       });
+      
       const uf = fMês(unicos); const ff = fMês(fixos); 
 
       const tF = ff.reduce((a, b) => a + (Number(b.valor) || 0), 0); 
@@ -350,20 +337,33 @@
       const totalMes = tF + tU;
 
       const searchStr = search.toLowerCase();
-      const filteredF = ff.filter(i => i.nome.toLowerCase().includes(searchStr) || (i.categoria||"").toLowerCase().includes(searchStr));
-      const filteredU = uf.filter(i => i.nome.toLowerCase().includes(searchStr) || (i.categoria||"").toLowerCase().includes(searchStr));
+      // BUSCA PROTEGIDA (impede crash se o item não tiver nome)
+      const filteredF = ff.filter(i => (i.nome || "").toLowerCase().includes(searchStr) || (i.categoria||"").toLowerCase().includes(searchStr));
+      const filteredU = uf.filter(i => (i.nome || "").toLowerCase().includes(searchStr) || (i.categoria||"").toLowerCase().includes(searchStr));
 
       const catF = CATS_FIXO.map(c => ({ name: c, value: ff.filter(f => f.categoria === c).reduce((a, b) => a + (Number(b.valor)||0), 0) })).filter(d => d.value > 0);
       
-      // BUGFIX 1: Blindagem de Gráfico para Dias 31 e Mapeamento
+      // LÓGICA DE GRÁFICO BLINDADA
       const bar = Array.from({ length: 6 }, (_, i) => {
         const d = new Date(); 
-        d.setDate(1); // Trava o dia em 1 para evitar pulo de meses (Ex: 31 Jan -> Volta 1 -> 31 Dez, mas se fosse 28 Fev -> Volta 1 -> 31 Jan (BUG))
+        d.setDate(1); 
         d.setMonth(d.getMonth() - (5 - i)); 
         const m = d.getMonth(), a = d.getFullYear();
         
-        const mF = fixos.filter(u => { if(!u.data) return false; const dd = new Date(u.data + "T12:00:00"); return dd.getMonth() === m && dd.getFullYear() === a; }).reduce((s, u) => s + (Number(u.valor)||0), 0);
-        const mU = unicos.filter(u => { if(!u.data) return false; const dd = new Date(u.data + "T12:00:00"); return dd.getMonth() === m && dd.getFullYear() === a; }).reduce((s, u) => s + (Number(u.valor)||0), 0);
+        const mF = fixos.filter(u => { 
+          if(!u.data) return false; 
+          const p = u.data.split('-'); 
+          if(p.length !== 3) return false;
+          return parseInt(p[1], 10) - 1 === m && parseInt(p[0], 10) === a; 
+        }).reduce((s, u) => s + (Number(u.valor)||0), 0);
+        
+        const mU = unicos.filter(u => { 
+          if(!u.data) return false; 
+          const p = u.data.split('-'); 
+          if(p.length !== 3) return false;
+          return parseInt(p[1], 10) - 1 === m && parseInt(p[0], 10) === a; 
+        }).reduce((s, u) => s + (Number(u.valor)||0), 0);
+        
         return { name: MONTHS[m], Fixos: mF, Variaveis: mU, Total: mF + mU };
       });
 
@@ -372,11 +372,13 @@
       if (!ready) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background:"#030712" }}><div style={{ color: TOKENS.electric, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, letterSpacing: "0.2em", fontSize: 12, animation: "pulse-glow 1.5s infinite" }}>Sincronizando Banco...</div></div>;
       const semDadosDRE = bar.every(d => d.Total === 0);
 
+      // ORDENAÇÃO DE LISTA BLINDADA
+      const sortList = (a, b) => (b.data || "").localeCompare(a.data || "");
+
       return (
         <div className="layout-wrapper">
           <div className="hex-bg" />
           
-          {/* SIDEBAR DESKTOP */}
           <div className="sidebar">
             <div style={{ padding: "40px 24px 32px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
@@ -405,7 +407,6 @@
             </div>
           </div>
 
-          {/* ÁREA PRINCIPAL DA DIREITA */}
           <div className="main-content">
             <div className="header-mobile" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 40 }}>
               <div>
@@ -430,7 +431,6 @@
               </div>
             </div>
 
-            {/* ABA: RESUMO GERAL */}
             {tab === "overview" && (
               <div style={{ animation: "fadeIn 0.3s ease-out" }}>
                 <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 32 }}>
@@ -479,7 +479,6 @@
               </div>
             )}
 
-            {/* ABA: CUSTOS FIXOS */}
             {tab === "fixos" && (
               <div style={{ animation: "fadeIn 0.3s ease-out" }}>
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
@@ -487,14 +486,13 @@
                 </div>
                 {filteredF.length === 0 ? <div className="empty-state"><Icon name="inbox" size={48} /><h3>Cofre trancado</h3><p>Nenhum custo fixo anotado em {MONTHS[mes]}.</p></div> : (
                   <div className="glass-panel" style={{ overflow: "hidden", padding: window.innerWidth < 900 ? 16 : 0, background: window.innerWidth < 900 ? "transparent" : "", border: window.innerWidth < 900 ? "none" : "", boxShadow: window.innerWidth < 900 ? "none" : "" }}>
-                    {filteredF.sort((a, b) => new Date(b.data) - new Date(a.data)).map(item => <DataRow key={item.id} item={item} type="fixo" onEdit={item => setModal({ type: "fixo", item })} onDelete={delFixo} />)}
+                    {filteredF.sort(sortList).map(item => <DataRow key={item.id} item={item} type="fixo" onEdit={item => setModal({ type: "fixo", item })} onDelete={delFixo} />)}
                     <div style={{ padding: "24px", background: "rgba(0,0,0,0.4)", textAlign: "right", borderTop: "1px solid rgba(255,255,255,0.05)", borderRadius: window.innerWidth < 900 ? 16 : 0, marginTop: window.innerWidth < 900 ? 16 : 0 }}><span style={{fontSize: 12, color: TOKENS.textMuted, marginRight: 16, textTransform: "uppercase", fontWeight: 700}}>Soma da Base:</span><span className="font-display" style={{ color: TOKENS.electric, fontSize: 24, fontWeight: 800 }}>{fmt(tF)}</span></div>
                   </div>
                 )}
               </div>
             )}
 
-            {/* ABA: GASTOS VARIÁVEIS */}
             {tab === "unicos" && (
               <div style={{ animation: "fadeIn 0.3s ease-out" }}>
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
@@ -502,7 +500,7 @@
                 </div>
                 {filteredU.length === 0 ? <div className="empty-state"><Icon name="inbox" size={48} /><h3>Tudo sob controle</h3><p>Nenhuma despesa variável ou imprevisto no mês.</p></div> : (
                   <div className="glass-panel" style={{ overflow: "hidden", padding: window.innerWidth < 900 ? 16 : 0, background: window.innerWidth < 900 ? "transparent" : "", border: window.innerWidth < 900 ? "none" : "", boxShadow: window.innerWidth < 900 ? "none" : "" }}>
-                    {filteredU.sort((a, b) => new Date(b.data) - new Date(a.data)).map(item => <DataRow key={item.id} item={item} type="unico" onEdit={item => setModal({ type: "unico", item })} onDelete={delUnico} />)}
+                    {filteredU.sort(sortList).map(item => <DataRow key={item.id} item={item} type="unico" onEdit={item => setModal({ type: "unico", item })} onDelete={delUnico} />)}
                     <div style={{ padding: "24px", background: "rgba(0,0,0,0.4)", textAlign: "right", borderTop: "1px solid rgba(255,255,255,0.05)", borderRadius: window.innerWidth < 900 ? 16 : 0, marginTop: window.innerWidth < 900 ? 16 : 0 }}><span style={{fontSize: 12, color: TOKENS.textMuted, marginRight: 16, textTransform: "uppercase", fontWeight: 700}}>Soma dos Extras:</span><span className="font-display" style={{ color: TOKENS.orange, fontSize: 24, fontWeight: 800 }}>{fmt(tU)}</span></div>
                   </div>
                 )}
@@ -510,7 +508,6 @@
             )}
           </div>
 
-          {/* MENU APP NO CELULAR (MAGIA DO NUBANK) */}
           <div className="mobile-nav">
             {[{ id: "overview", label: "Resumo", icon: "layout-dashboard" }, { id: "fixos", label: "Fixos", icon: "anchor" }, { id: "unicos", label: "Variáveis", icon: "zap" }].map(n => (
               <button key={n.id} className={`nav-btn-mobile ${tab === n.id ? 'active' : ''}`} onClick={() => {setTab(n.id); setSearch("");}}>
@@ -520,7 +517,6 @@
             ))}
           </div>
 
-          {/* MODAL DE REGISTRO */}
           {modal && (
             <Modal title={modal.item ? "Alterar Lançamento" : modal.type === "fixo" ? "Novo Custo Fixo" : "Novo Gasto Variável"} onClose={() => setModal(null)}>
               <Form type={modal.type} onSave={modal.type === "fixo" ? saveFixo : saveUnico} onClose={() => setModal(null)} initial={modal.item} cats={modal.type === "fixo" ? CATS_FIXO : CATS_UNICO} />
