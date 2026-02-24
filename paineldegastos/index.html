@@ -18,95 +18,102 @@
 
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; padding: 0; background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    body { margin: 0; padding: 0; background: #030712; color: #f8fafc; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
     #root { min-height: 100vh; display: flex; flex-direction: column; }
     
-    /* Fundo Tecnológico */
-    .hex-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg width='40' height='69.28' viewBox='0 0 40 69.28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 17.32l-20 11.54L0 17.32V-5.77l20-11.54 20 11.54V17.32zM20 46.18l20-11.54V11.54L20 23.09 0 11.54v23.09L20 46.18zM0 63.5l20-11.54 20 11.54V86.6l-20 11.54-20-11.54V63.5z' fill='%230ea5e9' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E"); }
+    /* Fundo Elegante BG Tech */
+    .hex-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg width='40' height='69.28' viewBox='0 0 40 69.28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 17.32l-20 11.54L0 17.32V-5.77l20-11.54 20 11.54V17.32zM20 46.18l20-11.54V11.54L20 23.09 0 11.54v23.09L20 46.18zM0 63.5l20-11.54 20 11.54V86.6l-20 11.54-20-11.54V63.5z' fill='%230ea5e9' fill-opacity='0.025' fill-rule='evenodd'/%3E%3C/svg%3E"); }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #020617; }
+    ::-webkit-scrollbar-track { background: #030712; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
     
-    /* Modais e Painéis */
-    .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(14, 165, 233, 0.1); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(2, 6, 15, 0.9); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; animation: fadeIn 0.2s ease; }
-    .modal-card { background: #0f172a; border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; box-shadow: 0 24px 80px rgba(0,0,0,0.9); width: 100%; max-width: 500px; padding: 32px; transform: scale(0.98); animation: popUp 0.2s ease forwards; max-height: 90vh; overflow-y: auto; }
+    /* Vidro e Modais Premium */
+    .glass-panel { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(3, 7, 18, 0.92); backdrop-filter: blur(12px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; animation: fadeIn 0.2s ease; }
+    .modal-card { background: #0b1120; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; box-shadow: 0 24px 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05); width: 100%; max-width: 500px; padding: 36px; transform: scale(0.98); animation: popUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; max-height: 90vh; overflow-y: auto; }
     
-    /* Inputs e Botões */
-    .btn-glow { transition: all 0.2s ease; position: relative; overflow: hidden; }
+    /* Botões Otimizados */
+    .btn-glow { transition: all 0.3s ease; position: relative; overflow: hidden; }
     .btn-glow:hover { box-shadow: 0 0 20px rgba(14, 165, 233, 0.4); transform: translateY(-2px); }
-    .btn-cancelar { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); border-radius: 10px; padding: 14px 20px; font-weight: 600; font-size: 14px; transition: all 0.2s; cursor: pointer; }
-    .btn-cancelar:hover { border-color: rgba(255,255,255,0.2); color: white; }
+    .btn-cancelar { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); border-radius: 12px; padding: 14px 20px; font-weight: 600; font-size: 14px; transition: all 0.2s; cursor: pointer; }
+    .btn-cancelar:hover { background: rgba(255,255,255,0.08); color: white; border-color: rgba(255,255,255,0.15); }
 
-    .modal-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #f8fafc; padding: 14px 16px; font-size: 15px; outline: none; font-family: inherit; transition: all 0.2s; width: 100%; }
-    .modal-input:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15); }
+    /* Inputs Limpos */
+    .modal-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #f8fafc; padding: 16px; font-size: 15px; outline: none; font-family: inherit; transition: all 0.2s; width: 100%; }
+    .modal-input:focus { border-color: #0ea5e9; background: rgba(14, 165, 233, 0.03); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
 
-    .select-periodo { appearance: none; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #f8fafc; padding: 10px 36px 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: 0.2s; }
+    /* Estados Vazios Animados */
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.08); border-radius: 20px; animation: fadeIn 0.4s ease; background: rgba(255,255,255,0.01); }
+    .empty-state svg { width: 48px; height: 48px; color: rgba(255,255,255,0.15); margin-bottom: 16px; }
+    .empty-state h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; color: rgba(255,255,255,0.8); margin: 0 0 8px; font-weight: 700; }
+    .empty-state p { font-size: 14px; color: rgba(255,255,255,0.4); margin: 0; }
+
+    /* Selectors */
+    .select-periodo { appearance: none; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #f8fafc; padding: 12px 40px 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; transition: 0.2s; }
     .select-periodo:hover { border-color: rgba(14, 165, 233, 0.4); }
 
-    /* Empty States */
-    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.05); border-radius: 16px; animation: fadeIn 0.4s ease; background: rgba(0,0,0,0.2); }
-    .empty-state svg { width: 48px; height: 48px; color: rgba(255,255,255,0.15); margin-bottom: 16px; }
-    .empty-state h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; color: rgba(255,255,255,0.6); margin: 0 0 8px; }
-    .empty-state p { font-size: 13px; color: rgba(255,255,255,0.3); margin: 0; }
+    /* Linhas do Extrato */
+    .extrato-row { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: all 0.2s ease; animation: fadeInSlide 0.3s ease forwards; }
+    .extrato-row:hover { background: rgba(255,255,255,0.02); padding-left: 28px; border-left: 2px solid #0ea5e9; }
+    .extrato-info { display: flex; flex-direction: column; gap: 6px; }
+    .extrato-title { color: #f8fafc; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+    .extrato-meta { color: #64748b; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+    .tag-category { background: rgba(14, 165, 233, 0.1); color: #38bdf8; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+    .tag-pending { background: rgba(245, 158, 11, 0.15); color: #fcd34d; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
 
-    /* LAYOUT BASE DESKTOP */
+    /* LAYOUT DESKTOP */
     .layout-wrapper { display: flex; min-height: 100vh; }
-    .sidebar { width: 280px; background: rgba(2, 6, 15, 0.95); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; backdrop-filter: blur(20px); }
+    .sidebar { width: 280px; background: rgba(3, 7, 18, 0.8); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; backdrop-filter: blur(20px); }
     .main-content { margin-left: 280px; flex: 1; padding: 48px 56px 100px; position: relative; z-index: 1; max-width: 1400px; }
     .mobile-nav { display: none; }
-    
-    .desktop-table-row { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: all 0.2s ease; animation: fadeInSlide 0.3s ease forwards; }
-    .desktop-table-row:hover { background: rgba(14, 165, 233, 0.05); border-left: 3px solid #0ea5e9; padding-left: 21px; }
 
-    /* RESPONSIVIDADE MOBILE ABSOLUTA */
+    /* ==========================================================================
+       RESPONSIVIDADE MOBILE TIPO APLICATIVO BANCÁRIO
+       ========================================================================== */
     @media (max-width: 900px) {
       .layout-wrapper { flex-direction: column; }
-      .sidebar { display: none; } /* Oculta a sidebar lateral */
-      .main-content { margin-left: 0; padding: 24px 16px 100px; } /* Ajusta o padding da tela inteira */
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; padding: 24px 16px 120px; }
       
-      /* Header enxuto */
-      .header-mobile { flex-direction: column; align-items: flex-start !important; gap: 16px; margin-bottom: 24px !important; }
-      .header-mobile h1 { font-size: 24px !important; }
-      .header-mobile .filters { width: 100%; display: flex; gap: 8px; }
-      .header-mobile .filters select { flex: 1; padding: 12px; }
-      .search-box { width: 100% !important; margin-top: 12px !important; }
+      .header-mobile { flex-direction: column; align-items: flex-start !important; gap: 16px; margin-bottom: 32px !important; }
+      .header-mobile h1 { font-size: 28px !important; }
+      .filters { width: 100%; display: flex; gap: 8px; }
+      .filters select { flex: 1; }
+      .search-box { width: 100% !important; margin-top: 8px !important; }
       
-      /* Grids em 1 coluna */
       .stats-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
       .charts-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
       .chart-container { padding: 20px !important; }
       
-      /* Tabela vira Card */
-      .desktop-table-row { flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); border-left: none !important; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 12px; }
-      .desktop-table-row:hover { background: rgba(255,255,255,0.04); padding-left: 16px; }
-      .row-value-box { width: 100%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; }
-      .row-actions { margin-left: 0 !important; width: 100%; display: flex; gap: 8px; justify-content: flex-end; }
-      .row-actions button { padding: 8px 16px !important; }
+      /* O Extrato vira Card Isolado no Celular */
+      .extrato-row { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; background: rgba(255,255,255,0.02); margin-bottom: 12px; }
+      .extrato-row:hover { padding-left: 20px; background: rgba(255,255,255,0.03); border-left: 1px solid rgba(255,255,255,0.05); }
+      .row-value-box { width: 100%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px; margin-top: 4px; }
+      .row-actions-btns { display: flex; gap: 8px; }
 
-      /* Modais tela cheia */
-      .modal-card { max-width: 100%; height: 100%; border-radius: 0; padding: 24px 16px; border: none; }
+      .modal-card { max-width: 100%; height: 100%; border-radius: 0; padding: 24px 20px; border: none; }
       .form-grid-mobile { grid-template-columns: 1fr !important; gap: 16px !important; margin-bottom: 16px !important; }
 
-      /* Menu Inferior Nativo */
-      .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(2, 6, 15, 0.98); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; padding: 8px 16px 20px; justify-content: space-between; }
-      .nav-btn-mobile { display: flex; flex-direction: column; align-items: center; gap: 4px; color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600; padding: 8px; border-radius: 8px; transition: 0.2s; flex: 1; background: transparent; border: none; }
+      /* Bottom Nav Fixa Perfeita */
+      .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(3, 7, 18, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; padding: 12px 16px 24px; justify-content: space-around; box-shadow: 0 -10px 20px rgba(0,0,0,0.5); }
+      .nav-btn-mobile { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #64748b; font-size: 11px; font-weight: 700; transition: 0.2s; background: transparent; border: none; padding: 8px; border-radius: 12px; }
       .nav-btn-mobile.active { color: #0ea5e9; }
-      .nav-btn-mobile.active svg { color: #0ea5e9; }
+      .nav-btn-mobile.active svg { color: #0ea5e9; transform: translateY(-2px); filter: drop-shadow(0 0 8px rgba(14,165,233,0.5)); }
     }
 
-    @keyframes pulse-glow { 0% { text-shadow: 0 0 10px rgba(14, 165, 233, 0.2); transform: scale(1); } 50% { text-shadow: 0 0 30px rgba(14, 165, 233, 0.6); transform: scale(1.02); } 100% { text-shadow: 0 0 10px rgba(14, 165, 233, 0.2); transform: scale(1); } }
+    /* Animações e Magia */
+    @keyframes pulse-glow { 0% { opacity: 0.5; filter: blur(2px); } 50% { opacity: 1; filter: blur(0px); } 100% { opacity: 0.5; filter: blur(2px); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes popUp { to { transform: scale(1); } }
+    @keyframes popUp { 0% { transform: scale(0.95) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
     @keyframes fadeInSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
   <div id="root">
-    <div style="display:flex; height:100vh; flex-direction:column; align-items:center; justify-content:center; background:#020617;">
-      <div style="color:#0ea5e9; font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; letter-spacing:0.15em; animation:pulse-glow 1.5s infinite;">INICIANDO NÚCLEO...</div>
+    <div style="display:flex; height:100vh; flex-direction:column; align-items:center; justify-content:center; background:#030712;">
+      <div style="color:#0ea5e9; font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; letter-spacing:0.15em; animation:pulse-glow 1.5s infinite;">INICIANDO O COFRE...</div>
     </div>
   </div>
 
@@ -114,19 +121,20 @@
     const { useState, useEffect, useCallback, useRef } = React;
     const { PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } = window.Recharts;
 
+    // Acesso Exclusivo
     const ADMIN = { user: "bgtech", pass: "admin2024" };
     
-    // Categorias Estritas de Despesas
-    const CATS_FIXO  = ["Infraestrutura Nuvem", "Software/SaaS", "Pessoal/Pró-labore", "Contabilidade/Jurídico", "Marketing Fixo", "Escritório", "Outros"];
-    const CATS_UNICO = ["Equipamento", "Serviço Terceirizado", "Licença Anual", "Tráfego/Ads", "Taxas Bancárias", "Investimento", "Outros"];
+    // Categorias de CFO (Traduzidas pro mundo real)
+    const CATS_FIXO  = ["Ferramentas e Nuvem", "Contabilidade/Jurídico", "Pró-labore e Equipe", "Marketing Base", "Estrutura Física", "Outros Custos Fixos"];
+    const CATS_UNICO = ["Compra de Equipamento", "Serviço Terceirizado", "Anúncios/Tráfego", "Impostos Extras", "Taxas Bancárias", "Outros Gastos Pontuais"];
 
     const TOKENS = {
-      electric: "#0ea5e9", // Sky Blue
+      electric: "#0ea5e9", // Azul Ciano (Base da Empresa)
       electricDark: "#0284c7",
-      red: "#ef4444",      // Rose Red para saídas
-      redDark: "#b91c1c",
-      textMuted: "#94a3b8",
-      chartColors: ["#0ea5e9", "#ef4444", "#8b5cf6", "#f59e0b", "#10b981", "#64748b"]
+      red: "#ef4444",      // Vermelho (Alerta de Saída)
+      orange: "#f59e0b",   // Laranja (Imprevistos/Variáveis)
+      textMuted: "#64748b",
+      chartColors: ["#0ea5e9", "#ef4444", "#f59e0b", "#8b5cf6", "#10b981", "#64748b"]
     };
 
     const MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -135,7 +143,7 @@
     const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
     // ============================================================================
-    // ÍCONES NATIVOS
+    // ÍCONES NATIVOS BLINDADOS (Adeus Lucide Crash)
     // ============================================================================
     const Icon = ({ name, color = "currentColor", size = 20, style }) => {
       const paths = {
@@ -147,13 +155,14 @@
         "bar-chart-2": <><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></>,
         "inbox": <><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></>,
         "plus": <><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>,
-        "log-out": <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>
+        "log-out": <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>,
+        "shield-check": <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></>
       };
-      return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}>{paths[name]}</svg>;
+      return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{...style, transition: '0.2s'}}>{paths[name]}</svg>;
     };
 
     // ============================================================================
-    // SUPABASE (MOTOR)
+    // CONEXÃO SUPABASE
     // ============================================================================
     const DB_CONFIG = {
       URL: "https://urpuiznydrlwmaqhdids.supabase.co",
@@ -167,7 +176,7 @@
         });
         const data = await res.json();
         if (data && data.length > 0) return { fixos: data[0].fixos || [], unicos: data[0].unicos || [] };
-      } catch (err) {}
+      } catch (err) { console.error("Erro leitura Nuvem:", err); }
       return { fixos: [], unicos: [] };
     }
 
@@ -182,101 +191,108 @@
     }
 
     // ============================================================================
-    // COMPONENTES DE UI
+    // COMPONENTES HUMANIZADOS
     // ============================================================================
-    const PrimaryBtnStyle = { padding: "14px 24px", background: `linear-gradient(135deg, ${TOKENS.electric}, ${TOKENS.electricDark})`, border: "none", borderRadius: 10, color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, justifyContent: "center" };
-    function Lbl({ children }) { return <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: TOKENS.textMuted, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>{children}</label>; }
+    const PrimaryBtnStyle = { padding: "14px 24px", background: `linear-gradient(135deg, ${TOKENS.electric}, ${TOKENS.electricDark})`, border: "none", borderRadius: 12, color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, justifyContent: "center" };
+    function Lbl({ children }) { return <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: TOKENS.textMuted, marginBottom: 8 }}>{children}</label>; }
 
-    // FORMULÁRIO RESPONSIVO
     function Form({ type, onSave, onClose, initial, cats }) {
       const getToday = () => { const d = new Date(); return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0,10); };
       const [f, setF] = useState(initial || { nome: "", fornecedor: "", valor: "", categoria: cats[0], descricao: "", data: getToday(), status: "Pago" });
       const up = k => v => setF(p => ({ ...p, [k]: v }));
       
       const go = () => {
-        if (!f.nome || !f.valor) return alert("Preencha o Título e o Valor.");
-        const val = parseFloat(String(f.valor).replace(",", "."));
-        if(isNaN(val)) return alert("Valor inválido.");
+        if (!f.nome || !f.valor) return alert("Aviso: O Nome e o Valor são obrigatórios.");
+        
+        // BUGFIX 2: Blindagem Absoluta contra formatação errada
+        let numStr = String(f.valor).replace(/\./g, '').replace(',', '.'); 
+        const val = parseFloat(numStr);
+        if(isNaN(val)) return alert("Tem letras no valor. Digite apenas os números.");
+        
         onSave({ ...f, valor: val, id: f.id || uid(), createdAt: f.createdAt || new Date().toISOString() });
         onClose();
+      };
+
+      const getNomePlaceholder = () => {
+        if (f.categoria === "Pró-labore e Equipe") return "Ex: Pagamento do Gabriel";
+        if (f.categoria === "Ferramentas e Nuvem") return "Ex: Servidor AWS, n8n";
+        return "Descreva a saída...";
       };
 
       return (
         <React.Fragment>
           <div style={{ marginBottom: 20 }}>
-            <Lbl>O que foi gasto? *</Lbl>
-            <input className="modal-input" value={f.nome} onChange={e => up("nome")(e.target.value)} placeholder="Ex: Servidor AWS, Make.com" autoFocus />
+            <Lbl>Para onde foi esse dinheiro? *</Lbl>
+            <input className="modal-input" value={f.nome} onChange={e => up("nome")(e.target.value)} placeholder={getNomePlaceholder()} autoFocus />
           </div>
           <div className="form-grid-mobile" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
-            <div><Lbl>Valor (R$) *</Lbl><input className="modal-input" type="number" step="0.01" value={f.valor} onChange={e => up("valor")(e.target.value)} placeholder="0.00" /></div>
-            <div><Lbl>Data de Pagamento</Lbl><input className="modal-input" type="date" value={f.data} onChange={e => up("data")(e.target.value)} /></div>
+            <div><Lbl>Valor Real (R$) *</Lbl><input className="modal-input" type="number" step="0.01" value={f.valor} onChange={e => up("valor")(e.target.value)} placeholder="0.00" /></div>
+            <div><Lbl>Data Base</Lbl><input className="modal-input" type="date" value={f.data} onChange={e => up("data")(e.target.value)} /></div>
           </div>
           <div className="form-grid-mobile" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
             <div>
-              <Lbl>Categoria</Lbl>
-              <select className="modal-input" value={f.categoria} onChange={e => up("categoria")(e.target.value)} style={{cursor:"pointer"}}>{cats.map(c => <option key={c} value={c} style={{background:"#0f172a"}}>{c}</option>)}</select>
+              <Lbl>Categoria Estratégica</Lbl>
+              <select className="modal-input" value={f.categoria} onChange={e => up("categoria")(e.target.value)} style={{cursor:"pointer"}}>{cats.map(c => <option key={c} value={c} style={{background:"#0b1120"}}>{c}</option>)}</select>
             </div>
             <div>
-              <Lbl>Status</Lbl>
+              <Lbl>Status da Saída</Lbl>
               <select className="modal-input" value={f.status} onChange={e => up("status")(e.target.value)} style={{cursor:"pointer"}}>
-                <option value="Pago" style={{background:"#0f172a"}}>✔️ Efetuado (Pago)</option>
-                <option value="Pendente" style={{background:"#0f172a"}}>⏳ Pendente (A Pagar)</option>
+                <option value="Pago" style={{background:"#0b1120"}}>✔️ Já descontou (Pago)</option>
+                <option value="Pendente" style={{background:"#0b1120"}}>⏳ Vai sair (A Pagar)</option>
               </select>
             </div>
           </div>
           <div style={{ marginBottom: 32 }}>
-            <Lbl>Fornecedor ou Observação</Lbl>
-            <input className="modal-input" value={f.descricao} onChange={e => up("descricao")(e.target.value)} placeholder="Detalhes (Opcional)" />
+            <Lbl>Observação Interna</Lbl>
+            <input className="modal-input" value={f.descricao} onChange={e => up("descricao")(e.target.value)} placeholder="Dados do fornecedor, motivo..." />
           </div>
           <div style={{ display: "flex", gap: 16 }}>
             <button onClick={onClose} className="btn-cancelar" style={{ flex: 1 }}>Cancelar</button>
-            <button onClick={go} className="btn-glow" style={{ ...PrimaryBtnStyle, flex: 2 }}>Salvar Saída</button>
+            <button onClick={go} className="btn-glow" style={{ ...PrimaryBtnStyle, flex: 2 }}>Registrar Saída</button>
           </div>
         </React.Fragment>
       );
     }
 
     function StatCard({ label, value, sub, color, type }) {
-      const glowStr = type === "danger" ? "rgba(239,68,68,0.06)" : "rgba(14,165,233,0.06)";
+      const isDanger = type === "danger";
       return (
-        <div className="glass-panel" style={{ padding: "28px 24px", flex: 1, minWidth: 200, position: "relative", overflow: "hidden", boxShadow: `0 0 24px ${glowStr}` }}>
-          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: color }} />
-          <div style={{ fontSize: 11, color: TOKENS.textMuted, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>{label}</div>
-          <div className="font-display" style={{ fontSize: "clamp(1.8rem, 3vw, 2.5rem)", fontWeight: 800, color: "white", letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums", marginBottom: 4 }}>{value}</div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{sub}</div>
+        <div className="glass-panel" style={{ padding: "32px 24px", flex: 1, minWidth: 200, position: "relative", overflow: "hidden", borderTop: `2px solid ${color}` }}>
+          <div style={{ fontSize: 12, color: TOKENS.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>{label}</div>
+          <div className="font-display" style={{ fontSize: "clamp(2rem, 3.5vw, 2.5rem)", fontWeight: 800, color: "white", letterSpacing: "-0.03em", marginBottom: 4 }}>{value}</div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 500 }}>{sub}</div>
         </div>
       );
     }
 
-    // LINHA DE DADOS RESPONSIVA
     function DataRow({ item, type, onEdit, onDelete }) {
       const [confirm, setConfirm] = useState(false);
       const isPending = item.status === "Pendente";
+      const mainColor = type === "fixo" ? TOKENS.electric : TOKENS.orange;
 
       return (
-        <div className="desktop-table-row" style={{ opacity: isPending ? 0.7 : 1 }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-              <div style={{ color: "white", fontWeight: 600, fontSize: 15 }}>{item.nome}</div>
-              {isPending && <span style={{ background: "rgba(245, 158, 11, 0.15)", color: "#f59e0b", padding: "2px 6px", borderRadius: 4, fontSize: 10, fontWeight: 800, textTransform: "uppercase" }}>A Pagar</span>}
+        <div className="extrato-row" style={{ opacity: isPending ? 0.6 : 1 }}>
+          <div className="extrato-info">
+            <div className="extrato-title">
+              {item.nome}
+              {isPending && <span className="tag-pending">Programado</span>}
             </div>
-            <div style={{ color: TOKENS.textMuted, fontSize: 12, marginTop: 4, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-              <span style={{ color: TOKENS.electric, fontWeight: 600 }}>{item.categoria}</span>
-              <span style={{ opacity: 0.3 }}>•</span> 
+            <div className="extrato-meta">
+              <span className="tag-category" style={{ color: mainColor, background: `${mainColor}20` }}>{item.categoria}</span>
               <span>{fmtDate(item.data)}</span>
             </div>
-            {item.descricao && <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, marginTop: 4 }}>{item.descricao}</div>}
+            {item.descricao && <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>{item.descricao}</div>}
           </div>
           
           <div className="row-value-box">
-            <div className="font-display" style={{ fontWeight: 700, color: type === "fixo" ? TOKENS.electric : TOKENS.red, fontSize: 16 }}>
-              {fmt(item.valor)}
+            <div className="font-display" style={{ fontWeight: 800, color: type === "fixo" ? TOKENS.electric : TOKENS.orange, fontSize: 18, textAlign: "right" }}>
+              R$ {fmt(item.valor).replace('R$', '').trim()}
             </div>
-            <div className="row-actions" style={{ display: "flex", gap: 8, marginLeft: 24 }}>
-              <button onClick={() => onEdit(item)} style={{ background: "rgba(255,255,255,0.05)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 8, color: "white", padding: "6px 12px", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>Editar</button>
+            <div className="row-actions-btns" style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: window.innerWidth < 900 ? 0 : 8 }}>
+              <button onClick={() => onEdit(item)} style={{ background: "transparent", border: "none", color: TOKENS.textMuted, cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Editar</button>
               {confirm
-                ? <button onClick={() => { onDelete(item.id); setConfirm(false); }} style={{ background: "rgba(239,68,68,0.15)", border: "1px solid #ef4444", borderRadius: 8, color: "#ef4444", padding: "6px 12px", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>Certeza?</button>
-                : <button onClick={() => setConfirm(true)} style={{ background: "transparent", border: `1px solid transparent`, borderRadius: 8, color: TOKENS.textMuted, padding: "6px 12px", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>Del</button>}
+                ? <button onClick={() => { onDelete(item.id); setConfirm(false); }} style={{ background: "transparent", border: "none", color: TOKENS.red, cursor: "pointer", fontSize: 12, fontWeight: 800 }}>Confirmar Exclusão</button>
+                : <button onClick={() => setConfirm(true)} style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.2)", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Apagar</button>}
             </div>
           </div>
         </div>
@@ -284,7 +300,7 @@
     }
 
     // ============================================================================
-    // DASHBOARD PRINCIPAL (CFO VIEW)
+    // CÉREBRO DO DASHBOARD
     // ============================================================================
     function Dashboard({ onLogout }) {
       const [tab, setTab] = useState("overview"); 
@@ -318,33 +334,42 @@
       
       const saveFixo = async item => await persist(fixos.find(i => i.id === item.id) ? fixos.map(i => i.id === item.id ? item : i) : [...fixos, item], unicos);
       const saveUnico = async item => await persist(fixos, unicos.find(i => i.id === item.id) ? unicos.map(i => i.id === item.id ? item : i) : [...unicos, item]);
-      
       const delFixo = async id => await persist(fixos.filter(i => i.id !== id), unicos);
       const delUnico = async id => await persist(fixos, unicos.filter(i => i.id !== id));
 
-      const fMês = (arr) => arr.filter(u => { const d = new Date(u.data + "T12:00:00"); return d.getMonth() === mes && d.getFullYear() === ano; });
+      // BUGFIX 3: Blindagem de filtro de data contra arrays quebrados
+      const fMês = (arr) => arr.filter(u => { 
+        if(!u.data) return false;
+        const d = new Date(u.data + "T12:00:00"); 
+        return d.getMonth() === mes && d.getFullYear() === ano; 
+      });
       const uf = fMês(unicos); const ff = fMês(fixos); 
 
-      const tF = ff.reduce((a, b) => a + (b.valor || 0), 0); 
-      const tU = uf.reduce((a, b) => a + (b.valor || 0), 0);
+      const tF = ff.reduce((a, b) => a + (Number(b.valor) || 0), 0); 
+      const tU = uf.reduce((a, b) => a + (Number(b.valor) || 0), 0);
       const totalMes = tF + tU;
 
       const searchStr = search.toLowerCase();
-      const filteredF = ff.filter(i => i.nome.toLowerCase().includes(searchStr) || (i.categoria).toLowerCase().includes(searchStr));
-      const filteredU = uf.filter(i => i.nome.toLowerCase().includes(searchStr) || (i.categoria).toLowerCase().includes(searchStr));
+      const filteredF = ff.filter(i => i.nome.toLowerCase().includes(searchStr) || (i.categoria||"").toLowerCase().includes(searchStr));
+      const filteredU = uf.filter(i => i.nome.toLowerCase().includes(searchStr) || (i.categoria||"").toLowerCase().includes(searchStr));
 
-      const catF = CATS_FIXO.map(c => ({ name: c, value: ff.filter(f => f.categoria === c).reduce((a, b) => a + b.valor, 0) })).filter(d => d.value > 0);
+      const catF = CATS_FIXO.map(c => ({ name: c, value: ff.filter(f => f.categoria === c).reduce((a, b) => a + (Number(b.valor)||0), 0) })).filter(d => d.value > 0);
       
+      // BUGFIX 1: Blindagem de Gráfico para Dias 31 e Mapeamento
       const bar = Array.from({ length: 6 }, (_, i) => {
-        const d = new Date(); d.setMonth(d.getMonth() - (5 - i)); const m = d.getMonth(), a = d.getFullYear();
-        const mF = fixos.filter(u => { const dd = new Date(u.data + "T12:00:00"); return dd.getMonth() === m && dd.getFullYear() === a; }).reduce((s, u) => s + u.valor, 0);
-        const mU = unicos.filter(u => { const dd = new Date(u.data + "T12:00:00"); return dd.getMonth() === m && dd.getFullYear() === a; }).reduce((s, u) => s + u.valor, 0);
+        const d = new Date(); 
+        d.setDate(1); // Trava o dia em 1 para evitar pulo de meses (Ex: 31 Jan -> Volta 1 -> 31 Dez, mas se fosse 28 Fev -> Volta 1 -> 31 Jan (BUG))
+        d.setMonth(d.getMonth() - (5 - i)); 
+        const m = d.getMonth(), a = d.getFullYear();
+        
+        const mF = fixos.filter(u => { if(!u.data) return false; const dd = new Date(u.data + "T12:00:00"); return dd.getMonth() === m && dd.getFullYear() === a; }).reduce((s, u) => s + (Number(u.valor)||0), 0);
+        const mU = unicos.filter(u => { if(!u.data) return false; const dd = new Date(u.data + "T12:00:00"); return dd.getMonth() === m && dd.getFullYear() === a; }).reduce((s, u) => s + (Number(u.valor)||0), 0);
         return { name: MONTHS[m], Fixos: mF, Variaveis: mU, Total: mF + mU };
       });
 
-      const TooltipStyle = { background: "#0f172a", border: `1px solid rgba(255,255,255,0.05)`, borderRadius: 8, color: "white", padding: "12px", fontSize: 13 };
+      const TooltipStyle = { background: "#0b1120", border: `1px solid rgba(255,255,255,0.05)`, borderRadius: 12, color: "white", padding: "16px", fontSize: 13, boxShadow: "0 10px 25px rgba(0,0,0,0.5)" };
 
-      if (!ready) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background:"#020617" }}><div style={{ color: TOKENS.electric, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, letterSpacing: "0.2em", fontSize: 12, animation: "pulse-glow 1.5s infinite" }}>SINCRONIZANDO DADOS...</div></div>;
+      if (!ready) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background:"#030712" }}><div style={{ color: TOKENS.electric, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, letterSpacing: "0.2em", fontSize: 12, animation: "pulse-glow 1.5s infinite" }}>Sincronizando Banco...</div></div>;
       const semDadosDRE = bar.every(d => d.Total === 0);
 
       return (
@@ -355,18 +380,19 @@
           <div className="sidebar">
             <div style={{ padding: "40px 24px 32px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
-                <span className="font-display" style={{ fontSize: 20, fontWeight: 900, color: "white", letterSpacing: "-0.02em" }}>BG <span style={{ color: TOKENS.electric }}>TECH</span></span>
+                <Icon name="shield-check" size={24} color={TOKENS.electric} />
+                <span className="font-display" style={{ fontSize: 24, fontWeight: 900, color: "white", letterSpacing: "-0.02em" }}>BG <span style={{ color: TOKENS.electric }}>TECH</span></span>
               </div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span style={{ color: TOKENS.textMuted, fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>Centro de Custos</span>
-                <span style={{ width: 6, height: 6, background: syncing ? TOKENS.electric : TOKENS.green, borderRadius: "50%", opacity: syncing ? 1 : 0.4 }} title="Status"/>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8, paddingLeft: 2 }}>
+                <span style={{ color: TOKENS.textMuted, fontSize: 10, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>Gestão Financeira</span>
+                <span style={{ width: 6, height: 6, background: syncing ? TOKENS.electric : TOKENS.green, borderRadius: "50%", opacity: syncing ? 1 : 0.4 }} title="Status do Servidor"/>
               </div>
             </div>
             
             <nav style={{ flex: 1, padding: "0 16px" }}>
-              {[{ id: "overview", label: "Visão Geral", icon: "layout-dashboard" }, { id: "fixos", label: "Carga Fixa (OPEX)", icon: "anchor" }, { id: "unicos", label: "Despesas Variáveis", icon: "zap" }].map(n => (
-                <button key={n.id} onClick={() => {setTab(n.id); setSearch("");}} style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", padding: "12px 16px", borderRadius: 10, border: "none", background: tab === n.id ? "rgba(14, 165, 233, 0.1)" : "transparent", color: tab === n.id ? "white" : TOKENS.textMuted, fontWeight: tab === n.id ? 700 : 500, fontSize: 14, cursor: "pointer", fontFamily: "inherit", marginBottom: 4, transition: "0.2s" }}>
-                  <Icon name={n.icon} size={16} color={tab === n.id ? TOKENS.electric : "currentColor"} />
+              {[{ id: "overview", label: "Resumo do Mês", icon: "layout-dashboard" }, { id: "fixos", label: "Custos Fixos", icon: "anchor" }, { id: "unicos", label: "Gastos Variáveis", icon: "zap" }].map(n => (
+                <button key={n.id} onClick={() => {setTab(n.id); setSearch("");}} style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", padding: "14px 16px", borderRadius: 12, border: "none", background: tab === n.id ? "rgba(255, 255, 255, 0.05)" : "transparent", color: tab === n.id ? "white" : TOKENS.textMuted, fontWeight: tab === n.id ? 700 : 500, fontSize: 14, cursor: "pointer", fontFamily: "inherit", marginBottom: 6, transition: "0.2s" }}>
+                  <Icon name={n.icon} size={18} color={tab === n.id ? TOKENS.electric : "currentColor"} />
                   {n.label}
                 </button>
               ))}
@@ -374,128 +400,129 @@
             
             <div style={{ padding: "24px 16px", borderTop: `1px solid rgba(255,255,255,0.05)` }}>
               <button onClick={onLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px", background: "transparent", border: "none", color: TOKENS.textMuted, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                <Icon name="log-out" size={16} /> Sair do Sistema
+                <Icon name="log-out" size={16} /> Fechar Cofre
               </button>
             </div>
           </div>
 
-          {/* MAIN CONTENT */}
+          {/* ÁREA PRINCIPAL DA DIREITA */}
           <div className="main-content">
             <div className="header-mobile" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 40 }}>
               <div>
-                <h1 className="font-display" style={{ color: "white", fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-                  {tab === 'overview' ? 'Visão Consolidada' : tab === 'fixos' ? 'Carga Fixa (OPEX)' : 'Despesas Variáveis'}
+                <h1 className="font-display" style={{ color: "white", fontSize: "clamp(26px, 4vw, 36px)", fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.02em" }}>
+                  {tab === 'overview' ? 'Resumo do Mês' : tab === 'fixos' ? 'Custos Fixos da Operação' : 'Gastos Variáveis e Extras'}
                 </h1>
+                <p style={{ color: TOKENS.textMuted, fontSize: 14, margin: 0 }}>
+                  {tab === 'overview' ? 'O raio-X direto das saídas financeiras.' : `Acompanhamento de custos para ${MONTHS[mes]}/${ano}.`}
+                </p>
                 
                 {tab !== 'overview' && (
-                  <div className="search-box" style={{ position: "relative", width: 300, marginTop: 16 }}>
-                    <div style={{ position: "absolute", left: 14, top: 13, color: "rgba(255,255,255,0.3)" }}><Icon name="search" size={16} /></div>
-                    <input className="modal-input" type="text" placeholder="Buscar lançamento..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft: 40, paddingRight: 16, paddingTop: 10, paddingBottom: 10, fontSize: 13, background:"rgba(255,255,255,0.03)" }} />
+                  <div className="search-box" style={{ position: "relative", width: 320, marginTop: 24 }}>
+                    <div style={{ position: "absolute", left: 14, top: 15, color: "rgba(255,255,255,0.3)" }}><Icon name="search" size={16} /></div>
+                    <input className="modal-input" type="text" placeholder="Procurar um gasto..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft: 40, background:"rgba(255,255,255,0.02)" }} />
                   </div>
                 )}
               </div>
               
               <div className="filters" style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                <select value={mes} onChange={e => setMes(Number(e.target.value))} className="select-periodo">{MONTHS.map((m, i) => <option key={i} value={i} style={{background:"#0f172a"}}>{m}</option>)}</select>
-                <select value={ano} onChange={e => setAno(Number(e.target.value))} className="select-periodo">{[2024, 2025, 2026, 2027].map(a => <option key={a} value={a} style={{background:"#0f172a"}}>{a}</option>)}</select>
+                <select value={mes} onChange={e => setMes(Number(e.target.value))} className="select-periodo">{MONTHS.map((m, i) => <option key={i} value={i} style={{background:"#0b1120"}}>{m}</option>)}</select>
+                <select value={ano} onChange={e => setAno(Number(e.target.value))} className="select-periodo">{[2024, 2025, 2026, 2027].map(a => <option key={a} value={a} style={{background:"#0b1120"}}>{a}</option>)}</select>
               </div>
             </div>
 
-            {/* OVERVIEW TAB */}
+            {/* ABA: RESUMO GERAL */}
             {tab === "overview" && (
               <div style={{ animation: "fadeIn 0.3s ease-out" }}>
                 <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 32 }}>
-                  <StatCard label="Saída Total (Mês)" value={fmt(totalMes)} sub={`Referência: ${MONTHS[mes]}`} color={TOKENS.red} type="danger" />
-                  <StatCard label="Custo Fixo Base" value={fmt(tF)} sub={`${ff.length} despesas mapeadas`} color={TOKENS.electric} type="normal" />
-                  <StatCard label="Gasto Variável" value={fmt(tU)} sub={`${uf.length} saídas extras`} color="#f59e0b" type="normal" />
+                  <StatCard label="Total de Saídas no Mês" value={fmt(totalMes)} sub={`Soma geral em ${MONTHS[mes]}`} color={TOKENS.red} type="danger" />
+                  <StatCard label="Total em Custos Fixos" value={fmt(tF)} sub={`A base da operação (${ff.length} itens)`} color={TOKENS.electric} type="normal" />
+                  <StatCard label="Total em Variáveis" value={fmt(tU)} sub={`Gastos extras ou pontuais (${uf.length} itens)`} color={TOKENS.orange} type="normal" />
                 </div>
 
                 <div className="charts-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
                   <div className="glass-panel chart-container" style={{ padding: 32 }}>
-                    <h3 className="font-display" style={{ color: "white", margin: "0 0 32px", fontSize: 16, fontWeight: 700 }}>Curva de Saída — Histórico Semestral</h3>
+                    <h3 className="font-display" style={{ color: "white", margin: "0 0 32px", fontSize: 16, fontWeight: 700 }}>Curva de Custos (Últimos 6 meses)</h3>
                     {semDadosDRE ? (
-                      <div className="empty-state" style={{ height: 240, border: "none", background: "transparent" }}><Icon name="bar-chart-2" size={40} /><p>Registre custos para ver o histórico.</p></div>
+                      <div className="empty-state" style={{ height: 260, border: "none", background: "transparent" }}><Icon name="bar-chart-2" size={40} /><p>O gráfico aparece quando houver saídas.</p></div>
                     ) : (
                       <ResponsiveContainer width="100%" height={280}>
                         <AreaChart data={bar} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                           <defs>
-                            <linearGradient id="colorFixos" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={TOKENS.electric} stopOpacity={0.3}/><stop offset="95%" stopColor={TOKENS.electric} stopOpacity={0}/></linearGradient>
-                            <linearGradient id="colorVar" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/><stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/></linearGradient>
+                            <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={TOKENS.red} stopOpacity={0.3}/><stop offset="95%" stopColor={TOKENS.red} stopOpacity={0}/></linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
                           <XAxis dataKey="name" stroke="rgba(255,255,255,0.1)" tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 12 }} tickMargin={12} />
                           <YAxis stroke="rgba(255,255,255,0.1)" tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 12 }} tickFormatter={v => `R$${(v/1000).toFixed(0)}k`} width={50} />
                           <Tooltip formatter={v => fmt(v)} contentStyle={TooltipStyle} />
                           <Legend wrapperStyle={{paddingTop: 20, fontSize: 13, color: TOKENS.textMuted}} iconType="circle" />
-                          <Area type="monotone" dataKey="Fixos" stroke={TOKENS.electric} strokeWidth={2} fillOpacity={1} fill="url(#colorFixos)" />
-                          <Area type="monotone" dataKey="Variaveis" name="Variáveis" stroke="#f59e0b" strokeWidth={2} fillOpacity={1} fill="url(#colorVar)" />
+                          <Area type="monotone" dataKey="Total" name="Sangria Total Mensal" stroke={TOKENS.red} strokeWidth={3} fillOpacity={1} fill="url(#colorTotal)" activeDot={{ r: 6, strokeWidth: 0, fill: "white" }} />
                         </AreaChart>
                       </ResponsiveContainer>
                     )}
                   </div>
 
                   <div className="glass-panel chart-container" style={{ padding: 32 }}>
-                    <h3 className="font-display" style={{ color: "white", margin: "0 0 24px", fontSize: 16, fontWeight: 700 }}>Composição Fixo</h3>
+                    <h3 className="font-display" style={{ color: "white", margin: "0 0 24px", fontSize: 16, fontWeight: 700 }}>Onde a Base Gasta?</h3>
                     {catF.length > 0 ? ( 
                       <ResponsiveContainer width="100%" height={280}>
                         <PieChart>
-                          <Pie data={catF} cx="50%" cy="40%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value" stroke="none">
+                          <Pie data={catF} cx="50%" cy="45%" innerRadius={60} outerRadius={80} paddingAngle={4} dataKey="value" stroke="none">
                             {catF.map((_, i) => <Cell key={i} fill={TOKENS.chartColors[i % TOKENS.chartColors.length]} />)}
                           </Pie>
                           <Tooltip formatter={v => fmt(v)} contentStyle={TooltipStyle} itemStyle={{color:"white", fontSize: 12}} />
-                          <Legend iconType="circle" layout="vertical" verticalAlign="bottom" wrapperStyle={{fontSize: 11, color: TOKENS.textMuted}} />
+                          <Legend iconType="circle" layout="horizontal" verticalAlign="bottom" wrapperStyle={{fontSize: 11, color: TOKENS.textMuted, marginTop: 10}} />
                         </PieChart>
                       </ResponsiveContainer> 
-                    ) : <div className="empty-state" style={{ height: 240, border: "none", background: "transparent" }}><Icon name="pie-chart" size={40} /><p>Sem dados.</p></div>}
+                    ) : <div className="empty-state" style={{ height: 260, border: "none", background: "transparent" }}><Icon name="pie-chart" size={40} /><p>Aguardando custos fixos.</p></div>}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* FIXOS TAB */}
+            {/* ABA: CUSTOS FIXOS */}
             {tab === "fixos" && (
               <div style={{ animation: "fadeIn 0.3s ease-out" }}>
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
-                  <button onClick={() => setModal({ type: "fixo", item: null })} className="btn-glow" style={{...PrimaryBtnStyle, width: window.innerWidth < 900 ? "100%" : "auto"}}><Icon name="plus" size={16}/> Registrar Custo Fixo</button>
+                  <button onClick={() => setModal({ type: "fixo", item: null })} className="btn-glow" style={{...PrimaryBtnStyle, width: window.innerWidth < 900 ? "100%" : "auto"}}><Icon name="plus" size={18}/> Novo Custo Fixo</button>
                 </div>
-                {filteredF.length === 0 ? <div className="empty-state"><Icon name="inbox" size={48} /><h3>Sem registros</h3><p>Nenhum custo fixo encontrado.</p></div> : (
-                  <div className="glass-panel" style={{ overflow: "hidden" }}>
+                {filteredF.length === 0 ? <div className="empty-state"><Icon name="inbox" size={48} /><h3>Cofre trancado</h3><p>Nenhum custo fixo anotado em {MONTHS[mes]}.</p></div> : (
+                  <div className="glass-panel" style={{ overflow: "hidden", padding: window.innerWidth < 900 ? 16 : 0, background: window.innerWidth < 900 ? "transparent" : "", border: window.innerWidth < 900 ? "none" : "", boxShadow: window.innerWidth < 900 ? "none" : "" }}>
                     {filteredF.sort((a, b) => new Date(b.data) - new Date(a.data)).map(item => <DataRow key={item.id} item={item} type="fixo" onEdit={item => setModal({ type: "fixo", item })} onDelete={delFixo} />)}
-                    <div style={{ padding: "20px 24px", background: "rgba(0,0,0,0.3)", textAlign: "right", borderTop: "1px solid rgba(255,255,255,0.05)" }}><span style={{fontSize: 12, color: TOKENS.textMuted, marginRight: 16, textTransform: "uppercase", fontWeight: 700}}>Total Fixo:</span><span className="font-display" style={{ color: TOKENS.electric, fontSize: 24, fontWeight: 800 }}>{fmt(tF)}</span></div>
+                    <div style={{ padding: "24px", background: "rgba(0,0,0,0.4)", textAlign: "right", borderTop: "1px solid rgba(255,255,255,0.05)", borderRadius: window.innerWidth < 900 ? 16 : 0, marginTop: window.innerWidth < 900 ? 16 : 0 }}><span style={{fontSize: 12, color: TOKENS.textMuted, marginRight: 16, textTransform: "uppercase", fontWeight: 700}}>Soma da Base:</span><span className="font-display" style={{ color: TOKENS.electric, fontSize: 24, fontWeight: 800 }}>{fmt(tF)}</span></div>
                   </div>
                 )}
               </div>
             )}
 
-            {/* UNICOS TAB */}
+            {/* ABA: GASTOS VARIÁVEIS */}
             {tab === "unicos" && (
               <div style={{ animation: "fadeIn 0.3s ease-out" }}>
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
-                  <button onClick={() => setModal({ type: "unico", item: null })} className="btn-glow" style={{...PrimaryBtnStyle, background: `linear-gradient(135deg, #ef4444, #b91c1c)`, width: window.innerWidth < 900 ? "100%" : "auto"}}><Icon name="plus" size={16}/> Lançar Gasto Variável</button>
+                  <button onClick={() => setModal({ type: "unico", item: null })} className="btn-glow" style={{...PrimaryBtnStyle, background: `linear-gradient(135deg, ${TOKENS.orange}, #d97706)`, width: window.innerWidth < 900 ? "100%" : "auto"}}><Icon name="plus" size={18}/> Novo Gasto Variável</button>
                 </div>
-                {filteredU.length === 0 ? <div className="empty-state"><Icon name="inbox" size={48} /><h3>Sem registros</h3><p>Nenhuma despesa variável encontrada.</p></div> : (
-                  <div className="glass-panel" style={{ overflow: "hidden" }}>
+                {filteredU.length === 0 ? <div className="empty-state"><Icon name="inbox" size={48} /><h3>Tudo sob controle</h3><p>Nenhuma despesa variável ou imprevisto no mês.</p></div> : (
+                  <div className="glass-panel" style={{ overflow: "hidden", padding: window.innerWidth < 900 ? 16 : 0, background: window.innerWidth < 900 ? "transparent" : "", border: window.innerWidth < 900 ? "none" : "", boxShadow: window.innerWidth < 900 ? "none" : "" }}>
                     {filteredU.sort((a, b) => new Date(b.data) - new Date(a.data)).map(item => <DataRow key={item.id} item={item} type="unico" onEdit={item => setModal({ type: "unico", item })} onDelete={delUnico} />)}
-                    <div style={{ padding: "20px 24px", background: "rgba(0,0,0,0.3)", textAlign: "right", borderTop: "1px solid rgba(255,255,255,0.05)" }}><span style={{fontSize: 12, color: TOKENS.textMuted, marginRight: 16, textTransform: "uppercase", fontWeight: 700}}>Total Variável:</span><span className="font-display" style={{ color: TOKENS.red, fontSize: 24, fontWeight: 800 }}>{fmt(tU)}</span></div>
+                    <div style={{ padding: "24px", background: "rgba(0,0,0,0.4)", textAlign: "right", borderTop: "1px solid rgba(255,255,255,0.05)", borderRadius: window.innerWidth < 900 ? 16 : 0, marginTop: window.innerWidth < 900 ? 16 : 0 }}><span style={{fontSize: 12, color: TOKENS.textMuted, marginRight: 16, textTransform: "uppercase", fontWeight: 700}}>Soma dos Extras:</span><span className="font-display" style={{ color: TOKENS.orange, fontSize: 24, fontWeight: 800 }}>{fmt(tU)}</span></div>
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* MOBILE BOTTOM NAVIGATION */}
+          {/* MENU APP NO CELULAR (MAGIA DO NUBANK) */}
           <div className="mobile-nav">
-            {[{ id: "overview", label: "Painel", icon: "layout-dashboard" }, { id: "fixos", label: "Fixos", icon: "anchor" }, { id: "unicos", label: "Variáveis", icon: "zap" }].map(n => (
+            {[{ id: "overview", label: "Resumo", icon: "layout-dashboard" }, { id: "fixos", label: "Fixos", icon: "anchor" }, { id: "unicos", label: "Variáveis", icon: "zap" }].map(n => (
               <button key={n.id} className={`nav-btn-mobile ${tab === n.id ? 'active' : ''}`} onClick={() => {setTab(n.id); setSearch("");}}>
-                <Icon name={n.icon} size={20} />
+                <Icon name={n.icon} size={22} />
                 {n.label}
               </button>
             ))}
           </div>
 
-          {/* MODAL DE CRIAÇÃO/EDIÇÃO */}
+          {/* MODAL DE REGISTRO */}
           {modal && (
-            <Modal title={modal.item ? "Editar Lançamento" : modal.type === "fixo" ? "Novo Custo Fixo" : "Novo Gasto Variável"} onClose={() => setModal(null)}>
+            <Modal title={modal.item ? "Alterar Lançamento" : modal.type === "fixo" ? "Novo Custo Fixo" : "Novo Gasto Variável"} onClose={() => setModal(null)}>
               <Form type={modal.type} onSave={modal.type === "fixo" ? saveFixo : saveUnico} onClose={() => setModal(null)} initial={modal.item} cats={modal.type === "fixo" ? CATS_FIXO : CATS_UNICO} />
             </Modal>
           )}
@@ -507,20 +534,21 @@
       const [u, setU] = useState(""); const [p, setP] = useState(""); const [err, setErr] = useState(""); const [load, setLoad] = useState(false);
       const go = () => {
         setLoad(true);
-        setTimeout(() => { if (u.trim().toLowerCase() === ADMIN.user && p === ADMIN.pass) onLogin(); else { setErr("Acesso Negado."); setLoad(false); } }, 800);
+        setTimeout(() => { if (u.trim().toLowerCase() === ADMIN.user && p === ADMIN.pass) onLogin(); else { setErr("Acesso Negado. Credenciais erradas."); setLoad(false); } }, 800);
       };
       return (
         <div style={{ minHeight: "100vh", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div className="hex-bg" />
-          <div className="glass-panel" style={{ padding: "40px 32px", width: "100%", maxWidth: 400, zIndex: 10 }}>
+          <div className="glass-panel" style={{ padding: "48px 32px", width: "100%", maxWidth: 420, zIndex: 10, background: "rgba(11, 17, 32, 0.85)" }}>
             <div style={{ textAlign: "center", marginBottom: 40 }}>
-              <h1 className="font-display" style={{ color: "white", fontSize: 24, fontWeight: 800, margin: "0 0 8px" }}>BG <span style={{ color: TOKENS.electric }}>TECH</span></h1>
-              <p style={{ color: TOKENS.electric, fontSize: 10, fontWeight: 800, margin: 0, textTransform: "uppercase", letterSpacing: "0.2em" }}>Centro de Custos CFO</p>
+              <Icon name="shield-check" size={48} color={TOKENS.electric} style={{marginBottom: 16}} />
+              <h1 className="font-display" style={{ color: "white", fontSize: 28, fontWeight: 800, margin: "0 0 8px" }}>BG <span style={{ color: TOKENS.electric }}>TECH</span></h1>
+              <p style={{ color: TOKENS.textMuted, fontSize: 11, fontWeight: 700, margin: 0, textTransform: "uppercase", letterSpacing: "0.2em" }}>Acesso ao Cofre (CFO)</p>
             </div>
-            <div style={{ marginBottom: 20 }}><Lbl>ID de Acesso</Lbl><input className="modal-input" value={u} onChange={e => { setU(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} placeholder="Usuário root" autoFocus /></div>
-            <div style={{ marginBottom: 32 }}><Lbl>Chave de Segurança</Lbl><input className="modal-input" type="password" value={p} onChange={e => { setP(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} placeholder="••••••••" /></div>
-            {err && <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: 12, color: TOKENS.red, fontSize: 13, textAlign: "center", marginBottom: 24, fontWeight: 700 }}>⚠️ {err}</div>}
-            <button onClick={go} disabled={load} className="btn-glow" style={{ ...PrimaryBtnStyle, width: "100%", padding: "16px", fontSize: 15 }}>{load ? "Autenticando..." : "Acessar"}</button>
+            <div style={{ marginBottom: 20 }}><input className="modal-input" value={u} onChange={e => { setU(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} placeholder="ID de Acesso (Usuário)" autoFocus /></div>
+            <div style={{ marginBottom: 32 }}><input className="modal-input" type="password" value={p} onChange={e => { setP(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} placeholder="Senha" /></div>
+            {err && <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 12, padding: 12, color: TOKENS.red, fontSize: 13, textAlign: "center", marginBottom: 24, fontWeight: 600 }}>{err}</div>}
+            <button onClick={go} disabled={load} className="btn-glow" style={{ ...PrimaryBtnStyle, width: "100%", padding: "16px", fontSize: 16 }}>{load ? "Abrindo a Porta..." : "Destrancar Cofre"}</button>
           </div>
         </div>
       );
