@@ -43,6 +43,16 @@
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+    /* Correção do Autofill do Navegador (Fundo Branco nunca mais) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
+        -webkit-text-fill-color: white !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
     /* Fundo Tech */
     .bg-grid { position: fixed; inset: 0; z-index: -2; background-size: 50px 50px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); }
     .bg-glow-1 { position: fixed; width: 800px; height: 800px; background: radial-gradient(circle, var(--primary-glow) 0%, transparent 60%); top: -300px; right: -200px; z-index: -1; pointer-events: none; }
@@ -54,7 +64,7 @@
     .main-content { flex: 1; margin-left: 280px; padding: 48px clamp(20px, 5vw, 56px); max-width: 1600px; width: 100%; }
 
     /* Componentes Premium */
-    .glass-card { background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 24px; box-shadow: var(--glass-shadow); padding: clamp(20px, 4vw, 32px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .glass-card { background: var(--bg-card); backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 24px; box-shadow: var(--glass-shadow); padding: clamp(20px, 4vw, 32px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     .glass-card:hover { border-color: rgba(14, 165, 233, 0.2); }
 
     .btn-action { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; padding: 14px 28px; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 24px var(--primary-glow), inset 0 1px 1px rgba(255,255,255,0.3); transition: 0.2s; white-space: nowrap; }
@@ -66,10 +76,13 @@
     .nav-btn.active { background: linear-gradient(90deg, rgba(14,165,233,0.1), transparent); color: var(--primary); border-left: 2px solid var(--primary); }
 
     /* Formulários e Inputs */
-    .input-wrapper { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; width: 100%; }
+    .input-wrapper { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; width: 100%; position: relative; }
     .input-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
     .input-field { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 14px; padding: 16px; color: white; font-size: 16px; transition: 0.3s; box-shadow: inset 0 2px 6px rgba(0,0,0,0.5); }
     .input-field:focus { border-color: var(--primary); background: rgba(14,165,233,0.03); box-shadow: 0 0 0 4px var(--primary-glow), inset 0 2px 6px rgba(0,0,0,0.5); }
+    .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 20px; height: 20px; pointer-events: none; transition: 0.3s; }
+    .input-field:focus + .input-icon { color: var(--primary); } /* Acende o ícone no foco */
+    .input-with-icon { padding-left: 48px; }
 
     /* Header & Filters */
     .top-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; gap: 20px; flex-wrap: wrap; }
@@ -111,35 +124,23 @@
     .type-btn.active { background: var(--bg-card); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); }
 
     /* ==========================================================================
-       MODO RESPONSIVO MOBILE (Onde a mágica acontece)
+       MODO RESPONSIVO MOBILE
        ========================================================================== */
     @media (max-width: 1000px) {
       .sidebar { display: none; }
-      
-      /* Ajuste do container principal */
       .main-content { margin-left: 0; padding: 32px 16px 120px; }
-      
-      /* Header 100% Flexível */
       .top-header { flex-direction: column; align-items: flex-start; margin-bottom: 32px; gap: 16px; }
       .header-actions { width: 100%; flex-direction: column; align-items: stretch; gap: 16px; }
       .filters-box { width: 100%; display: flex; justify-content: space-between; }
       .filter-select { flex: 1; text-align: center; }
-      
-      /* Ajuste de Texto */
       #page-title { font-size: clamp(28px, 8vw, 36px); }
       .stat-number { font-size: clamp(32px, 8vw, 40px) !important; }
-
-      /* Grids em 1 Coluna */
       .charts-grid { grid-template-columns: 1fr; }
       .form-grid-mobile { display: flex !important; flex-direction: column !important; gap: 0 !important; }
       
-      /* Menu Inferior Fixo */
       .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(3,7,18,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); padding: 12px 16px; z-index: 100; justify-content: space-around; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
       .m-nav-btn { background: transparent; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; transition: 0.3s; }
       .m-nav-btn.active { color: var(--primary); transform: translateY(-4px); filter: drop-shadow(0 4px 8px var(--primary-glow)); }
-
-      /* Telas de Login */
-      .login-box { padding: 40px 24px; margin: 16px; border-radius: 20px; }
     }
     @media (min-width: 1001px) { .mobile-nav { display: none; } }
 
@@ -152,28 +153,38 @@
     .sync-status { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--text-muted); padding-left: 16px; }
     .sync-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success); }
     @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    @keyframes pulse-glow { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
   </style>
 </head>
 <body>
 
-  <div id="login-screen" class="login-wrapper">
-    <div class="bg-grid"></div><div class="bg-glow-1 login-glow"></div>
-    <div class="glass-card login-box">
+  <div id="login-screen" style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: var(--bg-dark);">
+    <div class="bg-grid"></div>
+    <div style="position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 60%); top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; filter: blur(40px); pointer-events: none; animation: pulse-glow 4s ease-in-out infinite;"></div>
+    
+    <div class="glass-card" style="width: 100%; max-width: 440px; margin: 20px; padding: 56px 40px; text-align: center; position: relative; z-index: 10;">
+      
       <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom: 24px;">
-        <i data-lucide="cpu" color="#0ea5e9" style="width:40px; height:40px;"></i>
-        <h1 class="font-title" style="font-size: clamp(28px, 6vw, 36px); letter-spacing:-0.03em;">BG <span>TECH</span></h1>
-      </div>
-      <div style="background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.3); color:var(--primary); padding:6px 16px; border-radius:100px; font-size:11px; font-weight:800; letter-spacing:0.15em; display:inline-block; margin-bottom: 40px;">ACESSO RESTRITO CFO</div>
-      
-      <div class="input-wrapper" style="text-align: left;">
-        <input type="text" id="login-user" class="input-field" placeholder="Identificação">
-      </div>
-      <div class="input-wrapper" style="text-align: left; margin-bottom: 32px;">
-        <input type="password" id="login-pass" class="input-field" placeholder="Senha do Cofre">
+        <i data-lucide="cpu" style="color:var(--primary); width:36px; height:36px;"></i>
+        <h1 class="font-title" style="font-size: 36px; letter-spacing:-0.03em; margin:0;">BG <span>TECH</span></h1>
       </div>
       
-      <button class="btn-action" style="width: 100%; padding: 18px;" onclick="app.login()">
-        Destrancar Núcleo <i data-lucide="unlock" style="width:18px;"></i>
+      <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.3); color:var(--primary); padding:6px 16px; border-radius:100px; font-size:11px; font-weight:800; letter-spacing:0.1em; margin-bottom: 48px;">
+        <i data-lucide="shield-check" style="width:14px; height:14px;"></i> ACESSO RESTRITO CFO
+      </div>
+      
+      <div style="position: relative; margin-bottom: 16px;">
+        <input type="text" id="login-user" class="input-field input-with-icon" placeholder="ID de Acesso">
+        <i data-lucide="user" class="input-icon"></i>
+      </div>
+      
+      <div style="position: relative; margin-bottom: 40px;">
+        <input type="password" id="login-pass" class="input-field input-with-icon" placeholder="Senha do Cofre">
+        <i data-lucide="key" class="input-icon"></i>
+      </div>
+      
+      <button class="btn-action" style="width: 100%; padding: 18px; font-size: 16px; justify-content: center; gap: 12px;" onclick="app.login()">
+        Destrancar Sistema <i data-lucide="arrow-right" style="width: 18px;"></i>
       </button>
     </div>
   </div>
@@ -213,7 +224,7 @@
             </select>
           </div>
           <button class="btn-action" style="width: 100%;" onclick="app.openDrawer()">
-            <i data-lucide="plus"></i> Adicionar
+            <i data-lucide="plus"></i> Adicionar Gasto
           </button>
         </div>
       </header>
