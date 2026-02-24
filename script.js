@@ -429,6 +429,7 @@ function runLoading() {
   tick();
 }
 
+// ==== NOVO SHOW RESULT OTMIZADO E ANIMADO ====
 function showResult() {
   const body = document.getElementById('quiz-body');
   const nome = textData.nome.split(' ')[0];
@@ -450,7 +451,7 @@ function showResult() {
   if (fatIndex === 2) { minLoss = 28500; maxLoss = 42000; }
   if (fatIndex === 3) { minLoss = 65000; maxLoss = 98000; }
 
-  const lostValueStr = `R$ ${minLoss.toLocaleString('pt-BR')} a R$ ${maxLoss.toLocaleString('pt-BR')} /mês`;
+  const lostValueStr = `R$ ${(minLoss / 1000).toFixed(0)}k a R$ ${(maxLoss / 1000).toFixed(0)}k`;
   const workersEquiv = (maxLoss / 3500).toFixed(1);
 
   let score = 38; 
@@ -469,104 +470,96 @@ function showResult() {
   const scoreCat = scoreLabels.find(s => score <= s.max);
   const circleOffset = 251 - (251 * (score / 100));
 
-  const recupAuto = (maxLoss * 0.6).toLocaleString('pt-BR');
-  const recupInteg = (maxLoss * 0.35).toLocaleString('pt-BR');
-  const totalRecup = (maxLoss * 0.95).toLocaleString('pt-BR');
+  const recupAuto = (maxLoss * 0.6 / 1000).toFixed(1);
+  const recupInteg = (maxLoss * 0.35 / 1000).toFixed(1);
 
   body.innerHTML = `
-    <div class="reveal visible">
-      <h2 class="q-title" style="font-size: 24px;">${nome}, encontramos o problema.</h2>
-      <div class="mirror-text">
-        ${mirrorText}
+    <div class="reveal visible" style="animation: fadeIn 0.5s ease-out;">
+      <h2 class="q-title" style="font-size: 24px; margin-bottom: 8px;">${nome}, encontramos o problema.</h2>
+      <p class="q-desc" style="font-size: 15px;">Processamos os dados da <strong>${empresa}</strong> contra o benchmark do seu setor.</p>
+      
+      <div class="score-banner">
+        <div class="score-circle">
+          <svg viewBox="0 0 100 100">
+            <circle class="score-track" cx="50" cy="50" r="40"></circle>
+            <circle class="score-fill" id="anim-circle" cx="50" cy="50" r="40" style="stroke-dasharray: 251; stroke-dashoffset: 251;"></circle>
+          </svg>
+          <div class="score-number">
+            <span class="score-val">${score}</span>
+            <span class="score-max">/100</span>
+          </div>
+        </div>
+        <div class="score-text">
+          <span style="font-size: 13px; color: var(--text-3);">Maturidade Operacional</span>
+          <span class="score-category" style="color: ${scoreCat.color};">${scoreCat.label}</span>
+        </div>
       </div>
 
-      <div class="score-banner">
-         <div class="score-circle">
-           <svg viewBox="0 0 100 100">
-             <circle class="score-track" cx="50" cy="50" r="40"></circle>
-             <circle class="score-fill" id="anim-circle" cx="50" cy="50" r="40" style="stroke-dashoffset: 251;"></circle>
-           </svg>
-           <div class="score-number">
-             <span class="score-val">${score}</span>
-             <span class="score-max">/100</span>
-           </div>
-         </div>
-         <div class="score-text">
-           <span class="score-category" style="color: ${scoreCat.color};">${scoreCat.label}</span>
-           <p style="margin-top: 8px;">Você está entre os 34% de empresas em ${leadLocation} que identificaram a dor, mas não agiram. As que resolveram têm score médio de 78+. A diferença é a automação.</p>
-         </div>
-      </div>
-      
       <div class="result-box">
-        <div class="alert-tag">CUSTO MENSAL DAS INEFICIÊNCIAS</div>
-        <div class="loss-value">${lostValueStr}</div>
-        <div class="loss-desc">Baseado no faturamento e padrão da sua região. Esse valor sai direto da margem de lucro.</div>
-        <div class="equivalence">Equivale a ${workersEquiv} funcionários trabalhando o mês inteiro só para cobrir retrabalho.</div>
+        <span class="alert-tag">Custo Invisível Estimado</span>
+        <div class="loss-value">${lostValueStr} <span style="font-size: 16px; color: var(--text-3); font-weight: 500;">/mês</span></div>
+        <p style="font-size: 14px; color: var(--text-2); margin-top: 8px;">Equivale a <strong>${workersEquiv} funcionários</strong> trabalhando o mês inteiro apenas para cobrir ineficiências e retrabalho manual.</p>
+      </div>
+
+      <div class="opportunity-highlight-card">
+        <div class="opp-highlight-label"><i data-lucide="trending-up" style="width: 16px;"></i> Oportunidade Identificada</div>
+        <div class="opp-highlight-value">R$ ${(maxLoss / 1000).toFixed(0)}k <span style="font-size: 16px; font-weight: 600; color: #064e3b;">/mês recuperáveis</span></div>
       </div>
 
       <div class="opps-box">
+        <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--text-1); margin-bottom: 20px;">Plano de Ação Sugerido:</h3>
+        
         <div class="opp-item">
-           <div class="opp-header"><span>1. Automação de tarefas repetitivas</span><span>Alto ROI</span></div>
-           <div class="opp-bar-wrap"><div class="opp-bar" id="bar-0" style="width: 0%;"></div></div>
-           <div class="opp-sub">Potencial de recuperação: R$ ${recupAuto}/mês</div>
+          <div class="opp-header"><span>1. Automação de Tarefas</span><span>R$ ${recupAuto}k</span></div>
+          <div class="opp-bar-wrap"><div class="opp-bar" id="bar-0" style="width: 0%;" data-target="85%"></div></div>
         </div>
         <div class="opp-item">
-           <div class="opp-header"><span>2. Integração dos sistemas atuais</span><span>Médio/Alto</span></div>
-           <div class="opp-bar-wrap"><div class="opp-bar" id="bar-1" style="width: 0%;"></div></div>
-           <div class="opp-sub">Potencial de recuperação: R$ ${recupInteg}/mês</div>
+          <div class="opp-header"><span>2. Integração de Sistemas</span><span>R$ ${recupInteg}k</span></div>
+          <div class="opp-bar-wrap"><div class="opp-bar" id="bar-1" style="width: 0%; background: var(--cyan);" data-target="65%"></div></div>
         </div>
         <div class="opp-item">
-           <div class="opp-header"><span>3. Dashboard de gestão em tempo real</span><span>Estratégico</span></div>
-           <div class="opp-bar-wrap"><div class="opp-bar" id="bar-2" style="width: 0%;"></div></div>
-           <div class="opp-sub">Impacto drástico em tomada de decisão e escala</div>
-        </div>
-        <div class="total-opp-box">
-           <span class="total-opp-label">OPORTUNIDADE IDENTIFICADA</span>
-           <span class="total-opp-val">R$ ${totalRecup}/mês recuperáveis</span>
+          <div class="opp-header"><span>3. Dashboards de Controle</span><span>Alto Valor</span></div>
+          <div class="opp-bar-wrap"><div class="opp-bar" id="bar-2" style="width: 0%; background: var(--text-3);" data-target="40%"></div></div>
         </div>
       </div>
-      
-      <div style="border-top: 1px solid var(--border-lt); padding-top: 32px;">
-        
-        <div class="urgency-bar">
-          <i data-lucide="clock" width="16"></i>
-          Diagnósticos aprofundados disponíveis esta semana: <strong>4 vagas</strong>
-        </div>
 
-        <p style="font-size: 16px; color: var(--text-3); margin-bottom: 24px; line-height: 1.6;">
-          ${nome}, o plano está pronto. O próximo passo é uma conversa de 20 minutos com nosso time. Sem apresentação de vendas e sem propostas no ar. <strong>Nossos especialistas já viram este diagnóstico antes de falar com você.</strong>
-        </p>
-
-        <button class="btn-primary js-wpp" style="width:100%; padding: 20px; font-size: 16px; margin-bottom: 12px;">
-          Quero meu plano para a ${empresa} <i data-lucide="arrow-right" width="18"></i>
-        </button>
-        <button class="btn-ghost-whatsapp js-wpp-direct" style="width:100%;">
-          <i data-lucide="message-circle" width="18"></i> Falar agora com nosso time
-        </button>
-        
-        <p style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 12px;">Resposta em até 2 horas úteis. Sem compromisso.</p>
+      <div class="urgency-bar">
+        <i data-lucide="clock" style="width: 16px;"></i> Restam apenas 4 agendas para novos clientes esta semana.
       </div>
-    </div>`;
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 32px;">
+        <button class="btn-ghost-whatsapp js-wpp-direct" style="width: 100%;">
+          Agendar minha conversa de 20 min gratuita
+        </button>
+        <button class="btn-primary js-wpp" style="width: 100%; justify-content: center; padding: 18px; font-size: 16px;">
+          Quero meu plano estrutural para a ${empresa}
+        </button>
+      </div>
+    </div>
+  `;
+  
   lucide.createIcons();
 
+  // ATIVA AS ANIMAÇÕES DE FORMA SEGURA E ASSÍNCRONA
   setTimeout(() => {
     const elCirc = document.getElementById('anim-circle');
-    if (elCirc) elCirc.style.strokeDashoffset = circleOffset;
+    if (elCirc) {
+      elCirc.style.transition = 'stroke-dashoffset 1.5s ease-out';
+      elCirc.style.strokeDashoffset = circleOffset;
+    }
 
-    const bars = [
-      { id: 'bar-0', w: '85%', d: 500 },
-      { id: 'bar-1', w: '65%', d: 800 },
-      { id: 'bar-2', w: '45%', d: 1100 }
-    ];
-    bars.forEach(b => {
+    [0, 1, 2].forEach((i, index) => {
       setTimeout(() => {
-        const barEl = document.getElementById(b.id);
-        if (barEl) barEl.style.width = b.w;
-      }, b.d);
+        const barEl = document.getElementById(`bar-${i}`);
+        if (barEl) {
+          barEl.style.transition = 'width 1s ease-out';
+          barEl.style.width = barEl.getAttribute('data-target');
+        }
+      }, 500 + (index * 300)); // Delay em cascata (Escadinha)
     });
   }, 100);
 
-  // PAYLOAD ORGANIZADO PARA O SUPABASE (Seu CRM)
+  // PREPARA O ENVIO PARA O SUPABASE
   const supabasePayload = {
     nome: textData.nome,
     empresa: textData.empresa,
@@ -581,7 +574,7 @@ function showResult() {
   };
 
   const openWpp = () => {
-    // 1. GRAVA NO SUPABASE DE FORMA SILENCIOSA E ULTRA RÁPIDA
+    // 1. Grava no banco de dados Supabase na surdina
     if (CONFIG.supabaseUrl && CONFIG.supabaseKey) {
       fetch(`${CONFIG.supabaseUrl}/rest/v1/leads`, {
         method: 'POST',
@@ -595,20 +588,22 @@ function showResult() {
       }).catch(err => console.error("Erro no DB:", err));
     }
 
-    // 2. REDIRECIONA O LEAD PARA O WHATSAPP COM A MENSAGEM PRONTA
-    const msg = `Olá! Fiz o diagnóstico da BG Tech agora. Score ${score}/100, custo estimado de R$ ${(minLoss / 1000).toFixed(0)}k a R$ ${(maxLoss / 1000).toFixed(0)}k mensais em ineficiências. Quero conversar sobre os próximos passos para a ${empresa}.`;
+    // 2. Dispara o lead pro WhatsApp com a copy focada no agendamento de 20 min
+    const msg = `Olá! Fiz o diagnóstico da BG Tech agora. Score ${score}/100, custo estimado de R$ ${(minLoss / 1000).toFixed(0)}k a R$ ${(maxLoss / 1000).toFixed(0)}k mensais em ineficiências. Quero agendar a conversa de 20 min para a ${empresa}.`;
     window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
-  // Prevenindo Multiplos Event Listeners (Bug fix)
-  const wppBtn = body.querySelector('.js-wpp');
-  const wppDirectBtn = body.querySelector('.js-wpp-direct');
+  // Previne duplicação de cliques
+  const wppBtn = document.querySelector('.js-wpp');
+  const wppDirectBtn = document.querySelector('.js-wpp-direct');
 
-  const newWppBtn = wppBtn.cloneNode(true);
-  const newWppDirectBtn = wppDirectBtn.cloneNode(true);
-  wppBtn.parentNode.replaceChild(newWppBtn, wppBtn);
-  wppDirectBtn.parentNode.replaceChild(newWppDirectBtn, wppDirectBtn);
+  if (wppBtn && wppDirectBtn) {
+    const newWppBtn = wppBtn.cloneNode(true);
+    const newWppDirectBtn = wppDirectBtn.cloneNode(true);
+    wppBtn.parentNode.replaceChild(newWppBtn, wppBtn);
+    wppDirectBtn.parentNode.replaceChild(newWppDirectBtn, wppDirectBtn);
 
-  newWppBtn.addEventListener('click', openWpp);
-  newWppDirectBtn.addEventListener('click', openWpp);
+    newWppBtn.addEventListener('click', openWpp);
+    newWppDirectBtn.addEventListener('click', openWpp);
+  }
 }
