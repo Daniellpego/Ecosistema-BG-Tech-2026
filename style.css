@@ -389,3 +389,26 @@
     .score-banner { flex-direction: column; text-align: left; align-items: flex-start; padding: 16px;}
     .intro-social-proof { flex-direction: column; gap: 12px; }
   }
+
+/* =========================================================
+   OTIMIZAÇÃO DE PERFORMANCE (LIGHTHOUSE 90+)
+   Colocado no final para sobrescrever regras pesadas anteriores
+   ========================================================= */
+
+/* Transforma a animação pesada em uma animação leve (Usa GPU em vez de CPU) */
+@keyframes grid-move {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100px); }
+}
+
+@media (max-width: 768px) {
+  /* Desliga animações de fundo no celular para não fritar o processador e travar o LCP */
+  .grid-overlay, .particle, .hero-glow-left, .hero-glow-right {
+    animation: none !important;
+  }
+  
+  /* Garante que o texto principal não espere delay para aparecer no 4G */
+  .hero-title, .hero-subtitle, .hero-badge {
+    animation-delay: 0s !important;
+  }
+}
