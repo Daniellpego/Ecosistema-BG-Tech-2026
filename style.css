@@ -104,7 +104,10 @@
   /* HERO */
   #hero { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 180px 24px 80px; overflow: hidden; background: var(--bg-main);}
   .grid-overlay { position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='40' height='69.28' viewBox='0 0 40 69.28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 17.32l-20 11.54L0 17.32V-5.77l20-11.54 20 11.54V17.32zM20 46.18l20-11.54V11.54L20 23.09 0 11.54v23.09L20 46.18zM0 63.5l20-11.54 20 11.54V86.6l-20 11.54-20-11.54V63.5z' fill='%2338D8FF' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E"); animation: grid-move 30s linear infinite; mask-image: radial-gradient(ellipse at top, black 30%, transparent 80%); -webkit-mask-image: radial-gradient(ellipse at top, black 30%, transparent 80%); pointer-events: none; }
-  @keyframes grid-move { from { background-position: 0 0; } to { background-position: 0 69.28px; } }
+ @keyframes grid-move {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100px); }
+}
   
   .hero-glow-left { position: absolute; width: 800px; height: 800px; background: radial-gradient(ellipse 70% 55% at 15% 45%, rgba(0,168,255,0.22) 0%, transparent 60%); top: -100px; left: -200px; filter: blur(80px); pointer-events: none; }
   .hero-glow-right { position: absolute; width: 600px; height: 600px; background: radial-gradient(ellipse 50% 65% at 85% 15%, rgba(56,216,255,0.15) 0%, transparent 55%); top: 0; right: -100px; filter: blur(60px); pointer-events: none; }
