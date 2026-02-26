@@ -165,6 +165,7 @@
         .data-table th { padding: 20px 24px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); background: rgba(0, 0, 0, 0.3); white-space: nowrap; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 10; }
         .data-table td { padding: 20px 24px; border-bottom: 1px solid var(--color-border); vertical-align: middle; transition: all 0.3s ease; }
         .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr { transition: all 0.3s ease; }
         .data-table tr:hover td { background: rgba(14, 165, 233, 0.04); }
         .item-name { font-size: 15px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px; }
         .item-desc { font-size: 13px; color: var(--text-dim); margin-top: 4px; line-height: 1.5; }
@@ -805,7 +806,10 @@
     <div id="toast-wrap" role="region" aria-live="polite" aria-label="Notificações"></div>
 
     <script>
-        const DB = { url: "https://urpuiznydrlwmaqhdids.supabase.co/rest/v1/painel_gastos?id=eq.1", key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVycHVpem55ZHJsd21hcWhkaWRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzczMTM5OTcsImV4cCI6MjA1Mjg4OTk5N30.1yOEoCa5jS6eqXaEPGaO_VBH6Bfv3AqNmGEOnN0xXYg" };
+        const DB = { 
+            url: "https://urpuiznydrlwmaqhdids.supabase.co/rest/v1/painel_gastos?id=eq.1", 
+            key: "sb_publishable_9G6JUKnfZ1mekk7qUKdTQA_TXbARtR0" 
+        };
         const MONTHS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         const CATS = {
             fixos: ["Software e Automação", "Nuvem e Infra", "Pró-labore e Equipe", "Marketing Fixo", "Estrutura", "Outros Custos Fixos"],
