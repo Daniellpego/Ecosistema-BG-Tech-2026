@@ -56,7 +56,7 @@
 
         #login-screen { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, #0a0f1a 0%, #030712 100%); perspective: 1000px; }
         .app { display: none; min-height: 100vh; opacity: 0; transform: translateY(20px); transition: opacity 0.6s var(--transition), transform 0.6s var(--transition); }
-        .app.visible { display: flex; opacity: 1; transform: translateY(0); }
+        .app.visible { display: flex; opacity: 1; transform: translateY(0); flex-direction: column; }
 
         /* MENSAGEM DO GUSTAVO */
         #msg-gustavo { display: none; margin: 0; padding: 20px 24px; background: linear-gradient(90deg, rgba(14, 165, 233, 0.15), rgba(0, 0, 0, 0.5)); border-bottom: 1px solid var(--color-border); border-left: 4px solid var(--primary); align-items: center; gap: 20px; animation: slideDown 0.5s ease forwards; }
@@ -100,7 +100,6 @@
         .filter-select option { background: #0d1117; padding: 8px; }
         .filter-sep { width: 1px; background: var(--color-border); margin: 10px 0; }
 
-        /* LOADING SPINNER NA ACTION */
         .btn-primary, .btn-success, .form-save { position: relative; overflow: hidden; }
         .loading { pointer-events: none !important; color: transparent !important; }
         .loading::after { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; }
@@ -141,7 +140,7 @@
         .stat-sub { font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 10px; display: flex; align-items: center; gap: 6px; justify-content: space-between;}
 
         /* STATUS BANNER */
-        #status-banner { margin-bottom: 24px; padding: 16px 24px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 16px; font-size: 14px; font-weight: 600; border: 1px solid transparent; }
+        #status-banner { margin-bottom: 24px; padding: 16px 24px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 16px; font-size: 14px; font-weight: 600; border: 1px solid transparent; transition: all 0.3s ease; }
         #status-banner.verde { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: var(--success); }
         #status-banner.amarelo { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
         #status-banner.vermelho { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
@@ -153,6 +152,7 @@
         .chart-sub { font-size: 12px; color: var(--text-muted); font-weight: 600; background: rgba(255, 255, 255, 0.03); padding: 4px 10px; border-radius: 20px; }
         #chart-area, #chart-donut, #chart-dre-bar, #chart-dre-line { min-height: 280px; }
 
+        /* ABA BALANÇO ANUAL */
         .annual-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
         .month-tile { padding: 24px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--color-border); background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%); transition: all 0.4s var(--transition); position: relative; overflow: hidden; }
         .month-tile::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--primary); transform: scaleX(0); transition: transform 0.4s var(--transition); }
@@ -161,7 +161,14 @@
         .month-tile.current { border-color: rgba(14, 165, 233, 0.5); background: linear-gradient(145deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0.04) 100%); box-shadow: 0 0 30px rgba(14, 165, 233, 0.15); }
         .month-tile.current::before { transform: scaleX(1); box-shadow: 0 0 10px var(--primary); }
         .month-tile-name { font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
-        .month-tile-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 900; color: var(--text); letter-spacing: -0.02em; }
+
+        /* MODAL DRILL DOWN MENSAL */
+        .modal-month { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: linear-gradient(180deg, #0d1117 0%, #070a0f 100%); border: 1px solid var(--color-border); padding: 40px; border-radius: var(--radius); z-index: 201; width: 100%; max-width: 600px; opacity: 0; pointer-events: none; transition: all 0.3s var(--transition); box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+        .modal-month.open { opacity: 1; pointer-events: all; transform: translate(-50%, -50%) scale(1); }
+        .drill-section { padding: 16px; background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-bottom: 16px; }
+        .drill-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; color: var(--text-muted); }
+        .drill-row:last-child { border-bottom: none; }
+        .drill-val { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; color: var(--text); }
 
         .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius-sm); }
         .data-table { width: 100%; min-width: 800px; border-collapse: separate; border-spacing: 0; }
@@ -199,12 +206,14 @@
         .dre-pct { font-size: 11px; color: var(--text-dim); margin-left: 8px; font-weight: 700; display: inline-block; width: 45px; text-align: right; }
         .dre-positive { color: var(--success); }
         .dre-negative { color: var(--danger); }
-        .dre-neutral { color: var(--primary); }
 
         .empty-state { text-align: center; padding: 100px 24px; color: var(--text-muted); }
         .empty-state svg { width: 64px; height: 64px; opacity: 0.2; margin-bottom: 24px; stroke-width: 1.5; }
         .empty-state h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--text); }
         .empty-state p { font-size: 14px; color: var(--text-dim); max-width: 300px; margin: 0 auto; }
+
+        .view { display: none; opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
+        .view.active { display: block; opacity: 1; transform: translateY(0); }
 
         .drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(12px); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .drawer-overlay.open { opacity: 1; pointer-events: all; }
@@ -247,9 +256,6 @@
         .toast.show { transform: translateX(0) scale(1); opacity: 1; }
         .toast.err { border-left-color: var(--danger); }
         .toast.warning { border-left-color: var(--warning); }
-
-        .view { display: none; opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
-        .view.active { display: block; opacity: 1; transform: translateY(0); }
 
         .search-wrap { padding: 20px 24px; border-bottom: 1px solid var(--color-border); background: rgba(0, 0, 0, 0.2); }
         .search-input { width: 100%; padding: 14px 18px 14px 48px; border-radius: var(--radius-sm); background: rgba(0, 0, 0, 0.4); border: 1px solid var(--color-border); color: var(--text); font-size: 14px; font-weight: 500; outline: none; position: relative; }
@@ -380,13 +386,13 @@
                         <div class="card stat-card c-success" style="border-top-width: 4px; background: linear-gradient(180deg, rgba(16,185,129,0.05), transparent);">
                             <div class="stat-label">Caixa Disponível <button onclick="A.editCaixa()" style="background:none;border:none;cursor:pointer;color:var(--text-dim);"><i data-lucide="edit-3" width="14" height="14"></i></button></div>
                             <div class="stat-value font-title" id="v-caixa" style="color:var(--success)">R$ 0,00</div>
-                            <div class="stat-sub"><i data-lucide="landmark" width="14" height="14"></i> Saldo em banco (Manual)</div>
+                            <div class="stat-sub"><i data-lucide="landmark" width="14" height="14"></i> Saldo na conta bancária</div>
                         </div>
 
                         <div class="card stat-card c-purple" id="card-runway" style="border-top-width: 4px; background: linear-gradient(180deg, rgba(168,85,247,0.05), transparent);">
                             <div class="stat-label">Runway (Sobrevivência) <i data-lucide="timer" width="18" height="18" style="color:#a855f7"></i></div>
                             <div class="stat-value font-title" id="v-runway" style="color:#a855f7">0,0 Meses</div>
-                            <div class="stat-sub"><i data-lucide="shield" width="14" height="14"></i> Caixa ÷ Burn Rate</div>
+                            <div class="stat-sub"><i data-lucide="shield" width="14" height="14"></i> Caixa ÷ Burn Rate Mensal</div>
                         </div>
 
                         <div class="card stat-card" id="card-res-liq" style="border-top-width: 4px;">
@@ -493,7 +499,7 @@
                             <div>
                                 <div class="chart-title font-title" style="font-size:24px;margin-bottom:8px;" id="annual-title">Balanço Anual</div>
                                 <div style="font-size:14px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
-                                    <i data-lucide="mouse-pointer-2" width="14" height="14"></i> Clique em um mês para visualizar os detalhes
+                                    <i data-lucide="mouse-pointer-2" width="14" height="14"></i> Clique em um mês para visualizar o Drill Down (Detalhes)
                                 </div>
                             </div>
                             <div style="display:flex;gap:16px;flex-wrap:wrap;">
@@ -506,7 +512,7 @@
                                     <div class="font-title" style="font-size:22px;font-weight:900;color:var(--danger);" id="annual-total-out">R$ 0,00</div>
                                 </div>
                                 <div style="text-align:center;padding:16px 20px;background:rgba(0,0,0,0.3);border-radius:var(--radius-sm);border:1px solid var(--color-border);">
-                                    <div style="font-size:11px;color:var(--text-dim);font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Resultado Anual</div>
+                                    <div style="font-size:11px;color:var(--text-dim);font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Saldo Anual</div>
                                     <div class="font-title" style="font-size:22px;font-weight:900;" id="annual-saldo">R$ 0,00</div>
                                 </div>
                             </div>
@@ -770,6 +776,31 @@
         </button>
     </div>
 
+    <div class="drawer-overlay" id="month-overlay" onclick="A.closeMonthModal()"></div>
+    <div class="modal-month" id="month-modal">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <h3 class="font-title" style="font-size: 22px; color: white;" id="mm-title">Resumo Gerencial</h3>
+            <button class="btn-ghost" onclick="A.closeMonthModal()" style="padding:8px;"><i data-lucide="x" width="16" height="16"></i></button>
+        </div>
+        
+        <div class="drill-section">
+            <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px;">Dados Realizados</div>
+            <div class="drill-row"><span>Total Receitas</span><span class="drill-val" style="color:var(--success)" id="mm-rec">R$ 0,00</span></div>
+            <div class="drill-row"><span>Custos Fixos</span><span class="drill-val" style="color:var(--primary)" id="mm-fix">R$ 0,00</span></div>
+            <div class="drill-row"><span>Gastos Variáveis</span><span class="drill-val" style="color:var(--warning)" id="mm-var">R$ 0,00</span></div>
+            <div class="drill-row" style="border-top: 1px solid var(--color-border); margin-top: 8px; padding-top: 16px;">
+                <span style="font-weight:700; color:white;">Saldo Final</span>
+                <span class="drill-val" id="mm-saldo" style="font-size:18px;">R$ 0,00</span>
+            </div>
+        </div>
+
+        <div class="drill-section" style="background: rgba(14,165,233,0.05); border-color: rgba(14,165,233,0.2);">
+            <div style="font-size:11px; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px;">Projetado vs Realizado</div>
+            <div class="drill-row"><span>Receita (Proj. vs Real)</span><span class="drill-val" id="mm-p-rec">R$ 0,00</span></div>
+            <div class="drill-row"><span>Despesa (Proj. vs Real)</span><span class="drill-val" id="mm-p-desp">R$ 0,00</span></div>
+        </div>
+    </div>
+
     <div class="drawer-overlay" id="export-overlay" onclick="A.closeExportModal()"></div>
     <div class="modal-export" id="export-modal">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
@@ -828,14 +859,14 @@
                 "Freelancers por Projeto", 
                 "Serviços Terceirizados Pontuais", 
                 "APIs e Consumo Variável", 
-                "Impostos sobre Faturamento (Simples, etc)",
+                "Impostos sobre Faturamento",
                 "Gasto Não Previsto"
             ]
         };
         const RECOR_HINTS = { unico: "Lançamento pontual, somente neste mês.", mensal: "Replica automaticamente para todos os 12 meses do ano selecionado.", proximo: "Replica a partir do mês da data informada até dezembro do mesmo ano." };
 
         const A = {
-            state: { tab: 'overview', type: 'fixos', modo: 'despesa', pTipo: 'saida', data: { fixos: [], unicos: [], entradas: [], projecoes: { entradas: [], saidas: [] } }, supportsEntradas: true },
+            state: { tab: 'overview', type: 'fixos', modo: 'despesa', pTipo: 'saida', data: { fixos: [], unicos: [], entradas: [], projecoes: { entradas: [], saidas: [] }, caixa_disponivel: 0 }, supportsEntradas: true },
             ch: { area: null, donut: null, dreBar: null, dreLine: null },
 
             init() {
@@ -845,34 +876,10 @@
                 sel.value = new Date().getMonth();
                 document.getElementById('lp').addEventListener('keypress', e => { if (e.key === 'Enter') A.login() });
                 document.getElementById('lu').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('lp').focus() });
-                
-                // Set default date in forms
                 document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
             },
 
             genId(prefix) { return prefix + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9); },
-
-            saveLocal() {
-                try {
-                    localStorage.setItem('bg_cfo_data', JSON.stringify({
-                        fixos: A.state.data.fixos || [],
-                        unicos: A.state.data.unicos || [],
-                        entradas: A.state.data.entradas || []
-                    }));
-                } catch(e) {}
-            },
-
-            loadLocal() {
-                try {
-                    const stored = localStorage.getItem('bg_cfo_data');
-                    if(stored) {
-                        const parsed = JSON.parse(stored);
-                        A.state.data.fixos = parsed.fixos || [];
-                        A.state.data.unicos = parsed.unicos || [];
-                        A.state.data.entradas = parsed.entradas || [];
-                    }
-                } catch(e) {}
-            },
 
             login() {
                 const u = document.getElementById('lu').value.trim().toLowerCase(), p = document.getElementById('lp').value, lc = document.getElementById('login-card');
@@ -884,14 +891,12 @@
                         document.getElementById('login-screen').style.display = 'none';
                         document.getElementById('app').classList.add('visible');
                         
-                        // Easter Egg Gustavo
                         if (u === 'gustavo') {
                             const msg = document.getElementById('msg-gustavo');
                             if (msg) msg.classList.add('active');
                             document.getElementById('main-content').style.paddingTop = '10px';
                         }
 
-                        A.loadProjecoes();
                         A.initCharts(); 
                         A.fetchSync(); 
                         setInterval(() => A.fetchSync(true), 15000);
@@ -930,18 +935,12 @@
 
                 if(t === 'projecoes') {
                     if(hGroup) hGroup.style.display = 'none';
-                    addLabel.textContent = 'Nova Projeção'; 
-                    addBtn.className = 'btn-primary'; 
-                    addBtn.style.display = ''; 
-                    addBtn.onclick = () => A.openProjDrawer('saida');
+                    addLabel.textContent = 'Nova Projeção'; addBtn.className = 'btn-primary'; addBtn.style.display = ''; addBtn.onclick = () => A.openProjDrawer('saida');
                     A.renderProjecoes();
                 } else if (t === 'relatorios') {
-                    if(hGroup) hGroup.style.display = 'flex';
-                    addBtn.style.display = 'none';
-                    A.render();
+                    if(hGroup) hGroup.style.display = 'flex'; addBtn.style.display = 'none'; A.render();
                 } else {
-                    if(hGroup) hGroup.style.display = 'flex';
-                    addBtn.style.display = '';
+                    if(hGroup) hGroup.style.display = 'flex'; addBtn.style.display = '';
                     if (t === 'entradas') { addLabel.textContent = 'Nova Receita'; addBtn.className = 'btn-success'; addBtn.onclick = () => A.openDrawer(null, 'entrada'); }
                     else { addLabel.textContent = 'Novo Lançamento'; addBtn.className = 'btn-primary'; addBtn.onclick = () => A.openDrawer(); }
                     A.render();
@@ -951,45 +950,39 @@
 
             async fetchSync(silent = false) {
                 if (!silent) A.syncUI('load');
-                A.loadLocal(); 
-                A.render(); 
-
                 try {
                     const r = await fetch(DB.url, { headers: { apikey: DB.key, Authorization: `Bearer ${DB.key}`, 'Cache-Control': 'no-cache' } });
-                    if (!r.ok) throw new Error("HTTP error " + r.status);
+                    if (!r.ok) throw new Error("HTTP error");
                     const d = await r.json();
                     if (d && d[0]) {
                         A.state.data.fixos = Array.isArray(d[0].fixos) ? d[0].fixos : JSON.parse(d[0].fixos || '[]');
                         A.state.data.unicos = Array.isArray(d[0].unicos) ? d[0].unicos : JSON.parse(d[0].unicos || '[]');
                         A.state.data.entradas = Array.isArray(d[0].entradas) ? d[0].entradas : JSON.parse(d[0].entradas || '[]');
-                        A.saveLocal(); 
+                        A.state.data.projecoes = typeof d[0].projecoes === 'string' ? JSON.parse(d[0].projecoes) : (d[0].projecoes || { entradas: [], saidas: [] });
+                        A.state.data.caixa_disponivel = d[0].caixa_disponivel || 0;
                     }
-                    A.syncUI('ok'); 
-                    A.render();
+                    A.syncUI('ok'); A.render();
                 } catch (e) { 
                     A.syncUI('err'); 
-                    if(!silent) A.toast("Trabalhando Offline. Dados em cache.", "warning");
+                    if(!silent) A.toast("Trabalhando Offline. Banco inacessível.", "warning");
                 }
             },
 
             async pushSync() {
                 A.syncUI('load');
-                A.saveLocal(); 
                 try {
-                    const payload = { fixos: A.state.data.fixos || [], unicos: A.state.data.unicos || [], updated_at: new Date().toISOString() };
-                    if (A.state.supportsEntradas) payload.entradas = A.state.data.entradas || [];
-                    
+                    const payload = { 
+                        fixos: A.state.data.fixos || [], 
+                        unicos: A.state.data.unicos || [], 
+                        entradas: A.state.data.entradas || [],
+                        projecoes: A.state.data.projecoes || { entradas: [], saidas: [] },
+                        caixa_disponivel: A.state.data.caixa_disponivel || 0,
+                        updated_at: new Date().toISOString() 
+                    };
                     const r = await fetch(DB.url, { method: 'PATCH', headers: { apikey: DB.key, Authorization: `Bearer ${DB.key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(payload) });
-                    if (!r.ok && A.state.supportsEntradas) {
-                        A.state.supportsEntradas = false;
-                        delete payload.entradas;
-                        await fetch(DB.url, { method: 'PATCH', headers: { apikey: DB.key, Authorization: `Bearer ${DB.key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(payload) });
-                    }
+                    if (!r.ok) throw new Error("Falha ao salvar");
                     A.syncUI('ok');
-                } catch (e) { 
-                    A.syncUI('err'); 
-                    A.toast("Erro na Nuvem. Salvo localmente.", "warning"); 
-                }
+                } catch (e) { A.syncUI('err'); A.toast("Erro ao salvar na Nuvem.", "warning"); }
             },
 
             syncUI(s) { const dot = document.getElementById('sync-dot'), txt = document.getElementById('sync-txt'), m = { load: ['var(--warning)', 'Sincronizando...'], ok: ['var(--success)', 'Nuvem Conectada'], err: ['var(--danger)', 'Modo Offline'] }; dot.style.background = m[s][0]; dot.style.boxShadow = `0 0 12px ${m[s][0]}`; txt.textContent = m[s][1]; },
@@ -1004,33 +997,28 @@
                     const [y, m] = x.data.split('-');
                     if (y !== yStr) return false;
                     if (mStr === 'anual') return true;
-                    if (isYTD) return parseInt(m) <= (parseInt(mStr) + 1); // Acumulado até o mês selecionado
-                    return parseInt(m) === (parseInt(mStr) + 1); // Apenas o mês
+                    if (isYTD) return parseInt(m) <= (parseInt(mStr) + 1);
+                    return parseInt(m) === (parseInt(mStr) + 1);
                 });
             },
 
-            // --- FUNÇÃO PARA EDITAR O CAIXA DISPONÍVEL ---
-            editCaixa() {
-                const atual = localStorage.getItem('bg_cfo_caixa') || '0';
-                const input = prompt("Atualize o saldo atual do Caixa da empresa (R$):", parseFloat(atual).toFixed(2));
+            async editCaixa() {
+                const atual = A.state.data.caixa_disponivel || 0;
+                const input = prompt("Atualize o saldo bancário da empresa (Caixa Disponível em R$):", parseFloat(atual).toFixed(2));
                 if(input !== null) {
                     const val = A.cleanMoney(input);
-                    localStorage.setItem('bg_cfo_caixa', val.toString());
+                    A.state.data.caixa_disponivel = val;
                     A.render();
+                    await A.pushSync();
                 }
             },
 
-            // --- GERADOR DE BADGE MoM (Month over Month) ---
             trendHTML(curr, prev, invertColors = false) {
                 if (!prev || prev === 0) return `<span class="trend-badge neutral">Sem histórico</span>`;
                 const pct = ((curr - prev) / prev) * 100;
                 let isGood = pct >= 0;
-                if (invertColors) isGood = !isGood; // Para custos, cair é bom (verde)
-                
-                return `<span class="trend-badge ${isGood ? 'up' : 'down'}">
-                    <i data-lucide="${pct >= 0 ? 'trending-up' : 'trending-down'}" width="12" height="12"></i> 
-                    ${Math.abs(pct).toFixed(1)}%
-                </span>`;
+                if (invertColors) isGood = !isGood;
+                return `<span class="trend-badge ${isGood ? 'up' : 'down'}"><i data-lucide="${pct >= 0 ? 'trending-up' : 'trending-down'}" width="12" height="12"></i> ${Math.abs(pct).toFixed(1)}%</span>`;
             },
 
             render() {
@@ -1038,12 +1026,10 @@
                 
                 const mVal = document.getElementById('fMonth').value, yVal = document.getElementById('fYear').value, t = A.state.tab;
                 
-                // Dados do Período Atual
                 const eM = A.filterData(A.state.data.entradas, mVal, yVal);
                 const fM = A.filterData(A.state.data.fixos, mVal, yVal);
                 const uM = A.filterData(A.state.data.unicos, mVal, yVal);
 
-                // Dados do Período Anterior (Para MoM)
                 let prevM = mVal, prevY = yVal;
                 if(mVal !== 'anual') {
                     let calcM = parseInt(mVal) - 1;
@@ -1056,36 +1042,24 @@
                 const fPrev = A.filterData(A.state.data.fixos, prevM, prevY);
                 const uPrev = A.filterData(A.state.data.unicos, prevM, prevY);
 
-                // SOMAS ATUAIS
                 const sumE = eM.reduce((a, b) => a + Number(b.valor), 0);
                 const sumF = fM.reduce((a, b) => a + Number(b.valor), 0);
                 const sumU = uM.reduce((a, b) => a + Number(b.valor), 0);
-                const sumBurn = sumF + sumU; // Burn Rate Mensal
+                const sumBurn = sumF + sumU; 
                 
-                // MRR (Mensalidade)
                 const sumMRR = eM.filter(x => x.categoria.includes("Mensalidade") || x.recorrente === 'mensal').reduce((a, b) => a + Number(b.valor), 0);
-                
-                // Impostos (Exigência CFO: não mistura no calc da margem operacional)
                 const sumImp = uM.filter(x => x.categoria.includes("Imposto")).reduce((a, b) => a + Number(b.valor), 0);
-                
-                // Resultado Líquido
                 const resLiq = sumE - sumBurn; 
                 const margem = sumE > 0 ? ((resLiq / sumE) * 100).toFixed(1) : '0.0';
 
-                // SOMAS ANTERIORES (Para % MoM)
                 const prevSumE = ePrev.reduce((a, b) => a + Number(b.valor), 0);
                 const prevSumBurn = fPrev.reduce((a, b) => a + Number(b.valor), 0) + uPrev.reduce((a, b) => a + Number(b.valor), 0);
                 const prevSumMRR = ePrev.filter(x => x.categoria.includes("Mensalidade") || x.recorrente === 'mensal').reduce((a, b) => a + Number(b.valor), 0);
 
-                // --- CAIXA E RUNWAY ---
-                const caixaVal = parseFloat(localStorage.getItem('bg_cfo_caixa') || '0');
+                const caixaVal = A.state.data.caixa_disponivel || 0;
                 const runway = sumBurn > 0 ? (caixaVal / sumBurn).toFixed(1) : '99+';
 
-                // ==========================================
-                // RENDER: PAINEL GERAL (VISÃO EXECUTIVA)
-                // ==========================================
                 if(t === 'overview') {
-                    // Update Numbers
                     A.animateValue('v-caixa', caixaVal);
                     document.getElementById('v-runway').textContent = `${runway} Meses`;
                     
@@ -1098,56 +1072,37 @@
                     A.animateValue('v-burn-ov', sumBurn);
                     document.getElementById('t-burn-ov').innerHTML = A.trendHTML(sumBurn, prevSumBurn, true) + ' vs mês anterior';
                     
-                    A.animateValue('v-fixos-ov', sumF);
-                    A.animateValue('v-var-ov', sumU);
+                    A.animateValue('v-fixos-ov', sumF); A.animateValue('v-var-ov', sumU);
                     
                     A.animateValue('v-res-liq', Math.abs(resLiq));
-                    const elRes = document.getElementById('v-res-liq');
-                    const cardRes = document.getElementById('card-res-liq');
-                    const iconRes = document.getElementById('icon-res-liq');
-                    const subRes = document.getElementById('v-res-liq-sub');
+                    const elRes = document.getElementById('v-res-liq'), cardRes = document.getElementById('card-res-liq'), iconRes = document.getElementById('icon-res-liq'), subRes = document.getElementById('v-res-liq-sub');
                     
                     if (resLiq >= 0) {
-                        elRes.textContent = '+ ' + A.fmtR(resLiq);
-                        elRes.style.color = 'var(--success)';
-                        cardRes.className = 'card stat-card c-success';
-                        iconRes.style.color = 'var(--success)';
+                        elRes.textContent = '+ ' + A.fmtR(resLiq); elRes.style.color = 'var(--success)'; cardRes.className = 'card stat-card c-success'; iconRes.style.color = 'var(--success)';
                         subRes.innerHTML = `<span class="trend-badge up"><i data-lucide="check-circle" width="12" height="12"></i> Lucro: ${margem}%</span>`;
                     } else {
-                        elRes.textContent = '- ' + A.fmtR(Math.abs(resLiq));
-                        elRes.style.color = 'var(--danger)';
-                        cardRes.className = 'card stat-card c-danger';
-                        iconRes.style.color = 'var(--danger)';
+                        elRes.textContent = '- ' + A.fmtR(Math.abs(resLiq)); elRes.style.color = 'var(--danger)'; cardRes.className = 'card stat-card c-danger'; iconRes.style.color = 'var(--danger)';
                         subRes.innerHTML = `<span class="trend-badge down"><i data-lucide="alert-circle" width="12" height="12"></i> Prejuízo: ${margem}%</span>`;
                     }
 
-                    // --- STATUS DA OPERAÇÃO (Lógica Automática) ---
                     const banner = document.getElementById('status-banner');
                     const rNum = parseFloat(runway);
                     if (rNum >= 3 && resLiq >= 0) {
-                        banner.className = 'verde';
-                        banner.innerHTML = `<i data-lucide="check-circle" width="20" height="20"></i><span><strong>Operação Saudável:</strong> O caixa garante mais de 3 meses de Runway e o DRE gerou lucro no período.</span>`;
+                        banner.className = 'verde'; banner.innerHTML = `<i data-lucide="check-circle" width="20" height="20"></i><span><strong>Operação Saudável:</strong> O caixa garante mais de 3 meses de Runway e o DRE gerou lucro no período.</span>`;
                     } else if (rNum < 1 || (sumBurn > sumE && caixaVal < sumBurn)) {
-                        banner.className = 'vermelho';
-                        banner.innerHTML = `<i data-lucide="alert-octagon" width="20" height="20"></i><span><strong>Risco Crítico de Caixa:</strong> Sobrevivência inferior a 1 mês. Necessária injeção de capital ou corte drástico imediato.</span>`;
+                        banner.className = 'vermelho'; banner.innerHTML = `<i data-lucide="alert-octagon" width="20" height="20"></i><span><strong>Risco Crítico de Caixa:</strong> Sobrevivência inferior a 1 mês. Necessária injeção de capital ou corte drástico imediato.</span>`;
                     } else {
-                        banner.className = 'amarelo';
-                        banner.innerHTML = `<i data-lucide="alert-triangle" width="20" height="20"></i><span><strong>Atenção:</strong> Runway intermediário (${runway} meses) ou queima de caixa registrada no período. Monitore de perto.</span>`;
+                        banner.className = 'amarelo'; banner.innerHTML = `<i data-lucide="alert-triangle" width="20" height="20"></i><span><strong>Atenção:</strong> Runway intermediário (${runway} meses) ou queima de caixa registrada no período. Monitore de perto.</span>`;
                     }
                 }
 
-                // ==========================================
-                // RENDER: DRE GERENCIAL (O Motor Faria Lima)
-                // ==========================================
                 if(t === 'dre') {
                     document.getElementById('dre-lbl-periodo').textContent = mVal === 'anual' ? `Ano ${yVal}` : `${MONTHS[mVal]} de ${yVal}`;
                     
-                    // Dados Acumulados YTD
                     const eYTD = A.filterData(A.state.data.entradas, mVal, yVal, true);
                     const fYTD = A.filterData(A.state.data.fixos, mVal, yVal, true);
                     const uYTD = A.filterData(A.state.data.unicos, mVal, yVal, true);
 
-                    // 1. RECEITA BRUTA
                     const calcRB = (arr) => {
                         const setup = arr.filter(x => x.categoria.includes("Setup")).reduce((a,b)=>a+Number(b.valor),0);
                         const mensal = arr.filter(x => x.categoria.includes("Mensalidade")).reduce((a,b)=>a+Number(b.valor),0);
@@ -1157,7 +1112,6 @@
                     };
                     const rbM = calcRB(eM); const rbYTD = calcRB(eYTD);
 
-                    // 2. CUSTOS VARIÁVEIS (Isolando Impostos)
                     const calcCV = (arr) => {
                         const mkt = arr.filter(x => x.categoria.includes("Marketing")).reduce((a,b)=>a+Number(b.valor),0);
                         const taxas = arr.filter(x => x.categoria.includes("Pagamento")).reduce((a,b)=>a+Number(b.valor),0);
@@ -1168,25 +1122,11 @@
                     };
                     const cvM = calcCV(uM); const cvYTD = calcCV(uYTD);
 
-                    // 3. MARGEM BRUTA
-                    const mbM = rbM.total - cvM.total; 
-                    const mbYTD = rbYTD.total - cvYTD.total;
-
-                    // 4. CUSTOS FIXOS
-                    const calcCF = (arr) => arr.reduce((a,b)=>a+Number(b.valor),0);
-                    const cfM = calcCF(fM); const cfYTD = calcCF(fYTD);
-
-                    // 5. RESULTADO OPERACIONAL
-                    const roM = mbM - cfM; 
-                    const roYTD = mbYTD - cfYTD;
-
-                    // 6. IMPOSTOS
-                    const calcIMP = (arr) => arr.filter(x => x.categoria.includes("Imposto")).reduce((a,b)=>a+Number(b.valor),0);
-                    const impM = calcIMP(uM); const impYTD = calcIMP(uYTD);
-
-                    // 7. RESULTADO LÍQUIDO FINAL
-                    const rlM = roM - impM; 
-                    const rlYTD = roYTD - impYTD;
+                    const mbM = rbM.total - cvM.total; const mbYTD = rbYTD.total - cvYTD.total;
+                    const cfM = fM.reduce((a,b)=>a+Number(b.valor),0); const cfYTD = fYTD.reduce((a,b)=>a+Number(b.valor),0);
+                    const roM = mbM - cfM; const roYTD = mbYTD - cfYTD;
+                    const impM = uM.filter(x => x.categoria.includes("Imposto")).reduce((a,b)=>a+Number(b.valor),0); const impYTD = uYTD.filter(x => x.categoria.includes("Imposto")).reduce((a,b)=>a+Number(b.valor),0);
+                    const rlM = roM - impM; const rlYTD = roYTD - impYTD;
 
                     const pct = (val, base) => base > 0 ? ((val/base)*100).toFixed(1) + '%' : '0.0%';
                     const rowMain = (title, valM, valYTD, pM, pYTD, isNeg=false) => `
@@ -1217,11 +1157,8 @@
                     html += rowSub("Gasto Não Previsto", cvM.outros, cvYTD.outros, rbM.total, rbYTD.total);
 
                     html += rowMain("3. (=) MARGEM BRUTA", mbM, mbYTD, pct(mbM, rbM.total), pct(mbYTD, rbYTD.total));
-
                     html += rowMain("4. (-) CUSTOS FIXOS", cfM, cfYTD, pct(cfM, rbM.total), pct(cfYTD, rbYTD.total), true);
-
                     html += rowMain("5. (=) RESULTADO OPERACIONAL", roM, roYTD, pct(roM, rbM.total), pct(roYTD, rbYTD.total));
-
                     html += rowMain("6. (-) IMPOSTOS", impM, impYTD, pct(impM, rbM.total), pct(impYTD, rbYTD.total), true);
 
                     html += `<tr class="dre-row-main" style="background: rgba(14, 165, 233, 0.15); border-top: 2px solid var(--primary);">
@@ -1235,8 +1172,8 @@
 
                 if(t === 'entradas') {
                     A.animateValue('v-receita-total', sumE, false, 'var(--success)');
-                    A.animateValue('v-receita-recor', sumER);
-                    A.animateValue('v-receita-avulsa', sumEA);
+                    A.animateValue('v-receita-recor', sumMRR);
+                    A.animateValue('v-receita-avulsa', sumE - sumMRR);
                     A.animateValue('v-saldo-entradas', resLiq);
                     const cardSaldoEnt = document.getElementById('card-saldo-ent');
                     const elSaldoEnt = document.getElementById('v-saldo-entradas');
@@ -1246,12 +1183,29 @@
                     }
                 }
 
-                if (t === 'fixos' || t === 'unicos') A.renderTable(t === 'fixos' ? fM : uM, 'table-body', 'table-empty', 'gasto');
+                if (t === 'fixos') A.renderTable(fM, 'table-body', 'table-empty', 'gasto');
+                if (t === 'unicos') A.renderTable(uM, 'table-body', 'table-empty', 'gasto');
                 if (t === 'entradas') A.renderTable(eM, 'table-entradas', 'entradas-empty', 'entrada');
                 if (t === 'annual') A.renderAnnual(yVal);
                 
                 A.updateCharts();
                 lucide.createIcons();
+            },
+
+            animateValue(id, value, isInt = false, forceColor = null) {
+                const el = document.getElementById(id); if (!el) return;
+                const absVal = Math.abs(value);
+                const start = parseFloat(el.textContent.replace(/[^\d,-]/g, '').replace(',', '.')) || 0;
+                const duration = 800, startTime = performance.now();
+                if (forceColor) el.style.color = forceColor;
+                const animate = (ct) => {
+                    const elapsed = ct - startTime, progress = Math.min(elapsed / duration, 1), ep = 1 - Math.pow(1 - progress, 3);
+                    const cur = Math.abs(start) + (absVal - Math.abs(start)) * ep;
+                    el.textContent = isInt ? Math.round(cur) : (value < 0 ? '- ' + A.fmtR(cur) : A.fmtR(cur));
+                    if (progress < 1) requestAnimationFrame(animate);
+                    else el.textContent = isInt ? Math.round(value) : (value < 0 ? '- ' + A.fmtR(absVal) : A.fmtR(absVal));
+                };
+                requestAnimationFrame(animate);
             },
 
             renderTable(list, tbodyId, emptyId, tipo) {
@@ -1282,6 +1236,9 @@
                 }
             },
 
+            // ==========================================
+            // ABA BALANÇO ANUAL E MODAL DRILL DOWN
+            // ==========================================
             renderAnnual(year) {
                 document.getElementById('annual-title').textContent = `Balanço Anual ${year}`;
                 const grid = document.getElementById('annual-grid'), now = new Date();
@@ -1293,19 +1250,19 @@
                 const yearIn = allIn.reduce((a, b) => a + b, 0);
                 const yearOut = allOut.reduce((a, b) => a + b, 0);
                 const yearSaldo = yearIn - yearOut;
-                const elTotalIn = document.getElementById('annual-total-in');
-                const elTotalOut = document.getElementById('annual-total-out');
+                
+                document.getElementById('annual-total-in').textContent = A.fmtR(yearIn);
+                document.getElementById('annual-total-out').textContent = A.fmtR(yearOut);
                 const elSaldo = document.getElementById('annual-saldo');
-                if (elTotalIn) elTotalIn.textContent = A.fmtR(yearIn);
-                if (elTotalOut) elTotalOut.textContent = A.fmtR(yearOut);
-                if (elSaldo) { elSaldo.textContent = A.fmtR(yearSaldo); elSaldo.style.color = yearSaldo >= 0 ? 'var(--success)' : 'var(--danger)'; }
+                elSaldo.textContent = A.fmtR(yearSaldo); elSaldo.style.color = yearSaldo >= 0 ? 'var(--success)' : 'var(--danger)';
+                
                 const maxVal = Math.max(...allIn, ...allOut, 1);
                 grid.innerHTML = MONTHS.map((name, m) => {
                     const inv = allIn[m], outv = allOut[m], saldo = inv - outv;
                     const isCur = m === now.getMonth() && year === now.getFullYear().toString();
                     const pctIn = Math.round((inv / maxVal) * 100) || 0;
                     const pctOut = Math.round((outv / maxVal) * 100) || 0;
-                    return `<div class="month-tile${isCur ? ' current' : ''}" onclick="A.goToMonth(${m},'${year}')" style="animation:fadeInUp 0.5s ease ${m * 50}ms both;">
+                    return `<div class="month-tile${isCur ? ' current' : ''}" onclick="A.openMonthModal(${m},'${year}')" style="animation:fadeInUp 0.5s ease ${m * 50}ms both;">
         <div class="month-tile-name">${name}${isCur ? ' <span style="font-size:11px;color:var(--primary);font-weight:800;">● ATUAL</span>' : ''}</div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
           <div style="color:var(--success);font-weight:800;font-size:13px;">+ ${A.fmtR(inv)}</div>
@@ -1322,15 +1279,50 @@
                 }).join('');
             },
 
-            goToMonth(m, y) { document.getElementById('fMonth').value = m; document.getElementById('fYear').value = y; A.tab('overview'); },
+            openMonthModal(m, y) {
+                document.getElementById('mm-title').textContent = `Resumo Gerencial - ${MONTHS[m]} ${y}`;
+                
+                // Dados Realizados
+                const mStr = m.toString();
+                const totalE = A.filterData(A.state.data.entradas, mStr, y).reduce((a,b)=>a+Number(b.valor),0);
+                const totalF = A.filterData(A.state.data.fixos, mStr, y).reduce((a,b)=>a+Number(b.valor),0);
+                const totalV = A.filterData(A.state.data.unicos, mStr, y).reduce((a,b)=>a+Number(b.valor),0);
+                const saldo = totalE - totalF - totalV;
+
+                document.getElementById('mm-rec').textContent = '+ R$ ' + A.fmtR(totalE);
+                document.getElementById('mm-fix').textContent = '- R$ ' + A.fmtR(totalF);
+                document.getElementById('mm-var').textContent = '- R$ ' + A.fmtR(totalV);
+                
+                const elSaldo = document.getElementById('mm-saldo');
+                elSaldo.textContent = (saldo >= 0 ? '+ ' : '- ') + 'R$ ' + A.fmtR(Math.abs(saldo));
+                elSaldo.style.color = saldo >= 0 ? 'var(--success)' : 'var(--danger)';
+
+                // Dados Projetados (Simulador)
+                const mesProjStr = `${y}-${String(m+1).padStart(2, '0')}`;
+                const projE = (A.state.data.projecoes.entradas || []).filter(p => p.mes === mesProjStr).reduce((a,b)=>a+Number(b.valor),0);
+                const projS = (A.state.data.projecoes.saidas || []).filter(p => p.mes === mesProjStr).reduce((a,b)=>a+Number(b.valor),0);
+
+                const diffE = totalE - projE;
+                const diffS = (totalF + totalV) - projS;
+
+                document.getElementById('mm-p-rec').innerHTML = `R$ ${A.fmtR(projE)} <span style="font-size:11px; margin-left:8px; color:${diffE >= 0 ? 'var(--success)' : 'var(--danger)'}">(${diffE >= 0 ? '+' : ''}${A.fmtR(diffE)})</span>`;
+                document.getElementById('mm-p-desp').innerHTML = `R$ ${A.fmtR(projS)} <span style="font-size:11px; margin-left:8px; color:${diffS <= 0 ? 'var(--success)' : 'var(--danger)'}">(${diffS > 0 ? '+' : ''}${A.fmtR(diffS)})</span>`;
+
+                document.getElementById('month-modal').classList.add('open');
+                document.getElementById('month-overlay').classList.add('open');
+            },
+
+            closeMonthModal() {
+                document.getElementById('month-modal').classList.remove('open');
+                document.getElementById('month-overlay').classList.remove('open');
+            },
 
             initCharts() {
                 const base = { chart: { background: 'transparent', fontFamily: 'Inter', toolbar: { show: false }, animations: { enabled: true, speed: 800, easing: 'easeinout' } }, theme: { mode: 'dark' } };
                 
-                // Overview Charts
                 A.ch.area = new ApexCharts(document.querySelector('#chart-area'), {
                     ...base, series: [{ name: 'Receitas', data: [] }, { name: 'Burn Rate (Despesas)', data: [] }],
-                    chart: { ...base.chart, type: 'area', height: 300 }, colors: ['#10b981', '#ef4444'],
+                    chart: { ...base.chart, type: 'area', height: 280 }, colors: ['#10b981', '#ef4444'],
                     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.05, stops: [0, 90, 100] } },
                     stroke: { curve: 'smooth', width: 3 }, dataLabels: { enabled: false },
                     grid: { borderColor: 'rgba(255,255,255,0.05)', strokeDashArray: 4, xaxis: { lines: { show: false } } },
@@ -1340,15 +1332,14 @@
                 });
                 
                 A.ch.donut = new ApexCharts(document.querySelector('#chart-donut'), { 
-                    ...base, series: [], labels: [], chart: { ...base.chart, type: 'donut', height: 300 }, 
+                    ...base, series: [], labels: [], chart: { ...base.chart, type: 'donut', height: 280 }, 
                     colors: ['#0ea5e9', '#38bdf8', '#7dd3fc', '#bae6fd', '#0284c7', '#0369a1'], stroke: { show: true, colors: ['#0d1117'], width: 3 }, 
                     dataLabels: { enabled: false }, legend: { position: 'bottom', labels: { colors: '#94a3b8' }, fontSize: '13px', fontWeight: 600 }, 
                     plotOptions: { pie: { donut: { size: '75%', labels: { show: true, name: { color: '#94a3b8', fontSize: '14px', fontWeight: 600 }, value: { color: 'white', fontSize: '24px', fontWeight: 900, formatter: v => A.fmtR(v) }, total: { show: true, label: 'Total Fixos', color: '#94a3b8', fontSize: '14px', fontWeight: 600, formatter: w => A.fmtR(w.globals.seriesTotals.reduce((a, b) => a + b, 0)) } } } } }, tooltip: { theme: 'dark', y: { formatter: v => A.fmtR(v) } } 
                 });
 
-                // DRE Charts
                 A.ch.dreBar = new ApexCharts(document.querySelector('#chart-dre-bar'), {
-                    ...base, series: [], chart: { ...base.chart, type: 'bar', height: 300, stacked: false },
+                    ...base, series: [], chart: { ...base.chart, type: 'bar', height: 280, stacked: false },
                     colors: ['#10b981', '#f59e0b', '#ef4444'], plotOptions: { bar: { borderRadius: 4, columnWidth: '60%' } },
                     dataLabels: { enabled: false }, stroke: { show: true, width: 2, colors: ['transparent'] },
                     xaxis: { categories: [], labels: { style: { colors: '#94a3b8', fontWeight: 600 } }, axisBorder: { show: false }, axisTicks: { show: false } },
@@ -1358,7 +1349,7 @@
                 });
 
                 A.ch.dreLine = new ApexCharts(document.querySelector('#chart-dre-line'), {
-                    ...base, series: [], chart: { ...base.chart, type: 'area', height: 300 },
+                    ...base, series: [], chart: { ...base.chart, type: 'area', height: 280 },
                     colors: ['#0ea5e9'], stroke: { curve: 'smooth', width: 3 },
                     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.05, stops: [0, 90, 100] } },
                     dataLabels: { enabled: false }, markers: { size: 4, colors: ['#0ea5e9'], strokeColors: '#0d1117', strokeWidth: 2 },
@@ -1503,25 +1494,25 @@
                 btn.classList.add('loading');
                 try {
                     const dataBase = document.getElementById('f-data').value, recorrente = document.getElementById('f-recor').value, editId = document.getElementById('f-id').value;
-                    const base = { nome, valor, data: dataBase, categoria: document.getElementById('f-cat').value, status: document.getElementById('f-status').value, descricao: document.getElementById('f-desc').value.trim(), recorrente };
+                    const base = { id: editId || A.genId('bgt'), nome, valor, data: dataBase, categoria: document.getElementById('f-cat').value, status: document.getElementById('f-status').value, descricao: document.getElementById('f-desc').value.trim(), recorrente };
                     const isIncome = A.state.modo === 'entrada';
                     const arrKey = isIncome ? 'entradas' : A.state.type;
                     const arr = A.state.data[arrKey] || [];
                     
                     if (editId) {
                         ['fixos', 'unicos', 'entradas'].forEach(k => { A.state.data[k] = (A.state.data[k]||[]).filter(i => i.id !== editId); });
-                        arr.push({ id: editId, ...base });
+                        arr.push(base);
                     } else {
                         if (recorrente === 'mensal') {
                             const [y, , d] = dataBase.split('-');
-                            for (let m = 0; m < 12; m++) arr.push({ id: A.genId('bgt'), ...base, data: `${y}-${String(m + 1).padStart(2, '0')}-${d}` });
+                            for (let m = 0; m < 12; m++) arr.push({ ...base, id: A.genId('bgt'), data: `${y}-${String(m + 1).padStart(2, '0')}-${d}` });
                             A.toast(`12 ${isIncome ? 'receitas' : 'lançamentos'} mensais criados! ✨`);
                         } else if (recorrente === 'proximo') {
                             const [y, mo, d] = dataBase.split('-'); const startM = parseInt(mo) - 1; let count = 0;
-                            for (let m = startM; m < 12; m++) { arr.push({ id: A.genId('bgt'), ...base, data: `${y}-${String(m + 1).padStart(2, '0')}-${d}` }); count++; }
+                            for (let m = startM; m < 12; m++) { arr.push({ ...base, id: A.genId('bgt'), data: `${y}-${String(m + 1).padStart(2, '0')}-${d}` }); count++; }
                             A.toast(`${count} ${isIncome ? 'receitas' : 'lançamentos'} criados! ✨`);
                         } else {
-                            arr.push({ id: A.genId('bgt'), ...base });
+                            arr.push(base);
                             A.toast(`${isIncome ? 'Receita registrada' : 'Lançamento salvo'} com sucesso! ✅`);
                         }
                     }
@@ -1538,7 +1529,7 @@
             edit(id) { const item = (A.state.data.fixos||[]).find(i => i.id === id) || (A.state.data.unicos||[]).find(i => i.id === id) || (A.state.data.entradas||[]).find(i => i.id === id); if (item) A.openDrawer(item); },
 
             del(id) {
-                if (confirm("Excluir permanentemente este registro da DRE?")) {
+                if (confirm("Excluir permanentemente este registro da base?")) {
                     A.state.data.fixos = A.state.data.fixos.filter(i => i.id !== id);
                     A.state.data.unicos = A.state.data.unicos.filter(i => i.id !== id);
                     A.state.data.entradas = A.state.data.entradas.filter(i => i.id !== id);
@@ -1571,7 +1562,6 @@
             renderRelatorios() {
                 const { sm, em, year, label } = A.getReportRange();
                 
-                // Conversão de números para strings (filtro antigo usava parseDate manual, atualizamos para usar filterData se possível, mas aqui o código de relatório é do original, vou deixar como estava)
                 let entradas = [], fixos = [], unicos = [];
                 for(let m = sm; m <= em; m++){
                     entradas = entradas.concat(A.filterData(A.state.data.entradas, m.toString(), year.toString()));
@@ -1610,15 +1600,8 @@
             },
 
             loadProjecoes() {
-                try {
-                    const stored = localStorage.getItem('bg_projecoes');
-                    if (stored) A.state.data.projecoes = JSON.parse(stored);
-                    else A.state.data.projecoes = { entradas: [], saidas: [] };
-                } catch(e) { A.state.data.projecoes = { entradas: [], saidas: [] }; }
-            },
-
-            saveProjecoes() {
-                localStorage.setItem('bg_projecoes', JSON.stringify(A.state.data.projecoes));
+                // Legado: As projeções agora vêm do Supabase via fetchSync. Isso aqui é só fallback de segurança.
+                if(!A.state.data.projecoes) A.state.data.projecoes = { entradas: [], saidas: [] };
             },
 
             setProjType(t) {
@@ -1676,7 +1659,7 @@
                 document.getElementById('proj-overlay').classList.remove('open');
             },
 
-            saveProj() {
+            async saveProj() {
                 const btn = document.getElementById('btn-proj-save');
                 if(btn.classList.contains('loading')) return;
                 
@@ -1702,27 +1685,28 @@
                     };
 
                     const arrKey = tipo + 's'; 
-                    A.state.data.projecoes.entradas = A.state.data.projecoes.entradas.filter(x => x.id !== id);
-                    A.state.data.projecoes.saidas = A.state.data.projecoes.saidas.filter(x => x.id !== id);
+                    if(!A.state.data.projecoes) A.state.data.projecoes = {entradas:[], saidas:[]};
                     
+                    A.state.data.projecoes.entradas = (A.state.data.projecoes.entradas||[]).filter(x => x.id !== id);
+                    A.state.data.projecoes.saidas = (A.state.data.projecoes.saidas||[]).filter(x => x.id !== id);
                     A.state.data.projecoes[arrKey].push(base);
 
-                    A.saveProjecoes();
                     A.closeProjDrawer();
                     A.renderProjecoes();
-                    A.toast("Projeção salva no simulador! 🔮");
+                    await A.pushSync(); // Salva na NUVEM agora
+                    A.toast("Projeção salva na nuvem e no simulador! 🔮");
                 } finally {
                     btn.classList.remove('loading');
                 }
             },
 
-            delProj(tipo, id) {
-                if (confirm("Excluir permanentemente esta projeção?")) {
-                    A.state.data.projecoes.entradas = A.state.data.projecoes.entradas.filter(x => x.id !== id);
-                    A.state.data.projecoes.saidas = A.state.data.projecoes.saidas.filter(x => x.id !== id);
-                    A.saveProjecoes();
+            async delProj(tipo, id) {
+                if (confirm("Excluir permanentemente esta projeção da nuvem?")) {
+                    A.state.data.projecoes.entradas = (A.state.data.projecoes.entradas||[]).filter(x => x.id !== id);
+                    A.state.data.projecoes.saidas = (A.state.data.projecoes.saidas||[]).filter(x => x.id !== id);
                     A.renderProjecoes();
-                    A.toast("Projeção removida. 🗑️");
+                    await A.pushSync(); // Salva na Nuvem
+                    A.toast("Projeção removida da nuvem. 🗑️");
                 }
             },
 
@@ -1749,9 +1733,10 @@
                 }
                 if([...monthFilter.options].some(o => o.value === prevSelected)) monthFilter.value = prevSelected;
 
+                const proj = A.state.data.projecoes || {entradas:[], saidas:[]};
                 const allProj = [
-                   ...(A.state.data.projecoes.entradas || []).map(x => ({...x, _tipo: 'entrada'})),
-                   ...(A.state.data.projecoes.saidas || []).map(x => ({...x, _tipo: 'saida'}))
+                   ...(proj.entradas || []).map(x => ({...x, _tipo: 'entrada'})),
+                   ...(proj.saidas || []).map(x => ({...x, _tipo: 'saida'}))
                 ];
 
                 const filtered = allProj.filter(p => {
@@ -1865,7 +1850,7 @@
 
         function esc(s) { const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
         window.onload = A.init;
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') { A.closeDrawer(); A.closeProjDrawer(); A.closeExportModal(); } });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { A.closeDrawer(); A.closeProjDrawer(); A.closeExportModal(); A.closeMonthModal(); } });
     </script>
 </body>
 </html>
