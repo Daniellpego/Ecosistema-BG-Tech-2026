@@ -1,8 +1,10 @@
+
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { bodyHTML } from "./cfo-body";
 
+export default function CFODashboard() {
   const ref = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -28,13 +30,13 @@ import { bodyHTML } from "./cfo-body";
     };
   }, []);
   return (
-    <>
+    <div>
       <Script src="/cfo-app.js" strategy="afterInteractive" />
       {error ? (
-        <div className="error-state" style={{color:'red',padding:'24px',textAlign:'center'}}> {error} </div>
+        <div className="error-state" style={{ color: "red", padding: "24px", textAlign: "center" }}>{error}</div>
       ) : (
-        <div ref={ref} />
+        <div ref={ref}></div>
       )}
-    </>
+    </div>
   );
 }
