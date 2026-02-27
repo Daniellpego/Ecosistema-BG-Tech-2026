@@ -1,5 +1,17 @@
-import { useEffect } from "react";
-  // Chat sincronizado
+"use client";
+
+import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://urpuiznydrlwmaqhdids.supabase.co";
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || "sb_publishable_9G6JUKnfZ1mekk7qUKdTQA_TXbARtR0";
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export default function CFODashboard() {
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [chatInput, setChatInput] = useState("");
 
@@ -32,45 +44,6 @@ import { useEffect } from "react";
     await supabase.from("chat").insert({ user, text: chatInput });
     setChatInput("");
   };
-      {/* Chat sincronizado */}
-      <div style={{ marginTop: 40, background: "#181f2a", borderRadius: 16, padding: 24, maxWidth: 420 }}>
-        <h2 style={{ color: "#00bfff", fontWeight: 700, fontSize: 20, marginBottom: 12 }}>Chat dos Sócios</h2>
-        <div style={{ maxHeight: 180, overflowY: "auto", marginBottom: 16, background: "#222", borderRadius: 8, padding: 12 }}>
-          {messages.map((msg, idx) => (
-            <div key={idx} style={{ marginBottom: 8, color: msg.user === user ? "#00bfff" : "#fff" }}>
-              <b>{msg.user}:</b> {msg.text}
-            </div>
-          ))}
-        </div>
-        <div style={{ display: "flex" }}>
-          <input
-            type="text"
-            value={chatInput}
-            onChange={e => setChatInput(e.target.value)}
-            placeholder="Digite sua mensagem..."
-            style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #333", fontSize: 15 }}
-          />
-          <button
-            onClick={sendMessage}
-            style={{ marginLeft: 8, background: "#00bfff", color: "#fff", border: "none", borderRadius: 8, padding: "10px 18px", fontWeight: 600 }}
-          >Enviar</button>
-        </div>
-      </div>
-
-"use client";
-
-import { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://urpuiznydrlwmaqhdids.supabase.co";
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || "sb_publishable_9G6JUKnfZ1mekk7qUKdTQA_TXbARtR0";
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-export default function CFODashboard() {
-  const [user, setUser] = useState("");
-  const [pass, setPass] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   // Função limpa de login
   const handleLogin = async () => {
@@ -137,6 +110,30 @@ export default function CFODashboard() {
           <i data-lucide="arrow-right" style={{ fontSize: 20, marginLeft: 8 }}></i>
         </button>
         {error && <div style={{ color: "#ff4d4f", marginTop: 24, textAlign: "center", fontWeight: 500 }}>{error}</div>}
+        {/* Chat sincronizado */}
+        <div style={{ marginTop: 40, background: "#181f2a", borderRadius: 16, padding: 24, maxWidth: 420 }}>
+          <h2 style={{ color: "#00bfff", fontWeight: 700, fontSize: 20, marginBottom: 12 }}>Chat dos Sócios</h2>
+          <div style={{ maxHeight: 180, overflowY: "auto", marginBottom: 16, background: "#222", borderRadius: 8, padding: 12 }}>
+            {messages.map((msg, idx) => (
+              <div key={idx} style={{ marginBottom: 8, color: msg.user === user ? "#00bfff" : "#fff" }}>
+                <b>{msg.user}:</b> {msg.text}
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex" }}>
+            <input
+              type="text"
+              value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
+              placeholder="Digite sua mensagem..."
+              style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #333", fontSize: 15 }}
+            />
+            <button
+              onClick={sendMessage}
+              style={{ marginLeft: 8, background: "#00bfff", color: "#fff", border: "none", borderRadius: 8, padding: "10px 18px", fontWeight: 600 }}
+            >Enviar</button>
+          </div>
+        </div>
       </div>
     </div>
   );
