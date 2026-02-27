@@ -114,25 +114,7 @@ const A = {
             A.supabaseChannel = null;
         }
     },
-                A.fetchSync();
-                // Supabase Realtime
-                if (window.supabase) {
-                    const supabase = window.supabase;
-                    A.cleanup();
-                    A.supabaseChannel = supabase.channel('painel_gastos')
-                        .on('postgres_changes', { event: '*', schema: 'public', table: 'painel_gastos' }, payload => {
-                            A.fetchSync();
-                        })
-                        .subscribe();
-                } else {
-                    setInterval(() => A.fetchSync(true), 15000);
-                }
-            }, 500);
-        } else {
-            A.toast("Credenciais inválidas.", "err"); lc.classList.remove('shake'); void lc.offsetWidth; lc.classList.add('shake');
-            document.getElementById('lp').value = ''; document.getElementById('lp').focus();
-        }
-    },
+    // ...adicione o bloco de Supabase Realtime dentro da função de login ou init...
 
     tab(t) {
         A.state.tab = t;
