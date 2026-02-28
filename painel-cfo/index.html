@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR" data-color-scheme="dark">
 <head>
@@ -14,6 +13,8 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         :root {
@@ -743,10 +744,14 @@
     <div id="toast-wrap"></div>
 
     <script>
-      const DB = { 
-    url: "https://urpuiznydrlwmaqhdids.supabase.co/rest/v1/painel_gastos?id=eq.1", 
-    key: "sb_publishable_9G6JUKnfZ1mekk7qUKdTQA_TXbARtR0" 
-};
+        const DB = { 
+            url: "https://urpuiznydrlwmaqhdids.supabase.co", 
+            key: "sb_publishable_9G6JUKnfZ1mekk7qUKdTQA_TXbARtR0" 
+        };
+        
+        // MOTOR OFICIAL SUPABASE
+        const supabase = window.supabase.createClient(DB.url, DB.key);
+
         const MONTHS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         
         const CATS = {
@@ -778,7 +783,6 @@
                         document.getElementById('login-screen').style.display = 'none';
                         document.getElementById('app').classList.add('visible');
                         
-                        // MENSAGEM EXCLUSIVA DO GUSTAVO
                         if (u === 'gustavo') {
                             const msg = document.getElementById('msg-gustavo');
                             if (msg) msg.style.display = 'flex';
@@ -847,31 +851,56 @@
             async fetchSync(silent = false) {
                 if (!silent) A.syncUI('load');
                 try {
-                    const r = await fetch(DB.url, { headers: { apikey: DB.key, Authorization: `Bearer ${DB.key}`, 'Cache-Control': 'no-cache' } });
-                    if (!r.ok) throw new Error("HTTP error");
-                    const d = await r.json();
-                    if (d && d[0]) {
-                        A.state.data.fixos = Array.isArray(d[0].fixos) ? d[0].fixos : JSON.parse(d[0].fixos || '[]');
-                        A.state.data.unicos = Array.isArray(d[0].unicos) ? d[0].unicos : JSON.parse(d[0].unicos || '[]');
-                        A.state.data.entradas = Array.isArray(d[0].entradas) ? d[0].entradas : JSON.parse(d[0].entradas || '[]');
-                        A.state.data.projecoes = typeof d[0].projecoes === 'string' ? JSON.parse(d[0].projecoes) : (d[0].projecoes || { entradas: [], saidas: [] });
-                        A.state.data.caixa_disponivel = d[0].caixa_disponivel || 0;
+                    const { data, error } = await supabase
+                        .from('painel_gastos')
+                        .select('*')
+                        .eq('id', 1)
+                        .single();
+
+                    if (error) throw error;
+
+                    if (data) {
+                        A.state.data.fixos = Array.isArray(data.fixos) ? data.fixos : JSON.parse(data.fixos || '[]');
+                        A.state.data.unicos = Array.isArray(data.unicos) ? data.unicos : JSON.parse(data.unicos || '[]');
+                        A.state.data.entradas = Array.isArray(data.entradas) ? data.entradas : JSON.parse(data.entradas || '[]');
+                        A.state.data.projecoes = typeof data.projecoes === 'string' ? JSON.parse(data.projecoes) : (data.projecoes || { entradas: [], saidas: [] });
+                        A.state.data.caixa_disponivel = data.caixa_disponivel || 0;
                     }
                     A.syncUI('ok');
                     A.normalizeLegacyStatus();
                     A.refreshFilterOptions();
                     A.render();
                     if (A.state.tab === 'projecoes') A.renderProjecoes();
-                } catch (e) { A.syncUI('err'); if(!silent) A.toast("Modo Offline.", "err"); }
+                } catch (e) {
+                    console.error("Falha na sincronização:", e);
+                    A.syncUI('err');
+                    if(!silent) A.toast("Modo Offline.", "err");
+                }
             },
 
             async pushSync() {
                 A.syncUI('load');
                 try {
-                    const payload = { fixos: A.state.data.fixos, unicos: A.state.data.unicos, entradas: A.state.data.entradas, projecoes: A.state.data.projecoes, caixa_disponivel: A.state.data.caixa_disponivel, updated_at: new Date().toISOString() };
-                    await fetch(DB.url, { method: 'PATCH', headers: { apikey: DB.key, Authorization: `Bearer ${DB.key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(payload) });
+                    const payload = {
+                        fixos: A.state.data.fixos,
+                        unicos: A.state.data.unicos,
+                        entradas: A.state.data.entradas,
+                        projecoes: A.state.data.projecoes,
+                        caixa_disponivel: A.state.data.caixa_disponivel,
+                        updated_at: new Date().toISOString()
+                    };
+                    const { error } = await supabase
+                        .from('painel_gastos')
+                        .update(payload)
+                        .eq('id', 1);
+
+                    if (error) throw error;
                     A.syncUI('ok');
-                } catch (e) { A.syncUI('err'); A.toast("Erro ao salvar na Nuvem.", "err"); }
+                } catch (e) {
+                    console.error("Falha ao enviar:", e);
+                    A.syncUI('err');
+                    A.toast("Erro ao salvar na Nuvem.", "err");
+                }
             },
 
             syncUI(s) { const d = document.getElementById('sync-dot'), t = document.getElementById('sync-txt'), m = { load: ['var(--warning)', 'Sincronizando...'], ok: ['var(--success)', 'Nuvem Conectada'], err: ['var(--danger)', 'Modo Offline'] }; d.style.background = m[s][0]; d.style.boxShadow = `0 0 12px ${m[s][0]}`; t.textContent = m[s][1]; },
@@ -920,7 +949,6 @@
                 const fM = A.filterData(A.state.data.fixos, m, y, false, client, project);
                 const uM = A.filterData(A.state.data.unicos, m, y, false, client, project);
 
-                // REGRA DO CFO: APENAS "Confirmado" ENTRA NOS CÁLCULOS!
                 const isConf = (x) => (x?.status === 'Confirmado');
                 const eMC = eM.filter(isConf), fMC = fM.filter(isConf), uMC = uM.filter(isConf);
 
@@ -941,7 +969,6 @@
                 
                 const sumMRR = eMC.filter(x => (x.categoria||'').includes("Mensalidade") || x.recorrente === 'mensal').reduce((a,b)=>a+Number(b.valor),0);
                 
-                // CÁLCULO DE IMPOSTO AUTOMÁTICO (Caso o usuário esqueça de lançar o DARF)
                 let sumImp = uMC.filter(x => (x.categoria||'').includes("Imposto")).reduce((a,b)=>a+Number(b.valor),0);
                 if (sumImp === 0 && sumE > 0) { sumImp = sumE * 0.06; } // Fallback 6% Simples Nacional
 
@@ -1009,7 +1036,6 @@
                     const cfM = sumF; const cfYTD = fYTDC.reduce((a,b)=>a+Number(b.valor),0);
                     const roM = mbM - cfM; const roYTD = mbYTD - cfYTD;
                     
-                    // Cálculo Automático do Simples Nacional (Caso não tenha sido lançado)
                     let calcImpYTD = uYTDC.filter(x => (x.categoria||'').includes("Imposto")).reduce((a,b)=>a+Number(b.valor),0);
                     if (calcImpYTD === 0 && rbYTD.total > 0) calcImpYTD = rbYTD.total * 0.06;
 
@@ -1089,7 +1115,6 @@
                 const def = defs[key] || { title: "Lançamentos Rastreáveis", list: [] };
                 let total = def.list.reduce((a,b)=>a+Number(b.valor),0);
                 
-                // Exceção visual caso a lista de imposto esteja vazia mas tenha cálculo automático
                 if(key === 'imp_all' && def.list.length === 0) {
                     const rB = eM.reduce((a,b)=>a+Number(b.valor),0);
                     if(rB > 0) {
@@ -1482,7 +1507,13 @@
                 
                 const now = new Date(), curM = now.getMonth(), curY = now.getFullYear();
                 let filtered = [];
-                if (monthsBack === 12) { filtered = allData.filter(x => { const p = A.parseDate(x.data); return p && p.y === curY; }); } 
+                if (monthsBack === 12) { 
+                    filtered = allData.filter(x => { 
+                        if(!x.data) return false;
+                        const [y] = x.data.split('-');
+                        return parseInt(y) === curY; 
+                    }); 
+                } 
                 else {
                     filtered = allData.filter(d => {
                         if(!d.data) return false;
