@@ -579,19 +579,46 @@ function showResult() {
     custo_mensal: `R$ ${(minLoss / 1000).toFixed(0)}k a R$ ${(maxLoss / 1000).toFixed(0)}k`
   };
 
-  // 🔥 NOVO FLUXO FASE 3: ENVIO PARA O MAKE.COM (Sem header Content-Type para bypass de CORS Local)
+  // 🔥 NOVO FLUXO FASE 3: ENVIO PARA O MAKE.COM (MARRETA ANTI-CORS)
   const makeWebhookUrl = 'https://hook.us2.make.com/88y3c45jrsbdcitl5o6i932hco6rq0i6';
   
-  fetch(makeWebhookUrl, {
-    method: 'POST',
-    body: JSON.stringify(supabasePayload)
-  })
-  .then(response => {
-    console.log("Sucesso! Lead enviado para a automação do Make.");
-  })
-  .catch(err => {
-    console.error("Erro ao enviar para o Make:", err);
-  });
+  try {
+    // 1. Criamos um formulário invisível na memória do navegador
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = makeWebhookUrl;
+    form.target = 'hidden-iframe'; // Redireciona a resposta pra um iframe fantasma
+    form.style.display = 'none';
+
+    // 2. Colocamos o seu JSON dentro de um campo de texto escondido
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload'; // O Make vai receber tudo dentro deste nome
+    input.value = JSON.stringify(supabasePayload);
+    form.appendChild(input);
+
+    // 3. Criamos o iframe fantasma para a página não piscar nem recarregar
+    const iframe = document.createElement('iframe');
+    iframe.name = 'hidden-iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    document.body.appendChild(form);
+
+    // 4. Disparamos o formulário forçadamente!
+    form.submit();
+    
+    console.log("🔥 SUCESSO FORÇADO: Lead arremessado para o Make via form submission!");
+
+    // 5. Limpeza de memória
+    setTimeout(() => {
+      document.body.removeChild(form);
+      document.body.removeChild(iframe);
+    }, 2000);
+
+  } catch (err) {
+    console.error("Falha ao usar a marreta anti-CORS:", err);
+  }
+
 
   // O botão agora apenas redireciona, porque o dado já está seguro.
   const openWpp = () => {
