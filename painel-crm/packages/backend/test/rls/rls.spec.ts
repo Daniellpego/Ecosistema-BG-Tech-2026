@@ -127,8 +127,8 @@ describe('RLS Cross-Tenant Isolation', () => {
 
     expect(allAccounts.length).toBeGreaterThanOrEqual(2);
 
-    const tenantACount = allAccounts.find((r) => r.tenant_id === tenantA)?.cnt || 0;
-    const tenantBCount = allAccounts.find((r) => r.tenant_id === tenantB)?.cnt || 0;
+    const tenantACount = allAccounts.find((r: any) => r.tenant_id === tenantA)?.cnt || 0;
+    const tenantBCount = allAccounts.find((r: any) => r.tenant_id === tenantB)?.cnt || 0;
 
     expect(tenantACount).toBeGreaterThan(0);
     expect(tenantBCount).toBeGreaterThan(0);

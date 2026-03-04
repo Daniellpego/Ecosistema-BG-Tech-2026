@@ -1,16 +1,17 @@
 import { Queue, Worker, Job } from 'bullmq';
-import IORedis from 'ioredis';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const QUEUE_NAME = 'agent-jobs';
 
-let connection: IORedis | null = null;
-
-function getConnection(): IORedis {
-  if (!connection) {
-    connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
-  }
-  return connection;
+/** Parse REDIS_URL into a BullMQ-compatible connection config. */
+function getConnectionOpts() {
+  const url = new URL(REDIS_URL);
+  return {
+    host: url.hostname,
+    port: Number(url.port) || 6379,
+    password: url.password || undefined,
+    maxRetriesPerRequest: null as null,
+  };
 }
 
 /**
@@ -18,7 +19,7 @@ function getConnection(): IORedis {
  * Jobs are processed asynchronously by the worker process.
  */
 export function getAgentQueue(): Queue {
-  return new Queue(QUEUE_NAME, { connection: getConnection() });
+  return new Queue(QUEUE_NAME, { connection: getConnectionOpts() });
 }
 
 export interface AgentJobData {
@@ -48,7 +49,7 @@ export function createAgentWorker(
     QUEUE_NAME,
     processor,
     {
-      connection: getConnection(),
+      connection: getConnectionOpts(),
       concurrency: Number(process.env.WORKER_CONCURRENCY) || 3,
     },
   );
