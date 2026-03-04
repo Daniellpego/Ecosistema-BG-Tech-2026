@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PrismaModule } from './common/prisma.module';
 import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
+import { BudgetMiddleware } from './common/middleware/budget.middleware';
 import { AuthModule } from './auth/auth.module';
 import { TenantsModule } from './tenants/tenants.module';
 import { AccountsModule } from './accounts/accounts.module';
@@ -40,4 +41,10 @@ import { AnalyticsModule } from './analytics/analytics.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(BudgetMiddleware)
+      .forRoutes({ path: 'agents/*', method: RequestMethod.POST });
+  }
+}
