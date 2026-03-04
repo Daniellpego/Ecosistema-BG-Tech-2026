@@ -18,6 +18,7 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 -- USERS
 -- ============================================================================
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "users_tenant_select" ON users
   FOR SELECT TO authenticated
@@ -36,6 +37,7 @@ CREATE POLICY "users_tenant_update" ON users
 -- ACCOUNTS
 -- ============================================================================
 ALTER TABLE accounts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE accounts FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "accounts_tenant_select" ON accounts
   FOR SELECT TO authenticated
@@ -58,6 +60,7 @@ CREATE POLICY "accounts_tenant_delete" ON accounts
 -- CONTACTS
 -- ============================================================================
 ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contacts FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "contacts_tenant_select" ON contacts
   FOR SELECT TO authenticated
@@ -80,6 +83,7 @@ CREATE POLICY "contacts_tenant_delete" ON contacts
 -- OPPORTUNITIES
 -- ============================================================================
 ALTER TABLE opportunities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE opportunities FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "opportunities_tenant_select" ON opportunities
   FOR SELECT TO authenticated
@@ -102,6 +106,7 @@ CREATE POLICY "opportunities_tenant_delete" ON opportunities
 -- RESOURCES
 -- ============================================================================
 ALTER TABLE resources ENABLE ROW LEVEL SECURITY;
+ALTER TABLE resources FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "resources_tenant_select" ON resources
   FOR SELECT TO authenticated
@@ -120,6 +125,7 @@ CREATE POLICY "resources_tenant_update" ON resources
 -- PROJECTS
 -- ============================================================================
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE projects FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "projects_tenant_select" ON projects
   FOR SELECT TO authenticated
@@ -138,6 +144,7 @@ CREATE POLICY "projects_tenant_update" ON projects
 -- SLAs
 -- ============================================================================
 ALTER TABLE slas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE slas FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "slas_tenant_select" ON slas
   FOR SELECT TO authenticated
@@ -156,6 +163,7 @@ CREATE POLICY "slas_tenant_update" ON slas
 -- PROPOSALS
 -- ============================================================================
 ALTER TABLE proposals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE proposals FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "proposals_tenant_select" ON proposals
   FOR SELECT TO authenticated
@@ -174,6 +182,7 @@ CREATE POLICY "proposals_tenant_update" ON proposals
 -- CONTRACTS
 -- ============================================================================
 ALTER TABLE contracts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contracts FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "contracts_tenant_select" ON contracts
   FOR SELECT TO authenticated
@@ -192,6 +201,7 @@ CREATE POLICY "contracts_tenant_update" ON contracts
 -- AGENT LOGS
 -- ============================================================================
 ALTER TABLE agent_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE agent_logs FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "agent_logs_tenant_select" ON agent_logs
   FOR SELECT TO authenticated
@@ -200,6 +210,29 @@ CREATE POLICY "agent_logs_tenant_select" ON agent_logs
 CREATE POLICY "agent_logs_tenant_insert" ON agent_logs
   FOR INSERT TO authenticated
   WITH CHECK (tenant_id = public.get_current_tenant_id());
+
+-- ============================================================================
+-- LEADS (Quiz / Facebook)
+-- ============================================================================
+ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE leads FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY "leads_tenant_select" ON leads
+  FOR SELECT TO authenticated
+  USING (tenant_id = public.get_current_tenant_id());
+
+CREATE POLICY "leads_tenant_insert" ON leads
+  FOR INSERT TO authenticated
+  WITH CHECK (tenant_id = public.get_current_tenant_id());
+
+CREATE POLICY "leads_tenant_update" ON leads
+  FOR UPDATE TO authenticated
+  USING (tenant_id = public.get_current_tenant_id())
+  WITH CHECK (tenant_id = public.get_current_tenant_id());
+
+CREATE POLICY "leads_tenant_delete" ON leads
+  FOR DELETE TO authenticated
+  USING (tenant_id = public.get_current_tenant_id());
 
 -- ============================================================================
 -- VERIFICATION: Test queries to confirm RLS isolation

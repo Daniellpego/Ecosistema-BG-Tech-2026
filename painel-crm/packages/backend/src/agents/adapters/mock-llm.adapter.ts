@@ -16,29 +16,52 @@ export class MockLlmAdapter implements LlmAdapter {
     let content: string;
 
     if (systemPrompt.includes('Qualificação') || systemPrompt.includes('Qualification')) {
-      content = JSON.stringify({
-        budget_estimate: 500000 + Math.floor(Math.random() * 2000000),
-        decision_makers: ['CTO', 'VP Engineering'],
-        must_have_reqs: [
-          'Real-time dashboard',
-          'API integration with existing ERP',
-          'Multi-tenant support',
-        ],
-        nice_to_have: ['Mobile app', 'AI-powered insights', 'Custom reports'],
-        risk_flags: ['legacy_integration', 'tight_timeline'],
-        recommended_next_steps: [
-          'Schedule technical deep-dive',
-          'Request architecture documentation',
-          'Prepare proof-of-concept',
-        ],
-        initial_effort_hours: 800 + Math.floor(Math.random() * 2000),
-        bant: {
-          budget: 'Confirmed — R$ 500k-2M range',
-          authority: 'CTO has budget authority',
-          need: 'Critical — current system at end of life',
-          timing: 'Q2 2026 desired start',
-        },
-      });
+      // Detect quiz-lead qualification (has lead_score + lead_category fields)
+      if (systemPrompt.includes('lead_score') || userMessage.includes('leadId')) {
+        const mockScore = 50 + Math.floor(Math.random() * 50); // 50-99
+        const category = mockScore >= 75 ? 'hot' : mockScore >= 50 ? 'warm' : 'cold';
+        content = JSON.stringify({
+          lead_score: mockScore,
+          lead_category: category,
+          recommended_stage: category === 'hot' ? 'qualified' : category === 'warm' ? 'nurture' : 'lead',
+          summary: `Lead qualificado com score ${mockScore}. Segmento compatível, dor principal identificada. Categoria: ${category}.`,
+          budget_estimate_brl: 100000 + Math.floor(Math.random() * 500000),
+          decision_makers: ['Proprietário', 'Gerente de TI'],
+          must_have_reqs: ['Automação de processos', 'Dashboard gerencial'],
+          risk_flags: mockScore < 60 ? ['orçamento_limitado'] : [],
+          recommended_actions: category === 'hot'
+            ? ['Agendar call comercial em 24h', 'Enviar proposta preliminar']
+            : ['Incluir em fluxo de nurture', 'Enviar material educativo'],
+          pain_intensity: mockScore >= 75 ? 'high' : 'medium',
+          timing_urgency: mockScore >= 75 ? 'immediate' : 'short_term',
+        });
+      } else {
+        content = JSON.stringify({
+          budget_estimate: 500000 + Math.floor(Math.random() * 2000000),
+          decision_makers: ['CTO', 'VP Engineering'],
+          must_have_reqs: [
+            'Real-time dashboard',
+            'API integration with existing ERP',
+            'Multi-tenant support',
+          ],
+          nice_to_have: ['Mobile app', 'AI-powered insights', 'Custom reports'],
+          risk_flags: ['legacy_integration', 'tight_timeline'],
+          recommended_next_steps: [
+            'Schedule technical deep-dive',
+            'Request architecture documentation',
+            'Prepare proof-of-concept',
+          ],
+          initial_effort_hours: 800 + Math.floor(Math.random() * 2000),
+          bant: {
+            budget: 'Confirmed — R$ 500k-2M range',
+            authority: 'CTO has budget authority',
+            need: 'Critical — current system at end of life',
+            timing: 'Q2 2026 desired start',
+          },
+          qualification_score: 72 + Math.floor(Math.random() * 28),
+          recommended_stage: 'qualified',
+        });
+      }
     } else if (systemPrompt.includes('Negociação') || systemPrompt.includes('Negotiation')) {
       content = JSON.stringify({
         counter_proposal: {

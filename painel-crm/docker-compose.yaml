@@ -9,7 +9,8 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./sql/rls-policies.sql:/docker-entrypoint-initdb.d/02-rls.sql
+      # NOTE: rls-policies.sql requires tables created by Prisma migrate first.
+      # Apply RLS manually after migrations: psql -f sql/rls-policies.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U crm -d crm_bgtech"]
       interval: 5s

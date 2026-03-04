@@ -15,6 +15,7 @@ import { Job } from 'bullmq';
 import { createAgentWorker, AgentJobData, AgentJobResult } from './queue';
 import { createLlmAdapter } from './adapters/llm.factory';
 import { AGENT_PROMPTS } from './prompts';
+import { processLeadQualification } from './qualification-worker';
 
 const prisma = new PrismaClient();
 const llm = createLlmAdapter();
@@ -42,7 +43,12 @@ async function processJob(
 
     switch (agentName) {
       case 'qualification':
-        result = await runQualification(tenantId, payload);
+        // Route to lead-specific qualification when leadId is present
+        if (payload.leadId) {
+          result = await processLeadQualification(job.data);
+        } else {
+          result = await runQualification(tenantId, payload);
+        }
         break;
       case 'proposal':
         result = await runProposal(tenantId, payload);
