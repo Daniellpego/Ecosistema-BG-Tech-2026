@@ -4,6 +4,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PrismaModule } from './common/prisma.module';
 import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
 import { BudgetMiddleware } from './common/middleware/budget.middleware';
+import { MetricsController } from './common/metrics.controller';
 import { AuthModule } from './auth/auth.module';
 import { TenantsModule } from './tenants/tenants.module';
 import { AccountsModule } from './accounts/accounts.module';
@@ -34,6 +35,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     AgentsModule,
     AnalyticsModule,
   ],
+  controllers: [MetricsController],
   providers: [
     {
       provide: APP_INTERCEPTOR,
