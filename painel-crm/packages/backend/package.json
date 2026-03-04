@@ -8,6 +8,8 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
+    "start:worker": "ts-node src/agents/agent-worker-runner.ts",
+    "start:worker:prod": "node dist/agents/agent-worker-runner.js",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
