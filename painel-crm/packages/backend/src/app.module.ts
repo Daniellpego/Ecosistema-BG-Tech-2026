@@ -17,6 +17,7 @@ import { ProposalsModule } from './proposals/proposals.module';
 import { ContractsModule } from './contracts/contracts.module';
 import { AgentsModule } from './agents/agents.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { LeadsModule } from './leads/leads.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     ContractsModule,
     AgentsModule,
     AnalyticsModule,
+    LeadsModule,
   ],
   controllers: [MetricsController],
   providers: [

@@ -46,6 +46,7 @@ ALTER TABLE "agent_logs" ADD CONSTRAINT "agent_logs_lead_id_fkey" FOREIGN KEY ("
 
 -- Enable RLS on leads table
 ALTER TABLE "leads" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "leads" FORCE ROW LEVEL SECURITY;
 
 -- RLS policies using current_setting('my.tenant', true)
 CREATE POLICY "leads_tenant_isolation_select" ON "leads"
