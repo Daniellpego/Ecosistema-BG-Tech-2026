@@ -1,8 +1,8 @@
 {
   "name": "painel-crm",
-  "buildCommand": "echo 'Static site - no build needed'",
+  "buildCommand": "mkdir -p out && cp -r painel-cfo/* out/",
   "installCommand": "",
-  "outputDirectory": "painel-cfo",
+  "outputDirectory": "out",
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
