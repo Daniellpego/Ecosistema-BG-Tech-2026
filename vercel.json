@@ -1,6 +1,6 @@
 {
   "name": "painel-crm",
-  "buildCommand": "mkdir -p out && cp -r painel-cfo/* out/",
+  "buildCommand": "mkdir -p out && (cd painel-cfo && cp -R . ../out/)",
   "installCommand": "",
   "outputDirectory": "out",
   "cleanUrls": true,
