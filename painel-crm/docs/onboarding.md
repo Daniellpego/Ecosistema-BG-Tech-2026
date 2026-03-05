@@ -467,3 +467,52 @@ cd painel-crm/packages/backend
 npx jest test/ingest/ingest.spec.ts --verbose
 npx jest test/agents/qualification-lead.spec.ts --verbose
 ```
+
+---
+
+## 3. Integração Leads Quiz (Supabase → CRM)
+
+### Variáveis de ambiente obrigatórias
+- SUPABASE_URL (backend)
+- SUPABASE_SERVICE_KEY (backend, **nunca expor no frontend ou repo público**)
+- REDIS_URL (backend)
+- DATABASE_URL (backend)
+- TEST_TOKEN (E2E)
+
+### Execução local
+```bash
+# Backend
+cd painel-crm/packages/backend
+npm ci
+npx prisma migrate dev
+npm run start:dev   # inicia API + listener
+npm run start:worker # inicia worker de qualificação
+
+# Frontend
+cd ../../apps/frontend
+npm ci
+npm run dev
+```
+
+### Testes
+```bash
+# Unitários
+npx jest --runInBand
+# RLS smoke
+npx jest packages/backend/test/rls/rls.spec.ts --runInBand
+# E2E Playwright
+npx playwright test
+```
+
+### Observações de segurança
+- SUPABASE_SERVICE_KEY: **nunca expor em frontend ou repo**. Usar apenas em backend/server.
+- Secrets sensíveis devem ser configurados via GitHub Actions/CI secrets.
+- Recomenda-se rodar pentest antes de produção enterprise.
+
+### Critérios de aceitação
+- Listener cria lead e enfileira job.
+- Worker atualiza lead com score, categoria e grava AgentLog.
+- RLS bloqueia acesso cross-tenant.
+- Budget guard impede chamadas LLM acima do limite.
+- UI /leads mostra leads em tempo real (<2s).
+- Todos os testes passam.
