@@ -1,8 +1,9 @@
 {
   "name": "painel-crm",
-  "buildCommand": "cd painel-crm && npm ci && npm run ci:build",
+  "buildCommand": "cd painel-crm/apps/frontend && npm ci && npm run build",
   "installCommand": "npm ci",
-  "outputDirectory": "painel-crm/apps/frontend/.next/standalone",
+  "outputDirectory": "painel-crm/apps/frontend/.next",
+  "framework": "nextjs",
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
