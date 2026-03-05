@@ -10,6 +10,7 @@
     "build": "npm run build:backend && npm run build:frontend",
     "build:backend": "cd packages/backend && npm run build",
     "build:frontend": "cd apps/frontend && npm run build",
+    "ci:build": "node ../ops/scripts/build-frontend.js",
     "migrate:dev": "cd packages/backend && npx prisma migrate dev",
     "migrate:deploy": "cd packages/backend && npx prisma migrate deploy",
     "seed": "cd packages/backend && npx prisma db seed",
@@ -24,7 +25,7 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "deploy:staging": "./ops/scripts/deploy-staging.sh",
-    "prepare": "husky"
+    "prepare": "node ../ops/scripts/husky-prepare-skip.js"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
