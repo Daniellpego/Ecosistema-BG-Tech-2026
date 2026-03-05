@@ -1,18 +1,14 @@
 {
   "name": "painel-crm",
-  "buildCommand": "mkdir -p out && (cd painel-cfo && cp -R . ../out/)",
-  "installCommand": "",
-  "outputDirectory": "out",
+  "buildCommand": "cd painel-crm && npm install && npm run build:frontend",
+  "installCommand": "npm install",
+  "outputDirectory": "painel-crm/apps/frontend/.next/standalone",
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "https://crm-bgtech-backend.vercel.app/api/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -25,7 +21,7 @@
         },
         {
           "key": "X-Build-Version",
-          "value": "2026-03-05-painel-cfo-api-proxy"
+          "value": "2026-03-05-painel-crm-nextjs"
         }
       ]
     }
