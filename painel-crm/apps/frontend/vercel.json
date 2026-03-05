@@ -1,0 +1,12 @@
+{
+  "framework": "nextjs",
+  "installCommand": "npm ci",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://crm-bgtech-backend.vercel.app/api/$1"
+    }
+  ]
+}
