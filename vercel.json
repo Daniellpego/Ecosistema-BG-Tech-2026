@@ -1,6 +1,6 @@
 {
   "name": "painel-crm",
-  "buildCommand": "npm run --workspace painel-crm ci:build",
+  "buildCommand": "cd painel-crm && npm ci && npm run ci:build",
   "installCommand": "npm ci",
   "outputDirectory": "painel-crm/apps/frontend/.next/standalone",
   "cleanUrls": true,
