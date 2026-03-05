@@ -1178,18 +1178,22 @@
                         A.checkUICountFloor('pushSync:before-render');
                         A.render();
                         if (A.state.tab === 'projecoes') A.renderProjecoes();
-                        return; // done
+                        return true; // done
                     } catch (e) {
                         if (attempt === MAX_CAS_RETRIES - 1) {
                             log.error('pushSync FAIL (all retries exhausted)', e);
                             A.logEvt('sync:push:fail', { error: e.message });
                             A.syncUI('err');
                             A.toast('Erro ao salvar na Nuvem. Tente novamente.', 'err');
-                            return;
+                            return false;
                         }
                         log.warn(`pushSync attempt ${attempt + 1} error, retrying...`, e.message);
                     }
                 }
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
+                return false;
+
+ main
                 } finally { A.logEvt('sync:push:end'); A.state._syncInFlight = false; } // ── FIX H6: release guard ──
             },
 
@@ -1221,22 +1225,35 @@
                 if (d.includes('/')) {
                     const p = d.split('/');
                     if (p.length === 3 && p[2].length === 4) return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+                    if (p.length === 2) {
+                        const y = String(new Date().getFullYear());
+                        return `${y}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+                    }
                 }
                 return d;
+            },
+
+            getDateParts(d) {
+                const nd = A._normDate(d);
+                const parts = (nd || '').split('-');
+                if (parts.length < 2) return null;
+                const y = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10);
+                const dd = parseInt(parts[2] || '1', 10);
+                if (!Number.isFinite(y) || !Number.isFinite(m) || m < 1 || m > 12) return null;
+                return { y, m, d: Number.isFinite(dd) ? dd : 1 };
             },
 
             filterData(arr, mStr, yStr, isYTD = false, client = 'all', project = 'all') {
                 return (arr || []).filter(x => {
                     if (!x?.data) return false;
-                    const nd = A._normDate(x.data);
-                    const parts = nd.split('-');
-                    if (parts.length < 2) return false;
-                    const [y, m] = parts;
-                    if (y !== yStr) return false;
+                    const parts = A.getDateParts(x.data);
+                    if (!parts) return false;
+                    if (String(parts.y) !== yStr) return false;
                     if (client !== 'all' && (x.cliente || '') !== client) return false;
                     if (project !== 'all' && (x.projeto || '') !== project) return false;
                     if (mStr === 'anual') return true;
-                    const mi = parseInt(mStr, 10) + 1, mm = parseInt(m, 10);
+                    const mi = parseInt(mStr, 10) + 1, mm = parts.m;
                     if (isNaN(mi) || isNaN(mm)) return false;
                     if (isYTD) return mm <= mi;
                     return mm === mi;
@@ -1251,8 +1268,12 @@
                     try {
                         A.state.data.caixa_disponivel = A.cleanMoney(input);
                         A.render();
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
+                        ok = await A.pushSync();
+
                         await A.pushSync();
                         ok = true;
+ main
                     } finally {
                         A.endMutation('saveCaixa', ok);
                     }
@@ -1455,8 +1476,13 @@
                 
                 if(key === 'imp_all') {
                     const rB = eM.reduce((a,b)=>a+Number(b.valor),0);
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
+                    const yy = y;
+                    const mm = (m === 'anual') ? '00' : String(Number(m) + 1).padStart(2, '0');
+
                     const yy = (m === 'anual') ? y : y;
                     const mm = (m === 'anual') ? String(new Date().getMonth() + 1).padStart(2, '0') : String(Number(m) + 1).padStart(2, '0');
+ main
                     const yyyyMm = `${yy}-${mm}`;
                     def.list.push({ id: A.deterministicTaxId(yyyyMm), data: new Date().toISOString().split('T')[0], nome: "Simples Nacional (Auto-Calculado 6%)", cliente: "Receita Federal", projeto: "Sistema", valor: A.calcTax(rB) });
                     total = A.calcTax(rB);
@@ -1747,8 +1773,12 @@
                         }
                         A.state.data[arrKey] = arr;
                     }
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
+                    A.closeDrawer(); A.refreshFilterOptions(); A.render(); ok = await A.pushSync();
+
                     A.closeDrawer(); A.refreshFilterOptions(); A.render(); await A.pushSync();
                     ok = true;
+ main
                 } finally { btn.classList.remove('loading'); A.endMutation('save', ok); }
             },
 
@@ -1765,9 +1795,12 @@
                     A.state.data.entradas = A.state.data.entradas.filter(i => i.id !== id);
                     A.refreshFilterOptions(); 
                     A.render(); 
-                    await A.pushSync();
+                    ok = await A.pushSync();
                     A.toast("Registro excluído. 🗑️");
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
+
                     ok = true;
+ main
                     } finally {
                         A.endMutation('del', ok);
                     }
@@ -2030,8 +2063,12 @@
                     A.state.data.projecoes.saidas = (A.state.data.projecoes.saidas||[]).filter(x => x.id !== id);
                     A.state.data.projecoes[arrKey].push(base);
 
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
+                    A.closeProjDrawer(); A.renderProjecoes(); ok = await A.pushSync(); A.toast("Projeção salva! 🔮");
+
                     A.closeProjDrawer(); A.renderProjecoes(); await A.pushSync(); A.toast("Projeção salva! 🔮");
                     ok = true;
+ main
                 } finally { btn.classList.remove('loading'); A.endMutation('saveProj', ok); }
             },
             async delProj(tipo, id) {
@@ -2042,8 +2079,12 @@
                     A._localDeletedIds.add(id); // Track for merge — prevents resurrection from remote
                     A.state.data.projecoes.entradas = (A.state.data.projecoes.entradas||[]).filter(x => x.id !== id);
                     A.state.data.projecoes.saidas = (A.state.data.projecoes.saidas||[]).filter(x => x.id !== id);
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
+                    A.renderProjecoes(); ok = await A.pushSync(); A.toast("Projeção removida. 🗑️");
+
                     A.renderProjecoes(); await A.pushSync(); A.toast("Projeção removida. 🗑️");
                     ok = true;
+ main
                     } finally {
                         A.endMutation('delProj', ok);
                     }
@@ -2066,19 +2107,29 @@
                 if (monthsBack === 12) { 
                     filtered = allData.filter(x => { 
                         if(!x.data) return false;
-                        const [y] = x.data.split('-');
-                        return parseInt(y) === curY; 
+                        const parts = A.getDateParts(x.data);
+                        if (!parts) return false;
+                        return parts.y === curY; 
                     }); 
                 } 
                 else {
                     filtered = allData.filter(d => {
                         if(!d.data) return false;
-                        const [y, m] = d.data.split('-');
-                        const itemDate = new Date(y, m-1, 1), limitDate = new Date(curY, curM - monthsBack + 1, 1), endDate = new Date(curY, curM + 1, 0); 
+                        const parts = A.getDateParts(d.data);
+                        if (!parts) return false;
+                        const itemDate = new Date(parts.y, parts.m - 1, 1), limitDate = new Date(curY, curM - monthsBack + 1, 1), endDate = new Date(curY, curM + 1, 0); 
                         return itemDate >= limitDate && itemDate <= endDate;
                     });
                 }
-                filtered.sort((a,b) => (a.data||'').localeCompare(b.data||''));
+                filtered.sort((a,b) => {
+                    const pa = A.getDateParts(a.data), pb = A.getDateParts(b.data);
+                    if (!pa && !pb) return 0;
+                    if (!pa) return -1;
+                    if (!pb) return 1;
+                    const da = `${pa.y}-${String(pa.m).padStart(2, '0')}-${String(pa.d).padStart(2, '0')}`;
+                    const db = `${pb.y}-${String(pb.m).padStart(2, '0')}-${String(pb.d).padStart(2, '0')}`;
+                    return da.localeCompare(db);
+                });
                 const filename = `Relatorio_BGTech_${monthsBack}M`;
                 
                 if (format === 'csv') {
