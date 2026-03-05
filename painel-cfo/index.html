@@ -1190,7 +1190,10 @@
                         log.warn(`pushSync attempt ${attempt + 1} error, retrying...`, e.message);
                     }
                 }
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
                 return false;
+
+ main
                 } finally { A.logEvt('sync:push:end'); A.state._syncInFlight = false; } // ── FIX H6: release guard ──
             },
 
@@ -1265,7 +1268,12 @@
                     try {
                         A.state.data.caixa_disponivel = A.cleanMoney(input);
                         A.render();
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
                         ok = await A.pushSync();
+
+                        await A.pushSync();
+                        ok = true;
+ main
                     } finally {
                         A.endMutation('saveCaixa', ok);
                     }
@@ -1468,8 +1476,13 @@
                 
                 if(key === 'imp_all') {
                     const rB = eM.reduce((a,b)=>a+Number(b.valor),0);
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
                     const yy = y;
                     const mm = (m === 'anual') ? '00' : String(Number(m) + 1).padStart(2, '0');
+
+                    const yy = (m === 'anual') ? y : y;
+                    const mm = (m === 'anual') ? String(new Date().getMonth() + 1).padStart(2, '0') : String(Number(m) + 1).padStart(2, '0');
+ main
                     const yyyyMm = `${yy}-${mm}`;
                     def.list.push({ id: A.deterministicTaxId(yyyyMm), data: new Date().toISOString().split('T')[0], nome: "Simples Nacional (Auto-Calculado 6%)", cliente: "Receita Federal", projeto: "Sistema", valor: A.calcTax(rB) });
                     total = A.calcTax(rB);
@@ -1760,7 +1773,12 @@
                         }
                         A.state.data[arrKey] = arr;
                     }
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
                     A.closeDrawer(); A.refreshFilterOptions(); A.render(); ok = await A.pushSync();
+
+                    A.closeDrawer(); A.refreshFilterOptions(); A.render(); await A.pushSync();
+                    ok = true;
+ main
                 } finally { btn.classList.remove('loading'); A.endMutation('save', ok); }
             },
 
@@ -1779,6 +1797,10 @@
                     A.render(); 
                     ok = await A.pushSync();
                     A.toast("Registro excluído. 🗑️");
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
+
+                    ok = true;
+ main
                     } finally {
                         A.endMutation('del', ok);
                     }
@@ -2041,7 +2063,12 @@
                     A.state.data.projecoes.saidas = (A.state.data.projecoes.saidas||[]).filter(x => x.id !== id);
                     A.state.data.projecoes[arrKey].push(base);
 
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
                     A.closeProjDrawer(); A.renderProjecoes(); ok = await A.pushSync(); A.toast("Projeção salva! 🔮");
+
+                    A.closeProjDrawer(); A.renderProjecoes(); await A.pushSync(); A.toast("Projeção salva! 🔮");
+                    ok = true;
+ main
                 } finally { btn.classList.remove('loading'); A.endMutation('saveProj', ok); }
             },
             async delProj(tipo, id) {
@@ -2052,7 +2079,12 @@
                     A._localDeletedIds.add(id); // Track for merge — prevents resurrection from remote
                     A.state.data.projecoes.entradas = (A.state.data.projecoes.entradas||[]).filter(x => x.id !== id);
                     A.state.data.projecoes.saidas = (A.state.data.projecoes.saidas||[]).filter(x => x.id !== id);
+ codex/fix-cfo-panel-mix-bug-and-data-reset-z8bv58
                     A.renderProjecoes(); ok = await A.pushSync(); A.toast("Projeção removida. 🗑️");
+
+                    A.renderProjecoes(); await A.pushSync(); A.toast("Projeção removida. 🗑️");
+                    ok = true;
+ main
                     } finally {
                         A.endMutation('delProj', ok);
                     }
