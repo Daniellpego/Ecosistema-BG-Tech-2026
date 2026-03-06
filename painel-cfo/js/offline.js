@@ -169,6 +169,34 @@ export async function clearSyncQueue() {
 
 // ─── Network Status ────────────────────────────
 
+// ─── Convenience Wrappers for State ────────────
+
+export async function syncToLocal(lancamentos, projecoes) {
+    try {
+        await Promise.all([
+            cacheLancamentos(lancamentos),
+            cacheProjecoes(projecoes)
+        ]);
+        console.log('📦 [Offline] Sincronização local concluída.');
+    } catch (err) {
+        console.error('❌ [Offline] Falha ao sincronizar localmente:', err);
+    }
+}
+
+export async function loadLocal() {
+    try {
+        const [lancamentos, projecoes, config] = await Promise.all([
+            getCachedLancamentos(),
+            getCachedProjecoes(),
+            getCachedConfig()
+        ]);
+        return { lancamentos, projecoes, config };
+    } catch (err) {
+        console.error('❌ [Offline] Falha ao carregar cache local:', err);
+        return { lancamentos: [], projecoes: [], config: null };
+    }
+}
+
 export function isOnline() {
     return navigator.onLine;
 }
