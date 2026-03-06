@@ -1,0 +1,76 @@
+/* ═══════════════════════════════════════════════
+   CFO Dashboard v2 — Design Tokens
+   ═══════════════════════════════════════════════ */
+
+:root {
+  /* Background & Surface */
+  --color-bg: #03050a;
+  --color-surface: #0a0f1a;
+  --color-card: rgba(15, 23, 42, 0.4);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(14, 165, 233, 0.3);
+
+  --font-main: 'Inter', sans-serif;
+  --font-title: 'Plus Jakarta Sans', sans-serif;
+  --font-serif: 'Bodoni Moda', serif;
+  --font-alt: 'Jost', sans-serif;
+
+  /* Primary */
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --primary-glow: rgba(14, 165, 233, 0.4);
+  --gold: #f59e0b;
+  --gold-glow: rgba(245, 158, 11, 0.4);
+  --primary-surface: rgba(14, 165, 233, 0.1);
+
+  /* Semantic */
+  --danger: #ef4444;
+  --shadow-md: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+  --shadow-premium: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 20px 50px -12px rgba(0, 0, 0, 0.8);
+  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --danger-glow: rgba(239, 68, 68, 0.3);
+  --danger-surface: rgba(239, 68, 68, 0.1);
+
+  --warning: #f59e0b;
+  --warning-glow: rgba(245, 158, 11, 0.3);
+  --warning-surface: rgba(245, 158, 11, 0.1);
+
+  --success: #10b981;
+  --success-glow: rgba(16, 185, 129, 0.3);
+  --success-surface: rgba(16, 185, 129, 0.1);
+
+  --purple: #a855f7;
+  --purple-glow: rgba(168, 85, 247, 0.3);
+
+  /* Text */
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #475569;
+
+  /* Layout */
+  --sidebar-w: 280px;
+  --radius: 24px;
+  --radius-sm: 16px;
+  --radius-xs: 8px;
+
+  /* Animation */
+  --transition: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 200ms ease;
+  --transition-med: 400ms ease;
+
+  /* Typography */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-title: 'Plus Jakarta Sans', var(--font-body);
+
+  /* Z-index scale */
+  --z-bg: 0;
+  --z-content: 1;
+  --z-sidebar: 100;
+  --z-mobile-bar: 150;
+  --z-overlay: 200;
+  --z-drawer: 201;
+  --z-toast: 9999;
+  --z-login: 1000;
+}
