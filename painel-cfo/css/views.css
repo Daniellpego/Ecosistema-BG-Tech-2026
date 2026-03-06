@@ -19,14 +19,17 @@
     max-width: 420px;
     padding: 60px 48px;
     background: var(--glass-bg);
-    backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid var(--glass-border);
     border-radius: 32px;
     box-shadow: var(--shadow-premium);
     text-align: center;
     position: relative;
-    z-index: 10;
-    animation: loginCardReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 100;
+    opacity: 0;
+    /* Start hidden for animation */
+    animation: loginCardReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .login-brand {
@@ -48,6 +51,7 @@
     letter-spacing: -0.02em;
     background: linear-gradient(180deg, #fff, #94a3b8);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 

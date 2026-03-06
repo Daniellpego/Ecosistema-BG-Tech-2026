@@ -14,12 +14,14 @@ import { renderLancamentosTable, openDrawer, addTag, removeTag } from './views/l
 const loginScreen = document.getElementById('login-screen');
 const appEl = document.getElementById('app');
 
+let isInitialized = false;
 async function initApp() {
+    if (isInitialized) return;
+    isInitialized = true;
+
     await State.loadAll();
-    // Render initial view
     navigate('overview');
 
-    // Realtime listeners
     DB.subscribeRealtime(
         (p) => { State.handleRealtimeEvent('cfo_lancamentos', p); renderActiveView(); },
         (p) => { State.handleRealtimeEvent('cfo_projecoes', p); renderActiveView(); },
@@ -62,6 +64,9 @@ window.CFO = {
     openDrawer,
     addTag,
     removeTag,
+    signOut: async () => {
+        await Auth.signOut();
+    },
     openTaxModal: () => {
         const s = State.getState();
         document.getElementById('tax-regime').value = s.regime_tributario;
@@ -83,12 +88,25 @@ window.CFO = {
 // Event Listeners
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = document.getElementById('btn-login');
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
 
     try {
+        btn.disabled = true;
+        btn.innerHTML = 'Entrando...';
         await Auth.signIn(email, pass);
-        // Premium Transition
+    } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="log-in" width="20" height="20"></i> Entrar';
+        if (window.lucide) lucide.createIcons();
+        document.getElementById('login-error').textContent = err.message;
+    }
+});
+
+// App Init
+Auth.onAuthChange(user => {
+    if (user) {
         const overlay = document.getElementById('welcome-overlay');
         overlay.classList.add('active');
 
@@ -98,20 +116,10 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
             setTimeout(() => {
                 overlay.classList.remove('active');
                 initApp();
-            }, 3000);
-        }, 1500);
-    } catch (err) {
-        document.getElementById('login-error').textContent = err.message;
-    }
-});
-
-// App Init
-Auth.onAuthChange(user => {
-    if (user) {
-        loginScreen.style.display = 'none';
-        appEl.style.display = 'flex';
-        initApp();
+            }, 2500);
+        }, 1200);
     } else {
+        isInitialized = false;
         loginScreen.style.display = 'flex';
         appEl.style.display = 'none';
     }
