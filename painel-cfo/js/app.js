@@ -120,18 +120,21 @@ function handleAuthStatus(user) {
         const overlay = document.getElementById('welcome-overlay');
         overlay.classList.add('active');
 
+        // Start loading data immediately while animation plays
+        initApp();
+
         setTimeout(() => {
             loginScreen.style.display = 'none';
-            appEl.style.display = 'flex';
+            appEl.classList.add('visible'); // Reveals the app (opacity + display)
+
             setTimeout(() => {
                 overlay.classList.remove('active');
-                initApp();
-            }, 2000);
-        }, 1000);
+            }, 1500);
+        }, 800);
     } else {
         isInitialized = false;
         loginScreen.style.display = 'flex';
-        appEl.style.display = 'none';
+        appEl.classList.remove('visible');
     }
 }
 
