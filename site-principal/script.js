@@ -1,5 +1,5 @@
 const CONFIG = {
-  whatsappNumber: '5543999998888', // TODO: substituir pelo número real de WhatsApp comercial
+  whatsappNumber: '5543999751504',
   webhookUrl: '',
   webhookToken: '',
   supabaseUrl: 'https://urpuiznydrlwmaqhdids.supabase.co',
@@ -504,7 +504,7 @@ function openQuiz() {
           quizBody.innerHTML = `
                      <div style="text-align:center; padding: 60px 20px;">
                        <p style="color: #ef4444; font-weight: 800; margin-bottom: 16px;">O diagnóstico encontrou um gargalo na rede.</p>
-                       <a href="https://wa.me/5543999998888" target="_blank" class="btn-primary" style="display:inline-flex;">Continuar via WhatsApp</a>
+                       <a href="https://wa.me/5543999751504" target="_blank" class="btn-primary" style="display:inline-flex;">Continuar via WhatsApp</a>
                      </div>`;
         }
       }, 4000);
