@@ -9,9 +9,8 @@ let supabaseClient = null;
 export function getSupabase() {
     if (!supabaseClient) {
         if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) {
-            console.error('❌ Supabase configuration missing!');
+            console.error('❌ Supabase configuration missing! Check environment variables.');
         }
-        // Initialize client using the window.supabase UMD library loaded in index.html
         supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
     }
     return supabaseClient;
@@ -19,7 +18,10 @@ export function getSupabase() {
 
 export async function signIn(email, password) {
     const sb = getSupabase();
-    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    // Suporta login com alias "bgtech" → email real
+    const LOGIN_ALIASES = { 'bgtech': 'acessosbgtech@gmail.com' };
+    const actualEmail = LOGIN_ALIASES[email.toLowerCase().trim()] || email;
+    const { data, error } = await sb.auth.signInWithPassword({ email: actualEmail, password });
     if (error) throw new Error(error.message);
     return data.user;
 }

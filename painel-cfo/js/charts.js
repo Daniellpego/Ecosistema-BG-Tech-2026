@@ -8,7 +8,7 @@ import * as State from './state.js';
 let charts = { area: null, donut: null, dreBar: null, dreLine: null };
 
 const baseOpts = {
-    chart: { background: 'transparent', fontFamily: 'Inter', toolbar: { show: false }, animations: { enabled: true, speed: 800 } },
+    chart: { background: 'transparent', fontFamily: 'Poppins', toolbar: { show: false }, animations: { enabled: true, speed: 800 } },
     theme: { mode: 'dark' }
 };
 

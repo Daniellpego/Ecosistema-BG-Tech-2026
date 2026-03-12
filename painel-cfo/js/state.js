@@ -53,27 +53,17 @@ export async function loadAll() {
             setTaxRate(state.aliquota_imposto);
 
             // Sync to local
-            await Offline.cacheLancamentos(lancamentos);
-            await Offline.cacheProjecoes(projecoes);
-            await Offline.cacheConfig({
-                caixa_disponivel: state.caixa,
-                aliquota_imposto: state.aliquota_imposto,
-                regime_tributario: state.regime_tributario
-            });
+            await Offline.syncToLocal(lancamentos, projecoes);
         } else {
-            state.lancamentos = await Offline.getCachedLancamentos();
-            state.projecoes = await Offline.getCachedProjecoes();
-            const config = await Offline.getCachedConfig();
-            if (config) {
-                state.caixa = config.caixa_disponivel;
-                state.aliquota_imposto = config.aliquota_imposto;
-                state.regime_tributario = config.regime_tributario;
-            }
+            const { lancamentos, projecoes } = await Offline.loadLocal();
+            state.lancamentos = lancamentos;
+            state.projecoes = projecoes;
         }
     } catch (err) {
         console.error('Load Error:', err);
-        state.lancamentos = await Offline.getCachedLancamentos();
-        state.projecoes = await Offline.getCachedProjecoes();
+        const { lancamentos, projecoes } = await Offline.loadLocal();
+        state.lancamentos = lancamentos;
+        state.projecoes = projecoes;
     } finally {
         state.syncing = false;
         notify();
@@ -104,9 +94,28 @@ export async function saveCaixa(valor) {
             await DB.updateCaixa(valor);
         }
         state.caixa = valor;
+        await Offline.cacheConfig({ caixa_disponivel: valor });
         notify();
     } catch (err) {
         toast('Erro ao salvar caixa', 'danger');
+    }
+}
+
+export async function saveProjecao(item) {
+    try {
+        if (Offline.isOnline()) {
+            const saved = await DB.upsertProjecao(item);
+            const idx = state.projecoes.findIndex(p => p.id === saved.id);
+            if (idx >= 0) state.projecoes[idx] = saved;
+            else state.projecoes.push(saved);
+        } else {
+            await Offline.offlinePutProjecao(item);
+            toast('Projeção salva offline', 'warning');
+        }
+        notify();
+    } catch (err) {
+        toast('Erro ao salvar projeção', 'danger');
+        throw err;
     }
 }
 
@@ -135,6 +144,13 @@ export function handleRealtimeEvent(table, payload) {
             if (idx >= 0) state.lancamentos[idx] = newRec;
             else state.lancamentos.push(newRec);
         }
+    } else if (table === 'cfo_projecoes') {
+        if (eventType === 'DELETE') state.projecoes = state.projecoes.filter(p => p.id !== oldRec.id);
+        else {
+            const idx = state.projecoes.findIndex(p => p.id === newRec.id);
+            if (idx >= 0) state.projecoes[idx] = newRec;
+            else state.projecoes.push(newRec);
+        }
     } else if (table === 'cfo_config_v2' && eventType === 'UPDATE') {
         state.caixa = newRec.caixa_disponivel;
         state.aliquota_imposto = newRec.aliquota_imposto;
@@ -146,6 +162,38 @@ export function handleRealtimeEvent(table, payload) {
 
 export function subscribe(cb) { state.listeners.push(cb); }
 function notify() { state.listeners.forEach(cb => cb(state)); }
+
+export async function deleteLancamento(id) {
+    try {
+        if (Offline.isOnline()) {
+            await DB.deleteLancamento(id);
+        } else {
+            await Offline.offlineDeleteLancamento(id);
+            toast('Lançamento removido (offline)', 'warn');
+        }
+        state.lancamentos = state.lancamentos.filter(l => l.id !== id);
+        notify();
+    } catch (err) {
+        toast('Erro ao excluir lançamento', 'danger');
+        throw err;
+    }
+}
+
+export async function deleteProjecao(id) {
+    try {
+        if (Offline.isOnline()) {
+            await DB.deleteProjecao(id);
+        } else {
+            await Offline.offlineDeleteProjecao(id);
+            toast('Projeção removida (offline)', 'warn');
+        }
+        state.projecoes = state.projecoes.filter(p => p.id !== id);
+        notify();
+    } catch (err) {
+        toast('Erro ao excluir projeção', 'danger');
+        throw err;
+    }
+}
 
 export function refreshFilterOptions() {
     // Logic to update client/project dropdowns based on all lancamentos

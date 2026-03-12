@@ -1,76 +1,86 @@
 /* ═══════════════════════════════════════════════
    CFO Dashboard v2 — Design Tokens
+   Identity: BG Tech Brand Guide v1.0
    ═══════════════════════════════════════════════ */
 
 :root {
-  /* Background & Surface */
-  --color-bg: #03050a;
-  --color-surface: #0a0f1a;
-  --color-card: rgba(15, 23, 42, 0.4);
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-hover: rgba(14, 165, 233, 0.3);
+  /* ─── Fonts ─────────────────────────────────── */
+  --font-body:  'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-title: 'Poppins', sans-serif;
+  --font-serif: 'Poppins', sans-serif;
+  --font-mono:  'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --font-alt:   'Poppins', sans-serif;
 
-  --font-main: 'Inter', sans-serif;
-  --font-title: 'Plus Jakarta Sans', sans-serif;
-  --font-serif: 'Bodoni Moda', serif;
-  --font-alt: 'Jost', sans-serif;
+  /* ─── Background Layers ──────────────────────── */
+  --bg:         #0A1628;
+  --surface:    #0E1B32;
+  --surface-2:  #121F3D;
+  --surface-3:  #1A2A44;
 
-  /* Primary */
-  --primary: #0ea5e9;
-  --primary-dark: #0284c7;
-  --primary-glow: rgba(14, 165, 233, 0.4);
-  --gold: #f59e0b;
-  --gold-glow: rgba(245, 158, 11, 0.4);
-  --primary-surface: rgba(14, 165, 233, 0.1);
+  /* ─── Borders ────────────────────────────────── */
+  --border:        rgba(255, 255, 255, 0.06);
+  --border-hover:  rgba(255, 255, 255, 0.11);
+  --border-strong: rgba(255, 255, 255, 0.18);
 
-  /* Semantic */
-  --danger: #ef4444;
-  --shadow-md: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
-  --shadow-premium: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 20px 50px -12px rgba(0, 0, 0, 0.8);
-  --glass-bg: rgba(15, 23, 42, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --danger-glow: rgba(239, 68, 68, 0.3);
-  --danger-surface: rgba(239, 68, 68, 0.1);
+  /* ─── Primary: Electric Cyan ─────────────────── */
+  --primary:         #00C8F0;
+  --primary-dark:    #2B7AB5;
+  --primary-surface: rgba(0, 200, 240, 0.08);
+  --primary-glow:    rgba(0, 200, 240, 0.20);
+  --gradient-brand:  linear-gradient(135deg, #153B5F 0%, #00C8F0 100%);
 
-  --warning: #f59e0b;
-  --warning-glow: rgba(245, 158, 11, 0.3);
-  --warning-surface: rgba(245, 158, 11, 0.1);
+  /* ─── Semantic ───────────────────────────────── */
+  --success:         #10B981;
+  --success-surface: rgba(16, 185, 129, 0.08);
+  --success-glow:    rgba(16, 185, 129, 0.15);
 
-  --success: #10b981;
-  --success-glow: rgba(16, 185, 129, 0.3);
-  --success-surface: rgba(16, 185, 129, 0.1);
+  --danger:          #EF4444;
+  --danger-surface:  rgba(239, 68, 68, 0.08);
+  --danger-glow:     rgba(239, 68, 68, 0.15);
 
-  --purple: #a855f7;
-  --purple-glow: rgba(168, 85, 247, 0.3);
+  --warning:         #F59E0B;
+  --warning-surface: rgba(245, 158, 11, 0.08);
 
-  /* Text */
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #475569;
+  --purple:          #A78BFA;
+  --purple-surface:  rgba(167, 139, 250, 0.08);
 
-  /* Layout */
-  --sidebar-w: 280px;
-  --radius: 24px;
-  --radius-sm: 16px;
-  --radius-xs: 8px;
+  /* ─── Text ───────────────────────────────────── */
+  --text:       #FFFFFF;
+  --text-muted: #A8B8CC;
+  --text-dim:   #4A6080;
 
-  /* Animation */
-  --transition: cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-fast: 200ms ease;
-  --transition-med: 400ms ease;
+  /* ─── Backwards compat aliases ───────────────── */
+  --color-bg:           var(--bg);
+  --color-card:         var(--surface);
+  --color-border:       var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-surface:      var(--surface-2);
+  --glass-bg:           var(--surface);
+  --glass-border:       var(--border);
+  --shadow-premium:     0 8px 32px rgba(0, 0, 0, 0.6);
 
-  /* Typography */
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-title: 'Plus Jakarta Sans', var(--font-body);
+  /* ─── Layout ─────────────────────────────────── */
+  --sidebar-w: 256px;
+  --radius:    8px;
+  --radius-sm: 6px;
+  --radius-xs: 4px;
 
-  /* Z-index scale */
-  --z-bg: 0;
-  --z-content: 1;
-  --z-sidebar: 100;
-  --z-mobile-bar: 150;
-  --z-overlay: 200;
-  --z-drawer: 201;
-  --z-toast: 9999;
-  --z-login: 1000;
+  /* ─── Shadows ────────────────────────────────── */
+  --shadow-sm: 0 1px 3px  rgba(0, 0, 0, 0.50);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.55);
+
+  /* ─── Z-index ────────────────────────────────── */
+  --z-bg:         -1;
+  --z-content:     1;
+  --z-sidebar:   100;
+  --z-mobile-bar: 90;
+  --z-overlay:   200;
+  --z-drawer:    300;
+  --z-toast:    9000;
+  --z-login:    9999;
+
+  /* ─── Motion ─────────────────────────────────── */
+  --transition: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:   cubic-bezier(0, 0, 0.2, 1);
 }

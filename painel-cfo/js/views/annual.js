@@ -5,16 +5,18 @@
 import { fmtR, filterData, safe, MONTHS } from '../utils.js';
 import * as State from '../state.js';
 
-export function renderAnual() {
+export function renderAnnual() {
   const { y, client, project } = State.getFilters();
   const entradas = State.getEntradas();
   const variaveis = State.getVariaveis();
   const fixos = State.getFixos();
   const isConf = x => x?.status === 'Confirmado';
+  const taxRate = State.getState().aliquota_imposto;
 
   const grid = document.getElementById('annual-grid');
   if (!grid) return;
 
+  let totalIn = 0, totalOut = 0;
   let html = '';
   for (let i = 0; i < 12; i++) {
     const eM = filterData(entradas, i, y, false, client, project).filter(isConf);
@@ -22,8 +24,13 @@ export function renderAnual() {
     const fM = filterData(fixos, i, y, false, client, project).filter(isConf);
 
     const income = safe(eM.reduce((a, b) => a + Number(b.valor), 0));
-    const expense = safe(vM.reduce((a, b) => a + Number(b.valor), 0)) + safe(fM.reduce((a, b) => a + Number(b.valor), 0));
+    const rawExpense = safe(vM.reduce((a, b) => a + Number(b.valor), 0)) + safe(fM.reduce((a, b) => a + Number(b.valor), 0));
+    const tax = income * taxRate;
+    const expense = rawExpense + tax; // alinhado com DRE: inclui impostos
     const balance = income - expense;
+
+    totalIn += income;
+    totalOut += expense;
 
     html += `
             <div class="card annual-card clickable" onclick="window.CFO.navigate('dre', { m: '${i}' })">
@@ -37,4 +44,16 @@ export function renderAnual() {
         `;
   }
   grid.innerHTML = html;
+
+  // Summary cards do topo
+  const annualSaldo = totalIn - totalOut;
+  const elIn = document.getElementById('annual-total-in');
+  const elOut = document.getElementById('annual-total-out');
+  const elSaldo = document.getElementById('annual-saldo');
+  if (elIn) elIn.textContent = fmtR(totalIn);
+  if (elOut) elOut.textContent = fmtR(totalOut);
+  if (elSaldo) {
+    elSaldo.textContent = fmtR(annualSaldo);
+    elSaldo.style.color = annualSaldo >= 0 ? 'var(--success)' : 'var(--danger)';
+  }
 }

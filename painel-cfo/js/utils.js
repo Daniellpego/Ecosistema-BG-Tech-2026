@@ -27,8 +27,11 @@ export function fmtD(d) {
 }
 
 export function cleanMoney(s) {
+  if (!s) return 0;
   if (typeof s === 'number') return s;
-  return parseFloat(String(s).replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
+  // Remove everything EXCEPT numbers and comma
+  let v = String(s).replace(/[^\d,]/g, '').replace(',', '.');
+  return parseFloat(v) || 0;
 }
 
 export function maskMoney(e) {
@@ -66,10 +69,11 @@ export function toast(msg, type = 'success') {
   const t = document.createElement('div');
   t.className = `toast ${type}`;
   t.innerHTML = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.classList.add('visible'), 100);
+  const wrap = document.getElementById('toast-wrap') || document.body;
+  wrap.appendChild(t);
+  setTimeout(() => t.classList.add('show'), 100);
   setTimeout(() => {
-    t.classList.remove('visible');
+    t.classList.remove('show');
     setTimeout(() => t.remove(), 500);
   }, 3000);
 }

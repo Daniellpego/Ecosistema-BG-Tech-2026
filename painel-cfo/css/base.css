@@ -1,158 +1,131 @@
 /* ═══════════════════════════════════════════════
-   CFO Dashboard v2 — Base & Background
+   CFO Dashboard v2 — Base / Reset
    ═══════════════════════════════════════════════ */
 
-* {
+*, *::before, *::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-    background: var(--color-bg);
+    font-family: var(--font-body);
+    background: var(--bg);
     color: var(--text);
-    font-family: var(--font-main);
     overflow-x: hidden;
     min-height: 100vh;
+    line-height: 1.5;
 }
 
-/* Background Effects */
-.noise-overlay {
-    position: fixed;
-    inset: 0;
-    background: url("https://grainy-gradients.vercel.app/noise.svg");
-    opacity: 0.05;
-    pointer-events: none;
-    z-index: var(--z-bg);
+/* ─── Typography utilities ───────────────────── */
+.font-title { font-family: var(--font-title); }
+.font-serif { font-family: var(--font-serif); }
+.font-mono  { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Numbers always tabular — critical for finance */
+.stat-value,
+.amount-cell,
+.dre-val,
+.dre-val-neg,
+.annual-val,
+.annual-balance {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
 }
 
-.bg-grid {
-    position: fixed;
-    inset: 0;
-    background-image:
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
-    mask-image: radial-gradient(circle at center, black, transparent 80%);
-    pointer-events: none;
-    z-index: var(--z-bg);
-}
-
-.orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
-    pointer-events: none;
-    z-index: var(--z-bg);
-    animation: orb-float 20s infinite alternate ease-in-out;
-}
-
-.orb-1 {
-    width: 500px;
-    height: 500px;
-    background: var(--primary);
-    top: -100px;
-    right: -100px;
-}
-
-.orb-2 {
-    width: 400px;
-    height: 400px;
-    background: var(--purple);
-    bottom: -50px;
-    left: -50px;
-    animation-delay: -5s;
-}
-
-.orb-3 {
-    width: 300px;
-    height: 300px;
-    background: var(--gold);
-    top: 40%;
-    left: 20%;
-    animation-delay: -10s;
-    opacity: 0.08;
-}
-
-@keyframes orb-float {
-    0% {
-        transform: translate(0, 0) scale(1);
-    }
-
-    100% {
-        transform: translate(50px, 30px) scale(1.1);
-    }
-}
-
-/* Typography */
-h1,
-h2,
-h3,
-h4,
-.font-title {
-    font-family: var(--font-title);
-    letter-spacing: -0.02em;
-}
-
-.font-serif {
-    font-family: var(--font-serif);
-}
-
-.font-alt {
-    font-family: var(--font-alt);
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
+/* ─── Scrollbar ──────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    background: var(--surface-3);
+    border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+/* ─── Autofill ───────────────────────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text) !important;
+    -webkit-box-shadow: 0 0 0 1000px var(--surface-2) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+select option {
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 14px;
 }
 
-/* Utilities */
-.hidden {
-    display: none !important;
+/* ─── Single ambient glow — no noise, no grid ── */
+.ambient-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: var(--z-bg);
+    background:
+        radial-gradient(ellipse 80% 50% at 70% -10%,
+            rgba(56, 189, 248, 0.06) 0%,
+            transparent 60%),
+        radial-gradient(ellipse 60% 40% at 10% 90%,
+            rgba(16, 185, 129, 0.04) 0%,
+            transparent 50%);
 }
 
-/* Animations */
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ─── Keyframes ──────────────────────────────── */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
-/* Lucide Icon Alignment */
-[data-lucide] {
-    vertical-align: middle;
-    margin-top: -2px;
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes ping {
+    75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.7; }
+    50%       { opacity: 1; }
+}
+
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+}
+
+@keyframes borderGlow {
+    0%, 100% { border-color: rgba(56, 189, 248, 0.2); }
+    50%       { border-color: rgba(56, 189, 248, 0.4); }
+}
+
+@keyframes loginReveal {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ─── Reduced motion ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }

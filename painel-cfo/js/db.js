@@ -6,8 +6,11 @@ import { getSupabase } from './auth.js';
 
 export async function fetchLancamentos() {
     const sb = getSupabase();
-    const { data, error } = await sb.from('cfo_lancamentos').select('*').order('data', { ascending: false });
-    if (error) throw error;
+    const { data, error } = await sb.from('cfo_lancamentos').select('*');
+    if (error) {
+        console.error('[DB] Error fetching lancamentos:', error);
+        throw error;
+    }
     return data || [];
 }
 

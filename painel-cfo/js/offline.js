@@ -156,6 +156,7 @@ export async function processSyncQueue(dbModule) {
             } else {
                 await d.syncQueue.update(item.queueId, { _retries: retries });
             }
+            // Continue to next item instead of breaking
         }
     }
     if (failed > 0) console.warn(`[Offline] Sync: ${processed} ok, ${failed} failed`);
@@ -175,4 +176,15 @@ export function isOnline() {
 export function onNetworkChange(callback) {
     window.addEventListener('online', () => callback(true));
     window.addEventListener('offline', () => callback(false));
+}
+
+export async function syncToLocal(lancamentos, projecoes) {
+    await cacheLancamentos(lancamentos);
+    await cacheProjecoes(projecoes);
+}
+
+export async function loadLocal() {
+    const lancamentos = await getCachedLancamentos();
+    const projecoes = await getCachedProjecoes();
+    return { lancamentos, projecoes };
 }
