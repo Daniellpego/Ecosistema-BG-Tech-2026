@@ -24,6 +24,15 @@
       ]
     },
     {
+      "source": "/js/config.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
       "source": "/(css|js|assets)/(.*)",
       "headers": [
         {
