@@ -3828,12 +3828,12 @@ header.scrolled {
   }
 
   .hero-subtitle {
-    font-size: clamp(15px, 3.5vw, 17px);
+    font-size: clamp(16px, 3.5vw, 17px);
     margin-bottom: 36px;
   }
 
   .hero-value {
-    font-size: 15px;
+    font-size: 16px;
     margin-bottom: 28px;
   }
 
@@ -3857,7 +3857,7 @@ header.scrolled {
   .trust-bar-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 12px;
   }
 
   .trust-number {
@@ -4100,7 +4100,7 @@ header.scrolled {
   }
 
   .hero-subtitle {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .section-title {
@@ -4792,4 +4792,73 @@ header.scrolled {
 }
 .dash-stat-value.updating {
   animation: statUpdate 0.8s ease forwards;
+}
+
+/* ============================================
+   MOBILE PERFECTION — FIXES AUDITORIA
+   ============================================ */
+
+/* iOS safe-area no bar flutuante */
+.mobile-cta-bar {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+/* Partner chips: reduz tamanho em mobile para não vazar */
+@media (max-width: 600px) {
+  .partner-chip {
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .partner-chip i {
+    width: 16px;
+  }
+}
+
+/* Eyebrow: legível em telas muito pequenas */
+@media (max-width: 480px) {
+  .eyebrow {
+    font-size: clamp(11px, 3vw, 12px);
+  }
+}
+
+/* FAQ: padding menor em mobile */
+@media (max-width: 600px) {
+  .faq-question {
+    padding: 16px 20px;
+  }
+}
+
+/* CTA box: padding compacto em mobile pequeno */
+@media (max-width: 480px) {
+  .cta-box {
+    padding: 48px 20px;
+  }
+}
+
+/* Trust bar: 1 coluna em tablets (900-768px range) */
+@media (max-width: 900px) and (min-width: 769px) {
+  .trust-bar-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .trust-number {
+    font-size: clamp(20px, 4vw, 28px);
+  }
+
+  .trust-label {
+    font-size: 12px;
+  }
+
+  .trust-context {
+    font-size: 11px;
+  }
+}
+
+/* Scroll horizontal em seção de segmentos no mobile */
+@media (max-width: 768px) {
+  .segments-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
 }
