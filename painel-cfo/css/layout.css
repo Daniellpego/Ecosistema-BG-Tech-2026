@@ -436,6 +436,11 @@ nav::-webkit-scrollbar { width: 0; }
     background: var(--bg);
 }
 
+/* ─── Mobile menu button ─────────────────────── */
+.btn-menu-mobile {
+    display: none;
+}
+
 /* ─── Mobile bar ─────────────────────────────── */
 .mobile-bar {
     display: none;

@@ -2,7 +2,7 @@
 // CFO Dashboard v2 — Service Worker (PWA + Cache)
 // ═══════════════════════════════════════════════
 
-const CACHE_NAME = 'cfo-dashboard-v2-v4'; // v4: fix stale cache issues
+const CACHE_NAME = 'cfo-dashboard-v2-v5'; // v5: remove dead charts.js, fix cache + filters
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -17,7 +17,6 @@ const STATIC_ASSETS = [
     '/js/db.js',
     '/js/offline.js',
     '/js/state.js',
-    '/js/charts.js',
     '/js/utils.js',
     '/js/views/overview.js',
     '/js/views/dre.js',

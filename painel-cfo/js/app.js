@@ -99,6 +99,7 @@ function revealApp() {
         appEl.style.display = 'flex';
         appEl.style.opacity = '1';
         appEl.style.visibility = 'visible';
+        appEl.style.transform = 'translateY(0)';
     }
     if (loginScreen) loginScreen.style.display = 'none';
 
@@ -265,6 +266,7 @@ function initCharts() {
 
 function updateCharts() {
     const MONTHS_SHORT = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const { client, project } = State.getFilters();
     const entradas = State.getEntradas();
     const fixos = State.getFixos();
     const variaveis = State.getVariaveis();
@@ -275,9 +277,9 @@ function updateCharts() {
         const d = new Date(); d.setMonth(d.getMonth() - i);
         const mStr = d.getMonth(), yStr = d.getFullYear();
 
-        const eV = safe(filterData(entradas, mStr, yStr).filter(isConf).reduce((a, b) => a + Number(b.valor), 0));
-        const fV = safe(filterData(fixos, mStr, yStr).filter(isConf).reduce((a, b) => a + Number(b.valor), 0));
-        const vV = safe(filterData(variaveis, mStr, yStr).filter(isConf).reduce((a, b) => a + Number(b.valor), 0));
+        const eV = safe(filterData(entradas, mStr, yStr, false, client, project).filter(isConf).reduce((a, b) => a + Number(b.valor), 0));
+        const fV = safe(filterData(fixos, mStr, yStr, false, client, project).filter(isConf).reduce((a, b) => a + Number(b.valor), 0));
+        const vV = safe(filterData(variaveis, mStr, yStr, false, client, project).filter(isConf).reduce((a, b) => a + Number(b.valor), 0));
         const tax = calcTax(eV);
         const totalOut = fV + vV + tax;
 
@@ -300,7 +302,7 @@ function updateCharts() {
 
     // Donut
     const { m, y } = State.getFilters();
-    const curFixos = filterData(fixos, m, y).filter(isConf);
+    const curFixos = filterData(fixos, m, y, false, client, project).filter(isConf);
     const catMap = {};
     curFixos.forEach(x => { catMap[x.categoria || 'Outros'] = (catMap[x.categoria || 'Outros'] || 0) + Number(x.valor); });
     const labels = Object.keys(catMap), series = Object.values(catMap);

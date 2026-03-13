@@ -26,7 +26,8 @@ export function renderLancamentosTable() {
     else if (tab === 'fixos') data = State.getFixos();
     else if (tab === 'unicos') data = State.getVariaveis();
 
-    const filtered = filterData(data, m, y);
+    const { client, project } = State.getFilters();
+    const filtered = filterData(data, m, y, false, client, project);
 
     const tbodyId = TBODY_IDS[tab];
     const emptyId = EMPTY_IDS[tab];

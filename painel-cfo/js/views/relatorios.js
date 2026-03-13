@@ -9,15 +9,15 @@ export function renderRelatorios() {
     const container = document.getElementById('view-relatorios');
     if (!container) return;
 
-    const { m, y } = State.getFilters();
+    const { m, y, client, project } = State.getFilters();
     const entradas = State.getEntradas();
     const fixos = State.getFixos();
     const variaveis = State.getVariaveis();
     const isConf = x => x?.status === 'Confirmado';
 
-    const eFiltered = filterData(entradas, m, y).filter(isConf);
-    const fFiltered = filterData(fixos, m, y).filter(isConf);
-    const vFiltered = filterData(variaveis, m, y).filter(isConf);
+    const eFiltered = filterData(entradas, m, y, false, client, project).filter(isConf);
+    const fFiltered = filterData(fixos, m, y, false, client, project).filter(isConf);
+    const vFiltered = filterData(variaveis, m, y, false, client, project).filter(isConf);
 
     const totalReceita = safe(eFiltered.reduce((a, b) => a + Number(b.valor), 0));
     const totalFixo = safe(fFiltered.reduce((a, b) => a + Number(b.valor), 0));

@@ -15,14 +15,14 @@ function trendBadge(current, previous) {
 }
 
 export function renderOverview() {
-    const { m, y } = State.getFilters();
+    const { m, y, client, project } = State.getFilters();
     const lancamentos = State.getState().lancamentos;
     const isConf = x => x?.status === 'Confirmado';
 
     // Filtros por período
-    const eM = filterData(State.getEntradas(), m, y).filter(isConf);
-    const fM = filterData(State.getFixos(), m, y).filter(isConf);
-    const vM = filterData(State.getVariaveis(), m, y).filter(isConf);
+    const eM = filterData(State.getEntradas(), m, y, false, client, project).filter(isConf);
+    const fM = filterData(State.getFixos(), m, y, false, client, project).filter(isConf);
+    const vM = filterData(State.getVariaveis(), m, y, false, client, project).filter(isConf);
 
     // Previous period for trend comparison
     let prevM = m, prevY = y;
@@ -31,9 +31,9 @@ export function renderOverview() {
         if (mi === 0) { prevM = '11'; prevY = String(parseInt(y) - 1); }
         else { prevM = String(mi - 1); prevY = y; }
     }
-    const ePrev = m !== 'anual' ? filterData(State.getEntradas(), prevM, prevY).filter(isConf) : [];
-    const fPrev = m !== 'anual' ? filterData(State.getFixos(), prevM, prevY).filter(isConf) : [];
-    const vPrev = m !== 'anual' ? filterData(State.getVariaveis(), prevM, prevY).filter(isConf) : [];
+    const ePrev = m !== 'anual' ? filterData(State.getEntradas(), prevM, prevY, false, client, project).filter(isConf) : [];
+    const fPrev = m !== 'anual' ? filterData(State.getFixos(), prevM, prevY, false, client, project).filter(isConf) : [];
+    const vPrev = m !== 'anual' ? filterData(State.getVariaveis(), prevM, prevY, false, client, project).filter(isConf) : [];
     const prevEntradas = safe(ePrev.reduce((a, b) => a + Number(b.valor), 0));
     const prevFixos = safe(fPrev.reduce((a, b) => a + Number(b.valor), 0));
     const prevVariaveis = safe(vPrev.reduce((a, b) => a + Number(b.valor), 0));

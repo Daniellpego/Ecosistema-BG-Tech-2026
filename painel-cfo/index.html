@@ -174,7 +174,7 @@
                 <!-- Page header -->
                 <div class="page-header">
                     <div>
-                        <button id="btn-menu" class="btn-icon" style="display:none"><i data-lucide="menu" width="24"
+                        <button id="btn-menu" class="btn-icon btn-menu-mobile"><i data-lucide="menu" width="24"
                                 height="24"></i></button>
                         <h2 id="page-title" class="page-title font-title">Visão Geral</h2>
                         <p class="page-sub"><i data-lucide="radio" width="14" height="14"></i> <span
@@ -632,23 +632,22 @@
 
             </div>
         </div>
-    </div>
 
-    <!-- Mobile bar -->
-    <div class="mobile-bar">
-        <button class="m-btn active" data-tab="overview" onclick="window.CFO.navigate('overview')"><i
-                data-lucide="layout-dashboard" width="20" height="20"></i>Geral</button>
-        <button class="m-btn" data-tab="dre" onclick="window.CFO.navigate('dre')"><i data-lucide="scroll-text"
-                width="20" height="20"></i>DRE</button>
-        <button class="m-btn" data-tab="annual" onclick="window.CFO.navigate('annual')"><i data-lucide="calendar"
-                width="20" height="20"></i>Anual</button>
-        <button class="m-btn" data-tab="entradas" onclick="window.CFO.navigate('entradas')"><i data-lucide="trending-up"
-                width="20" height="20"></i>Receitas</button>
-        <button class="m-btn" data-tab="academia" onclick="window.CFO.navigate('academia')"><i data-lucide="graduation-cap"
-                width="20" height="20"></i>Academia</button>
-        <button class="m-btn" id="btn-menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')"><i
-                data-lucide="menu" width="20" height="20"></i>Menu</button>
-    </div>
+        <!-- Mobile bar -->
+        <div class="mobile-bar">
+            <button class="m-btn active" data-tab="overview" onclick="window.CFO.navigate('overview')"><i
+                    data-lucide="layout-dashboard" width="20" height="20"></i>Geral</button>
+            <button class="m-btn" data-tab="dre" onclick="window.CFO.navigate('dre')"><i data-lucide="scroll-text"
+                    width="20" height="20"></i>DRE</button>
+            <button class="m-btn" data-tab="annual" onclick="window.CFO.navigate('annual')"><i data-lucide="calendar"
+                    width="20" height="20"></i>Anual</button>
+            <button class="m-btn" data-tab="entradas" onclick="window.CFO.navigate('entradas')"><i data-lucide="trending-up"
+                    width="20" height="20"></i>Receitas</button>
+            <button class="m-btn" data-tab="academia" onclick="window.CFO.navigate('academia')"><i data-lucide="graduation-cap"
+                    width="20" height="20"></i>Academia</button>
+            <button class="m-btn" id="btn-menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')"><i
+                    data-lucide="menu" width="20" height="20"></i>Menu</button>
+        </div>
     </div>
 
     <!-- ═══ DRAWER: Lançamentos ═══ -->
