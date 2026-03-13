@@ -16,5 +16,5 @@ const SITE_CONFIG = {
   // ⚠️ IMPORTANTE: Substitua pela anon key real do projeto Supabase
   // Encontre em: Supabase Dashboard > Settings > API > anon public
   supabaseUrl: 'https://urpuiznydrlwmaqhdids.supabase.co',
-  supabaseAnonKey: '', // ← PREENCHER COM A ANON KEY REAL
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVycHVpem55ZHJsd21hcWhkaWRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MjQ0OTIsImV4cCI6MjA4NzIwMDQ5Mn0.qSoyYmBTvgdOAickkuLCYCveOj2ELIZt85LFZb6veQ8',
 };
