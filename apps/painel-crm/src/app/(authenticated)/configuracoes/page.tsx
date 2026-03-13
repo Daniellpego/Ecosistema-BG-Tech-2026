@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState } from 'react'
 import { Settings, Users, Bell, Palette, Database } from 'lucide-react'
 import { PageTransition, StaggerContainer, StaggerItem } from '@/components/motion'
+import { PageTitle } from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,6 +20,7 @@ export default function ConfiguracoesPage() {
 
   return (
     <PageTransition>
+      <PageTitle title="Configurações" />
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Configurações</h1>

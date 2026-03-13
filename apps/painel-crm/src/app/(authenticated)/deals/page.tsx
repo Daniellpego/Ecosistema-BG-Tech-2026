@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Plus, TrendingUp, Trophy, RefreshCw, Target, Search, X } from 'lucide-react'
 import { z } from 'zod'
 import { PageTransition, AnimatedNumber } from '@/components/motion'
+import { PageTitle } from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -51,7 +52,7 @@ const STATUS_COLORS: Record<DealStatus, string> = {
 }
 
 const dealFormSchema = z.object({
-  titulo: z.string().min(1, 'Titulo e obrigatorio'),
+  titulo: z.string().min(1, 'Título é obrigatório'),
   lead_id: z.string().nullable(),
   valor: z.number().min(0, 'Valor deve ser positivo'),
   mrr: z.number().min(0, 'MRR deve ser positivo'),
@@ -162,6 +163,7 @@ export default function DealsPage() {
 
   return (
     <PageTransition>
+      <PageTitle title="Deals" />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -277,7 +279,7 @@ export default function DealsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-brand-blue-deep/30">
-                <th className="text-left py-3 px-4 text-text-secondary font-medium">Titulo</th>
+                <th className="text-left py-3 px-4 text-text-secondary font-medium">Título</th>
                 <th className="text-left py-3 px-4 text-text-secondary font-medium">Lead</th>
                 <th className="text-right py-3 px-4 text-text-secondary font-medium">Valor</th>
                 <th className="text-right py-3 px-4 text-text-secondary font-medium">MRR</th>
@@ -361,7 +363,7 @@ export default function DealsPage() {
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="titulo">Titulo *</Label>
+                <Label htmlFor="titulo">Título *</Label>
                 <Input
                   id="titulo"
                   value={formData.titulo}
@@ -428,7 +430,7 @@ export default function DealsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="tipo_servico">Tipo de Servico</Label>
+                  <Label htmlFor="tipo_servico">Tipo de Serviço</Label>
                   <Select
                     value={formData.tipo_servico ?? '_none'}
                     onValueChange={(v) => setFormData(prev => ({ ...prev, tipo_servico: v === '_none' ? null : v as TipoServico }))}

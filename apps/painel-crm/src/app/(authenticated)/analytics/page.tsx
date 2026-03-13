@@ -12,6 +12,7 @@ import {
   AreaChart, Area,
 } from 'recharts'
 import { PageTransition, StaggerContainer, StaggerItem, AnimatedNumber, MotionCard } from '@/components/motion'
+import { PageTitle } from '@/components/page-title'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDashboard } from '@/hooks/use-dashboard'
 import { formatCurrency } from '@/lib/format'
@@ -133,6 +134,7 @@ export default function AnalyticsPage() {
 
   return (
     <PageTransition>
+      <PageTitle title="Analytics" />
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Analytics</h1>

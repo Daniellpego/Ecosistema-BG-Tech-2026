@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useMemo } from 'react'
 import { Plus, Users } from 'lucide-react'
 import { PageTransition, AnimatedNumber } from '@/components/motion'
+import { PageTitle } from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { useLeads } from '@/hooks/use-leads'
 import { LeadsTable } from '@/components/leads/leads-table'
@@ -53,6 +54,7 @@ export default function LeadsPage() {
 
   return (
     <PageTransition>
+      <PageTitle title="Leads" />
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>

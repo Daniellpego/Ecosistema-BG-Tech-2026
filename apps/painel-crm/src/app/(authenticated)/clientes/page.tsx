@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Search, Users, DollarSign, TrendingUp, MessageCircle, ExternalLink, Eye } from 'lucide-react'
 import { PageTransition, StaggerContainer, StaggerItem, AnimatedNumber, MotionCard } from '@/components/motion'
+import { PageTitle } from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -51,6 +52,7 @@ export default function ClientesPage() {
 
   return (
     <PageTransition>
+      <PageTitle title="Clientes" />
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Clientes</h1>
@@ -149,7 +151,7 @@ export default function ClientesPage() {
                       <td className="p-3 hidden md:table-cell">
                         {cliente.whatsapp ? (
                           <a
-                            href={formatWhatsAppUrl(cliente.whatsapp)}
+                            href={formatWhatsAppUrl(cliente.whatsapp, cliente.nome)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-sm text-brand-cyan hover:underline flex items-center gap-1"
@@ -186,7 +188,7 @@ export default function ClientesPage() {
                         <div className="flex items-center justify-end gap-1">
                           {cliente.whatsapp && (
                             <a
-                              href={formatWhatsAppUrl(cliente.whatsapp)}
+                              href={formatWhatsAppUrl(cliente.whatsapp, cliente.nome)}
                               target="_blank"
                               rel="noopener noreferrer"
                             >

@@ -29,9 +29,13 @@ export function formatTimeAgo(date: string | Date): string {
   return formatDistanceToNow(d, { addSuffix: true, locale: ptBR })
 }
 
-export function formatWhatsAppUrl(phone: string): string {
+export function formatWhatsAppUrl(phone: string, nome?: string): string {
   const cleaned = phone.replace(/\D/g, '')
   const withCountry = cleaned.startsWith('55') ? cleaned : `55${cleaned}`
+  if (nome) {
+    const msg = encodeURIComponent(`Olá ${nome}, aqui é da BG Tech! Tudo bem?`)
+    return `https://wa.me/${withCountry}?text=${msg}`
+  }
   return `https://wa.me/${withCountry}`
 }
 

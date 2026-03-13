@@ -23,6 +23,7 @@ import {
   Settings,
 } from 'lucide-react'
 import { PageTransition } from '@/components/motion'
+import { PageTitle } from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -227,6 +228,7 @@ export default function DealDetailPage() {
 
   return (
     <PageTransition>
+      <PageTitle title="Detalhes do Deal" />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -260,7 +262,7 @@ export default function DealDetailPage() {
                 <InfoField icon={Target} label="Probabilidade" value={`${deal.probabilidade}%`} />
                 <InfoField
                   icon={FileText}
-                  label="Tipo de Servico"
+                  label="Tipo de Serviço"
                   value={deal.tipo_servico ? TIPO_SERVICO_LABELS[deal.tipo_servico] : '-'}
                 />
                 <InfoField

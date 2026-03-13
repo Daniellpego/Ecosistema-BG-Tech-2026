@@ -8,6 +8,7 @@ import {
   MessageCircle, Calendar, ArrowRight,
 } from 'lucide-react'
 import { PageTransition, StaggerContainer, StaggerItem, AnimatedNumber, MotionCard } from '@/components/motion'
+import { PageTitle } from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDashboard } from '@/hooks/use-dashboard'
@@ -53,6 +54,7 @@ export default function DashboardPage() {
 
   return (
     <PageTransition>
+      <PageTitle title="Dashboard" />
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Visão Geral</h1>
@@ -233,7 +235,7 @@ export default function DashboardPage() {
                           </span>
                           {lead.whatsapp && (
                             <a
-                              href={formatWhatsAppUrl(lead.whatsapp)}
+                              href={formatWhatsAppUrl(lead.whatsapp, lead.nome)}
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}

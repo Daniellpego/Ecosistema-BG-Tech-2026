@@ -11,6 +11,7 @@ import {
   Trash2, Edit2, Loader2,
 } from 'lucide-react'
 import { PageTransition, StaggerContainer, StaggerItem } from '@/components/motion'
+import { PageTitle } from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -149,6 +150,7 @@ export default function LeadDetailPage() {
 
   return (
     <PageTransition>
+      <PageTitle title="Detalhes do Lead" />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -165,7 +167,7 @@ export default function LeadDetailPage() {
           </div>
           <div className="flex items-center gap-2">
             {lead.whatsapp && (
-              <a href={formatWhatsAppUrl(lead.whatsapp)} target="_blank" rel="noopener noreferrer">
+              <a href={formatWhatsAppUrl(lead.whatsapp, lead.nome)} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" size="sm">
                   <MessageCircle className="h-4 w-4 text-status-positive" />
                   WhatsApp
@@ -229,7 +231,7 @@ export default function LeadDetailPage() {
                   {lead.whatsapp && (
                     <InfoRow label="WhatsApp">
                       <a
-                        href={formatWhatsAppUrl(lead.whatsapp)}
+                        href={formatWhatsAppUrl(lead.whatsapp, lead.nome)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-brand-cyan hover:underline flex items-center gap-1"

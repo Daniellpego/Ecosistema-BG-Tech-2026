@@ -102,7 +102,7 @@ export function LeadsTable({ leads, isLoading }: LeadsTableProps) {
                 <td className="p-3 hidden md:table-cell">
                   {lead.whatsapp ? (
                     <a
-                      href={formatWhatsAppUrl(lead.whatsapp)}
+                      href={formatWhatsAppUrl(lead.whatsapp, lead.nome)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-brand-cyan hover:underline flex items-center gap-1"
@@ -137,7 +137,7 @@ export function LeadsTable({ leads, isLoading }: LeadsTableProps) {
                   <div className="flex items-center justify-end gap-1">
                     {lead.whatsapp && (
                       <a
-                        href={formatWhatsAppUrl(lead.whatsapp)}
+                        href={formatWhatsAppUrl(lead.whatsapp, lead.nome)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
