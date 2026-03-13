@@ -4,16 +4,36 @@ export const dynamic = 'force-dynamic'
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import {
-  ArrowLeft, Trash2, Loader2, FileText, Phone, MessageCircle,
-  Mail, Users, FileCheck, RefreshCw, Settings, CheckCircle2, XCircle,
+  ArrowLeft,
+  Calendar,
+  DollarSign,
+  RefreshCw,
+  Target,
+  FileText,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Phone,
+  Mail,
+  MessageCircle,
+  Users,
+  FileCheck,
+  Settings,
 } from 'lucide-react'
-import { PageTransition, StaggerContainer, StaggerItem } from '@/components/motion'
+import { PageTransition } from '@/components/motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Select,
   SelectContent,
@@ -21,18 +41,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { useDealById, useUpdateDeal, useDeleteDeal, useDealActivities } from '@/hooks/use-deals'
 import { useLeadById, useCreateActivity } from '@/hooks/use-leads'
-import { ATIVIDADE_LABELS, type AtividadeTipo } from '@/types/database'
 import { formatCurrency, formatDate, formatTimeAgo } from '@/lib/format'
+import type { DealStatus, TipoServico, AtividadeTipo } from '@/types/database'
 
-const TIPO_SERVICO_LABELS: Record<string, string> = {
+const STATUS_LABELS: Record<DealStatus, string> = {
+  aberto: 'Aberto',
+  ganho: 'Ganho',
+  perdido: 'Perdido',
+}
+
+const STATUS_BADGE_CLASSES: Record<DealStatus, string> = {
+  aberto: 'bg-[#00C8F0]/15 text-[#00C8F0] border-[#00C8F0]/30',
+  ganho: 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30',
+  perdido: 'bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30',
+}
+
+const TIPO_SERVICO_LABELS: Record<TipoServico, string> = {
   setup: 'Setup',
   mensalidade: 'Mensalidade',
   projeto_avulso: 'Projeto Avulso',
@@ -40,19 +66,18 @@ const TIPO_SERVICO_LABELS: Record<string, string> = {
   mvp: 'MVP',
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  aberto: '#00C8F0',
-  ganho: '#10B981',
-  perdido: '#EF4444',
+const ATIVIDADE_TIPO_LABELS: Record<AtividadeTipo, string> = {
+  nota: 'Nota',
+  ligacao: 'Ligação',
+  whatsapp: 'WhatsApp',
+  email: 'Email',
+  reuniao: 'Reunião',
+  proposta_enviada: 'Proposta Enviada',
+  followup: 'Follow-up',
+  sistema: 'Sistema',
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  aberto: 'Aberto',
-  ganho: 'Ganho',
-  perdido: 'Perdido',
-}
-
-const ACTIVITY_ICONS: Record<string, typeof FileText> = {
+const ATIVIDADE_ICONS: Record<AtividadeTipo, typeof FileText> = {
   nota: FileText,
   ligacao: Phone,
   whatsapp: MessageCircle,
@@ -66,76 +91,105 @@ const ACTIVITY_ICONS: Record<string, typeof FileText> = {
 export default function DealDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const id = params.id as string
+  const dealId = params.id as string
 
-  const { data: deal, isLoading } = useDealById(id)
-  const { data: activities } = useDealActivities(id)
+  const { data: deal, isLoading: dealLoading } = useDealById(dealId)
+  const { data: lead, isLoading: leadLoading } = useLeadById(deal?.lead_id ?? '')
+  const { data: activities, isLoading: activitiesLoading } = useDealActivities(dealId)
   const updateDeal = useUpdateDeal()
   const deleteDeal = useDeleteDeal()
   const createActivity = useCreateActivity()
 
-  const leadId = deal?.lead_id ?? ''
-  const { data: lead } = useLeadById(leadId)
-
-  const [deleteConfirm, setDeleteConfirm] = useState(false)
-  const [perdaOpen, setPerdaOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [perdidoDialogOpen, setPerdidoDialogOpen] = useState(false)
   const [motivoPerda, setMotivoPerda] = useState('')
-  const [activityType, setActivityType] = useState<AtividadeTipo>('nota')
-  const [activityDesc, setActivityDesc] = useState('')
+  const [probabilidade, setProbabilidade] = useState<number | null>(null)
 
-  async function handleGanho() {
+  // Activity form state
+  const [activityTipo, setActivityTipo] = useState<AtividadeTipo>('nota')
+  const [activityDescricao, setActivityDescricao] = useState('')
+  const [activitySubmitting, setActivitySubmitting] = useState(false)
+
+  function handleMarkGanho() {
     if (!deal) return
-    await updateDeal.mutateAsync({
+    updateDeal.mutate({
       id: deal.id,
-      status: 'ganho',
-      data_fechamento: new Date().toISOString().split('T')[0],
-    } as Parameters<typeof updateDeal.mutateAsync>[0])
-  }
-
-  async function handlePerda() {
-    if (!deal || !motivoPerda.trim()) return
-    await updateDeal.mutateAsync({
-      id: deal.id,
-      status: 'perdido',
-      motivo_perda: motivoPerda,
-      data_fechamento: new Date().toISOString().split('T')[0],
-    } as Parameters<typeof updateDeal.mutateAsync>[0])
-    setPerdaOpen(false)
-    setMotivoPerda('')
-  }
-
-  async function handleDelete() {
-    if (!deal) return
-    await deleteDeal.mutateAsync(deal.id)
-    router.push('/deals')
-  }
-
-  async function handleProbabilidade(prob: string) {
-    if (!deal) return
-    await updateDeal.mutateAsync({ id: deal.id, probabilidade: Number(prob) })
-  }
-
-  async function handleAddActivity(e: React.FormEvent) {
-    e.preventDefault()
-    if (!activityDesc.trim() || !deal) return
-    await createActivity.mutateAsync({
-      lead_id: deal.lead_id ?? '',
-      deal_id: deal.id,
-      tipo: activityType,
-      descricao: activityDesc,
-      autor: 'Bryan',
+      status: 'ganho' as DealStatus,
+      probabilidade: 100,
+      data_previsao_fechamento: new Date().toISOString().split('T')[0],
     })
-    setActivityDesc('')
   }
 
-  if (isLoading) {
+  function handleMarkPerdido() {
+    if (!deal || !motivoPerda.trim()) return
+    updateDeal.mutate(
+      {
+        id: deal.id,
+        status: 'perdido' as DealStatus,
+        probabilidade: 0,
+      },
+      {
+        onSuccess: () => {
+          setPerdidoDialogOpen(false)
+          setMotivoPerda('')
+        },
+      }
+    )
+  }
+
+  function handleUpdateProbabilidade() {
+    if (!deal || probabilidade === null) return
+    updateDeal.mutate({ id: deal.id, probabilidade })
+  }
+
+  function handleDelete() {
+    if (!deal) return
+    deleteDeal.mutate(deal.id, {
+      onSuccess: () => router.push('/deals'),
+    })
+  }
+
+  function handleSubmitActivity(e: React.FormEvent) {
+    e.preventDefault()
+    if (!deal || !activityDescricao.trim()) return
+
+    setActivitySubmitting(true)
+    createActivity.mutate(
+      {
+        lead_id: deal.lead_id ?? dealId,
+        deal_id: dealId,
+        tipo: activityTipo,
+        descricao: activityDescricao.trim(),
+        autor: 'Usuario',
+      },
+      {
+        onSuccess: () => {
+          setActivityDescricao('')
+          setActivityTipo('nota')
+          setActivitySubmitting(false)
+        },
+        onError: () => {
+          setActivitySubmitting(false)
+        },
+      }
+    )
+  }
+
+  if (dealLoading) {
     return (
       <PageTransition>
         <div className="space-y-6">
-          <Skeleton className="h-10 w-48" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Skeleton className="h-48" />
-            <Skeleton className="h-48" />
+          <Skeleton className="h-10 w-64" />
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <div className="lg:col-span-3 space-y-6">
+              <Skeleton className="h-64" />
+              <Skeleton className="h-48" />
+              <Skeleton className="h-64" />
+            </div>
+            <div className="lg:col-span-2 space-y-6">
+              <Skeleton className="h-48" />
+              <Skeleton className="h-64" />
+            </div>
           </div>
         </div>
       </PageTransition>
@@ -145,288 +199,416 @@ export default function DealDetailPage() {
   if (!deal) {
     return (
       <PageTransition>
-        <div className="text-center py-20">
-          <p className="text-text-secondary">Deal não encontrado</p>
-          <Link href="/deals">
-            <Button variant="ghost" className="mt-4">Voltar aos Deals</Button>
-          </Link>
+        <div className="space-y-6">
+          <Button variant="ghost" onClick={() => router.push('/deals')} className="text-text-secondary hover:text-text-primary">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
+          <div className="card-glass text-center py-12">
+            <p className="text-text-secondary">Deal não encontrado.</p>
+          </div>
         </div>
       </PageTransition>
     )
   }
 
-  const statusColor = STATUS_COLORS[deal.status] ?? '#94A3B8'
-
   return (
     <PageTransition>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/deals">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={() => router.push('/deals')} className="text-text-secondary hover:text-text-primary">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <h1 className="text-2xl font-bold text-text-primary">{deal.titulo}</h1>
-                <span
-                  className="text-xs font-semibold px-2.5 py-0.5 rounded-md"
-                  style={{ color: statusColor, background: `${statusColor}20` }}
-                >
-                  {STATUS_LABELS[deal.status] ?? deal.status}
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border ${STATUS_BADGE_CLASSES[deal.status]}`}>
+                  {STATUS_LABELS[deal.status]}
                 </span>
               </div>
-              <p className="text-lg font-bold text-brand-cyan">{formatCurrency(deal.valor)}</p>
+              <p className="text-lg text-brand-cyan font-semibold mt-1">{formatCurrency(deal.valor)}</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => setDeleteConfirm(true)}>
-            <Trash2 className="h-4 w-4 text-status-negative" />
-          </Button>
         </div>
 
-        <StaggerContainer className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Left Column */}
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Left Column - 3/5 */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Deal Info */}
-            <StaggerItem>
-              <div className="card-glass">
-                <h2 className="text-lg font-semibold text-text-primary mb-4">Informações do Deal</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <InfoRow label="Valor">{formatCurrency(deal.valor)}</InfoRow>
-                  <InfoRow label="MRR">{deal.mrr > 0 ? formatCurrency(deal.mrr) : '-'}</InfoRow>
-                  <InfoRow label="Tipo Serviço">
-                    {deal.tipo_servico ? TIPO_SERVICO_LABELS[deal.tipo_servico] ?? deal.tipo_servico : '-'}
-                  </InfoRow>
-                  <InfoRow label="Probabilidade">
-                    <span className="text-sm font-medium text-brand-cyan">{deal.probabilidade}%</span>
-                  </InfoRow>
-                  <InfoRow label="Previsão Fechamento">
-                    {deal.data_previsao_fechamento ? formatDate(deal.data_previsao_fechamento) : '-'}
-                  </InfoRow>
-                  <InfoRow label="Data Fechamento">
-                    {deal.data_fechamento ? formatDate(deal.data_fechamento) : '-'}
-                  </InfoRow>
-                  <InfoRow label="Criado em">{formatDate(deal.created_at)}</InfoRow>
-                  {deal.motivo_perda && (
-                    <InfoRow label="Motivo da Perda">
-                      <span className="text-sm text-status-negative">{deal.motivo_perda}</span>
-                    </InfoRow>
+            {/* Deal Info Card */}
+            <div className="card-glass space-y-4">
+              <h2 className="text-lg font-semibold text-text-primary">Informações do Deal</h2>
+              <Separator className="bg-brand-blue-deep/30" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <InfoField icon={DollarSign} label="Valor" value={formatCurrency(deal.valor)} />
+                <InfoField icon={RefreshCw} label="MRR" value={formatCurrency(deal.mrr)} />
+                <InfoField icon={Target} label="Probabilidade" value={`${deal.probabilidade}%`} />
+                <InfoField
+                  icon={FileText}
+                  label="Tipo de Servico"
+                  value={deal.tipo_servico ? TIPO_SERVICO_LABELS[deal.tipo_servico] : '-'}
+                />
+                <InfoField
+                  icon={Calendar}
+                  label="Previsão de Fechamento"
+                  value={deal.data_previsao_fechamento ? formatDate(deal.data_previsao_fechamento) : '-'}
+                />
+                <InfoField
+                  icon={Calendar}
+                  label="Data de Fechamento"
+                  value={deal.data_fechamento ? formatDate(deal.data_fechamento) : '-'}
+                />
+                <InfoField icon={Clock} label="Criado" value={formatDate(deal.created_at)} />
+                <InfoField icon={Clock} label="Atualizado" value={formatTimeAgo(deal.updated_at)} />
+              </div>
+              {deal.categoria && (
+                <>
+                  <Separator className="bg-brand-blue-deep/30" />
+                  <div>
+                    <p className="text-xs text-text-secondary mb-1">Categoria</p>
+                    <p className="text-sm text-text-primary">{deal.categoria}</p>
+                  </div>
+                </>
+              )}
+              {deal.notas && (
+                <>
+                  <Separator className="bg-brand-blue-deep/30" />
+                  <div>
+                    <p className="text-xs text-text-secondary mb-1">Notas</p>
+                    <p className="text-sm text-text-primary whitespace-pre-wrap">{deal.notas}</p>
+                  </div>
+                </>
+              )}
+              {deal.motivo_perda && (
+                <>
+                  <Separator className="bg-brand-blue-deep/30" />
+                  <div>
+                    <p className="text-xs text-text-secondary mb-1">Motivo da Perda</p>
+                    <p className="text-sm text-status-negative">{deal.motivo_perda}</p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Lead Info Card */}
+            {deal.lead_id && (
+              <div className="card-glass space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-text-primary">Lead Associado</h2>
+                  {lead && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => router.push(`/leads/${lead.id}`)}
+                      className="text-brand-cyan hover:text-brand-cyan/80"
+                    >
+                      Ver Lead
+                    </Button>
                   )}
                 </div>
-                {deal.notas && (
-                  <>
-                    <Separator className="my-4" />
+                <Separator className="bg-brand-blue-deep/30" />
+                {leadLoading ? (
+                  <div className="space-y-3">
+                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-4 w-36" />
+                    <Skeleton className="h-4 w-40" />
+                  </div>
+                ) : lead ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs text-text-secondary mb-1">Notas</p>
-                      <p className="text-sm text-text-primary whitespace-pre-wrap">{deal.notas}</p>
+                      <p className="text-xs text-text-secondary">Nome</p>
+                      <p className="text-sm text-text-primary font-medium">{lead.nome}</p>
                     </div>
-                  </>
+                    {lead.empresa && (
+                      <div>
+                        <p className="text-xs text-text-secondary">Empresa</p>
+                        <p className="text-sm text-text-primary">{lead.empresa}</p>
+                      </div>
+                    )}
+                    {lead.email && (
+                      <div>
+                        <p className="text-xs text-text-secondary">Email</p>
+                        <p className="text-sm text-text-primary">{lead.email}</p>
+                      </div>
+                    )}
+                    {lead.telefone && (
+                      <div>
+                        <p className="text-xs text-text-secondary">Telefone</p>
+                        <p className="text-sm text-text-primary">{lead.telefone}</p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-xs text-text-secondary">Status</p>
+                      <p className="text-sm text-text-primary capitalize">{lead.status}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-text-secondary">Temperatura</p>
+                      <p className="text-sm text-text-primary capitalize">{lead.temperatura}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-text-secondary">Lead não encontrado.</p>
                 )}
               </div>
-            </StaggerItem>
-
-            {/* Lead Card */}
-            {lead && (
-              <StaggerItem>
-                <div className="card-glass">
-                  <h2 className="text-lg font-semibold text-text-primary mb-4">Lead Vinculado</h2>
-                  <Link href={`/leads/${lead.id}`}>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-bg-navy/50 hover:bg-bg-navy transition-colors">
-                      <div>
-                        <p className="text-sm font-medium text-text-primary">{lead.nome}</p>
-                        <p className="text-xs text-text-secondary">{lead.empresa ?? 'Sem empresa'}</p>
-                      </div>
-                      <span className="text-sm text-brand-cyan">{formatCurrency(lead.valor_estimado)}</span>
-                    </div>
-                  </Link>
-                </div>
-              </StaggerItem>
             )}
 
             {/* Activity Timeline */}
-            <StaggerItem>
-              <div className="card-glass">
-                <h2 className="text-lg font-semibold text-text-primary mb-4">Timeline</h2>
-                {!activities || activities.length === 0 ? (
-                  <p className="text-sm text-text-secondary text-center py-6">
-                    Nenhuma atividade registrada
-                  </p>
-                ) : (
-                  <div className="space-y-4">
-                    {activities.map((activity) => {
-                      const Icon = ACTIVITY_ICONS[activity.tipo] ?? FileText
-                      return (
-                        <div key={activity.id} className="flex gap-3">
-                          <div className="p-1.5 rounded-md bg-brand-blue-deep/30 h-fit">
-                            <Icon className="h-3.5 w-3.5 text-brand-cyan" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs font-medium text-text-primary">
-                                {ATIVIDADE_LABELS[activity.tipo as AtividadeTipo] ?? activity.tipo}
-                              </span>
-                              <span className="text-xs text-text-dark">
-                                {formatTimeAgo(activity.data)}
-                              </span>
-                            </div>
-                            <p className="text-sm text-text-secondary mt-0.5">{activity.descricao}</p>
-                            <p className="text-xs text-text-dark mt-0.5">por {activity.autor}</p>
-                          </div>
+            <div className="card-glass space-y-4">
+              <h2 className="text-lg font-semibold text-text-primary">Timeline de Atividades</h2>
+              <Separator className="bg-brand-blue-deep/30" />
+              {activitiesLoading ? (
+                <div className="space-y-4">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex gap-3">
+                      <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-4 w-full" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : !activities || activities.length === 0 ? (
+                <p className="text-sm text-text-secondary py-4 text-center">Nenhuma atividade registrada.</p>
+              ) : (
+                <div className="space-y-4">
+                  {activities.map((activity) => {
+                    const tipo = activity.tipo as AtividadeTipo
+                    const IconComponent = ATIVIDADE_ICONS[tipo] ?? FileText
+                    return (
+                      <div key={activity.id} className="flex gap-3">
+                        <div className="flex items-center justify-center h-8 w-8 rounded-full bg-brand-blue-deep/30 shrink-0">
+                          <IconComponent className="h-4 w-4 text-brand-cyan" />
                         </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            </StaggerItem>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-medium text-brand-cyan">
+                              {ATIVIDADE_TIPO_LABELS[tipo] ?? tipo}
+                            </span>
+                            <span className="text-xs text-text-secondary">
+                              {formatTimeAgo(activity.data)}
+                            </span>
+                            <span className="text-xs text-text-secondary">
+                              por {activity.autor}
+                            </span>
+                          </div>
+                          <p className="text-sm text-text-primary mt-1">{activity.descricao}</p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Right Column - Actions */}
+          {/* Right Column - 2/5 */}
           <div className="lg:col-span-2 space-y-6">
             {/* Quick Actions */}
-            {deal.status === 'aberto' && (
-              <StaggerItem>
-                <div className="card-glass space-y-3">
-                  <h2 className="text-lg font-semibold text-text-primary">Ações</h2>
+            <div className="card-glass space-y-4">
+              <h2 className="text-lg font-semibold text-text-primary">Ações</h2>
+              <Separator className="bg-brand-blue-deep/30" />
 
+              {deal.status === 'aberto' && (
+                <div className="space-y-3">
                   <Button
-                    className="w-full bg-status-positive/10 text-status-positive hover:bg-status-positive/20"
-                    onClick={handleGanho}
+                    className="w-full bg-[#10B981] hover:bg-[#10B981]/80 text-white"
+                    onClick={handleMarkGanho}
                     disabled={updateDeal.isPending}
                   >
-                    {updateDeal.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
                     Marcar como Ganho
                   </Button>
-
                   <Button
-                    variant="destructive"
-                    className="w-full"
-                    onClick={() => setPerdaOpen(true)}
+                    className="w-full bg-[#EF4444] hover:bg-[#EF4444]/80 text-white"
+                    onClick={() => setPerdidoDialogOpen(true)}
+                    disabled={updateDeal.isPending}
                   >
-                    <XCircle className="h-4 w-4" />
+                    <XCircle className="h-4 w-4 mr-2" />
                     Marcar como Perdido
                   </Button>
-
-                  <Separator />
-
-                  <div>
-                    <p className="text-xs text-text-secondary mb-1.5">Probabilidade</p>
-                    <Select value={String(deal.probabilidade)} onValueChange={handleProbabilidade}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[10, 25, 50, 75, 90, 100].map((p) => (
-                          <SelectItem key={p} value={String(p)}>{p}%</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </div>
-              </StaggerItem>
-            )}
+              )}
 
-            {/* Add Activity */}
-            <StaggerItem>
-              <div className="card-glass">
-                <h2 className="text-lg font-semibold text-text-primary mb-3">Registrar Atividade</h2>
-                <form onSubmit={handleAddActivity} className="space-y-3">
-                  <Select value={activityType} onValueChange={(v) => setActivityType(v as AtividadeTipo)}>
+              {deal.status !== 'aberto' && (
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  onClick={() => updateDeal.mutate({ id: deal.id, status: 'aberto' as DealStatus, probabilidade: 50 })}
+                  disabled={updateDeal.isPending}
+                >
+                  Reabrir Deal
+                </Button>
+              )}
+
+              <Separator className="bg-brand-blue-deep/30" />
+
+              {/* Update Probability */}
+              <div className="space-y-2">
+                <Label htmlFor="prob_update">Atualizar Probabilidade</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="prob_update"
+                    type="number"
+                    min="0"
+                    max="100"
+                    placeholder={String(deal.probabilidade)}
+                    value={probabilidade ?? ''}
+                    onChange={(e) => setProbabilidade(e.target.value ? Number(e.target.value) : null)}
+                  />
+                  <Button
+                    size="sm"
+                    onClick={handleUpdateProbabilidade}
+                    disabled={probabilidade === null || updateDeal.isPending}
+                  >
+                    Salvar
+                  </Button>
+                </div>
+              </div>
+
+              <Separator className="bg-brand-blue-deep/30" />
+
+              {/* Delete */}
+              <Button
+                variant="ghost"
+                className="w-full text-status-negative hover:text-status-negative hover:bg-status-negative/10"
+                onClick={() => setDeleteDialogOpen(true)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Excluir Deal
+              </Button>
+            </div>
+
+            {/* Activity Input Form */}
+            <div className="card-glass space-y-4">
+              <h2 className="text-lg font-semibold text-text-primary">Registrar Atividade</h2>
+              <Separator className="bg-brand-blue-deep/30" />
+              <form onSubmit={handleSubmitActivity} className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="activity_tipo">Tipo</Label>
+                  <Select
+                    value={activityTipo}
+                    onValueChange={(v) => setActivityTipo(v as AtividadeTipo)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {(Object.entries(ATIVIDADE_LABELS) as Array<[AtividadeTipo, string]>)
-                        .filter(([k]) => k !== 'sistema')
-                        .map(([val, label]) => (
-                          <SelectItem key={val} value={val}>{label}</SelectItem>
-                        ))}
+                      <SelectItem value="nota">Nota</SelectItem>
+                      <SelectItem value="ligacao">Ligação</SelectItem>
+                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="reuniao">Reunião</SelectItem>
+                      <SelectItem value="proposta_enviada">Proposta Enviada</SelectItem>
+                      <SelectItem value="followup">Follow-up</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="activity_desc">Descrição</Label>
+                  <textarea
+                    id="activity_desc"
+                    rows={3}
+                    value={activityDescricao}
+                    onChange={(e) => setActivityDescricao(e.target.value)}
                     placeholder="Descreva a atividade..."
-                    value={activityDesc}
-                    onChange={(e) => setActivityDesc(e.target.value)}
+                    className="flex w-full rounded-lg border border-brand-blue-deep/30 bg-bg-navy px-3 py-2 text-sm text-text-primary placeholder:text-text-dark focus:border-brand-cyan focus:outline-none focus:ring-1 focus:ring-brand-cyan/50 transition-colors resize-none"
                   />
-                  <Button
-                    type="submit"
-                    size="sm"
-                    className="w-full"
-                    disabled={!activityDesc.trim() || createActivity.isPending}
-                  >
-                    {createActivity.isPending && <Loader2 className="h-3 w-3 animate-spin" />}
-                    Registrar
-                  </Button>
-                </form>
-              </div>
-            </StaggerItem>
-          </div>
-        </StaggerContainer>
-      </div>
-
-      {/* Perda Dialog */}
-      <Dialog open={perdaOpen} onOpenChange={setPerdaOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Motivo da Perda</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <textarea
-              placeholder="Por que este deal foi perdido?"
-              value={motivoPerda}
-              onChange={(e) => setMotivoPerda(e.target.value)}
-              rows={3}
-              className="flex w-full rounded-[10px] bg-bg-input px-3 py-2 text-sm text-text-primary placeholder:text-text-dark focus:border-brand-cyan focus:outline-none focus:ring-1 focus:ring-brand-cyan/50 transition-colors resize-none"
-              style={{ border: '1.5px solid #153B5F' }}
-            />
-            <div className="flex gap-2 justify-end">
-              <Button variant="ghost" onClick={() => setPerdaOpen(false)}>Cancelar</Button>
-              <Button
-                variant="destructive"
-                onClick={handlePerda}
-                disabled={!motivoPerda.trim() || updateDeal.isPending}
-              >
-                {updateDeal.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                Confirmar Perda
-              </Button>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={activitySubmitting || !activityDescricao.trim()}
+                >
+                  {activitySubmitting ? 'Registrando...' : 'Registrar Atividade'}
+                </Button>
+              </form>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
 
-      {/* Delete Confirmation */}
-      <Dialog open={deleteConfirm} onOpenChange={setDeleteConfirm}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Excluir Deal</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-text-secondary">
-            Tem certeza que deseja excluir <strong className="text-text-primary">{deal.titulo}</strong>?
-          </p>
-          <div className="flex gap-2 justify-end mt-4">
-            <Button variant="ghost" onClick={() => setDeleteConfirm(false)}>Cancelar</Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={deleteDeal.isPending}
-            >
-              {deleteDeal.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-              Excluir
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        {/* Perdido Dialog */}
+        <Dialog open={perdidoDialogOpen} onOpenChange={setPerdidoDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Marcar como Perdido</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="motivo_perda">Motivo da perda *</Label>
+                <textarea
+                  id="motivo_perda"
+                  rows={3}
+                  value={motivoPerda}
+                  onChange={(e) => setMotivoPerda(e.target.value)}
+                  placeholder="Descreva o motivo da perda..."
+                  className="flex w-full rounded-lg border border-brand-blue-deep/30 bg-bg-navy px-3 py-2 text-sm text-text-primary placeholder:text-text-dark focus:border-brand-cyan focus:outline-none focus:ring-1 focus:ring-brand-cyan/50 transition-colors resize-none"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" onClick={() => setPerdidoDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button
+                  className="bg-[#EF4444] hover:bg-[#EF4444]/80 text-white"
+                  onClick={handleMarkPerdido}
+                  disabled={!motivoPerda.trim() || updateDeal.isPending}
+                >
+                  {updateDeal.isPending ? 'Salvando...' : 'Confirmar Perda'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Excluir Deal</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-sm text-text-secondary">
+                Tem certeza que deseja excluir o deal <strong className="text-text-primary">{deal.titulo}</strong>? Esta ação não pode ser desfeita.
+              </p>
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" onClick={() => setDeleteDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button
+                  className="bg-[#EF4444] hover:bg-[#EF4444]/80 text-white"
+                  onClick={handleDelete}
+                  disabled={deleteDeal.isPending}
+                >
+                  {deleteDeal.isPending ? 'Excluindo...' : 'Excluir'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </PageTransition>
   )
 }
 
-function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
+function InfoField({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof DollarSign
+  label: string
+  value: string
+}) {
   return (
-    <div>
-      <p className="text-xs text-text-secondary mb-0.5">{label}</p>
-      <div>{children}</div>
+    <div className="flex items-center gap-3">
+      <Icon className="h-4 w-4 text-text-secondary shrink-0" />
+      <div>
+        <p className="text-xs text-text-secondary">{label}</p>
+        <p className="text-sm text-text-primary font-medium">{value}</p>
+      </div>
     </div>
   )
 }
