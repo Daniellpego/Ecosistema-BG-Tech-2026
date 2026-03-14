@@ -831,7 +831,7 @@ header.scrolled {
 .grid-overlay {
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='40' height='69.28' viewBox='0 0 40 69.28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 17.32l-20 11.54L0 17.32V-5.77l20-11.54 20 11.54V17.32zM20 46.18l20-11.54V11.54L20 23.09 0 11.54v23.09L20 46.18zM0 63.5l20-11.54 20 11.54V86.6l-20 11.54-20-11.54V63.5z' fill='%2338D8FF' fill-opacity='0.04' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='69.28' viewBox='0 0 40 69.28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 17.32l-20 11.54L0 17.32V-5.77l20-11.54 20 11.54V17.32zM20 46.18l20-11.54V11.54L20 23.09 0 11.54v23.09L20 46.18zM0 63.5l20-11.54 20 11.54V86.6l-20 11.54-20-11.54V63.5z' fill='%2338D8FF' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
   animation: grid-move 30s linear infinite;
   mask-image: radial-gradient(ellipse at top, black 30%, transparent 80%);
   -webkit-mask-image: radial-gradient(ellipse at top, black 30%, transparent 80%);
@@ -1574,6 +1574,10 @@ header.scrolled {
 
 .arch-card {
   grid-column: span 1;
+}
+
+.arch-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
 @media (max-width: 768px) {
@@ -4869,7 +4873,7 @@ header.scrolled {
 
 /* --- Brand Tokens (overrides) --- */
 :root {
-  --brand-cyan: #00C8F0;
+  --brand-cyan: #00A8FF;
   --brand-navy: #0A1628;
   --brand-blue: #1A6AAA;
   --brand-blue-deep: #153B5F;
@@ -4877,7 +4881,7 @@ header.scrolled {
 
 /* --- Hero highlight span --- */
 .hero-highlight {
-  background: linear-gradient(135deg, var(--brand-cyan, #00C8F0), #38D8FF);
+  background: linear-gradient(135deg, var(--brand-cyan, #00A8FF), #38D8FF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -4888,8 +4892,8 @@ header.scrolled {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,200,240,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,200,240,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(0,168,255,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,168,255,0.07) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
   z-index: 0;
@@ -4903,7 +4907,7 @@ header.scrolled {
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,200,240,0.12), transparent 70%);
+  background: radial-gradient(circle, rgba(0,168,255,0.20), transparent 70%);
   filter: blur(80px);
   pointer-events: none;
   z-index: 0;
@@ -4916,7 +4920,7 @@ header.scrolled {
   width: 400px;
   height: 400px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(26,106,170,0.1), transparent 70%);
+  background: radial-gradient(circle, rgba(0,168,255,0.15), transparent 70%);
   filter: blur(60px);
   pointer-events: none;
   z-index: 0;
@@ -4936,12 +4940,12 @@ header.scrolled {
   letter-spacing: -0.5px;
 }
 .nav-logo-txt .accent {
-  color: var(--brand-cyan, #00C8F0);
+  color: var(--accent-400, #38D8FF);
 }
 
 /* --- Header CTA glow button --- */
 .btn-cta-nav {
-  background: linear-gradient(135deg, var(--brand-cyan, #00C8F0), #38D8FF);
+  background: linear-gradient(135deg, var(--brand-cyan, #00A8FF), #38D8FF);
   color: #0A1628;
   font-weight: 700;
   font-size: 14px;
@@ -5119,7 +5123,7 @@ header.scrolled {
   line-height: 1.5;
 }
 .price-anchor strong {
-  color: var(--brand-cyan, #00C8F0);
+  color: var(--brand-cyan, #00A8FF);
   font-weight: 700;
 }
 
