@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   LineChart as LineChartIcon,
   TrendingUp,
@@ -29,7 +29,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts'
-import { useProjecoes, useCreateProjecao, useUpdateProjecao, useDeleteProjecao, type ProjecaoCalculada } from '@/hooks/use-projecoes'
+import { useProjecoes, useCreateProjecao, useUpdateProjecao, useDeleteProjecao, type ProjecaoCalculada, type ProjecaoMes } from '@/hooks/use-projecoes'
 import { useTax } from '@/providers/tax-provider'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -97,13 +97,17 @@ function KPICard({
   )
 }
 
-function QuarterlyBreakdown({ proj }: { proj: ProjecaoCalculada }) {
+interface MesAjustado extends ProjecaoMes {
+  imposto: number
+}
+
+function QuarterlyBreakdown({ meses, showImposto }: { meses: MesAjustado[]; showImposto: boolean }) {
   const [expandedQ, setExpandedQ] = useState<number | null>(null)
 
   return (
     <div className="space-y-3">
       {QUARTERS.map((q, qi) => {
-        const qMeses = proj.meses.filter((m) => q.meses.includes(m.mes))
+        const qMeses = meses.filter((m) => q.meses.includes(m.mes))
         const qReceita = qMeses.reduce((s, m) => s + m.receita, 0)
         const qResultado = qMeses.reduce((s, m) => s + m.resultado, 0)
         const qCaixa = qMeses[qMeses.length - 1]?.caixaAcumulado ?? 0
@@ -139,7 +143,10 @@ function QuarterlyBreakdown({ proj }: { proj: ProjecaoCalculada }) {
                 {qMeses.map((m) => (
                   <div
                     key={m.mes}
-                    className="grid grid-cols-2 sm:grid-cols-6 gap-2 p-3 rounded-lg bg-bg-navy/50 border border-brand-blue-deep/10"
+                    className={cn(
+                      'grid gap-2 p-3 rounded-lg bg-bg-navy/50 border border-brand-blue-deep/10',
+                      showImposto ? 'grid-cols-2 sm:grid-cols-7' : 'grid-cols-2 sm:grid-cols-6'
+                    )}
                   >
                     <div>
                       <span className="text-[10px] text-text-dark uppercase">Mês</span>
@@ -163,6 +170,12 @@ function QuarterlyBreakdown({ proj }: { proj: ProjecaoCalculada }) {
                       <span className="text-[10px] text-text-dark uppercase">Custos Var.</span>
                       <p className="text-sm font-medium text-status-negative">{formatCurrency(m.custosVariaveis)}</p>
                     </div>
+                    {showImposto && (
+                      <div>
+                        <span className="text-[10px] text-status-warning uppercase">Simples 6%</span>
+                        <p className="text-sm font-medium text-status-warning">{formatCurrency(m.imposto)}</p>
+                      </div>
+                    )}
                     <div>
                       <span className="text-[10px] text-text-dark uppercase">Resultado</span>
                       <p className={cn('text-sm font-bold', m.resultado >= 0 ? 'text-status-positive' : 'text-status-negative')}>
@@ -184,15 +197,15 @@ function QuarterlyBreakdown({ proj }: { proj: ProjecaoCalculada }) {
   )
 }
 
-function ProjecaoCharts({ proj }: { proj: ProjecaoCalculada }) {
+function ProjecaoCharts({ proj, mesesAjustados }: { proj: ProjecaoCalculada; mesesAjustados: MesAjustado[] }) {
   const config = getScenarioConfig(proj.cenario.nome)
 
-  const chartData = proj.meses.map((m) => ({
+  const chartData = mesesAjustados.map((m) => ({
     name: m.label,
     setup: Math.round(m.receitaSetup),
     mrr: Math.round(m.receitaMRR),
     receita: Math.round(m.receita),
-    custos: Math.round(m.custosFixos + m.custosVariaveis),
+    custos: Math.round(m.custosFixos + m.custosVariaveis + m.imposto),
     caixa: Math.round(m.caixaAcumulado),
     resultado: Math.round(m.resultado),
   }))
@@ -307,16 +320,36 @@ function ScenarioContent({
   const config = getScenarioConfig(proj.cenario.nome)
   const { simplesEnabled, aliquota } = useTax()
 
-  // Apply Simples Nacional overlay
-  const impostoTotal = simplesEnabled ? proj.receita12m * (aliquota / 100) : 0
-  const lucroAjustado = proj.lucroAcumulado - impostoTotal
+  // Compute per-month adjusted data with Simples Nacional tax
+  const mesesAjustados: MesAjustado[] = useMemo(() => {
+    const taxRate = simplesEnabled ? aliquota / 100 : 0
+    const firstMes = proj.meses[0]
+    let caixaAcum = firstMes
+      ? firstMes.caixaAcumulado - firstMes.resultado
+      : 0
+
+    return proj.meses.map((m) => {
+      const imposto = m.receita * taxRate
+      const resultado = m.resultado - imposto
+      caixaAcum += resultado
+      return { ...m, imposto, resultado, caixaAcumulado: caixaAcum }
+    })
+  }, [proj.meses, simplesEnabled, aliquota])
+
+  const lucroAjustado = mesesAjustados.reduce((s, m) => s + m.resultado, 0)
+
+  // Recalculate break-even with tax
+  const mesBreakEvenAjustado = useMemo(() => {
+    const idx = mesesAjustados.findIndex((m) => m.resultado >= 0)
+    return idx >= 0 ? mesesAjustados[idx]!.label : 'N/A'
+  }, [mesesAjustados])
 
   const kpis = [
     { label: 'Receita total 12m', value: formatCurrency(proj.receita12m), sub: `Setup: ${formatCurrency(proj.receitaSetup12m)}`, icon: DollarSign, color: 'text-status-positive' },
     { label: 'MRR projetado 12m', value: formatCurrency(proj.mrr12m), sub: 'Apenas mensalidades', icon: TrendingUp, color: 'text-brand-cyan' },
     { label: 'Clientes ativos 12m', value: String(proj.clientesAtivos12m), icon: Users, color: 'text-brand-cyan' },
-    { label: 'Lucro acumulado', value: formatCurrency(lucroAjustado), sub: simplesEnabled ? `(-${aliquota}% Simples)` : undefined, icon: BarChart3, color: lucroAjustado >= 0 ? 'text-status-positive' : 'text-status-negative' },
-    { label: 'Mês break-even', value: proj.mesBreakEven, icon: Target, color: config.color },
+    { label: 'Lucro acumulado', value: formatCurrency(lucroAjustado), sub: simplesEnabled ? `(-${aliquota}% Simples mês a mês)` : undefined, icon: BarChart3, color: lucroAjustado >= 0 ? 'text-status-positive' : 'text-status-negative' },
+    { label: 'Mês break-even', value: simplesEnabled ? mesBreakEvenAjustado : proj.mesBreakEven, icon: Target, color: config.color },
     { label: 'Runway atual', value: proj.runwayAtual >= 99 ? 'Positivo' : `${proj.runwayAtual} meses`, icon: Clock, color: proj.runwayAtual >= 6 ? 'text-status-positive' : 'text-status-negative' },
   ]
 
@@ -359,11 +392,11 @@ function ScenarioContent({
       {/* Quarterly Breakdown */}
       <div>
         <h2 className="text-sm font-semibold text-text-primary mb-3">Detalhamento trimestral</h2>
-        <QuarterlyBreakdown proj={proj} />
+        <QuarterlyBreakdown meses={mesesAjustados} showImposto={simplesEnabled} />
       </div>
 
       {/* Charts */}
-      <ProjecaoCharts proj={proj} />
+      <ProjecaoCharts proj={proj} mesesAjustados={mesesAjustados} />
     </div>
   )
 }
