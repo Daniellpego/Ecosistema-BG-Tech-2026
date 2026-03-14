@@ -591,7 +591,7 @@ function openQuiz() {
         if (quizBody.innerHTML.includes('Calibrando motor')) {
           quizBody.innerHTML = `
                      <div style="text-align:center; padding: 60px 20px;">
-                       <p style="color: #ef4444; font-weight: 800; margin-bottom: 16px;">O diagnóstico encontrou um gargalo na rede.</p>
+                       <p style="color: #EF4444; font-weight: 800; margin-bottom: 16px;">O diagnóstico encontrou um gargalo na rede.</p>
                        <a href="https://wa.me/${CONFIG.whatsappNumber}" target="_blank" class="btn-primary" style="display:inline-flex;">Continuar via WhatsApp</a>
                      </div>`;
         }
@@ -663,11 +663,11 @@ function renderStep() {
     const tCost = calculateCost(answers);
 
     const tScoreLabels = [
-      { max: 40, label: 'Operação em Risco', color: '#ef4444' },
-      { max: 60, label: 'Alerta Crítico', color: '#f97316' },
-      { max: 75, label: 'Em Transição', color: '#eab308' },
-      { max: 88, label: 'Estruturado', color: '#3b82f6' },
-      { max: 100, label: 'Alta Performance', color: '#10b981' },
+      { max: 40, label: 'Operação em Risco', color: '#EF4444' },
+      { max: 60, label: 'Alerta Crítico', color: '#F59E0B' },
+      { max: 75, label: 'Em Transição', color: '#F59E0B' },
+      { max: 88, label: 'Estruturado', color: '#2B7AB5' },
+      { max: 100, label: 'Alta Performance', color: '#10B981' },
     ];
     const tScoreCat = tScoreLabels.find(s => partialScore <= s.max);
     const tCircleOffset = 251 - (251 * (partialScore / 100));
@@ -830,7 +830,7 @@ function renderStep() {
             const isWarning = q.id === 'janela_decisao' && idx === 3;
             body.innerHTML = `
               <div class="micro-validation" style="display:flex; flex-direction:column; align-items:center; text-align:center; padding: 60px 20px;">
-                <i data-lucide="${isWarning ? 'alert-triangle' : 'zap'}" style="color:${isWarning ? '#f59e0b' : 'var(--blue)'}; width: 48px; height: 48px; margin-bottom: 24px; animation: pulse 2s infinite;"></i>
+                <i data-lucide="${isWarning ? 'alert-triangle' : 'zap'}" style="color:${isWarning ? '#F59E0B' : 'var(--blue)'}; width: 48px; height: 48px; margin-bottom: 24px; animation: pulse 2s infinite;"></i>
                 <p style="color: var(--text-1); font-size: 20px; font-weight: 800; line-height: 1.5;">${ecoText}</p>
               </div>`;
             if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -1048,11 +1048,11 @@ function showResult() {
   const score = calculateScore(answers);
 
   const scoreLabels = [
-    { max: 40, label: 'Operação em Risco', color: '#ef4444' },
-    { max: 60, label: 'Alerta Crítico', color: '#f97316' },
-    { max: 75, label: 'Em Transição', color: '#eab308' },
-    { max: 88, label: 'Estruturado', color: '#3b82f6' },
-    { max: 100, label: 'Alta Performance', color: '#10b981' },
+    { max: 40, label: 'Operação em Risco', color: '#EF4444' },
+    { max: 60, label: 'Alerta Crítico', color: '#F59E0B' },
+    { max: 75, label: 'Em Transição', color: '#F59E0B' },
+    { max: 88, label: 'Estruturado', color: '#2B7AB5' },
+    { max: 100, label: 'Alta Performance', color: '#10B981' },
   ];
   const scoreCat = scoreLabels.find(s => score <= s.max);
   const circleOffset = 251 - (251 * (score / 100));
@@ -1138,7 +1138,7 @@ function showResult() {
 
       <div class="opportunity-highlight-card">
         <div class="opp-highlight-label"><i data-lucide="trending-up" style="width: 16px;"></i> Oportunidade Identificada</div>
-        <div class="opp-highlight-value">R$ ${(maxLoss / 1000).toFixed(0)}k <span style="font-size: 16px; font-weight: 600; color: #064e3b;">/mês recuperáveis</span></div>
+        <div class="opp-highlight-value">R$ ${(maxLoss / 1000).toFixed(0)}k <span style="font-size: 16px; font-weight: 600; color: #10B981;">/mês recuperáveis</span></div>
       </div>
 
       <div class="opps-box">
