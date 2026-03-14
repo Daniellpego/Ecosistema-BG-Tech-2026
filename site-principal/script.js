@@ -1582,3 +1582,136 @@ function showResult() {
     document.querySelectorAll(sel).forEach(el => observer.observe(el));
   });
 })();
+
+// ==========================================
+// BRAND OVERHAUL — New Features (Março 2026)
+// ==========================================
+
+// --- Scroll Reveal Observer (rv, rv-l, rv-r classes) ---
+(function initScrollReveal() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('on');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.rv, .rv-l, .rv-r').forEach(el => obs.observe(el));
+})();
+
+// --- Counter Animation ---
+(function initCounterAnimation() {
+  function animCounter(el, target, dec) {
+    let s = 0;
+    const dur = 1800;
+    const step = ts => {
+      if (!s) s = ts;
+      const p = Math.min((ts - s) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = dec ? (ease * target).toFixed(1) : Math.floor(ease * target);
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const cobs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const numEl = e.target.querySelector('[data-count]');
+      if (!numEl || numEl.dataset.done) return;
+      numEl.dataset.done = '1';
+      const target = parseFloat(numEl.dataset.count);
+      const dec = numEl.dataset.decimal === 'true';
+      const orig = numEl.textContent;
+      animCounter(numEl, target, dec);
+      setTimeout(() => { numEl.textContent = orig; }, 1900);
+      cobs.unobserve(e.target);
+    });
+  }, { threshold: 0.4 });
+
+  document.querySelectorAll('.trust-item, .impact-stat-item, [class*="stat"]')
+    .forEach(el => cobs.observe(el));
+})();
+
+// --- Drawer (Mobile Menu) ---
+(function initDrawer() {
+  const ham = document.querySelector('.hamburger');
+  const drawer = document.getElementById('drawer');
+  if (!ham || !drawer) return;
+
+  window.openDrawer = function() {
+    ham.classList.add('open');
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    ham.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeDrawer = function() {
+    ham.classList.remove('open');
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    ham.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  };
+
+  ham.addEventListener('click', () => {
+    if (ham.classList.contains('open')) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDrawer();
+  });
+})();
+
+// --- Exit Intent Popup ---
+(function initExitIntent() {
+  let exitShown = sessionStorage.getItem('exitShown');
+
+  window.showExit = function() {
+    if (exitShown) return;
+    exitShown = true;
+    sessionStorage.setItem('exitShown', '1');
+    const ov = document.getElementById('exit-overlay');
+    if (!ov) return;
+    ov.classList.add('show');
+    ov.setAttribute('aria-hidden', 'false');
+  };
+
+  window.closeExit = function() {
+    const ov = document.getElementById('exit-overlay');
+    if (!ov) return;
+    ov.classList.remove('show');
+    ov.setAttribute('aria-hidden', 'true');
+  };
+
+  // Trigger by mouse leaving viewport
+  document.addEventListener('mouseleave', e => {
+    if (e.clientY < 20 && !exitShown) setTimeout(showExit, 200);
+  });
+
+  // Trigger by scroll 70%+
+  let scrollMax = 0;
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    if (pct > scrollMax) scrollMax = pct;
+    if (scrollMax > 0.7 && !exitShown) setTimeout(showExit, 800);
+  }, { passive: true });
+
+  // Close on overlay click
+  const overlay = document.getElementById('exit-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) closeExit();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeExit();
+    });
+  }
+})();
