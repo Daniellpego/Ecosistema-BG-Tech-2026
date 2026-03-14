@@ -30,6 +30,7 @@ import {
   ReferenceLine,
 } from 'recharts'
 import { useProjecoes, useCreateProjecao, useUpdateProjecao, useDeleteProjecao, type ProjecaoCalculada } from '@/hooks/use-projecoes'
+import { useTax } from '@/providers/tax-provider'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -303,12 +304,17 @@ function ScenarioContent({
   onDelete: (cenario: Projecao) => void
 }) {
   const config = getScenarioConfig(proj.cenario.nome)
+  const { simplesEnabled, aliquota } = useTax()
+
+  // Apply Simples Nacional overlay
+  const impostoTotal = simplesEnabled ? proj.receita12m * (aliquota / 100) : 0
+  const lucroAjustado = proj.lucroAcumulado - impostoTotal
 
   const kpis = [
     { label: 'Receita total 12m', value: formatCurrency(proj.receita12m), sub: `Setup: ${formatCurrency(proj.receitaSetup12m)}`, icon: DollarSign, color: 'text-status-positive' },
     { label: 'MRR projetado 12m', value: formatCurrency(proj.mrr12m), sub: 'Apenas mensalidades', icon: TrendingUp, color: 'text-brand-cyan' },
     { label: 'Clientes ativos 12m', value: String(proj.clientesAtivos12m), icon: Users, color: 'text-brand-cyan' },
-    { label: 'Lucro acumulado', value: formatCurrency(proj.lucroAcumulado), icon: BarChart3, color: proj.lucroAcumulado >= 0 ? 'text-status-positive' : 'text-status-negative' },
+    { label: 'Lucro acumulado', value: formatCurrency(lucroAjustado), sub: simplesEnabled ? `(-${aliquota}% Simples)` : undefined, icon: BarChart3, color: lucroAjustado >= 0 ? 'text-status-positive' : 'text-status-negative' },
     { label: 'Mês break-even', value: proj.mesBreakEven, icon: Target, color: config.color },
     { label: 'Runway atual', value: proj.runwayAtual >= 99 ? 'Positivo' : `${proj.runwayAtual} meses`, icon: Clock, color: proj.runwayAtual >= 6 ? 'text-status-positive' : 'text-status-negative' },
   ]
