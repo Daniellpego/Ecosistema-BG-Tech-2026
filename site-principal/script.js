@@ -1344,7 +1344,7 @@ function showResult() {
       lead_temperature: leadTemperature,
       score,
       custo_mensal_estimado: `R$ ${(minLoss / 1000).toFixed(0)}k a R$ ${(maxLoss / 1000).toFixed(0)}k`,
-      dor_principal: dorOpt ? dorOpt.title : '',
+      dor_principal: dorLabel,
       segmento: segOpt ? segOpt.title : '',
       created_at: new Date().toISOString()
     };
