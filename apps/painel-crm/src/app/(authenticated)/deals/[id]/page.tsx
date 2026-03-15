@@ -44,6 +44,7 @@ import {
 } from '@/components/ui/select'
 import { useDealById, useUpdateDeal, useDeleteDeal, useDealActivities } from '@/hooks/use-deals'
 import { useLeadById, useCreateActivity } from '@/hooks/use-leads'
+import { useCurrentUser } from '@/hooks/use-current-user'
 import { useToast } from '@/components/toast-provider'
 import { formatCurrency, formatDate, formatTimeAgo } from '@/lib/format'
 import type { DealStatus, TipoServico, AtividadeTipo } from '@/types/database'
@@ -102,6 +103,7 @@ export default function DealDetailPage() {
   const deleteDeal = useDeleteDeal()
   const createActivity = useCreateActivity()
 
+  const { data: currentUser } = useCurrentUser()
   const { addToast } = useToast()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [perdidoDialogOpen, setPerdidoDialogOpen] = useState(false)
@@ -173,7 +175,7 @@ export default function DealDetailPage() {
         deal_id: dealId,
         tipo: activityTipo,
         descricao: activityDescricao.trim(),
-        autor: 'Usuario',
+        autor: currentUser?.name ?? 'Usuário',
       },
       {
         onSuccess: () => {

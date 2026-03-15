@@ -49,6 +49,7 @@ import {
   type LeadTemperatura,
   type AtividadeTipo,
 } from '@/types/database'
+import { useCurrentUser } from '@/hooks/use-current-user'
 import { useGroqAnalysis } from '@/hooks/use-groq'
 import { useToast } from '@/components/toast-provider'
 import { formatCurrency, formatDate, formatTimeAgo, formatWhatsAppUrl, formatPhone } from '@/lib/format'
@@ -79,6 +80,7 @@ export default function LeadDetailPage() {
   const deleteLead = useDeleteLead()
   const createActivity = useCreateActivity()
 
+  const { data: currentUser } = useCurrentUser()
   const { analyze, isLoading: aiLoading, error: aiError } = useGroqAnalysis()
   const { addToast } = useToast()
   const [editOpen, setEditOpen] = useState(false)
@@ -156,7 +158,7 @@ export default function LeadDetailPage() {
       lead_id: lead.id,
       tipo: activityType,
       descricao: activityDesc,
-      autor: 'Bryan',
+      autor: currentUser?.name ?? 'Usuário',
     })
     setActivityDesc('')
     addToast('Atividade registrada.', 'success')
