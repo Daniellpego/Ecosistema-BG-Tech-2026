@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { usePeriod } from '@/providers/period-provider'
@@ -322,48 +323,59 @@ export function useDRE() {
     receitasYtdQuery.isLoading ||
     gastosVariaveisYtdQuery.isLoading
 
-  const receitas = receitasQuery.data ?? []
-  const custosFixos = custosFixosQuery.data ?? []
-  const gastosVariaveis = gastosVariaveisQuery.data ?? []
-  const receitasYtd = receitasYtdQuery.data ?? []
-  const gastosVariaveisYtd = gastosVariaveisYtdQuery.data ?? []
+  const { current, ytd } = React.useMemo(() => {
+    const receitas = receitasQuery.data ?? []
+    const custosFixos = custosFixosQuery.data ?? []
+    const gastosVariaveis = gastosVariaveisQuery.data ?? []
+    const receitasYtd = receitasYtdQuery.data ?? []
+    const gastosVariaveisYtd = gastosVariaveisYtdQuery.data ?? []
 
-  const current = computeMonthDRE(receitas, custosFixos, gastosVariaveis)
-  const ytdRaw = computeMonthDRE(receitasYtd, custosFixos, gastosVariaveisYtd)
-  // YTD custos fixos: multiply by number of months elapsed
-  const ytd = {
-    ...ytdRaw,
-    cfTotal: ytdRaw.cfTotal * month,
-    cfFerramentas: ytdRaw.cfFerramentas * month,
-    cfContabilidade: ytdRaw.cfContabilidade * month,
-    cfMarketing: ytdRaw.cfMarketing * month,
-    cfInfra: ytdRaw.cfInfra * month,
-    cfAdmin: ytdRaw.cfAdmin * month,
-    cfProLabore: ytdRaw.cfProLabore * month,
-    cfImpostosFixos: ytdRaw.cfImpostosFixos * month,
-    cfOutro: ytdRaw.cfOutro * month,
-    margemBruta: ytdRaw.receitaBruta - ytdRaw.custosVariaveisTotal,
-    resultadoOperacional:
-      ytdRaw.receitaBruta - ytdRaw.custosVariaveisTotal - ytdRaw.cfTotal * month,
-    resultadoLiquido:
-      ytdRaw.receitaBruta -
-      ytdRaw.custosVariaveisTotal -
-      ytdRaw.cfTotal * month -
-      ytdRaw.impostos,
-    pctMargemBruta: pct(
-      ytdRaw.receitaBruta - ytdRaw.custosVariaveisTotal,
-      ytdRaw.receitaBruta
-    ),
-    pctMargemLiquida: pct(
-      ytdRaw.receitaBruta -
+    const current = computeMonthDRE(receitas, custosFixos, gastosVariaveis)
+    const ytdRaw = computeMonthDRE(receitasYtd, custosFixos, gastosVariaveisYtd)
+    // YTD custos fixos: multiply by number of months elapsed
+    const ytd = {
+      ...ytdRaw,
+      cfTotal: ytdRaw.cfTotal * month,
+      cfFerramentas: ytdRaw.cfFerramentas * month,
+      cfContabilidade: ytdRaw.cfContabilidade * month,
+      cfMarketing: ytdRaw.cfMarketing * month,
+      cfInfra: ytdRaw.cfInfra * month,
+      cfAdmin: ytdRaw.cfAdmin * month,
+      cfProLabore: ytdRaw.cfProLabore * month,
+      cfImpostosFixos: ytdRaw.cfImpostosFixos * month,
+      cfOutro: ytdRaw.cfOutro * month,
+      margemBruta: ytdRaw.receitaBruta - ytdRaw.custosVariaveisTotal,
+      resultadoOperacional:
+        ytdRaw.receitaBruta - ytdRaw.custosVariaveisTotal - ytdRaw.cfTotal * month,
+      resultadoLiquido:
+        ytdRaw.receitaBruta -
         ytdRaw.custosVariaveisTotal -
         ytdRaw.cfTotal * month -
         ytdRaw.impostos,
-      ytdRaw.receitaBruta
-    ),
-  }
+      pctMargemBruta: pct(
+        ytdRaw.receitaBruta - ytdRaw.custosVariaveisTotal,
+        ytdRaw.receitaBruta
+      ),
+      pctMargemLiquida: pct(
+        ytdRaw.receitaBruta -
+          ytdRaw.custosVariaveisTotal -
+          ytdRaw.cfTotal * month -
+          ytdRaw.impostos,
+        ytdRaw.receitaBruta
+      ),
+    }
+    return { current, ytd }
+  }, [
+    receitasQuery.data,
+    custosFixosQuery.data,
+    gastosVariaveisQuery.data,
+    receitasYtdQuery.data,
+    gastosVariaveisYtdQuery.data,
+    month,
+  ])
 
-  function buildLines(): DRELine[] {
+  const lines = React.useMemo(() => {
+    if (isLoading) return []
     const rb = current.receitaBruta
     const rbYtd = ytd.receitaBruta
 
@@ -375,7 +387,7 @@ export function useDRE() {
         ytd: ytd.receitaBruta,
         percent: 100,
         percentYtd: 100,
-        type: 'header',
+        type: 'header' as const,
       },
       {
         label: 'Setup',
@@ -383,7 +395,7 @@ export function useDRE() {
         ytd: ytd.receitaSetup,
         percent: pct(current.receitaSetup, rb),
         percentYtd: pct(ytd.receitaSetup, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -392,7 +404,7 @@ export function useDRE() {
         ytd: ytd.receitaMensalidades,
         percent: pct(current.receitaMensalidades, rb),
         percentYtd: pct(ytd.receitaMensalidades, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -401,10 +413,10 @@ export function useDRE() {
         ytd: ytd.receitaProjetos,
         percent: pct(current.receitaProjetos, rb),
         percentYtd: pct(ytd.receitaProjetos, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
-      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' },
+      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' as const },
 
       // CUSTOS VARIAVEIS
       {
@@ -413,7 +425,7 @@ export function useDRE() {
         ytd: ytd.custosVariaveisTotal,
         percent: pct(current.custosVariaveisTotal, rb),
         percentYtd: pct(ytd.custosVariaveisTotal, rbYtd),
-        type: 'header',
+        type: 'header' as const,
       },
       {
         label: 'Marketing',
@@ -421,7 +433,7 @@ export function useDRE() {
         ytd: ytd.cvMarketing,
         percent: pct(current.cvMarketing, rb),
         percentYtd: pct(ytd.cvMarketing, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -430,7 +442,7 @@ export function useDRE() {
         ytd: ytd.cvComercial,
         percent: pct(current.cvComercial, rb),
         percentYtd: pct(ytd.cvComercial, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -439,7 +451,7 @@ export function useDRE() {
         ytd: ytd.cvFreelancer,
         percent: pct(current.cvFreelancer, rb),
         percentYtd: pct(ytd.cvFreelancer, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -448,7 +460,7 @@ export function useDRE() {
         ytd: ytd.cvApiConsumo,
         percent: pct(current.cvApiConsumo, rb),
         percentYtd: pct(ytd.cvApiConsumo, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -457,10 +469,10 @@ export function useDRE() {
         ytd: ytd.cvOutro,
         percent: pct(current.cvOutro, rb),
         percentYtd: pct(ytd.cvOutro, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
-      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' },
+      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' as const },
 
       // MARGEM BRUTA
       {
@@ -469,9 +481,9 @@ export function useDRE() {
         ytd: ytd.margemBruta,
         percent: current.pctMargemBruta,
         percentYtd: ytd.pctMargemBruta,
-        type: 'subtotal',
+        type: 'subtotal' as const,
       },
-      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' },
+      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' as const },
 
       // CUSTOS FIXOS
       {
@@ -480,7 +492,7 @@ export function useDRE() {
         ytd: ytd.cfTotal,
         percent: pct(current.cfTotal, rb),
         percentYtd: pct(ytd.cfTotal, rbYtd),
-        type: 'header',
+        type: 'header' as const,
       },
       {
         label: 'Ferramentas',
@@ -488,7 +500,7 @@ export function useDRE() {
         ytd: ytd.cfFerramentas,
         percent: pct(current.cfFerramentas, rb),
         percentYtd: pct(ytd.cfFerramentas, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -497,7 +509,7 @@ export function useDRE() {
         ytd: ytd.cfContabilidade,
         percent: pct(current.cfContabilidade, rb),
         percentYtd: pct(ytd.cfContabilidade, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -506,7 +518,7 @@ export function useDRE() {
         ytd: ytd.cfMarketing,
         percent: pct(current.cfMarketing, rb),
         percentYtd: pct(ytd.cfMarketing, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -515,7 +527,7 @@ export function useDRE() {
         ytd: ytd.cfInfra,
         percent: pct(current.cfInfra, rb),
         percentYtd: pct(ytd.cfInfra, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -524,7 +536,7 @@ export function useDRE() {
         ytd: ytd.cfAdmin,
         percent: pct(current.cfAdmin, rb),
         percentYtd: pct(ytd.cfAdmin, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -533,7 +545,7 @@ export function useDRE() {
         ytd: ytd.cfProLabore,
         percent: pct(current.cfProLabore, rb),
         percentYtd: pct(ytd.cfProLabore, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -542,7 +554,7 @@ export function useDRE() {
         ytd: ytd.cfImpostosFixos,
         percent: pct(current.cfImpostosFixos, rb),
         percentYtd: pct(ytd.cfImpostosFixos, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
       {
@@ -551,10 +563,10 @@ export function useDRE() {
         ytd: ytd.cfOutro,
         percent: pct(current.cfOutro, rb),
         percentYtd: pct(ytd.cfOutro, rbYtd),
-        type: 'sub',
+        type: 'sub' as const,
         indent: true,
       },
-      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' },
+      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' as const },
 
       // RESULTADO OPERACIONAL
       {
@@ -563,9 +575,9 @@ export function useDRE() {
         ytd: ytd.resultadoOperacional,
         percent: pct(current.resultadoOperacional, rb),
         percentYtd: pct(ytd.resultadoOperacional, rbYtd),
-        type: 'subtotal',
+        type: 'subtotal' as const,
       },
-      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' },
+      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' as const },
 
       // IMPOSTOS
       {
@@ -574,9 +586,9 @@ export function useDRE() {
         ytd: ytd.impostos,
         percent: pct(current.impostos, rb),
         percentYtd: pct(ytd.impostos, rbYtd),
-        type: 'header',
+        type: 'header' as const,
       },
-      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' },
+      { label: '', month: 0, ytd: 0, percent: 0, percentYtd: 0, type: 'separator' as const },
 
       // RESULTADO LIQUIDO
       {
@@ -585,13 +597,13 @@ export function useDRE() {
         ytd: ytd.resultadoLiquido,
         percent: current.pctMargemLiquida,
         percentYtd: ytd.pctMargemLiquida,
-        type: 'total',
+        type: 'total' as const,
       },
     ]
-  }
+  }, [current, ytd, isLoading])
 
   return {
-    lines: isLoading ? [] : buildLines(),
+    lines,
     current,
     ytd,
     chartData: chartQuery.data ?? [],

@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { usePeriod } from '@/providers/period-provider'
@@ -265,217 +266,254 @@ export function useDashboard(): DashboardData {
   })
 
   // ── Compute KPIs ──────────────────────────────────────────────────
-  const receitas = receitasQuery.data ?? []
-  const receitasPrev = receitasPrevQuery.data ?? []
-  const custosFixos = custosFixosQuery.data ?? []
-  const gastos = gastosQuery.data ?? []
-  const gastosPrev = gastosPrevQuery.data ?? []
-  const caixaEntries = caixaQuery.data ?? []
+  const kpisAndVariations = React.useMemo(() => {
+    const receitas = receitasQuery.data ?? []
+    const receitasPrev = receitasPrevQuery.data ?? []
+    const custosFixos = custosFixosQuery.data ?? []
+    const gastos = gastosQuery.data ?? []
+    const gastosPrev = gastosPrevQuery.data ?? []
+    const caixaEntries = caixaQuery.data ?? []
 
-  // Receita Bruta (valor_bruto) — mesma base da DRE
-  const receitaTotal = receitas.reduce((s, r) => s + Number(r.valor_bruto), 0)
-  const mrr = receitas.filter(r => r.recorrente).reduce((s, r) => s + Number(r.valor_bruto), 0)
-  const totalCustosFixos = custosFixos.reduce((s, c) => s + Number(c.valor_mensal), 0)
-  // Gastos variáveis SEM impostos (consistente com DRE)
-  const gastosVarSemImpostos = gastos.filter(g => g.tipo !== 'impostos')
-  const totalGastosVar = gastosVarSemImpostos.reduce((s, g) => s + Number(g.valor), 0)
-  const impostos = gastos.filter(g => g.tipo === 'impostos').reduce((s, g) => s + Number(g.valor), 0)
-  const burnRate = totalCustosFixos + totalGastosVar + impostos
-  // DRE cascade: Receita - CV - CF - Impostos
-  const margemBruta = receitaTotal - totalGastosVar
-  const resultadoOperacional = margemBruta - totalCustosFixos
-  const resultadoLiquido = resultadoOperacional - impostos
-  const caixaDisponivel = caixaEntries.length > 0 ? caixaEntries[0]!.saldo : 0
-  const runway = burnRate > 0 ? caixaDisponivel / burnRate : caixaDisponivel > 0 ? 99 : 0
-  const margem = receitaTotal > 0 ? (resultadoLiquido / receitaTotal) * 100 : 0
+    // Receita Bruta (valor_bruto) — mesma base da DRE
+    const receitaTotal = receitas.reduce((s, r) => s + Number(r.valor_bruto || 0), 0)
+    const mrr = receitas.filter(r => r.recorrente).reduce((s, r) => s + Number(r.valor_bruto || 0), 0)
+    const totalCustosFixos = custosFixos.reduce((s, c) => s + Number(c.valor_mensal || 0), 0)
+    
+    // Gastos variáveis SEM impostos (consistente com DRE)
+    const gastosVarSemImpostos = gastos.filter(g => g.tipo !== 'impostos')
+    const totalGastosVar = gastosVarSemImpostos.reduce((s, g) => s + Number(g.valor || 0), 0)
+    const impostos = gastos.filter(g => g.tipo === 'impostos').reduce((s, g) => s + Number(g.valor || 0), 0)
+    
+    const burnRate = totalCustosFixos + totalGastosVar + impostos
+    // DRE cascade: Receita - CV - CF - Impostos
+    const margemBruta = receitaTotal - totalGastosVar
+    const resultadoOperacional = margemBruta - totalCustosFixos
+    const resultadoLiquido = resultadoOperacional - impostos
+    const caixaDisponivel = caixaEntries.length > 0 ? Number(caixaEntries[0]?.saldo || 0) : 0
+    const runway = burnRate > 0 ? caixaDisponivel / burnRate : caixaDisponivel > 0 ? 99 : 0
+    const margem = receitaTotal > 0 ? (resultadoLiquido / receitaTotal) * 100 : 0
 
-  const kpis: DashboardKPIs = {
-    receitaTotal,
-    mrr,
-    burnRate,
-    custosFixos: totalCustosFixos,
-    custosVariaveis: totalGastosVar,
-    resultadoLiquido,
-    caixaDisponivel,
-    runway,
-    margem,
-  }
+    const kpis: DashboardKPIs = {
+      receitaTotal,
+      mrr,
+      burnRate,
+      custosFixos: totalCustosFixos,
+      custosVariaveis: totalGastosVar,
+      resultadoLiquido,
+      caixaDisponivel,
+      runway,
+      margem,
+    }
 
-  // ── Previous month KPIs for variation ─────────────────────────────
-  const prevReceitaTotal = receitasPrev.reduce((s, r) => s + Number(r.valor_bruto), 0)
-  const prevMrr = receitasPrev.filter(r => r.recorrente).reduce((s, r) => s + Number(r.valor_bruto), 0)
-  const prevGastosVarSemImp = gastosPrev.filter(g => g.tipo !== 'impostos')
-  const prevGastosVar = prevGastosVarSemImp.reduce((s, g) => s + Number(g.valor), 0)
-  const prevImpostos = gastosPrev.filter(g => g.tipo === 'impostos').reduce((s, g) => s + Number(g.valor), 0)
-  const prevBurnRate = totalCustosFixos + prevGastosVar + prevImpostos
-  const prevResultado = prevReceitaTotal - prevGastosVar - totalCustosFixos - prevImpostos
+    // Previous month KPIs for variation
+    const prevReceitaTotal = receitasPrev.reduce((s, r) => s + Number(r.valor_bruto || 0), 0)
+    const prevMrr = receitasPrev.filter(r => r.recorrente).reduce((s, r) => s + Number(r.valor_bruto || 0), 0)
+    const prevGastosVarSemImp = gastosPrev.filter(g => g.tipo !== 'impostos')
+    const prevGastosVar = prevGastosVarSemImp.reduce((s, g) => s + Number(g.valor || 0), 0)
+    const prevImpostos = gastosPrev.filter(g => g.tipo === 'impostos').reduce((s, g) => s + Number(g.valor || 0), 0)
+    const prevBurnRate = totalCustosFixos + prevGastosVar + prevImpostos
+    const prevResultado = prevReceitaTotal - prevGastosVar - totalCustosFixos - prevImpostos
 
-  function pctChange(curr: number, prev: number): number | null {
-    if (prev === 0) return curr === 0 ? null : 100
-    return ((curr - prev) / Math.abs(prev)) * 100
-  }
+    function pctChange(curr: number, prev: number): number | null {
+      if (prev === 0) return curr === 0 ? null : 100
+      return ((curr - prev) / Math.abs(prev)) * 100
+    }
 
-  const variations: DashboardVariation = {
-    receitaTotal: pctChange(receitaTotal, prevReceitaTotal),
-    mrr: pctChange(mrr, prevMrr),
-    burnRate: pctChange(burnRate, prevBurnRate),
-    custosFixos: null, // custos fixos don't vary month over month easily
-    custosVariaveis: pctChange(totalGastosVar, prevGastosVar),
-    resultadoLiquido: pctChange(resultadoLiquido, prevResultado),
-    caixaDisponivel: caixaEntries.length >= 2 ? pctChange(caixaEntries[0]!.saldo, caixaEntries[1]!.saldo) : null,
-    runway: null,
-  }
+    const variations: DashboardVariation = {
+      receitaTotal: pctChange(receitaTotal, prevReceitaTotal),
+      mrr: pctChange(mrr, prevMrr),
+      burnRate: pctChange(burnRate, prevBurnRate),
+      custosFixos: null,
+      custosVariaveis: pctChange(totalGastosVar, prevGastosVar),
+      resultadoLiquido: pctChange(resultadoLiquido, prevResultado),
+      caixaDisponivel: caixaEntries.length >= 2 ? pctChange(Number(caixaEntries[0]?.saldo || 0), Number(caixaEntries[1]?.saldo || 0)) : null,
+      runway: null,
+    }
+
+    return { kpis, variations }
+  }, [
+    receitasQuery.data,
+    receitasPrevQuery.data,
+    custosFixosQuery.data,
+    gastosQuery.data,
+    gastosPrevQuery.data,
+    caixaQuery.data,
+  ])
+
+  const { kpis, variations } = kpisAndVariations
 
   // ── Chart data (last 6 months) ────────────────────────────────────
-  const receitas6m = receitas6mQuery.data ?? []
-  const gastos6m = gastos6mQuery.data ?? []
+  const { chartData, costDistribution } = React.useMemo(() => {
+    const receitas6m = receitas6mQuery.data ?? []
+    const gastos6m = gastos6mQuery.data ?? []
+    const custosFixos = custosFixosQuery.data ?? []
+    const gastos = gastosQuery.data ?? []
+    const totalCustosFixos = kpis.custosFixos
 
-  const chartData: ChartMonth[] = []
-  for (let i = 5; i >= 0; i--) {
-    const m = subtractMonths(year, month, i)
-    const range = monthRange(m.year, m.month)
-    const monthReceita = receitas6m
-      .filter(r => r.data >= range.start && r.data <= range.end)
-      .reduce((s, r) => s + Number(r.valor_bruto), 0)
-    const monthGastos = gastos6m
-      .filter(g => g.data >= range.start && g.data <= range.end)
-      .reduce((s, g) => s + Number(g.valor), 0)
-    const monthCustos = monthGastos + totalCustosFixos
-    const label = new Date(m.year, m.month - 1)
-      .toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
+    const chartData: ChartMonth[] = []
+    for (let i = 5; i >= 0; i--) {
+      const m = subtractMonths(year, month, i)
+      const range = monthRange(m.year, m.month)
+      const monthReceita = receitas6m
+        .filter(r => r.data >= range.start && r.data <= range.end)
+        .reduce((s, r) => s + Number(r.valor_bruto || 0), 0)
+      const monthGastos = gastos6m
+        .filter(g => g.data >= range.start && g.data <= range.end)
+        .reduce((s, g) => s + Number(g.valor || 0), 0)
+      const monthCustos = monthGastos + totalCustosFixos
+      const label = new Date(m.year, m.month - 1)
+        .toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
 
-    chartData.push({
-      month: label,
-      receita: monthReceita,
-      custos: monthCustos,
-      resultado: monthReceita - monthCustos,
-    })
-  }
+      chartData.push({
+        month: label,
+        receita: monthReceita,
+        custos: monthCustos,
+        resultado: monthReceita - monthCustos,
+      })
+    }
 
-  // ── Cost distribution ─────────────────────────────────────────────
-  const costMap: Record<string, number> = {}
+    // ── Cost distribution ─────────────────────────────────────────────
+    const costMap: Record<string, number> = {}
 
-  for (const cf of custosFixos) {
-    const key = cf.categoria
-    costMap[key] = (costMap[key] ?? 0) + cf.valor_mensal
-  }
-  for (const gv of gastos) {
-    const key = gv.categoria
-    costMap[key] = (costMap[key] ?? 0) + gv.valor
-  }
+    for (const cf of custosFixos) {
+      const key = cf.categoria
+      costMap[key] = (costMap[key] ?? 0) + Number(cf.valor_mensal || 0)
+    }
+    for (const gv of gastos) {
+      const key = gv.categoria
+      costMap[key] = (costMap[key] ?? 0) + Number(gv.valor || 0)
+    }
 
-  const costDistribution: CostSlice[] = Object.entries(costMap)
-    .map(([name, value]) => ({
-      name: CATEGORY_LABELS[name] ?? name,
-      value,
-      color: COST_COLORS[name] ?? '#94A3B8',
-    }))
-    .sort((a, b) => b.value - a.value)
+    const costDistribution: CostSlice[] = Object.entries(costMap)
+      .map(([name, value]) => ({
+        name: CATEGORY_LABELS[name] ?? name,
+        value,
+        color: COST_COLORS[name] ?? '#94A3B8',
+      }))
+      .sort((a, b) => b.value - a.value)
+
+    return { chartData, costDistribution }
+  }, [
+    receitas6mQuery.data,
+    gastos6mQuery.data,
+    custosFixosQuery.data,
+    gastosQuery.data,
+    kpis.custosFixos,
+    year,
+    month,
+  ])
 
   // ── Health status ─────────────────────────────────────────────────
-  const hasData = receitaTotal > 0 || totalCustosFixos > 0 || totalGastosVar > 0 || caixaDisponivel > 0
-  let healthStatus: HealthStatus = 'saudavel'
+  const { hasData, healthStatus, caixaDropping3m } = React.useMemo(() => {
+    const caixaEntries = caixaQuery.data ?? []
+    const hasData = kpis.receitaTotal > 0 || kpis.custosFixos > 0 || kpis.custosVariaveis > 0 || kpis.caixaDisponivel > 0
+    let healthStatus: HealthStatus = 'saudavel'
 
-  const caixaDropping3m =
-    caixaEntries.length >= 3 &&
-    caixaEntries[0]!.saldo < caixaEntries[1]!.saldo &&
-    caixaEntries[1]!.saldo < caixaEntries[2]!.saldo
+    const caixaDropping3m =
+      caixaEntries.length >= 3 &&
+      Number(caixaEntries[0]?.saldo || 0) < Number(caixaEntries[1]?.saldo || 0) &&
+      Number(caixaEntries[1]?.saldo || 0) < Number(caixaEntries[2]?.saldo || 0)
 
-  if (!hasData) {
-    healthStatus = 'sem_dados'
-  } else if (runway < 1 || burnRate > receitaTotal || caixaDropping3m) {
-    healthStatus = 'critico'
-  } else if (
-    (runway >= 1 && runway < 3) ||
-    (resultadoLiquido < 0 && resultadoLiquido > -(receitaTotal * 0.1))
-  ) {
-    healthStatus = 'atencao'
-  } else if (runway >= 3 && resultadoLiquido >= 0 && margem >= 30) {
-    healthStatus = 'saudavel'
-  } else {
-    healthStatus = 'atencao'
-  }
+    if (!hasData) {
+      healthStatus = 'sem_dados'
+    } else if (kpis.runway < 1 || kpis.burnRate > kpis.receitaTotal || caixaDropping3m) {
+      healthStatus = 'critico'
+    } else if (
+      (kpis.runway >= 1 && kpis.runway < 3) ||
+      (kpis.resultadoLiquido < 0 && kpis.resultadoLiquido > -(kpis.receitaTotal * 0.1))
+    ) {
+      healthStatus = 'atencao'
+    } else if (kpis.runway >= 3 && kpis.resultadoLiquido >= 0 && kpis.margem >= 30) {
+      healthStatus = 'saudavel'
+    } else {
+      healthStatus = 'atencao'
+    }
+    
+    return { hasData, healthStatus, caixaDropping3m }
+  }, [kpis, caixaQuery.data])
 
   // ── Alerts ────────────────────────────────────────────────────────
-  const alerts: DashboardAlert[] = []
+  const alerts = React.useMemo(() => {
+    const alerts: DashboardAlert[] = []
 
-  // No alerts when there's no data at all
-  if (hasData) {
-    if (runway < 1 && burnRate > 0) {
-      alerts.push({
-        id: 'runway-critical',
-        type: 'critical',
-        icon: '🚨',
-        title: 'Runway crítico',
-        description: `Caixa cobre menos de 1 mês de operação. Runway atual: ${runway.toFixed(1)} meses.`,
-        action: 'Revise custos ou aporte capital',
-      })
-    } else if (runway < 3 && runway >= 1) {
-      alerts.push({
-        id: 'runway-low',
-        type: 'warning',
-        icon: '⚠️',
-        title: 'Runway baixo',
-        description: `Runway de ${runway.toFixed(1)} meses. Recomendado mínimo de 3 meses.`,
-        action: 'Avalie redução de custos',
-      })
-    }
+    if (hasData) {
+      if (kpis.runway < 1 && kpis.burnRate > 0) {
+        alerts.push({
+          id: 'runway-critical',
+          type: 'critical',
+          icon: '🚨',
+          title: 'Runway crítico',
+          description: `Caixa cobre menos de 1 mês de operação. Runway atual: ${kpis.runway.toFixed(1)} meses.`,
+          action: 'Revise custos ou aporte capital',
+        })
+      } else if (kpis.runway < 3 && kpis.runway >= 1) {
+        alerts.push({
+          id: 'runway-low',
+          type: 'warning',
+          icon: '⚠️',
+          title: 'Runway baixo',
+          description: `Runway de ${kpis.runway.toFixed(1)} meses. Recomendado mínimo de 3 meses.`,
+          action: 'Avalie redução de custos',
+        })
+      }
 
-    if (burnRate > receitaTotal && receitaTotal > 0) {
-      alerts.push({
-        id: 'burn-exceeds-revenue',
-        type: 'critical',
-        icon: '🔥',
-        title: 'Burn rate superior à receita',
-        description: `Custos totais (${burnRate.toFixed(0)}) excedem receita (${receitaTotal.toFixed(0)}).`,
-        action: 'Reduza custos ou aumente receita',
-      })
-    }
+      if (kpis.burnRate > kpis.receitaTotal && kpis.receitaTotal > 0) {
+        alerts.push({
+          id: 'burn-exceeds-revenue',
+          type: 'critical',
+          icon: '🔥',
+          title: 'Burn rate superior à receita',
+          description: `Custos totais (${kpis.burnRate.toFixed(0)}) excedem receita (${kpis.receitaTotal.toFixed(0)}).`,
+          action: 'Reduza custos ou aumente receita',
+        })
+      }
 
-    if (caixaDropping3m) {
-      alerts.push({
-        id: 'cash-declining',
-        type: 'critical',
-        icon: '📉',
-        title: 'Caixa em queda por 3 meses',
-        description: 'O saldo de caixa está caindo consecutivamente nos últimos 3 registros.',
-        action: 'Analise fluxo de caixa urgente',
-      })
-    }
+      if (caixaDropping3m) {
+        alerts.push({
+          id: 'cash-declining',
+          type: 'critical',
+          icon: '📉',
+          title: 'Caixa em queda por 3 meses',
+          description: 'O saldo de caixa está caindo consecutivamente nos últimos 3 registros.',
+          action: 'Analise fluxo de caixa urgente',
+        })
+      }
 
-    if (resultadoLiquido < 0) {
-      alerts.push({
-        id: 'negative-result',
-        type: 'warning',
-        icon: '📊',
-        title: 'Resultado líquido negativo',
-        description: `Prejuízo de R$ ${Math.abs(resultadoLiquido).toFixed(2)} no período.`,
-        action: 'Verifique DRE para detalhes',
-      })
-    }
+      if (kpis.resultadoLiquido < 0) {
+        alerts.push({
+          id: 'negative-result',
+          type: 'warning',
+          icon: '📊',
+          title: 'Resultado líquido negativo',
+          description: `Prejuízo de R$ ${Math.abs(kpis.resultadoLiquido).toFixed(2)} no período.`,
+          action: 'Verifique DRE para detalhes',
+        })
+      }
 
-    if (margem < 30 && margem >= 0 && receitaTotal > 0) {
-      alerts.push({
-        id: 'low-margin',
-        type: 'warning',
-        icon: '💹',
-        title: 'Margem abaixo do ideal',
-        description: `Margem líquida de ${margem.toFixed(1)}%. Meta: 30%.`,
-        action: 'Otimize custos operacionais',
-      })
-    }
+      if (kpis.margem < 30 && kpis.margem >= 0 && kpis.receitaTotal > 0) {
+        alerts.push({
+          id: 'low-margin',
+          type: 'warning',
+          icon: '💹',
+          title: 'Margem abaixo do ideal',
+          description: `Margem líquida de ${kpis.margem.toFixed(1)}%. Meta: 30%.`,
+          action: 'Otimize custos operacionais',
+        })
+      }
 
-    if (mrr === 0 && receitaTotal > 0) {
-      alerts.push({
-        id: 'no-mrr',
-        type: 'info',
-        icon: '🔄',
-        title: 'Sem receita recorrente',
-        description: 'Nenhuma receita recorrente identificada este mês.',
-        action: 'Considere criar planos mensais',
-      })
+      if (kpis.mrr === 0 && kpis.receitaTotal > 0) {
+        alerts.push({
+          id: 'no-mrr',
+          type: 'info',
+          icon: '🔄',
+          title: 'Sem receita recorrente',
+          description: 'Nenhuma receita recorrente identificada este mês.',
+          action: 'Considere criar planos mensais',
+        })
+      }
     }
-  }
+    return alerts
+  }, [hasData, kpis, caixaDropping3m])
 
   // ── Loading / error ───────────────────────────────────────────────
   const isLoading =
