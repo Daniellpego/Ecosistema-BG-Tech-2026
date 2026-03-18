@@ -1,6 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 /* ════════════════════════════════════════════════════════════
    TYPES
@@ -266,6 +272,32 @@ const SECTOR_CONTEXT: Record<string, string> = {
    COMPONENT
    ════════════════════════════════════════════════════════════ */
 
+/* ════════════════════════════════════════════════════════════
+   SUPABASE HELPERS
+   ════════════════════════════════════════════════════════════ */
+
+function getOptionText(questionId: string, answerIndex: number | undefined): string {
+  if (answerIndex == null) return "Não informado";
+  const q = QUESTIONS.find((q) => q.id === questionId);
+  return q?.opcoes[answerIndex] ?? "Não informado";
+}
+
+function getMultiOptionTexts(questionId: string, answerIndexes: number[] | undefined): string[] {
+  if (!answerIndexes || answerIndexes.length === 0) return [];
+  const q = QUESTIONS.find((q) => q.id === questionId);
+  if (!q) return [];
+  return answerIndexes.map((i) => q.opcoes[i]).filter(Boolean);
+}
+
+function getHorasMes(tempoIndex: number | undefined): string {
+  if (tempoIndex == null) return "Não informado";
+  return ["~20h/mês", "~40-60h/mês", "~65-160h/mês", "+160h/mês"][tempoIndex] ?? "Não informado";
+}
+
+/* ════════════════════════════════════════════════════════════
+   COMPONENT
+   ════════════════════════════════════════════════════════════ */
+
 export default function DiagnosticoPage() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [city, setCity] = useState<string>("");
@@ -282,6 +314,8 @@ export default function DiagnosticoPage() {
   const [score, setScore] = useState(0);
   const [animatedScore, setAnimatedScore] = useState(0);
   const streamRef = useRef<boolean>(false);
+  const leadRowIdRef = useRef<string | null>(null);
+  const diagSavedRef = useRef<boolean>(false);
 
   // Detect city
   useEffect(() => {
@@ -320,6 +354,27 @@ export default function DiagnosticoPage() {
     }, 20);
     return () => clearInterval(interval);
   }, [phase, score]);
+
+  // Supabase — salvar diagnostico_ia quando o stream completar
+  useEffect(() => {
+    if (phase !== "result" || !aiText || diagSavedRef.current) return;
+    // Detecta que o stream terminou: texto existe e termina com ponto
+    const streamDone = aiText.length > 50 && aiText.trimEnd().endsWith(".");
+    if (!streamDone) return;
+    if (!leadRowIdRef.current) return;
+
+    diagSavedRef.current = true;
+    (async () => {
+      try {
+        await supabase
+          .from("quiz_leads")
+          .update({ diagnostico_ia: aiText })
+          .eq("id", leadRowIdRef.current!);
+      } catch {
+        console.log("Supabase update diagnostico_ia falhou.");
+      }
+    })();
+  }, [phase, aiText]);
 
   const q = QUESTIONS[currentQ];
 
@@ -542,6 +597,47 @@ PROIBIDO: "incrível", "fantástico", "transformação digital", "jornada", "ala
         "lead_captured",
         { setor, tier: tierInfo.tier, score: finalScore }
       );
+    }
+
+    // Supabase — salvar lead (fire & forget, nunca bloqueia o fluxo)
+    // Se der erro de permissão, rodar no Supabase SQL Editor:
+    // create policy "allow insert from client" on quiz_leads for insert with check (true);
+    // create policy "allow update from client" on quiz_leads for update using (true) with check (true);
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const { data } = await supabase
+        .from("quiz_leads")
+        .insert({
+          nome: lead.nome,
+          empresa: lead.empresa,
+          email: lead.email,
+          whatsapp: lead.whatsapp || null,
+          cidade: city || null,
+          score: finalScore,
+          tier: tierInfo.tier,
+          cargo: getOptionText("cargo", answers.cargo?.[0]),
+          tamanho: getOptionText("tamanho", answers.tamanho?.[0]),
+          setor: getOptionText("setor", answers.setor?.[0]),
+          gargalos: getMultiOptionTexts("gargalos", answers.gargalos),
+          processos: getOptionText("processos", answers.processos?.[0]),
+          sistemas: getOptionText("sistemas", answers.sistemas?.[0]),
+          tempo: getOptionText("tempo", answers.tempo?.[0]),
+          tempo_horas_mes: getHorasMes(answers.tempo?.[0]),
+          impactos: getMultiOptionTexts("impactos", answers.impactos),
+          urgencia: getOptionText("urgencia", answers.urgencia?.[0]),
+          prioridade: getOptionText("prioridade", answers.prioridade?.[0]),
+          utm_source: params.get("utm_source"),
+          utm_medium: params.get("utm_medium"),
+          utm_campaign: params.get("utm_campaign"),
+        })
+        .select("id")
+        .single();
+
+      if (data?.id) {
+        leadRowIdRef.current = data.id;
+      }
+    } catch {
+      console.log("Supabase insert falhou — continuando normalmente.");
     }
 
     setPhase("loading");
