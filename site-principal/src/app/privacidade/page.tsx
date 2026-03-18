@@ -41,8 +41,8 @@ export default function PrivacidadePage() {
         <h2 className="text-xl font-bold text-text mt-8 mb-3">5. Contato do DPO</h2>
         <p>
           Para exercer seus direitos ou tirar dúvidas sobre privacidade, entre em contato:{" "}
-          <a href="mailto:contato@bgtechsolucoes.com.br" className="text-primary font-medium hover:underline">
-            contato@bgtechsolucoes.com.br
+          <a href="mailto:contato@gradios.com.br" className="text-primary font-medium hover:underline">
+            contato@gradios.com.br
           </a>.
         </p>
       </div>

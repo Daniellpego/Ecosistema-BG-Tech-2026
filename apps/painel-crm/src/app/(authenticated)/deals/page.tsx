@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
+import { PackageOpen } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -167,9 +169,9 @@ export default function DealsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary">Deals</h1>
-            <p className="text-sm text-text-secondary mt-1">Pipeline de negociações</p>
+          <div className="flex flex-col gap-1 mb-2">
+            <h1 className="text-2xl font-black text-text-primary tracking-tight">Deals</h1>
+            <p className="text-sm text-text-muted font-medium">Gerencie suas oportunidades de negócio e acompanhe o fechamento de vendas.</p>
           </div>
           <Button onClick={handleOpenForm}>
             <Plus className="h-4 w-4" />
@@ -303,8 +305,21 @@ export default function DealsPage() {
                 ))
               ) : !deals || deals.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-12 text-text-secondary">
-                    {hasFilters ? 'Nenhum deal encontrado com esses filtros.' : 'Nenhum deal cadastrado.'}
+                  <td colSpan={9} className="py-12 px-4">
+                    <EmptyState
+                      icon={PackageOpen}
+                      title={hasFilters ? "Nenhum deal encontrado" : "Nenhum deal cadastrado"}
+                      description={hasFilters 
+                        ? "Tente ajustar seus filtros para encontrar o que procura." 
+                        : "Comece criando seu primeiro deal para gerenciar suas vendas."}
+                      action={!hasFilters ? {
+                        label: "Novo Deal",
+                        onClick: handleOpenForm
+                      } : {
+                        label: "Limpar Filtros",
+                        onClick: clearFilters
+                      }}
+                    />
                   </td>
                 </tr>
               ) : (

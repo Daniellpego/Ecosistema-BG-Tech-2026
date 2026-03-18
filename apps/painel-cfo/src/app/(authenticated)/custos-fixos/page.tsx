@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency, formatPercent } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { PageTransition } from '@/components/motion'
+import { EmptyState } from '@/components/ui/empty-state'
 import type { CustoFixo } from '@/types/database'
 
 const CATEGORIA_COLORS: Record<string, string> = {
@@ -146,13 +147,13 @@ export default function CustosFixosPage() {
     <PageTransition>
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Wallet className="h-6 w-6 text-brand-cyan" />
-          <h1 className="text-2xl font-bold text-text-primary">Custos Fixos</h1>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Custos Fixos</h1>
+          <p className="text-sm text-text-muted font-medium">Gestão de despesas recorrentes, manutenção operacional e pró-labore.</p>
         </div>
-        <Button onClick={handleNew}>
-          <Plus className="h-4 w-4" />
+        <Button onClick={handleNew} className="shadow-sm">
+          <Plus className="h-4 w-4 mr-2" />
           Novo Custo Fixo
         </Button>
       </div>
@@ -244,16 +245,15 @@ export default function CustosFixosPage() {
 
       {/* Empty State */}
       {!isLoading && (!custosFixos || custosFixos.length === 0) && (
-        <div className="card-glass flex flex-col items-center justify-center py-16 gap-4">
-          <span className="text-5xl">🔧</span>
-          <h2 className="text-lg font-semibold text-text-primary">Nenhum custo fixo cadastrado</h2>
-          <p className="text-sm text-text-secondary text-center max-w-md">
-            Adicione os custos mensais da empresa (contabilidade, ferramentas, etc.)
-          </p>
-          <Button onClick={handleNew} className="mt-2">
-            <Plus className="h-4 w-4 mr-2" /> Cadastrar Custo Fixo
-          </Button>
-        </div>
+        <EmptyState 
+          title="Nenhum custo fixo cadastrado" 
+          description="Adicione os custos mensais da empresa (contabilidade, ferramentas, aluguel, etc.) para análise de burn rate."
+          className="card-glass py-20"
+          action={{
+            label: "Cadastrar Primeiro Custo",
+            onClick: handleNew
+          }}
+        />
       )}
 
       {/* Chart + Table grid */}
@@ -318,3 +318,4 @@ export default function CustosFixosPage() {
     </PageTransition>
   )
 }
+

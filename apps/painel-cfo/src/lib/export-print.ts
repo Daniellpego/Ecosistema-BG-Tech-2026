@@ -67,7 +67,7 @@ function wrapHTML(title: string, period: string, content: string): string {
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>${title} — Gradios</title>
+    <title>Gradios CFO — Relatório Financeiro</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>${BASE_STYLES}</style>
 </head>
@@ -77,7 +77,7 @@ function wrapHTML(title: string, period: string, content: string): string {
       <h1>${title}</h1>
       <div class="period">${period}</div>
     </div>
-    <div class="brand">Gradios</div>
+          <div class="brand">Gradios CFO</div>
   </div>
   ${content}
   <div class="footer">
@@ -261,3 +261,4 @@ export function buildMonthlyReportHTML(data: MonthlyReportData, month: number, y
 
   return wrapHTML('Relatório Mensal', period, content)
 }
+

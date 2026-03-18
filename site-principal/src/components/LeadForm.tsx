@@ -33,7 +33,7 @@ export function LeadForm() {
           {/* COLUNA ESQUERDA (texto de convencimento) */}
           <div>
             <div className="inline-flex items-center bg-primary/8 text-primary font-semibold border border-secondary/20 rounded-pill text-sm px-4 py-1.5 tracking-wide mb-6">
-              Diagnóstico Gratuito
+              Consultoria Gradios
             </div>
             
             <h2 className="text-4xl lg:text-5xl font-black text-text leading-tight mb-4">

@@ -1,4 +1,4 @@
-# Gradios — Ecosistema
+# Gradios 2026 - Guia do Ecossistema
 
 ## Projeto Principal: Painel CFO
 
@@ -133,3 +133,4 @@ src/
 - Formulários em Dialog/Sheet modal (não página separada)
 - TanStack Query com invalidação após mutações
 - Insert pattern: `.insert(data as unknown as Record<string, unknown>)` (workaround para tipos do Supabase sem generics)
+

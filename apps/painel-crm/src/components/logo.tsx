@@ -12,16 +12,14 @@ export function Logo({ collapsed = false, className }: LogoProps) {
       <div className="relative w-10 h-10 shrink-0">
         <Image 
           src="/logo.png" 
-          alt="Gradios" 
+          alt="Gradios Logo" 
           fill 
           className="object-contain drop-shadow-sm"
         />
       </div>
       {!collapsed && (
         <div className="flex flex-col">
-          <span className="text-base font-bold text-text-primary tracking-tight">
-            Gradios
-          </span>
+          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">Gradios</span>
           <span className="text-[10px] font-semibold text-brand-cyan tracking-widest uppercase opacity-80">
             Painel CRM
           </span>

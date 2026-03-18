@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { formatCurrency, formatPercent } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { PageTransition } from '@/components/motion'
+import { EmptyState } from '@/components/ui/empty-state'
 import type { GastoVariavel, Receita } from '@/types/database'
 
 function useReceitasConfirmadas() {
@@ -119,13 +120,13 @@ export default function GastosVariaveisPage() {
     <PageTransition>
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Receipt className="h-6 w-6 text-brand-cyan" />
-          <h1 className="text-2xl font-bold text-text-primary">Gastos Variáveis</h1>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Gastos Variáveis</h1>
+          <p className="text-sm text-text-muted font-medium">Controle de investimentos em marketing, fornecedores e impostos sobre vendas.</p>
         </div>
-        <Button onClick={handleNew}>
-          <Plus className="h-4 w-4" />
+        <Button onClick={handleNew} className="shadow-sm">
+          <Plus className="h-4 w-4 mr-2" />
           Novo Gasto
         </Button>
       </div>
@@ -154,16 +155,15 @@ export default function GastosVariaveisPage() {
 
       {/* Empty State */}
       {!isLoading && (!gastos || gastos.length === 0) && (
-        <div className="card-glass flex flex-col items-center justify-center py-16 gap-4">
-          <span className="text-5xl">📊</span>
-          <h2 className="text-lg font-semibold text-text-primary">Nenhum gasto variável registrado</h2>
-          <p className="text-sm text-text-secondary text-center max-w-md">
-            Registre gastos como marketing, freelancers ou impostos variáveis
-          </p>
-          <Button onClick={handleNew} className="mt-2">
-            <Plus className="h-4 w-4 mr-2" /> Registrar Gasto
-          </Button>
-        </div>
+        <EmptyState 
+          title="Nenhum gasto variável registrado" 
+          description="Registre seus primeiros gastos (marketing, freelancers, impostos) para análise de margem de contribuição."
+          className="card-glass py-20"
+          action={{
+            label: "Registrar Primeiro Gasto",
+            onClick: handleNew
+          }}
+        />
       )}
 
       {/* Tabs by tipo */}
@@ -204,3 +204,4 @@ export default function GastosVariaveisPage() {
     </PageTransition>
   )
 }
+

@@ -57,9 +57,9 @@ export default function LeadsPage() {
       <PageTitle title="Leads" />
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary">Leads</h1>
-            <p className="text-sm text-text-secondary mt-1">Gerencie todos os seus leads</p>
+          <div className="flex flex-col gap-1 mb-2">
+            <h1 className="text-2xl font-black text-text-primary tracking-tight">Leads</h1>
+            <p className="text-sm text-text-muted font-medium">Gerencie e qualifique seus potenciais clientes de forma centralizada.</p>
           </div>
           <Button onClick={() => setFormOpen(true)}>
             <Plus className="h-4 w-4" />

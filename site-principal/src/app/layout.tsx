@@ -13,14 +13,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Gradios | O Cérebro da Sua Empresa",
-  description: "Ajudamos empresas a eliminar processos manuais, integrar sistemas e escalar operações através de tecnologia e automação conectada aos resultados.",
+  title: 'Gradios | Engenharia Neural para Empresas Inteligentes',
+  description: 'Transforme sua empresa com a Gradios. Especialistas em automação inteligente e sistemas neurais de alta escala.',
   keywords: ["automação b2b", "desenvolvimento de software sob medida", "integração de sistemas", "dashboards empresariais", "ia para negócios"],
   authors: [{ name: "Gradios" }],
   openGraph: {
     type: "website",
-    url: "https://gradios.com.br",
-    title: "Gradios | O Cérebro da Sua Empresa",
     description: "Menos processo manual. Mais escala. Software que resolve de verdade.",
     siteName: "Gradios",
     locale: "pt_BR",
@@ -52,10 +50,10 @@ const jsonLd = {
     contactType: "sales",
     availableLanguage: "Portuguese",
   },
-  email: "contato@bgtechsolucoes.com.br",
+  email: "contato@gradios.com.br",
   sameAs: [
-    "https://www.instagram.com/bgtechsolucoes",
-    "https://www.linkedin.com/company/bgtechsolucoes",
+    "https://www.instagram.com/gradios",
+    "https://www.linkedin.com/company/gradios",
   ],
 };
 

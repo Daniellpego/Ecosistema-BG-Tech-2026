@@ -10,15 +10,15 @@ export function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
                <Image src="/logo.png" alt="Gradios" width={88} height={88} className="w-11 h-11 drop-shadow-md" />
-              <span className="font-bold text-[22px] tracking-tight text-text">Gradios</span>
+              <span className="text-xl font-bold text-white">Gradios</span>
             </div>
             <p className="text-sm font-medium text-primary mb-2">O cérebro da sua empresa.</p>
             <p className="text-text-muted text-sm max-w-sm mb-6">
               Menos processo manual. Mais escala.<br />Software que resolve de verdade.
             </p>
             <div className="flex flex-col gap-1 mb-4">
-              <a href="mailto:contato@bgtechsolucoes.com.br" className="text-sm font-medium text-primary hover:underline">
-                contato@bgtechsolucoes.com.br
+              <a href="mailto:contato@gradios.com.br" className="text-sm font-medium text-primary hover:underline">
+                contato@gradios.com.br
               </a>
               <a href="https://wa.me/5543988372540" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-green-600 hover:underline">
                 (43) 98837-2540
@@ -29,7 +29,7 @@ export function Footer() {
             {/* Redes Sociais */}
             <div className="flex items-center gap-3">
               <a
-                href="https://www.instagram.com/bgtechsolucoes"
+                href="https://www.instagram.com/gradios"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram da Gradios"
@@ -42,7 +42,7 @@ export function Footer() {
                 </svg>
               </a>
               <a
-                href="https://www.linkedin.com/company/bgtechsolucoes"
+                href="https://www.linkedin.com/company/gradios"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn da Gradios"
@@ -80,10 +80,11 @@ export function Footer() {
         
         <div className="pt-8 border-t border-card-border/60">
           <p className="text-xs text-text-muted/50 text-center">
-            © 2026 Gradios Soluções em Tecnologia LTDA | CNPJ 65.663.208/0001-36 | Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} Gradios. Todos os direitos reservados.
           </p>
         </div>
       </div>
     </footer>
   );
 }
+

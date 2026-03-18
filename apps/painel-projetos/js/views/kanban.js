@@ -52,10 +52,10 @@ export async function renderKanban() {
 
   const html = `
     <div class="fade-in">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Kanban</h1>
-          <p class="page-subtitle">Gestão visual das tarefas</p>
+      <div class="page-header" style="margin-bottom: 2rem;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <h1 class="page-title" style="font-weight: var(--font-black); font-size: 1.75rem; letter-spacing: -0.025em; color: var(--text-primary);">Kanban</h1>
+          <p class="page-subtitle" style="font-weight: var(--font-medium); font-size: 0.875rem; color: var(--text-secondary);">Gestão visual e ágil das tarefas operacionais.</p>
         </div>
       </div>
 
@@ -186,3 +186,4 @@ function bindMoveButtons() {
     });
   });
 }
+

@@ -369,3 +369,4 @@ function escapeHtml(str) {
 function escapeAttr(str) {
   return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+

@@ -12,10 +12,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency, formatPercent } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { PageTransition } from '@/components/motion'
+import { EmptyState } from '@/components/ui/empty-state'
 import type { Receita } from '@/types/database'
 
 export default function ReceitasPage() {
-  useEffect(() => { document.title = 'Receitas | Gradios CFO' }, [])
+  useEffect(() => {
+    document.title = 'Receitas | Gradios CFO'
+  }, [])
 
   const { data: receitas, isLoading } = useReceitas()
   const { data: receitasAno } = useReceitasAno()
@@ -60,13 +63,13 @@ export default function ReceitasPage() {
     <PageTransition>
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <TrendingUp className="h-6 w-6 text-brand-cyan" />
-          <h1 className="text-2xl font-bold text-text-primary">Receitas</h1>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Receitas</h1>
+          <p className="text-sm text-text-muted font-medium">Gestão de entradas, faturamento recorrente e análise de crescimento.</p>
         </div>
-        <Button onClick={handleNew}>
-          <Plus className="h-4 w-4" />
+        <Button onClick={handleNew} className="shadow-sm">
+          <Plus className="h-4 w-4 mr-2" />
           Nova Receita
         </Button>
       </div>
@@ -95,16 +98,15 @@ export default function ReceitasPage() {
 
       {/* Empty State */}
       {!isLoading && (!receitas || receitas.length === 0) && (
-        <div className="card-glass flex flex-col items-center justify-center py-16 gap-4">
-          <span className="text-5xl">💰</span>
-          <h2 className="text-lg font-semibold text-text-primary">Nenhuma receita cadastrada</h2>
-          <p className="text-sm text-text-secondary text-center max-w-md">
-            Registre sua primeira entrada para começar a acompanhar o faturamento
-          </p>
-          <Button onClick={handleNew} className="mt-2">
-            <Plus className="h-4 w-4 mr-2" /> Cadastrar Primeira Receita
-          </Button>
-        </div>
+        <EmptyState 
+          title="Nenhuma receita cadastrada" 
+          description="Registre sua primeira entrada para começar a acompanhar o faturamento da empresa."
+          className="card-glass py-20"
+          action={{
+            label: "Cadastrar Primeira Receita",
+            onClick: handleNew
+          }}
+        />
       )}
 
       {/* Table */}
@@ -122,3 +124,4 @@ export default function ReceitasPage() {
     </PageTransition>
   )
 }
+

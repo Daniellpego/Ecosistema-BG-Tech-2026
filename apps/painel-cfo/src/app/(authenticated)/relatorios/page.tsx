@@ -43,7 +43,9 @@ const MONTH_NAMES = [
 
 export default function RelatoriosPage() {
   const { month, year } = usePeriod()
-  useEffect(() => { document.title = 'Relatórios | Gradios CFO' }, [])
+  useEffect(() => {
+    document.title = 'Relatórios | Gradios CFO'
+  }, [])
 
   const dre = useDRE()
   const balanco = useBalanco()
@@ -173,12 +175,9 @@ export default function RelatoriosPage() {
     <PageTransition>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <FileBarChart className="h-6 w-6 text-brand-cyan" />
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary">Relatórios & Exportações</h1>
-            <p className="text-sm text-text-secondary">Período: {periodLabel}</p>
-          </div>
+        <div className="flex flex-col gap-1 mb-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Relatórios & Exportações</h1>
+          <p className="text-sm text-text-muted font-medium">Extraia dados consolidados e demonstrativos financeiros para análise externa.</p>
         </div>
 
         {/* Grid 2x2 */}
@@ -315,3 +314,4 @@ export default function RelatoriosPage() {
     </PageTransition>
   )
 }
+

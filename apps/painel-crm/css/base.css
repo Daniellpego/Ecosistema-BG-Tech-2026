@@ -1,5 +1,5 @@
 /* ============================================
-   Gradios CRM — Base / Reset
+   Gradios CRM — Base Styles
    ============================================ */
 
 *, *::before, *::after {
@@ -139,3 +139,4 @@ table {
 .animate-fade-in  { animation: fadeIn 0.3s ease forwards; }
 .animate-scale-in { animation: scaleIn 0.25s ease forwards; }
 .animate-slide-in { animation: slideInRight 0.3s ease forwards; }
+

@@ -51,8 +51,8 @@ async function callAI(systemPrompt: string, userPrompt: string): Promise<string>
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${openRouterKey}`,
-        'HTTP-Referer': 'https://bgtechsolucoes.com.br',
-        'X-Title': 'Gradios Paineis',
+        'HTTP-Referer': 'https://gradios.com.br',
+        'X-Title': 'Gradios CFO Analysis',
       },
       body: JSON.stringify({
         model: 'nvidia/nemotron-3-super-120b-a12b:free',
@@ -94,7 +94,7 @@ serve(async (req: Request) => {
     }
 
     // Build system prompt
-    const system = systemPrompt ?? `Você é um analista financeiro e de negócios da Gradios, uma empresa de automação e tecnologia.
+    const system = systemPrompt ?? `Você é o Analista Gracios AI, um especialista em finanças e controladoria da Gradios, uma empresa de automação e tecnologia.
 Responda de forma objetiva, direta e em português brasileiro.
 Use dados concretos quando disponíveis.
 Formate a resposta em tópicos claros.`
@@ -122,3 +122,4 @@ Formate a resposta em tópicos claros.`
     )
   }
 })
+

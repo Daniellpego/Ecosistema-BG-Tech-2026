@@ -48,6 +48,8 @@ import { useGroqAnalysis } from '@/hooks/use-groq'
 import { useDashboard } from '@/hooks/use-dashboard'
 import type { DashboardAlert, HealthStatus } from '@/hooks/use-dashboard'
 import { useTax } from '@/providers/tax-provider'
+import { EmptyState } from '@/components/ui/empty-state'
+import { ErrorState } from '@/components/ui/error-state'
 
 // ── Health Banner ────────────────────────────────────────────────────
 const HEALTH_CONFIG: Record<
@@ -78,9 +80,9 @@ const HEALTH_CONFIG: Record<
   sem_dados: {
     label: 'SEM DADOS',
     emoji: 'ℹ️',
-    bg: 'bg-slate-50',
-    text: 'text-slate-500',
-    border: 'border-slate-200',
+    bg: 'bg-amber-50/50',
+    text: 'text-amber-600',
+    border: 'border-amber-200/50',
   },
 }
 
@@ -123,18 +125,18 @@ function KPICard({ label, value, variation, icon, tooltip, invertVariation }: KP
   const isNegative = variation !== null && (invertVariation ? variation > 0 : variation < 0)
 
   return (
-    <div className="card-glass p-4 space-y-2">
+    <div className="card-glass p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="text-brand-cyan">{icon}</div>
-          <span className="text-xs text-text-secondary font-medium uppercase tracking-wide">
+          <div className="text-brand-cyan/80">{icon}</div>
+          <span className="text-[10px] text-text-muted font-bold tracking-widest uppercase">
             {label}
           </span>
         </div>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="text-text-dark hover:text-text-secondary transition-colors">
+              <button className="text-text-muted hover:text-text-primary transition-colors">
                 <HelpCircle className="h-3.5 w-3.5" />
               </button>
             </TooltipTrigger>
@@ -144,28 +146,31 @@ function KPICard({ label, value, variation, icon, tooltip, invertVariation }: KP
           </Tooltip>
         </TooltipProvider>
       </div>
-      <p className="text-xl font-bold text-text-primary">{value}</p>
-      {variation !== null ? (
-        <div className="flex items-center gap-1">
-          {isPositive && <TrendingUp className="h-3.5 w-3.5 text-status-positive" />}
-          {isNegative && <TrendingDown className="h-3.5 w-3.5 text-status-negative" />}
-          {!isPositive && !isNegative && (
-            <span className="h-3.5 w-3.5 text-text-dark">-</span>
-          )}
-          <span
-            className={cn(
-              'text-xs font-medium',
-              isPositive && 'text-status-positive',
-              isNegative && 'text-status-negative',
-              !isPositive && !isNegative && 'text-text-dark'
-            )}
-          >
-            {formatPercent(variation)} vs mês anterior
-          </span>
-        </div>
-      ) : (
-        <div className="h-5" />
-      )}
+      
+      <div className="flex flex-col items-end">
+        <p className="text-2xl font-black text-text-primary tracking-tight font-inter">
+          {value || '--'}
+        </p>
+        
+        {variation !== null ? (
+          <div className="flex items-center gap-1 mt-1">
+            <span
+              className={cn(
+                'text-[11px] font-bold tracking-tight',
+                isPositive && 'text-status-positive',
+                isNegative && 'text-status-negative',
+                !isPositive && !isNegative && 'text-text-muted'
+              )}
+            >
+              {isPositive && '+'}
+              {formatPercent(variation)}
+            </span>
+            <span className="text-[10px] text-text-muted/60 font-medium">vs mês ant.</span>
+          </div>
+        ) : (
+          <div className="h-4" />
+        )}
+      </div>
     </div>
   )
 }
@@ -250,7 +255,7 @@ function ChartTooltipContent({
 
 // ── Page ─────────────────────────────────────────────────────────────
 export default function DashboardPage() {
-  useEffect(() => { document.title = 'Painel Geral | Gradios CFO' }, [])
+  useEffect(() => { document.title = 'Dashboard | Gradios CFO' }, [])
 
   const dashboard = useDashboard()
   const { simplesEnabled, aliquota } = useTax()
@@ -375,19 +380,19 @@ export default function DashboardPage() {
     <PageTransition>
     <div className="space-y-6">
       {/* Title */}
-      <div className="flex items-center gap-3">
-        <LayoutDashboard className="h-6 w-6 text-brand-cyan" />
-        <h1 className="text-2xl font-bold text-text-primary">Painel Geral</h1>
+      <div className="flex flex-col gap-1 mb-2">
+        <h1 className="text-2xl font-black text-text-primary tracking-tight">Painel Geral</h1>
+        <p className="text-sm text-text-muted font-medium">Visão geral do desempenho financeiro da operação.</p>
       </div>
 
       {/* Error state */}
       {error && (
-        <div className="rounded-xl border border-status-negative/30 bg-status-negative/10 px-4 py-3 flex items-center gap-3">
-          <AlertTriangle className="h-5 w-5 text-status-negative shrink-0" />
-          <p className="text-sm text-status-negative">
-            Erro ao carregar dados: {error.message}
-          </p>
-        </div>
+        <ErrorState 
+          title="Erro ao carregar dashboard" 
+          description={error.message} 
+          onRetry={() => window.location.reload()}
+          className="card-glass"
+        />
       )}
 
       {/* Section 1 — Health Banner */}
@@ -439,9 +444,10 @@ export default function DashboardPage() {
         {isLoading ? (
           <Skeleton className="h-72 w-full rounded-lg" />
         ) : chartData.length === 0 ? (
-          <div className="flex items-center justify-center h-72 text-text-dark text-sm">
-            Adicione receitas e despesas para visualizar o gráfico
-          </div>
+          <EmptyState 
+            title="Gráfico indisponível" 
+            description="Adicione receitas e despesas nos menus laterais para visualizar o histórico."
+          />
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
@@ -499,9 +505,11 @@ export default function DashboardPage() {
         {isLoading ? (
           <Skeleton className="h-72 w-full rounded-lg" />
         ) : costDistribution.length === 0 ? (
-          <div className="flex items-center justify-center h-48 text-text-dark text-sm">
-            Nenhum custo registrado no período
-          </div>
+          <EmptyState 
+            title="Sem custos registrados" 
+            description="Não há dados de custos fixos ou variáveis para este período."
+            className="py-8"
+          />
         ) : (
           <div className="flex flex-col lg:flex-row items-center gap-6">
             <ResponsiveContainer width="100%" height={280}>
@@ -595,3 +603,4 @@ export default function DashboardPage() {
     </PageTransition>
   )
 }
+

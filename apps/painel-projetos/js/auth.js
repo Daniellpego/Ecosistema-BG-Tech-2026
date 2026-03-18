@@ -1,5 +1,6 @@
 /* ═══════════════════════════════════════════════════
-   Gradios — Auth Module (Supabase)
+   Gradios Projetos — Auth Helper
+Module (Supabase)
    ═══════════════════════════════════════════════════ */
 
 import { CONFIG } from './config.js';
@@ -50,3 +51,4 @@ export function onAuthChange(callback) {
   if (!sb) return { data: { subscription: { unsubscribe() {} } } };
   return sb.auth.onAuthStateChange((_event, session) => callback(session));
 }
+

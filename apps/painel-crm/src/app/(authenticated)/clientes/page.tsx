@@ -10,6 +10,8 @@ import { PageTitle } from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Inbox } from 'lucide-react'
 import { useAllLeads } from '@/hooks/use-leads'
 import { formatCurrency, formatDate, formatWhatsAppUrl, formatPhone } from '@/lib/format'
 import { ORIGENS_LABELS, ORIGENS_COLORS } from '@/types/database'
@@ -40,11 +42,11 @@ export default function ClientesPage() {
     return (
       <PageTransition>
         <div className="space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary">Clientes</h1>
-            <p className="text-sm text-text-secondary mt-1">Leads que viraram clientes</p>
-          </div>
-          <Skeleton className="h-96" />
+        <div className="flex flex-col gap-1 mb-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Clientes</h1>
+          <p className="text-sm text-text-muted font-medium">Leads que concluíram a jornada e se tornaram parceiros.</p>
+        </div>
+        <Skeleton className="h-96" />
         </div>
       </PageTransition>
     )
@@ -54,9 +56,9 @@ export default function ClientesPage() {
     <PageTransition>
       <PageTitle title="Clientes" />
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Clientes</h1>
-          <p className="text-sm text-text-secondary mt-1">Leads que viraram clientes</p>
+        <div className="flex flex-col gap-1 mb-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Clientes</h1>
+          <p className="text-sm text-text-muted font-medium">Leads que concluíram a jornada e se tornaram parceiros.</p>
         </div>
 
         {/* KPIs */}
@@ -117,9 +119,18 @@ export default function ClientesPage() {
 
         {/* Table */}
         {clientes.length === 0 ? (
-          <div className="card-glass text-center py-12">
-            <p className="text-text-secondary">Nenhum cliente encontrado</p>
-            <p className="text-sm text-text-dark mt-1">Leads com status &quot;Ganho&quot; aparecem aqui</p>
+          <div className="py-12 px-4">
+            <EmptyState
+              icon={Inbox}
+              title={search ? "Nenhum cliente encontrado" : "Ainda não há clientes"}
+              description={search 
+                ? `Não encontramos resultados para "${search}".` 
+                : "Seus leads convertidos aparecerão automaticamente nesta lista."}
+              action={search ? {
+                label: "Limpar busca",
+                onClick: () => setSearch('')
+              } : undefined}
+            />
           </div>
         ) : (
           <div className="card-glass p-0 overflow-hidden">

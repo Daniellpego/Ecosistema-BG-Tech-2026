@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function TermosPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-      <h1 className="text-4xl font-black text-text mb-8">Termos de Uso</h1>
+      <h1 className="text-4xl font-bold text-white mb-8">Termos de Uso Gradios</h1>
 
       <div className="prose prose-slate max-w-none space-y-6 text-text-muted text-sm leading-relaxed">
         <p><strong className="text-text">Última atualização:</strong> Março de 2026</p>
@@ -40,11 +40,12 @@ export default function TermosPage() {
         <h2 className="text-xl font-bold text-text mt-8 mb-3">5. Contato</h2>
         <p>
           Em caso de dúvidas, entre em contato pelo e-mail{" "}
-          <a href="mailto:contato@bgtechsolucoes.com.br" className="text-primary font-medium hover:underline">
-            contato@bgtechsolucoes.com.br
+          <a href="mailto:contato@gradios.com.br" className="text-primary font-medium hover:underline">
+            contato@gradios.com.br
           </a>.
         </p>
       </div>
     </div>
   );
 }
+

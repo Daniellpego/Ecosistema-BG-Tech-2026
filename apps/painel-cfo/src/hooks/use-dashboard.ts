@@ -250,16 +250,14 @@ export function useDashboard(): DashboardData {
   })
 
   // ── Metas financeiras (current month) ──
-  const periodoStr = `${year}-${String(month).padStart(2, '0')}`
   const periodoDate = `${year}-${String(month).padStart(2, '0')}-01`
   const metasQuery = useQuery({
-    queryKey: ['dashboard-metas', periodoStr],
+    queryKey: ['dashboard-metas', periodoDate],
     queryFn: async () => {
-      // Try text format first, fall back to date format
       const { data, error } = await supabase
         .from('metas_financeiras')
         .select('*')
-        .or(`periodo.eq.${periodoStr},periodo.eq.${periodoDate}`)
+        .eq('periodo', periodoDate)
       if (error) throw error
       return data as MetaFinanceira[]
     },

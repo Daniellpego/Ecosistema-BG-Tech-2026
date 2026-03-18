@@ -154,3 +154,4 @@ textarea::placeholder {
 .fade-in {
   animation: fadeIn 0.3s var(--ease) both;
 }
+

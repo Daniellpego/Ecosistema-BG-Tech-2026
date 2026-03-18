@@ -32,7 +32,7 @@ A `GROQ_API_KEY` fica apenas como secret na Edge Function do Supabase (nunca no 
 5. Clique em **"Create user"**
 6. Use essas credenciais no login do painel
 
-## Abas do Painel
+## Gradios CFO Panel
 
 | Aba | Rota | Funcao |
 |-----|------|--------|
@@ -72,3 +72,4 @@ npm run lint       # ESLint
 - **Runway:** Caixa Disponivel / Burn Rate mensal
 - Apenas receitas `status=confirmado` entram nos calculos
 - Apenas custos fixos `status=ativo` entram nos calculos
+

@@ -1,5 +1,5 @@
 -- ══════════════════════════════════════════════════════════════
--- Ecosistema Gradios 2026 — Unified Supabase Schema
+-- 001_unified_schema.sql - Unified Schema for Gradios Ecosystem
 --
 -- Tables: leads, deals, projetos, tarefas
 -- Triggers: cross-panel sync (CRM → CFO, Projetos → CFO)
@@ -315,3 +315,4 @@ CREATE POLICY "deny_anon_tarefas" ON public.tarefas AS RESTRICTIVE FOR ALL TO an
 -- Run in Supabase SQL Editor to apply.
 -- After: verify with SELECT * FROM pg_policies;
 -- ══════════════════════════════════════════════════════════════
+

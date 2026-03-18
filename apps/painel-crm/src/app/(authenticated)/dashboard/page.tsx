@@ -56,9 +56,9 @@ export default function DashboardPage() {
     <PageTransition>
       <PageTitle title="Dashboard" />
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Visão Geral</h1>
-          <p className="text-sm text-text-secondary mt-1">Resumo de vendas e pipeline</p>
+        <div className="flex flex-col gap-1 mb-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Visão Geral</h1>
+          <p className="text-sm text-text-muted font-medium">Acompanhe o desempenho de vendas e a saúde do seu pipeline em tempo real.</p>
         </div>
 
         {/* KPI Cards */}

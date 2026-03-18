@@ -1,5 +1,6 @@
 /* ============================================
-   Gradios CRM — Auth Module (Supabase)
+   Gradios CRM — Auth Helper
+Module (Supabase)
    ============================================ */
 
 import { CONFIG } from './config.js';
@@ -66,3 +67,4 @@ export function onAuthStateChange(callback) {
 
   return sb.auth.onAuthStateChange(callback);
 }
+

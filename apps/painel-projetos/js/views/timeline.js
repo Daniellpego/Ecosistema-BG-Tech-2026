@@ -37,12 +37,12 @@ export async function renderTimeline() {
   if (withDates.length === 0) {
     return `
       <div class="fade-in">
-        <div class="page-header">
-          <div>
-            <h1 class="page-title">Timeline</h1>
-            <p class="page-subtitle">Visão temporal dos projetos</p>
-          </div>
+        <div class="page-header" style="margin-bottom: 2rem;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <h1 class="page-title" style="font-weight: var(--font-black); font-size: 1.75rem; letter-spacing: -0.025em; color: var(--text-primary);">Timeline</h1>
+          <p class="page-subtitle" style="font-weight: var(--font-medium); font-size: 0.875rem; color: var(--text-secondary);">Visão temporal dos projetos</p>
         </div>
+      </div>
         <div class="empty-state">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <line x1="3" y1="12" x2="21" y2="12"/><polyline points="8 6 3 12 8 18"/>
@@ -122,10 +122,10 @@ export async function renderTimeline() {
 
   return `
     <div class="fade-in">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Timeline</h1>
-          <p class="page-subtitle">${withDates.length} projeto(s) com datas${noDates.length > 0 ? ` · ${noDates.length} sem datas` : ''}</p>
+      <div class="page-header" style="margin-bottom: 2rem;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <h1 class="page-title" style="font-weight: var(--font-black); font-size: 1.75rem; letter-spacing: -0.025em; color: var(--text-primary);">Timeline</h1>
+          <p class="page-subtitle" style="font-weight: var(--font-medium); font-size: 0.875rem; color: var(--text-secondary);">${withDates.length} projeto(s) com cronograma definido.</p>
         </div>
       </div>
 
@@ -169,3 +169,4 @@ export async function renderTimeline() {
       </div>
     </div>`;
 }
+

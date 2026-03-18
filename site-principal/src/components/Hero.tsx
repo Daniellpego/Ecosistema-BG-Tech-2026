@@ -191,7 +191,7 @@ export function Hero() {
                 </div>
                 <div className="flex-1 flex justify-center">
                   <div className="bg-white/5 rounded-md px-6 py-1 text-[11px] text-white/40 font-mono">
-                    app.gradios.com.br/dashboard
+                    app.Gradios.com.br/dashboard
                   </div>
                 </div>
                 <div className="w-16"></div>
@@ -319,3 +319,4 @@ export function Hero() {
     </section>
   );
 }
+

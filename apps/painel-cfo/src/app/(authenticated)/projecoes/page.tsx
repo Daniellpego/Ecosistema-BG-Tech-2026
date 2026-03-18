@@ -37,6 +37,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { PageTransition } from '@/components/motion'
+import { EmptyState } from '@/components/ui/empty-state'
 import type { Projecao } from '@/types/database'
 
 const SCENARIO_CONFIG: Record<string, { emoji: string; color: string; chartColor: string }> = {
@@ -594,13 +595,13 @@ export default function ProjecoesPage() {
     <PageTransition>
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <LineChartIcon className="h-6 w-6 text-brand-cyan" />
-          <h1 className="text-2xl font-bold text-text-primary">Projeções</h1>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Projeções</h1>
+          <p className="text-sm text-text-muted font-medium">Simulação de cenários financeiros, análise de lucro acumulado e meses de break-even.</p>
         </div>
         {projecoes.length > 0 && (
-          <Button onClick={() => { setEditingCenario(null); setFormOpen(true) }} size="sm">
+          <Button onClick={() => { setEditingCenario(null); setFormOpen(true) }} className="shadow-sm">
             <Plus className="h-4 w-4 mr-2" /> Nova Projeção
           </Button>
         )}
@@ -624,17 +625,15 @@ export default function ProjecoesPage() {
           <Skeleton className="h-64 w-full" />
         </div>
       ) : projecoes.length === 0 ? (
-        <div className="card-glass flex flex-col items-center justify-center py-16 gap-4">
-          <span className="text-5xl">📊</span>
-          <h2 className="text-lg font-semibold text-text-primary">Nenhuma projeção criada ainda</h2>
-          <p className="text-sm text-text-secondary text-center max-w-md">
-            Crie cenários financeiros para simular o futuro da Gradios.
-            Separe receita de Setup (única) e Mensalidade (recorrente).
-          </p>
-          <Button onClick={() => setFormOpen(true)} className="mt-2">
-            <Plus className="h-4 w-4 mr-2" /> Criar Projeção
-          </Button>
-        </div>
+        <EmptyState 
+          title="Nenhuma projeção criada ainda" 
+          description="Crie cenários financeiros (Conservador, Realista, Agressivo) para simular o futuro do caixa e resultados da Gradios."
+          className="card-glass py-20"
+          action={{
+            label: "Criar Primeira Projeção",
+            onClick: () => setFormOpen(true)
+          }}
+        />
       ) : (
         <Tabs value={activeTab ?? defaultTab} onValueChange={setActiveTab}>
           <TabsList>
@@ -680,3 +679,4 @@ export default function ProjecoesPage() {
     </PageTransition>
   )
 }
+

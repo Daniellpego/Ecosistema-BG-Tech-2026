@@ -193,3 +193,4 @@ function bindViewEvents() {
 /* ═══════════ BOOT ═══════════ */
 
 boot().catch((err) => console.error('[app] boot failed:', err));
+

@@ -70,7 +70,7 @@ export function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center gap-2.5">
-            <Image src="/logo.png" alt="Gradios" width={88} height={88} className="w-11 h-11 drop-shadow-md" priority />
+            <Image src="/logo.png" alt="Gradios Logo" width={88} height={88} className="w-11 h-11 drop-shadow-md" priority />
             <Link href="/" className="font-bold text-[22px] tracking-tight text-text">
               Gradios
             </Link>

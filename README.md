@@ -2,7 +2,8 @@
   <img src="site-principal/logo-bgtech.png" alt="Gradios" width="180" />
 </p>
 
-<h1 align="center">Ecosistema Gradios 2026</h1>
+<h1 align="center"># Ecosistema Gradios Ecosystem 2026
+</h1>
 
 <p align="center">
   <strong>Plataforma completa de gestão empresarial para operações B2B</strong><br/>
@@ -55,7 +56,7 @@ Três dashboards que **conversam entre si automaticamente** via triggers SQL. Fe
 
 ## Painéis
 
-### 💰 Painel CFO — Controle Financeiro
+### 💰1. **Gradios CFO**: Painel de análise financeira
 
 > `painel-cfo/` — Dashboard financeiro completo estilo Linear/Mercury
 
@@ -73,7 +74,7 @@ Três dashboards que **conversam entre si automaticamente** via triggers SQL. Fe
 
 ### 📊 Painel CRM — Gestão Comercial
 
-> `apps/painel-crm/` — Pipeline de vendas e gestão de leads
+> `apps/painel-crm/` — 2. **Gradios CRM**: Gestão de clientes
 
 | Feature | Descrição |
 |---------|-----------|
@@ -82,7 +83,7 @@ Três dashboards que **conversam entre si automaticamente** via triggers SQL. Fe
 | **Pipeline** | Visualização Kanban do funil de vendas |
 | **Analytics** | Métricas de conversão e performance |
 
-### 📋 Painel Projetos — Gestão de Entregas
+### 📋3. **Gradios Projetos**: Gestão de projetos
 
 > `apps/painel-projetos/` — Controle de projetos e tarefas
 
@@ -238,5 +239,6 @@ O ecosistema segue um design system consistente com tema dark inspirado em Linea
 
 <p align="center">
   <strong>Gradios</strong> — Automação e Engenharia Digital para Empresas B2B<br/>
-  <a href="https://gradios.com.br">gradios.com.br</a>
+  <a href="https://Gradios.com.br">Gradios.com.br</a>
 </p>
+

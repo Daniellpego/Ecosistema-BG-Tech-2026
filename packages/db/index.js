@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// Gradios Ecosystem — Shared Supabase DB Layer
+// Gradios Ecosystem — * Gradios Database Package
 // ═══════════════════════════════════════════════
 
 let _client = null;
@@ -84,3 +84,4 @@ export function subscribeRealtime(channelName, tables, callback) {
   }
   return channel.subscribe();
 }
+

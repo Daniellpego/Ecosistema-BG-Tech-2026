@@ -1,5 +1,6 @@
 /* ============================================
-   Gradios CRM — Main Application Controller
+   Gradios CRM — Main App Entry
+lication Controller
    ============================================ */
 
 import { signIn, signOut, getCurrentUser, onAuthStateChange } from './auth.js';
@@ -265,3 +266,4 @@ async function init() {
 }
 
 init();
+

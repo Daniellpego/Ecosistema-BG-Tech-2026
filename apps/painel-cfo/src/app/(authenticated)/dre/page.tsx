@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { PageTransition } from '@/components/motion'
+import { EmptyState } from '@/components/ui/empty-state'
 import {
   ComposedChart,
   Bar,
@@ -81,11 +82,11 @@ function DRERow({ line }: { line: DRELine }) {
   return (
     <tr
       className={cn(
-        'transition-colors',
-        isTotal && 'bg-brand-blue-deep/40',
-        isSubtotal && 'bg-brand-blue-deep/20',
-        isSimplesLine && 'bg-status-warning/10',
-        isSub && 'hover:bg-bg-hover/50'
+        'transition-colors border-b border-slate-100',
+        isTotal && 'bg-brand-cyan/5 border-y-2 border-brand-cyan/20 group/total',
+        isSubtotal && 'bg-slate-50/80 font-bold',
+        isSimplesLine && 'bg-status-warning/5',
+        isSub && 'hover:bg-slate-50/50'
       )}
     >
       {/* Label */}
@@ -155,12 +156,8 @@ function DRERow({ line }: { line: DRELine }) {
           'py-2 pl-4 pr-3 text-right font-mono whitespace-nowrap',
           isTotal && 'text-lg font-bold',
           isSubtotal && 'font-semibold',
-          isSub && 'text-sm text-text-dark',
-          isTotal || isSubtotal
-            ? valuePositive
-              ? 'text-status-positive'
-              : 'text-status-negative'
-            : 'text-text-dark'
+          isSub && 'text-sm',
+          valuePositive ? 'text-status-positive' : 'text-status-negative'
         )}
       >
         {formatDREPercent(line.percent)}
@@ -244,9 +241,9 @@ export default function DREPage() {
     <PageTransition>
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <FileText className="h-6 w-6 text-brand-cyan" />
-        <h1 className="text-2xl font-bold text-text-primary">DRE Simplificada</h1>
+      <div className="flex flex-col gap-1 mb-2">
+        <h1 className="text-2xl font-black text-text-primary tracking-tight">DRE Simplificada</h1>
+        <p className="text-sm text-text-muted font-medium">Demonstrativo de Resultados do Exercício — Visão Gerencial.</p>
       </div>
 
       {/* KPI Cards */}
@@ -324,14 +321,12 @@ export default function DREPage() {
       {/* DRE Table */}
       {isLoading ? (
         <DRETableSkeleton />
-      ) : current.receitaBruta === 0 && current.resultadoLiquido === 0 && current.cfTotal === 0 ? (
-        <div className="card-glass flex flex-col items-center justify-center py-16 gap-4">
-          <span className="text-5xl">📋</span>
-          <h2 className="text-lg font-semibold text-text-primary">DRE sem dados no período</h2>
-          <p className="text-sm text-text-secondary text-center max-w-md">
-            Cadastre receitas e custos para visualizar a Demonstração de Resultado
-          </p>
-        </div>
+      ) : (current.receitaBruta === 0 && current.resultadoLiquido === 0 && current.cfTotal === 0) ? (
+        <EmptyState 
+          title="DRE sem dados no período" 
+          description="Cadastre receitas e custos para visualizar a Demonstração de Resultado."
+          className="card-glass py-20"
+        />
       ) : (
         <div className="card-glass overflow-x-auto">
           <table className="w-full min-w-[600px]">
@@ -489,3 +484,4 @@ export default function DREPage() {
     </PageTransition>
   )
 }
+

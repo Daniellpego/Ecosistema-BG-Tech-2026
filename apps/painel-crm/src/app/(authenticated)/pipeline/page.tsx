@@ -390,11 +390,9 @@ export default function PipelinePage() {
       <PageTitle title="Pipeline" />
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Pipeline</h1>
-          <p className="text-sm text-text-secondary mt-1">
-            Kanban de vendas — arraste leads entre as etapas
-          </p>
+        <div className="flex flex-col gap-1 mb-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Pipeline</h1>
+          <p className="text-sm text-text-muted font-medium">Visualize e gerencie seu funil de vendas de forma dinâmica.</p>
         </div>
 
         {/* Summary Bar */}

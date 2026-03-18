@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://bgtechsolucoes.com.br',
+      url: 'https://gradios.com.br',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1,

@@ -109,9 +109,9 @@ export default function AcademyPage() {
   return (
     <PageTransition>
     <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <GraduationCap className="h-6 w-6 text-brand-cyan" />
-        <h1 className="text-2xl font-bold text-text-primary">Academy</h1>
+      <div className="flex flex-col gap-1 mb-2">
+        <h1 className="text-2xl font-black text-text-primary tracking-tight">Academy</h1>
+        <p className="text-sm text-text-muted font-medium">Guia prático e educacional sobre os conceitos financeiros aplicados na Gradios.</p>
       </div>
 
       {/* Glossário */}
@@ -198,3 +198,4 @@ export default function AcademyPage() {
     </PageTransition>
   )
 }
+

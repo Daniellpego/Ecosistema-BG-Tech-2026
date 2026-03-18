@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   Gradios — Database Operations (Projetos & Tarefas)
+  * Gradios Projetos Database Layer
    ═══════════════════════════════════════════════════ */
 
 import { getSupabase } from './auth.js';
@@ -133,3 +133,4 @@ export function subscribeRealtime({ onProjetosChange, onTarefasChange }) {
     },
   };
 }
+

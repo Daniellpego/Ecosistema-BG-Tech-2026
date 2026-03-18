@@ -116,10 +116,10 @@ export default function AnalyticsPage() {
     return (
       <PageTransition>
         <div className="space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary">Analytics</h1>
-            <p className="text-sm text-text-secondary mt-1">Métricas e relatórios de vendas</p>
-          </div>
+        <div className="flex flex-col gap-1 mb-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Analytics</h1>
+          <p className="text-sm text-text-muted font-medium">Análise detalhada de performance e conversão do funil.</p>
+        </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} className="h-24" />
@@ -139,9 +139,9 @@ export default function AnalyticsPage() {
     <PageTransition>
       <PageTitle title="Analytics" />
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Analytics</h1>
-          <p className="text-sm text-text-secondary mt-1">Métricas e relatórios de vendas</p>
+        <div className="flex flex-col gap-1 mb-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Analytics</h1>
+          <p className="text-sm text-text-muted font-medium">Análise detalhada de performance e conversão do funil.</p>
         </div>
 
         {/* KPIs */}

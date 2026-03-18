@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { PageTransition } from '@/components/motion'
+import { EmptyState } from '@/components/ui/empty-state'
 
 const MONTH_NAMES = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -77,9 +78,9 @@ export default function BalancoAnualPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-3">
-          <CalendarRange className="h-6 w-6 text-brand-cyan" />
-          <h1 className="text-2xl font-bold text-text-primary">Balanço Anual</h1>
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">Balanço Anual</h1>
+          <p className="text-sm text-text-muted font-medium">Histórico consolidado de entradas, saídas e lucratividade por mês.</p>
         </div>
 
         {/* Year Selector */}
@@ -167,13 +168,11 @@ export default function BalancoAnualPage() {
 
       {/* Empty State */}
       {!isLoading && faturamentoAno === 0 && gastosAno === 0 && (
-        <div className="card-glass flex flex-col items-center justify-center py-16 gap-4">
-          <span className="text-5xl">📅</span>
-          <h2 className="text-lg font-semibold text-text-primary">Nenhum dado no ano de {year}</h2>
-          <p className="text-sm text-text-secondary text-center max-w-md">
-            Cadastre receitas e custos para visualizar o balanço anual
-          </p>
-        </div>
+        <EmptyState 
+          title={`Nenhum dado no ano de ${year}`} 
+          description="Registre suas movimentações financeiras para visualizar o consolidado anual aqui."
+          className="card-glass py-20"
+        />
       )}
 
       {/* Month Grid */}
@@ -311,3 +310,4 @@ export default function BalancoAnualPage() {
     </PageTransition>
   )
 }
+

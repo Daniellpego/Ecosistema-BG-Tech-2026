@@ -81,10 +81,10 @@ export async function renderDashboard() {
 
   return `
     <div class="fade-in">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Dashboard</h1>
-          <p class="page-subtitle">Visão geral dos projetos</p>
+      <div class="page-header" style="margin-bottom: 2rem;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <h1 class="page-title" style="font-weight: var(--font-black); font-size: 1.75rem; letter-spacing: -0.025em; color: var(--text-primary);">Dashboard</h1>
+          <p class="page-subtitle" style="font-weight: var(--font-medium); font-size: 0.875rem; color: var(--text-secondary);">Visão geral dos projetos e métricas de performance.</p>
         </div>
       </div>
 
@@ -206,3 +206,4 @@ function statusLabel(s) {
   };
   return map[s] || s || '—';
 }
+

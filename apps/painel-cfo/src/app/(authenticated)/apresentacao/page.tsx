@@ -49,7 +49,9 @@ export default function ApresentacaoPage() {
   const health = HEALTH_MAP[healthStatus]
 
   // Dynamic title
-  useEffect(() => { document.title = 'Apresentação | Gradios CFO' }, [])
+  useEffect(() => {
+    document.title = 'Apresentação | Gradios CFO'
+  }, [])
 
   // Escape key to exit
   useEffect(() => {
@@ -247,3 +249,4 @@ function CascadeItem({
     </div>
   )
 }
+
