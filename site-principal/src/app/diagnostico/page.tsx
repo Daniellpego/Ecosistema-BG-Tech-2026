@@ -240,21 +240,21 @@ function getTier(score: number): { label: string; tier: string; color: string } 
 
 const SECTOR_CONTEXT: Record<string, string> = {
   "Varejo/E-commerce":
-    "integração pedido→estoque→financeiro, sistemas como VTEX/Tiny/Shopify raramente conversam com financeiro, resultado típico: fechamento de 3 dias para 2 horas",
+    "Sistemas como VTEX, Tiny, Bling, Shopify raramente conversam com o financeiro sem integração. Gargalo típico: pedido entra, estoque não atualiza, NF emitida manualmente. Divergência de estoque vira rotina. Resultado esperado com automação: fechamento de 3 dias para 2 horas, eliminação de divergência de estoque, pedido→estoque→financeiro rodando sem intervenção humana.",
   "Indústria/Manufatura":
-    "apontamento de produção manual, ERP existe mas não integrado ao processo produtivo, relatórios com atraso de 24-48h",
+    "ERP existe (Totvs, SAP, Senior) mas não está integrado ao chão de fábrica. Apontamento de produção manual, OEE invisível, relatórios de produção chegam com 24-48h de atraso. Decisões tomadas com dados de ontem. Resultado esperado: visibilidade em tempo real do chão de fábrica, redução de 40% no retrabalho, relatórios automáticos no fechamento do turno.",
   "Logística/Distribuição":
-    "emissão manual de NF + comunicação com transportadora, WMS não conectado ao ERP, resultado típico: eliminação de 80% das ligações de status",
+    "Emissão manual de NF + comunicação com transportadora feita uma por uma. WMS não conectado ao ERP do cliente. Rastreamento depende de ligação. Resultado esperado: eliminar 80% das ligações de status, NF emitida automaticamente ao confirmar pedido, tracking integrado ao sistema do cliente.",
   "Saúde/Clínicas":
-    "confirmação de consulta manual, prontuário/agendamento/faturamento não integrados, resultado típico: redução de 35% no no-show",
+    "Confirmação de consulta ainda por ligação manual, prontuário + agendamento + faturamento em sistemas separados, risco de glosa no faturamento ao plano de saúde. Retrabalho constante na conciliação. Resultado esperado: redução de 35% no no-show com confirmação automática, aceleração do ciclo de recebimento, faturamento ao convênio sem retrabalho.",
   "Financeiro/Contabilidade":
-    "fechamento mensal manual, conciliação bancária manual, resultado típico: fechamento de 3 dias para 4 horas — case real da Gradios",
+    "Case real da Gradios — fechamento mensal de 3 dias para 4 horas com automação de conciliação bancária e fluxo de aprovações. Lançamentos manuais e relatórios gerenciais sempre atrasados. Planilhas paralelas como fonte de verdade. Resultado esperado: conciliação automática, relatórios em tempo real, fluxo de aprovação digital sem e-mail.",
   "SaaS/Tecnologia":
-    "onboarding manual, integração CRM+billing+suporte por gambiarras, resultado típico: redução de 50% no time-to-value",
+    "Onboarding do cliente manual e lento, integração CRM (HubSpot, Pipedrive) + billing (Stripe, Iugu) + suporte feita por gambiarras ou Zapier frágil. CS sem visão completa do cliente. Resultado esperado: redução de 50% no time-to-value, CS com dashboard unificado, churn detectado antes de acontecer.",
   "Serviços em geral":
-    "proposta/contrato/NF/cobrança por e-mail manual, follow-up por memória, resultado típico: ciclo de vendas 30% mais rápido",
+    "Proposta + contrato + NF + cobrança ainda por e-mail manual, follow-up dependente de memória, CRM inexistente ou subutilizado. Vendedor gasta mais tempo em admin do que vendendo. Resultado esperado: ciclo de vendas 30% mais rápido com fluxo automatizado de proposta→contrato→NF→cobrança.",
   Outro:
-    "diagnóstico consultivo amplo, foco nos gargalos específicos mencionados",
+    "Diagnóstico consultivo amplo, foco nos gargalos específicos mencionados pelo lead. Análise cruzada entre processos manuais, sistemas desconectados e impacto financeiro do retrabalho.",
 };
 
 /* ════════════════════════════════════════════════════════════
