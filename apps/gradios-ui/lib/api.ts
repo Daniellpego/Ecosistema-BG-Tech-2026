@@ -115,11 +115,14 @@ export function streamAgent(
           signal: controller.signal,
         }
       );
-      if (!res.ok || !res.body) throw new Error("Falha na conexao com JARVIS");
+      if (!res.ok || !res.body) {
+        throw new Error(`JARVIS respondeu ${res.status}: ${res.statusText}`);
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      let finished = false;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -129,16 +132,25 @@ export function streamAgent(
         buffer = lines.pop() ?? "";
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
+          const payload = line.slice(6);
+          let data: Record<string, unknown>;
           try {
-            const data = JSON.parse(line.slice(6));
-            if (data.type === "token" && data.token) onToken(data.token);
-            if (data.type === "done") onDone();
+            data = JSON.parse(payload);
           } catch {
+            // JSON invalido — pula essa linha
             continue;
+          }
+          if (data.type === "token" && data.token) {
+            onToken(data.token as string);
+          } else if (data.type === "done") {
+            finished = true;
+            onDone();
+          } else if (data.type === "error") {
+            throw new Error((data.message as string) ?? "Erro no agent");
           }
         }
       }
-      onDone();
+      if (!finished) onDone();
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
         onError(e instanceof Error ? e : new Error(String(e)));

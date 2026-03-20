@@ -19,13 +19,17 @@ export function ChatModal({ agent, initialPrompt, onClose }: ChatModalProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const sentInitial = useRef(false);
 
-  // Envia prompt inicial se fornecido
+  // Envia prompt inicial uma unica vez na montagem
+  // Usa microtask em vez de setTimeout para sobreviver ao StrictMode
   useEffect(() => {
     if (initialPrompt && !sentInitial.current) {
       sentInitial.current = true;
-      send(initialPrompt, agent);
+      void Promise.resolve().then(() => {
+        if (sentInitial.current) send(initialPrompt, agent);
+      });
     }
-  }, [initialPrompt, agent, send]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

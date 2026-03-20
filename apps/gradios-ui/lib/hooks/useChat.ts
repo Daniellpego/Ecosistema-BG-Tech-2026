@@ -17,10 +17,14 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const loadingRef = useRef(false);
 
   const send = useCallback(
     (text: string, agent: Agent) => {
-      if (!text.trim() || loading) return;
+      if (!text.trim() || loadingRef.current) return;
+
+      loadingRef.current = true;
+      setLoading(true);
 
       const userMsg: ChatMessage = {
         id: crypto.randomUUID(),
@@ -39,9 +43,10 @@ export function useChat() {
       };
 
       setMessages((prev) => [...prev, userMsg, agentMsg]);
-      setLoading(true);
 
+      const targetId = agentMsg.id;
       let accumulated = "";
+      let done = false;
 
       abortRef.current = streamAgent(
         agent.slug,
@@ -49,33 +54,36 @@ export function useChat() {
         (token) => {
           accumulated += token;
           const current = accumulated;
-          setMessages((prev) => {
-            const copy = [...prev];
-            copy[copy.length - 1] = { ...copy[copy.length - 1], text: current };
-            return copy;
-          });
+          setMessages((prev) =>
+            prev.map((m) => (m.id === targetId ? { ...m, text: current } : m))
+          );
         },
-        () => setLoading(false),
+        () => {
+          if (done) return;
+          done = true;
+          loadingRef.current = false;
+          setLoading(false);
+        },
         (err) => {
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: crypto.randomUUID(),
-              role: "agent",
-              text: `Erro: ${err.message}`,
-              agent: "Sistema",
-              timestamp: new Date(),
-            },
-          ]);
+          if (done) return;
+          done = true;
+          loadingRef.current = false;
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === targetId ? { ...m, text: `Erro: ${err.message}` } : m
+            )
+          );
           setLoading(false);
         }
       );
     },
-    [loading]
+    // Sem dependencias mutaveis — usa ref para checar loading
+    [],
   );
 
   const clearMessages = useCallback(() => {
     abortRef.current?.abort();
+    loadingRef.current = false;
     setMessages([]);
     setLoading(false);
   }, []);
