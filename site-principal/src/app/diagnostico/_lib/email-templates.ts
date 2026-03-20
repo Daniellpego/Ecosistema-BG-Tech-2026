@@ -580,7 +580,7 @@ export interface EmailVariables {
  */
 export function renderTemplate(template: string, vars: EmailVariables): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => {
-    return (vars as Record<string, string | number>)[key]?.toString() ?? "";
+    return (vars as unknown as Record<string, string | number>)[key]?.toString() ?? "";
   });
 }
 
