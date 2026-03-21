@@ -1608,33 +1608,35 @@ async def criar_reuniao(payload: CriarReuniaoPayload) -> dict:
         logger.error("Erro ao criar evento Google Calendar: %s", e)
         evento = {"error": str(e)}
 
-    # 2. Enviar confirmacao WhatsApp
+    # 2. Enviar confirmacao WhatsApp (lead + fallback Daniel)
     whatsapp_ok = False
-    if payload.whatsapp_lead:
-        try:
-            evo_url = os.getenv("EVOLUTION_URL", "http://localhost:8080")
-            evo_instance = os.getenv("EVOLUTION_INSTANCE", "gradios")
-            evo_key = os.getenv("EVOLUTION_APIKEY", "")
-            if evo_key:
-                msg = (
-                    f"Ola {payload.lead_nome}! 👋\n\n"
-                    f"Confirmando nossa reuniao:\n"
-                    f"📅 Data: {payload.data}\n"
-                    f"🕐 Hora: {payload.hora}\n"
-                    f"⏱️ Duracao: {payload.duracao_minutos} minutos\n\n"
-                    f"Qualquer duvida, estamos a disposicao.\n"
-                    f"— Equipe GRADIOS"
+    try:
+        evo_url = os.getenv("EVOLUTION_URL", "http://localhost:8080")
+        evo_instance = os.getenv("EVOLUTION_INSTANCE", "gradios")
+        evo_key = os.getenv("EVOLUTION_APIKEY", "")
+        daniel_wa = os.getenv("DANIEL_WHATSAPP", "5543988372540")
+        destinatario = payload.whatsapp_lead or daniel_wa
+        if evo_key and destinatario:
+            msg = (
+                f"📅 *REUNIAO AGENDADA*\n\n"
+                f"Lead: {payload.lead_nome}\n"
+                f"Empresa: {payload.empresa}\n"
+                f"Data: {payload.data}\n"
+                f"Hora: {payload.hora}\n"
+                f"Duracao: {payload.duracao_minutos} minutos\n"
+                f"Descricao: {payload.descricao or 'N/A'}\n\n"
+                f"— JARVIS GRADIOS"
+            )
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                r = await client.post(
+                    f"{evo_url}/message/sendText/{evo_instance}",
+                    headers={"apikey": evo_key, "Content-Type": "application/json"},
+                    json={"number": destinatario, "text": msg},
                 )
-                async with httpx.AsyncClient(timeout=10.0) as client:
-                    r = await client.post(
-                        f"{evo_url}/message/sendText/{evo_instance}",
-                        headers={"apikey": evo_key, "Content-Type": "application/json"},
-                        json={"number": payload.whatsapp_lead, "text": msg},
-                    )
-                    r.raise_for_status()
-                    whatsapp_ok = True
-        except Exception as e:
-            logger.warning("WhatsApp confirmacao falhou: %s", e)
+                r.raise_for_status()
+                whatsapp_ok = True
+    except Exception as e:
+        logger.warning("WhatsApp confirmacao falhou: %s", e)
 
     # 3. Salvar em jarvis_studies
     await sb.insert("jarvis_studies", {
