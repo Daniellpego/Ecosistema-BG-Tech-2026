@@ -25,6 +25,10 @@ export const AGENTS: Agent[] = [
   { slug: "brand",      label: "Brand",      desc: "Identidade premium",   emoji: "\u{1F3A8}", color: "text-purple-400", bgColor: "bg-purple-500/10" },
   { slug: "cfo",        label: "CFO",        desc: "Dashboard financeiro", emoji: "\u{1F4B0}", color: "text-green-400", bgColor: "bg-green-500/10" },
   { slug: "crm",        label: "CRM",        desc: "Pipeline clientes",   emoji: "\u{1F91D}", color: "text-blue-400", bgColor: "bg-blue-500/10" },
+  { slug: "pm",         label: "PM",         desc: "Gestao de projetos",  emoji: "\u{1F4CB}", color: "text-teal-400", bgColor: "bg-teal-500/10" },
+  { slug: "cs",         label: "CS",         desc: "Customer Success",    emoji: "\u{2B50}", color: "text-amber-400", bgColor: "bg-amber-500/10" },
+  { slug: "design",     label: "Design",     desc: "Direcao criativa",    emoji: "\u{1F58C}\u{FE0F}", color: "text-rose-400", bgColor: "bg-rose-500/10" },
+  { slug: "rh",         label: "RH",         desc: "People Operations",   emoji: "\u{1F465}", color: "text-sky-400", bgColor: "bg-sky-500/10" },
 ];
 
 export const AGENT_MAP = Object.fromEntries(AGENTS.map((a) => [a.slug, a]));
@@ -36,8 +40,10 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/",         label: "Painel",   icon: "LayoutDashboard" },
-  { href: "/agents",   label: "Agents",   icon: "Bot" },
-  { href: "/estudos",  label: "Estudos",  icon: "FileText" },
-  { href: "/alertas",  label: "Alertas",  icon: "Bell" },
+  { href: "/",          label: "Painel",    icon: "LayoutDashboard" },
+  { href: "/agents",    label: "Agents",    icon: "Bot" },
+  { href: "/projetos",  label: "Projetos",  icon: "FolderKanban" },
+  { href: "/estudos",   label: "Estudos",   icon: "FileText" },
+  { href: "/alertas",   label: "Alertas",   icon: "Bell" },
+  { href: "/status",    label: "Status",    icon: "Activity" },
 ];

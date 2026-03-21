@@ -6,6 +6,7 @@ import type { Agent } from "@/lib/constants";
 import { fetchHealth, supabaseSelect, supabaseCount } from "@/lib/api";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ChatModal } from "@/components/ChatModal";
+import { UserMenu } from "@/components/UserMenu";
 import {
   Users,
   DollarSign,
@@ -14,9 +15,10 @@ import {
   Activity,
   ArrowRight,
   RefreshCw,
-  Wifi,
-  WifiOff,
   Clock,
+  FolderKanban,
+  TrendingUp,
+  BarChart3,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -28,6 +30,8 @@ interface KpiData {
   agentsAtivos: number;
   alertasPendentes: number;
   estudosTotal: number;
+  projetosAtivos: number;
+  mrr: number;
 }
 
 interface FeedItem {
@@ -46,33 +50,83 @@ interface SystemStatus {
   evolution: boolean;
 }
 
+interface WeekLeads {
+  label: string;
+  count: number;
+}
+
+interface MonthRevenue {
+  label: string;
+  value: number;
+}
+
 // ─── Quick Actions ──────────────────────────────────────────────────
 
 const QUICK_ACTIONS = [
   { label: "Analisar pipeline", agent: "crm", prompt: "Analise o pipeline atual de vendas e sugira acoes para acelerar conversoes" },
   { label: "Gerar proposta",    agent: "copy", prompt: "Gere uma proposta comercial para um lead de automacao industrial" },
   { label: "Ver DRE",           agent: "cfo", prompt: "Gere um DRE resumido do mes atual com analise de margem" },
-  { label: "Alertas CRM",       agent: "crm", prompt: "Liste todos os leads sem contato ha mais de 2 dias com acoes recomendadas" },
+  { label: "Status projetos",   agent: "pm", prompt: "Faca um status report de todos os projetos ativos com riscos e proximos passos" },
 ];
+
+// ─── Bar Chart (pure CSS) ──────────────────────────────────────────
+
+function BarChart({ data, maxValue }: { data: WeekLeads[]; maxValue: number }) {
+  const max = maxValue || 1;
+  return (
+    <div className="flex items-end gap-2 h-32">
+      {data.map((w, i) => (
+        <div key={i} className="flex-1 flex flex-col items-center gap-1">
+          <span className="text-[10px] text-zinc-400">{w.count}</span>
+          <div
+            className="w-full bg-indigo-500/80 rounded-t transition-all"
+            style={{ height: `${(w.count / max) * 100}%`, minHeight: w.count > 0 ? "4px" : "0" }}
+          />
+          <span className="text-[9px] text-zinc-600">{w.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function LineChart({ data, maxValue }: { data: MonthRevenue[]; maxValue: number }) {
+  const max = maxValue || 1;
+  const points = data.map((d, i) => ({
+    x: (i / Math.max(data.length - 1, 1)) * 100,
+    y: 100 - (d.value / max) * 100,
+  }));
+  const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
+
+  return (
+    <div className="h-32 relative">
+      <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="none">
+        <path d={pathD} fill="none" stroke="#6366f1" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        {points.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r="2" fill="#6366f1" vectorEffect="non-scaling-stroke" />
+        ))}
+      </svg>
+      <div className="flex justify-between mt-1">
+        {data.map((d, i) => (
+          <span key={i} className="text-[9px] text-zinc-600">{d.label}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ─── Main Component ─────────────────────────────────────────────────
 
 export default function PainelPrincipal() {
   const [kpis, setKpis] = useState<KpiData>({
-    leadsHoje: 0,
-    totalLeads: 0,
-    leadsQuentes: 0,
-    agentsAtivos: 8,
-    alertasPendentes: 0,
-    estudosTotal: 0,
+    leadsHoje: 0, totalLeads: 0, leadsQuentes: 0, agentsAtivos: 12,
+    alertasPendentes: 0, estudosTotal: 0, projetosAtivos: 0, mrr: 0,
   });
   const [feed, setFeed] = useState<FeedItem[]>([]);
   const [status, setStatus] = useState<SystemStatus>({
-    ollama: false,
-    supabase: false,
-    claude: false,
-    evolution: false,
+    ollama: false, supabase: false, claude: false, evolution: false,
   });
+  const [weekLeads, setWeekLeads] = useState<WeekLeads[]>([]);
+  const [monthRevenue, setMonthRevenue] = useState<MonthRevenue[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [chatAgent, setChatAgent] = useState<Agent | null>(null);
@@ -81,30 +135,18 @@ export default function PainelPrincipal() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      // Health check
       const health = await fetchHealth().catch(() => ({
-        ollama: false,
-        supabase: false,
-        claude: false,
-        models: [],
-        status: "error",
+        ollama: false, supabase: false, claude: false, models: [], status: "error",
       }));
 
-      // Evolution check
       let evoOk = false;
       try {
         const r = await fetch("http://localhost:8080", { signal: AbortSignal.timeout(3000) });
         evoOk = r.ok;
       } catch { /* offline */ }
 
-      setStatus({
-        ollama: health.ollama,
-        supabase: health.supabase,
-        claude: health.claude,
-        evolution: evoOk,
-      });
+      setStatus({ ollama: health.ollama, supabase: health.supabase, claude: health.claude, evolution: evoOk });
 
-      // KPIs from Supabase
       const hoje = new Date();
       hoje.setHours(0, 0, 0, 0);
       const hojeISO = hoje.toISOString();
@@ -117,29 +159,68 @@ export default function PainelPrincipal() {
         supabaseCount("jarvis_studies"),
       ]);
 
+      // Projetos ativos
+      const projetosAtivos = await supabaseCount("projetos", { status: "neq.entregue" });
+
+      // MRR
+      interface ReceitaRow { valor_bruto: number; recorrente: boolean; status: string }
+      const now = new Date();
+      const mesInicio = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+      const receitas = await supabaseSelect<ReceitaRow>("receitas", {
+        select: "valor_bruto,recorrente,status",
+        "and": `(data.gte.${mesInicio},status.eq.confirmado,recorrente.eq.true)`,
+      });
+      const mrr = receitas.reduce((sum, r) => sum + (r.valor_bruto ?? 0), 0);
+
       setKpis({
-        leadsHoje,
-        totalLeads,
-        leadsQuentes,
-        agentsAtivos: health.ollama ? 8 : 0,
-        alertasPendentes: alertas,
-        estudosTotal: estudos,
+        leadsHoje, totalLeads, leadsQuentes,
+        agentsAtivos: health.ollama ? 12 : 0,
+        alertasPendentes: alertas, estudosTotal: estudos,
+        projetosAtivos, mrr,
       });
 
-      // Feed: ultimos estudos + alertas
-      interface StudyRow {
-        id: string;
-        title: string;
-        agent: string;
-        tags: string[];
-        status: string;
-        created_at: string;
+      // Leads por semana (ultimas 4 semanas)
+      const weeks: WeekLeads[] = [];
+      for (let i = 3; i >= 0; i--) {
+        const start = new Date();
+        start.setDate(start.getDate() - (i + 1) * 7);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date();
+        end.setDate(end.getDate() - i * 7);
+        end.setHours(23, 59, 59, 999);
+        const count = await supabaseCount("leads", {
+          "and": `(created_at.gte.${start.toISOString()},created_at.lte.${end.toISOString()})`,
+        });
+        weeks.push({ label: `Sem ${4 - i}`, count });
       }
-      const recentStudies = await supabaseSelect<StudyRow>(
-        "jarvis_studies",
-        { select: "id,title,agent,tags,status,created_at", order: "created_at.desc", limit: "15" },
-      );
+      setWeekLeads(weeks);
 
+      // Receita por mes (ultimos 6 meses)
+      const months: MonthRevenue[] = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const mStart = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+        const mEnd = new Date(d.getFullYear(), d.getMonth() + 2, 0).toISOString().split("T")[0];
+        const recMes = await supabaseSelect<ReceitaRow>("receitas", {
+          select: "valor_bruto",
+          "and": `(data.gte.${mStart},data.lte.${mEnd},status.eq.confirmado)`,
+        });
+        const total = recMes.reduce((s, r) => s + (r.valor_bruto ?? 0), 0);
+        months.push({
+          label: d.toLocaleDateString("pt-BR", { month: "short" }),
+          value: total,
+        });
+      }
+      setMonthRevenue(months);
+
+      // Feed
+      interface StudyRow {
+        id: string; title: string; agent: string; tags: string[]; status: string; created_at: string;
+      }
+      const recentStudies = await supabaseSelect<StudyRow>("jarvis_studies", {
+        select: "id,title,agent,tags,status,created_at", order: "created_at.desc", limit: "15",
+      });
       const feedItems: FeedItem[] = recentStudies.map((s) => ({
         id: s.id,
         tipo: (s.tags ?? []).includes("alerta-crm") ? "alerta" as const : "estudo" as const,
@@ -148,7 +229,6 @@ export default function PainelPrincipal() {
         timestamp: s.created_at,
         tags: s.tags ?? [],
       }));
-
       setFeed(feedItems);
       setLastUpdate(new Date());
     } catch (err) {
@@ -160,22 +240,18 @@ export default function PainelPrincipal() {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 60000); // refresh a cada 60s
+    const interval = setInterval(loadData, 60000);
     return () => clearInterval(interval);
   }, [loadData]);
 
   function openChat(agentSlug: string, prompt?: string) {
     const agent = AGENT_MAP[agentSlug];
-    if (agent) {
-      setChatAgent(agent);
-      setChatPrompt(prompt ?? "");
-    }
+    if (agent) { setChatAgent(agent); setChatPrompt(prompt ?? ""); }
   }
 
   function formatTime(iso: string): string {
     const d = new Date(iso);
-    const now = new Date();
-    const diff = now.getTime() - d.getTime();
+    const diff = Date.now() - d.getTime();
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return "agora";
     if (mins < 60) return `${mins}min`;
@@ -193,27 +269,21 @@ export default function PainelPrincipal() {
             <h1 className="text-xl font-bold tracking-tight">GRADIOS AIOX</h1>
             <p className="text-xs text-zinc-500 mt-0.5">Orquestrador Autonomo de Operacoes</p>
           </div>
-
           <div className="flex items-center gap-4">
-            {/* System status dots */}
             <div className="hidden sm:flex items-center gap-3">
               <StatusDot label="Ollama" ok={status.ollama} />
               <StatusDot label="Supabase" ok={status.supabase} />
               <StatusDot label="WhatsApp" ok={status.evolution} />
             </div>
-
-            <button
-              onClick={loadData}
-              disabled={loading}
+            <button onClick={loadData} disabled={loading}
               className="p-2 rounded-lg hover:bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 transition-colors disabled:opacity-40"
-              title="Atualizar dados"
-            >
+              title="Atualizar dados">
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </button>
-
             <span className="text-[10px] text-zinc-600">
               {lastUpdate.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
             </span>
+            <UserMenu />
           </div>
         </div>
       </header>
@@ -221,38 +291,32 @@ export default function PainelPrincipal() {
       <div className="p-6 space-y-6">
         {/* KPI Cards */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KpiCard
-            icon={<Users className="w-5 h-5" />}
-            label="Leads hoje"
-            value={kpis.leadsHoje}
-            sub={`${kpis.totalLeads} total \u00B7 ${kpis.leadsQuentes} quentes`}
-            color="text-blue-400"
-            bgColor="bg-blue-500/10"
-          />
-          <KpiCard
-            icon={<DollarSign className="w-5 h-5" />}
-            label="Estudos gerados"
-            value={kpis.estudosTotal}
-            sub="analises e relatorios"
-            color="text-green-400"
-            bgColor="bg-green-500/10"
-          />
-          <KpiCard
-            icon={<Bot className="w-5 h-5" />}
-            label="Agents ativos"
-            value={kpis.agentsAtivos}
-            sub={kpis.agentsAtivos > 0 ? "todos online" : "offline"}
-            color="text-indigo-400"
-            bgColor="bg-indigo-500/10"
-          />
-          <KpiCard
-            icon={<AlertTriangle className="w-5 h-5" />}
-            label="Alertas CRM"
-            value={kpis.alertasPendentes}
-            sub="gerados automaticamente"
-            color="text-amber-400"
-            bgColor="bg-amber-500/10"
-          />
+          <KpiCard icon={<Users className="w-5 h-5" />} label="Leads hoje" value={kpis.leadsHoje}
+            sub={`${kpis.totalLeads} total · ${kpis.leadsQuentes} quentes`} color="text-blue-400" bgColor="bg-blue-500/10" />
+          <KpiCard icon={<FolderKanban className="w-5 h-5" />} label="Projetos ativos" value={kpis.projetosAtivos}
+            sub="em andamento" color="text-indigo-400" bgColor="bg-indigo-500/10" />
+          <KpiCard icon={<DollarSign className="w-5 h-5" />} label="MRR" value={kpis.mrr}
+            sub="receita recorrente mensal" color="text-green-400" bgColor="bg-green-500/10" isCurrency />
+          <KpiCard icon={<AlertTriangle className="w-5 h-5" />} label="Alertas CRM" value={kpis.alertasPendentes}
+            sub="gerados automaticamente" color="text-amber-400" bgColor="bg-amber-500/10" />
+        </section>
+
+        {/* Charts */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <BarChart3 className="w-4 h-4 text-indigo-400" />
+              <h3 className="text-sm font-medium text-zinc-300">Leads por semana</h3>
+            </div>
+            <BarChart data={weekLeads} maxValue={Math.max(...weekLeads.map((w) => w.count), 1)} />
+          </div>
+          <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp className="w-4 h-4 text-green-400" />
+              <h3 className="text-sm font-medium text-zinc-300">Receita por mes (6m)</h3>
+            </div>
+            <LineChart data={monthRevenue} maxValue={Math.max(...monthRevenue.map((m) => m.value), 1)} />
+          </div>
         </section>
 
         {/* Quick Actions */}
@@ -262,16 +326,11 @@ export default function PainelPrincipal() {
             {QUICK_ACTIONS.map((action) => {
               const agent = AGENT_MAP[action.agent];
               return (
-                <button
-                  key={action.label}
-                  onClick={() => openChat(action.agent, action.prompt)}
-                  className="group flex items-center gap-3 bg-zinc-900/60 border border-zinc-800/60 rounded-xl px-4 py-3 hover:border-indigo-500/30 hover:bg-zinc-800/40 transition-all text-left"
-                >
+                <button key={action.label} onClick={() => openChat(action.agent, action.prompt)}
+                  className="group flex items-center gap-3 bg-zinc-900/60 border border-zinc-800/60 rounded-xl px-4 py-3 hover:border-indigo-500/30 hover:bg-zinc-800/40 transition-all text-left">
                   <span className="text-lg">{agent?.emoji ?? "\u{1F916}"}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">
-                      {action.label}
-                    </p>
+                    <p className="text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">{action.label}</p>
                     <p className="text-[10px] text-zinc-600">{agent?.label}</p>
                   </div>
                   <ArrowRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-indigo-400 transition-colors" />
@@ -281,9 +340,8 @@ export default function PainelPrincipal() {
           </div>
         </section>
 
-        {/* Main grid: Feed + Agents */}
+        {/* Feed + Agents */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Activity Feed */}
           <section className="lg:col-span-2">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-medium text-zinc-400">Atividade recente</h2>
@@ -291,37 +349,25 @@ export default function PainelPrincipal() {
             </div>
             <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl divide-y divide-zinc-800/40">
               {feed.length === 0 && !loading && (
-                <div className="px-4 py-8 text-center text-sm text-zinc-600">
-                  Nenhuma atividade registrada ainda
-                </div>
+                <div className="px-4 py-8 text-center text-sm text-zinc-600">Nenhuma atividade registrada ainda</div>
               )}
               {loading && feed.length === 0 && (
-                <div className="px-4 py-8 text-center text-sm text-zinc-600">
-                  Carregando...
-                </div>
+                <div className="px-4 py-8 text-center text-sm text-zinc-600">Carregando...</div>
               )}
               {feed.map((item) => {
                 const agent = AGENT_MAP[item.agent];
                 return (
-                  <div
-                    key={item.id}
-                    className="flex items-start gap-3 px-4 py-3 hover:bg-zinc-800/20 transition-colors"
-                  >
+                  <div key={item.id} className="flex items-start gap-3 px-4 py-3 hover:bg-zinc-800/20 transition-colors">
                     <div className={`mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center text-sm ${
-                      item.tipo === "alerta" ? "bg-amber-500/10" : (agent?.bgColor ?? "bg-zinc-800")
-                    }`}>
+                      item.tipo === "alerta" ? "bg-amber-500/10" : (agent?.bgColor ?? "bg-zinc-800")}`}>
                       {item.tipo === "alerta" ? "\u{1F6A8}" : (agent?.emoji ?? "\u{1F4C4}")}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-zinc-200 truncate">{item.titulo}</p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className={`text-[10px] font-medium ${agent?.color ?? "text-zinc-500"}`}>
-                          {agent?.label ?? item.agent}
-                        </span>
+                        <span className={`text-[10px] font-medium ${agent?.color ?? "text-zinc-500"}`}>{agent?.label ?? item.agent}</span>
                         {item.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className="text-[10px] text-zinc-600 bg-zinc-800/60 px-1.5 rounded">
-                            {tag}
-                          </span>
+                          <span key={tag} className="text-[10px] text-zinc-600 bg-zinc-800/60 px-1.5 rounded">{tag}</span>
                         ))}
                       </div>
                     </div>
@@ -335,23 +381,15 @@ export default function PainelPrincipal() {
             </div>
           </section>
 
-          {/* Agents mini-grid */}
           <section>
-            <h2 className="text-sm font-medium text-zinc-400 mb-3">Agents</h2>
+            <h2 className="text-sm font-medium text-zinc-400 mb-3">Agents ({AGENTS.length})</h2>
             <div className="space-y-2">
               {AGENTS.map((agent) => (
-                <button
-                  key={agent.slug}
-                  onClick={() => openChat(agent.slug)}
-                  className="w-full group flex items-center gap-3 bg-zinc-900/40 border border-zinc-800/60 rounded-xl px-4 py-3 hover:border-zinc-700/60 hover:bg-zinc-800/30 transition-all text-left"
-                >
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${agent.bgColor}`}>
-                    {agent.emoji}
-                  </div>
+                <button key={agent.slug} onClick={() => openChat(agent.slug)}
+                  className="w-full group flex items-center gap-3 bg-zinc-900/40 border border-zinc-800/60 rounded-xl px-4 py-3 hover:border-zinc-700/60 hover:bg-zinc-800/30 transition-all text-left">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${agent.bgColor}`}>{agent.emoji}</div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-zinc-300 group-hover:text-white transition-colors">
-                      {agent.label}
-                    </p>
+                    <p className="text-sm font-medium text-zinc-300 group-hover:text-white transition-colors">{agent.label}</p>
                     <p className="text-[10px] text-zinc-600">{agent.desc}</p>
                   </div>
                   <StatusBadge online={kpis.agentsAtivos > 0} />
@@ -362,13 +400,8 @@ export default function PainelPrincipal() {
         </div>
       </div>
 
-      {/* Chat Modal */}
       {chatAgent && (
-        <ChatModal
-          agent={chatAgent}
-          initialPrompt={chatPrompt}
-          onClose={() => { setChatAgent(null); setChatPrompt(""); }}
-        />
+        <ChatModal agent={chatAgent} initialPrompt={chatPrompt} onClose={() => { setChatAgent(null); setChatPrompt(""); }} />
       )}
     </div>
   );
@@ -376,30 +409,18 @@ export default function PainelPrincipal() {
 
 // ─── Sub-components ─────────────────────────────────────────────────
 
-function KpiCard({
-  icon,
-  label,
-  value,
-  sub,
-  color,
-  bgColor,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  sub: string;
-  color: string;
-  bgColor: string;
+function KpiCard({ icon, label, value, sub, color, bgColor, isCurrency }: {
+  icon: React.ReactNode; label: string; value: number; sub: string; color: string; bgColor: string; isCurrency?: boolean;
 }) {
   return (
     <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4">
       <div className="flex items-center gap-3 mb-3">
-        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${bgColor} ${color}`}>
-          {icon}
-        </div>
+        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${bgColor} ${color}`}>{icon}</div>
         <span className="text-xs text-zinc-500 font-medium">{label}</span>
       </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-2xl font-bold text-white">
+        {isCurrency ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}` : value}
+      </p>
       <p className="text-[11px] text-zinc-500 mt-1">{sub}</p>
     </div>
   );

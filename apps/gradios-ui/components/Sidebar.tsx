@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/lib/constants";
+import { UserMenu } from "./UserMenu";
 import {
   LayoutDashboard,
   Bot,
   FileText,
   Bell,
   Zap,
+  FolderKanban,
+  Activity,
 } from "lucide-react";
 
 const ICONS: Record<string, React.ElementType> = {
@@ -16,6 +19,8 @@ const ICONS: Record<string, React.ElementType> = {
   Bot,
   FileText,
   Bell,
+  FolderKanban,
+  Activity,
 };
 
 export function Sidebar() {
@@ -54,6 +59,12 @@ export function Sidebar() {
           </Link>
         );
       })}
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* User menu at bottom */}
+      <UserMenu />
     </aside>
   );
 }

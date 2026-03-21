@@ -134,6 +134,10 @@ from agents.brand import AGENT_CONFIG as _brand
 from agents.manufatura import AGENT_CONFIG as _manufatura
 from agents.cfo import AGENT_CONFIG as _cfo
 from agents.crm import AGENT_CONFIG as _crm
+from agents.pm import AGENT_CONFIG as _pm
+from agents.cs import AGENT_CONFIG as _cs
+from agents.design import AGENT_CONFIG as _design
+from agents.rh import AGENT_CONFIG as _rh
 
 AGENTS: dict[str, dict[str, str]] = {
     "copy": _copy,
@@ -144,6 +148,10 @@ AGENTS: dict[str, dict[str, str]] = {
     "manufatura": _manufatura,
     "cfo": _cfo,
     "crm": _crm,
+    "pm": _pm,
+    "cs": _cs,
+    "design": _design,
+    "rh": _rh,
 }
 
 # ─── Modelos Pydantic ───────────────────────────────────────────────
@@ -518,6 +526,62 @@ async def get_cfo_summary() -> dict:
     }
 
 
+# ─── Projetos (Supabase REST) ──────────────────────────────────────
+
+class ProjetoPayload(BaseModel):
+    """Payload para criar/atualizar projeto."""
+    nome: str
+    cliente: str
+    valor: float = 0.0
+    prazo: str = ""
+    responsavel: str = "Daniel"
+    descricao: str = ""
+    status: str = "backlog"
+    progresso: int = 0
+
+
+class ProjetoStatusPatch(BaseModel):
+    """Payload para atualizar status do projeto."""
+    projeto_id: str
+    status: str
+
+
+@app.post("/jarvis/projetos")
+async def criar_projeto(payload: ProjetoPayload) -> dict:
+    """Cria um novo projeto no Supabase."""
+    data = payload.model_dump()
+    result = await sb.insert("projetos", data)
+    if not result:
+        raise HTTPException(500, "Erro ao criar projeto no Supabase")
+    return {"status": "ok", "projeto": result}
+
+
+@app.patch("/jarvis/projetos/status")
+async def atualizar_status_projeto(payload: ProjetoStatusPatch) -> dict:
+    """Atualiza o status de um projeto (drag-drop no Kanban)."""
+    if not sb.enabled:
+        raise HTTPException(503, "Supabase nao conectado")
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            r = await client.patch(
+                f"{sb.base_url}/projetos",
+                headers=sb.headers,
+                params={"id": f"eq.{payload.projeto_id}"},
+                json={"status": payload.status},
+            )
+            r.raise_for_status()
+            return {"status": "ok"}
+    except Exception as e:
+        logger.error("Erro ao atualizar status projeto: %s", e)
+        raise HTTPException(500, str(e))
+
+
+@app.get("/jarvis/projetos")
+async def listar_projetos() -> list[dict]:
+    """Lista todos os projetos."""
+    return await sb.select("projetos", order="created_at.desc", limit=100)
+
+
 # ─── Endpoints basicos ──────────────────────────────────────────────
 
 @app.get("/")
@@ -598,6 +662,8 @@ async def orchestrate(req: JarvisRequest) -> dict:
         "brand": ["marca", "branding", "logo", "identidade", "tipografia", "paleta", "design", "visual"],
         "cfo": ["financeiro", "dre", "ebitda", "valuation", "kpi", "orcamento", "fluxo de caixa", "dashboard"],
         "crm": ["cliente", "pipeline", "vendas", "lead", "proposta", "forecast", "crm", "comercial"],
+        "pm": ["projeto", "cronograma", "prazo", "entrega", "sprint", "milestone", "atraso", "wbs", "gantt", "backlog"],
+        "cs": ["satisfacao", "nps", "churn", "retencao", "onboarding", "health score", "customer success", "feedback", "reclamacao"],
     }
 
     relevant_agents: list[str] = []
@@ -1050,32 +1116,534 @@ async def call_agent(agent: str, req: JarvisRequest) -> JarvisResponse:
     )
 
 
+# ─── Proposta em PDF ──────────────────────────────────────────────
+
+
+class PropostaPDFPayload(BaseModel):
+    """Payload para gerar proposta em PDF."""
+    lead_id: Optional[int] = None
+    dados_lead: Optional[DadosLead] = None
+    valor_estimado: float = 5000.0
+    servicos: list[str] = []
+    observacoes: str = ""
+
+
+@app.post("/jarvis/crm/proposta-pdf")
+async def crm_proposta_pdf(payload: PropostaPDFPayload) -> dict:
+    """Gera proposta comercial em PDF profissional usando reportlab.
+
+    1. Gera conteudo via agent Copy (reutiliza logica de gerar-proposta)
+    2. Renderiza PDF com layout premium
+    3. Salva em E:/gradios/propostas/
+    4. Retorna caminho do arquivo
+    """
+    import time
+    t0 = time.perf_counter()
+
+    # ── 1. Resolver dados do lead ──────────────────────────────────
+    nome = ""
+    empresa = ""
+    segmento = ""
+    dor = ""
+    lead_score = 0
+
+    if payload.lead_id and sb.enabled:
+        rows = await sb.select(
+            "leads",
+            columns="id,nome,empresa,segmento,dor_principal,score,whatsapp",
+            filters={"id": f"eq.{payload.lead_id}"},
+            limit=1,
+        )
+        if rows:
+            lead = rows[0]
+            nome = lead.get("nome", "")
+            empresa = lead.get("empresa", "")
+            segmento = lead.get("segmento", "")
+            dor = lead.get("dor_principal", "")
+            lead_score = int(lead.get("score", 0) or 0)
+
+    if not nome and payload.dados_lead:
+        nome = payload.dados_lead.nome
+        empresa = payload.dados_lead.empresa
+        segmento = payload.dados_lead.segmento
+        dor = payload.dados_lead.dor_principal
+        lead_score = payload.dados_lead.score
+
+    if not nome or not empresa:
+        raise HTTPException(400, "Informe lead_id ou dados_lead com nome e empresa")
+
+    # ── 2. Gerar conteudo via IA ──────────────────────────────────
+    valor_base = payload.valor_estimado
+    valor_essencial = round(valor_base * 0.65, 2)
+    valor_completo = round(valor_base, 2)
+    valor_premium = round(valor_base * 1.45, 2)
+    servicos_texto = ", ".join(payload.servicos) if payload.servicos else "automacao de processos"
+
+    system = AGENTS["copy"]["system"] + (
+        "\n\nMISSAO: Gerar texto para proposta comercial PDF. "
+        "Tom profissional, direto, confiante. Sem markdown — texto puro. "
+        "Separe secoes com \\n\\n e titulos em MAIUSCULA."
+    )
+    prompt = (
+        f"Gere o conteudo de uma proposta comercial para:\n"
+        f"- Lead: {nome} | Empresa: {empresa} | Segmento: {segmento}\n"
+        f"- Dor: {dor} | Score: {lead_score}/100\n"
+        f"- Servicos: {servicos_texto}\n"
+        f"- Valores: Essencial R${valor_essencial:,.2f} | "
+        f"Completa R${valor_completo:,.2f} | Premium R${valor_premium:,.2f}\n\n"
+        f"Secoes obrigatorias (texto puro, sem markdown):\n"
+        f"1. O PROBLEMA (2-3 paragrafos sobre a dor real)\n"
+        f"2. NOSSA SOLUCAO (o que a GRADIOS entrega)\n"
+        f"3. METODOLOGIA (fases de trabalho com prazos)\n"
+        f"4. INVESTIMENTO (3 opcoes com escopo de cada)\n"
+        f"5. POR QUE A GRADIOS (3 diferenciais)\n"
+        f"6. PROXIMO PASSO (CTA direto)\n\n"
+        f"Retorne APENAS o texto, sem explicacoes."
+    )
+
+    try:
+        response_text = ""
+        async for chunk in call_ollama(system, [{"role": "user", "content": prompt}]):
+            response_text += chunk
+    except Exception as e:
+        logger.error("Erro ao gerar conteudo proposta PDF: %s", e)
+        raise HTTPException(502, f"Erro ao gerar conteudo: {e}")
+
+    # ── 3. Gerar PDF com reportlab ────────────────────────────────
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import cm
+    from reportlab.lib.colors import HexColor
+    from reportlab.platypus import (
+        SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak,
+    )
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+    import pathlib
+    import re
+
+    propostas_dir = pathlib.Path("E:/gradios/propostas")
+    propostas_dir.mkdir(parents=True, exist_ok=True)
+
+    # Nome do arquivo unico
+    timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+    empresa_slug = re.sub(r"[^a-zA-Z0-9]", "_", empresa.lower())[:30]
+    filename = f"proposta_{empresa_slug}_{timestamp_str}.pdf"
+    filepath = propostas_dir / filename
+
+    # Cores GRADIOS
+    cor_primaria = HexColor("#1a1a2e")
+    cor_acento = HexColor("#6366f1")
+    cor_texto = HexColor("#1f2937")
+    cor_cinza = HexColor("#6b7280")
+    cor_fundo_tabela = HexColor("#f3f4f6")
+
+    styles = getSampleStyleSheet()
+
+    style_titulo = ParagraphStyle(
+        "TituloProposta",
+        parent=styles["Heading1"],
+        fontSize=24,
+        textColor=cor_primaria,
+        spaceAfter=8,
+        fontName="Helvetica-Bold",
+    )
+    style_subtitulo = ParagraphStyle(
+        "SubtituloProposta",
+        parent=styles["Heading2"],
+        fontSize=14,
+        textColor=cor_acento,
+        spaceBefore=20,
+        spaceAfter=10,
+        fontName="Helvetica-Bold",
+    )
+    style_corpo = ParagraphStyle(
+        "CorpoProposta",
+        parent=styles["Normal"],
+        fontSize=10.5,
+        textColor=cor_texto,
+        leading=15,
+        spaceAfter=8,
+        fontName="Helvetica",
+    )
+    style_meta = ParagraphStyle(
+        "MetaProposta",
+        parent=styles["Normal"],
+        fontSize=9,
+        textColor=cor_cinza,
+        fontName="Helvetica",
+    )
+    style_center = ParagraphStyle(
+        "CenterProposta",
+        parent=styles["Normal"],
+        fontSize=10.5,
+        textColor=cor_texto,
+        alignment=TA_CENTER,
+        fontName="Helvetica",
+    )
+
+    doc = SimpleDocTemplate(
+        str(filepath),
+        pagesize=A4,
+        topMargin=2.5 * cm,
+        bottomMargin=2 * cm,
+        leftMargin=2.5 * cm,
+        rightMargin=2.5 * cm,
+    )
+
+    elements = []
+
+    # ── Capa ──
+    elements.append(Spacer(1, 4 * cm))
+    elements.append(Paragraph("GRADIOS", ParagraphStyle(
+        "Logo", parent=style_titulo, fontSize=36, textColor=cor_acento,
+        alignment=TA_CENTER,
+    )))
+    elements.append(Spacer(1, 0.5 * cm))
+    elements.append(Paragraph(
+        "O cerebro da sua operacao",
+        ParagraphStyle("Tagline", parent=style_meta, alignment=TA_CENTER, fontSize=12),
+    ))
+    elements.append(Spacer(1, 3 * cm))
+    elements.append(Paragraph("PROPOSTA COMERCIAL", ParagraphStyle(
+        "TituloCapa", parent=style_titulo, alignment=TA_CENTER, fontSize=28,
+    )))
+    elements.append(Spacer(1, 1 * cm))
+    elements.append(Paragraph(empresa.upper(), ParagraphStyle(
+        "EmpresaCapa", parent=style_subtitulo, alignment=TA_CENTER, fontSize=18,
+    )))
+    elements.append(Spacer(1, 3 * cm))
+
+    # Metadados da capa
+    data_hoje = datetime.now().strftime("%d/%m/%Y")
+    meta_lines = [
+        f"Preparado para: {nome}",
+        f"Empresa: {empresa}",
+        f"Segmento: {segmento}",
+        f"Data: {data_hoje}",
+        f"Validade: 15 dias",
+    ]
+    for line in meta_lines:
+        elements.append(Paragraph(line, ParagraphStyle(
+            "MetaCapa", parent=style_meta, alignment=TA_CENTER, fontSize=11,
+            spaceAfter=4,
+        )))
+
+    elements.append(PageBreak())
+
+    # ── Conteudo gerado pela IA ──
+    # Parseia o texto em secoes
+    secoes = re.split(r'\n\s*\n', response_text.strip())
+    for secao in secoes:
+        secao = secao.strip()
+        if not secao:
+            continue
+
+        lines = secao.split('\n')
+        first_line = lines[0].strip()
+
+        # Detecta se e titulo (tudo maiuscula ou comeca com numero.)
+        is_title = (
+            first_line.isupper()
+            or re.match(r'^\d+[\.\)]\s*[A-Z]', first_line)
+            or first_line.startswith('#')
+        )
+
+        if is_title:
+            titulo_limpo = re.sub(r'^[\d\.\)#\s]+', '', first_line).strip()
+            elements.append(Paragraph(titulo_limpo, style_subtitulo))
+            corpo = '\n'.join(lines[1:]).strip()
+        else:
+            corpo = secao
+
+        if corpo:
+            # Substitui markdown basico
+            corpo = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', corpo)
+            corpo = re.sub(r'\*(.+?)\*', r'<i>\1</i>', corpo)
+            # Quebra paragrafos
+            paragrafos = corpo.split('\n')
+            for p in paragrafos:
+                p = p.strip()
+                if p.startswith('- ') or p.startswith('• '):
+                    elements.append(Paragraph(
+                        f"  •  {p[2:]}",
+                        ParagraphStyle("Bullet", parent=style_corpo, leftIndent=15),
+                    ))
+                elif p:
+                    elements.append(Paragraph(p, style_corpo))
+
+    # ── Tabela de investimento ──
+    elements.append(Spacer(1, 0.5 * cm))
+    elements.append(Paragraph("INVESTIMENTO", style_subtitulo))
+
+    table_data = [
+        ["Opcao", "Escopo", "Valor"],
+        ["Essencial", "Resolve a dor principal", f"R$ {valor_essencial:,.2f}"],
+        ["Completa *", "Dor + integracoes + suporte", f"R$ {valor_completo:,.2f}"],
+        ["Premium", "Completo + 3 meses suporte + treinamento", f"R$ {valor_premium:,.2f}"],
+    ]
+    # Converte para Paragraphs para wrapping
+    table_paras = []
+    for i, row in enumerate(table_data):
+        prow = []
+        for j, cell in enumerate(row):
+            if i == 0:
+                prow.append(Paragraph(f"<b>{cell}</b>", ParagraphStyle(
+                    "TH", parent=style_corpo, textColor=HexColor("#ffffff"), fontSize=10,
+                )))
+            elif i == 2:
+                prow.append(Paragraph(f"<b>{cell}</b>", style_corpo))
+            else:
+                prow.append(Paragraph(cell, style_corpo))
+        table_paras.append(prow)
+
+    t = Table(table_paras, colWidths=[3 * cm, 9 * cm, 4 * cm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), cor_acento),
+        ("TEXTCOLOR", (0, 0), (-1, 0), HexColor("#ffffff")),
+        ("BACKGROUND", (0, 2), (-1, 2), HexColor("#eef2ff")),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [HexColor("#ffffff"), cor_fundo_tabela]),
+        ("GRID", (0, 0), (-1, -1), 0.5, HexColor("#d1d5db")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ("LEFTPADDING", (0, 0), (-1, -1), 10),
+    ]))
+    elements.append(t)
+    elements.append(Paragraph("* Opcao recomendada", ParagraphStyle(
+        "Nota", parent=style_meta, fontSize=8, spaceBefore=4,
+    )))
+
+    # ── Pagina: POR QUE A GRADIOS ──
+    elements.append(PageBreak())
+    elements.append(Paragraph("POR QUE A GRADIOS", style_subtitulo))
+    elements.append(Spacer(1, 0.5 * cm))
+
+    diferenciais = [
+        ("Resultado em 2 semanas",
+         "Enquanto consultorias tradicionais levam meses para entregar, "
+         "a GRADIOS entrega valor tangivel nas primeiras 2 semanas. "
+         "Diagnostico rapido, implementacao agil, resultados imediatos."),
+        ("IA integrada na operacao",
+         "Nao vendemos ferramentas — integramos inteligencia artificial "
+         "diretamente nos processos do cliente. 12 agentes especializados "
+         "trabalhando 24/7 para otimizar cada area do negocio."),
+        ("Sem contrato longo, sem surpresas",
+         "Proposta transparente, escopo definido, prazo real. "
+         "Pagamento por entrega, nao por hora. "
+         "Se nao entregar resultado, nao cobra."),
+    ]
+    for titulo_dif, desc_dif in diferenciais:
+        elements.append(Paragraph(f"<b>{titulo_dif}</b>", ParagraphStyle(
+            "DifTitulo", parent=style_corpo, fontSize=12,
+            spaceBefore=12, spaceAfter=4, fontName="Helvetica-Bold",
+            textColor=cor_acento,
+        )))
+        elements.append(Paragraph(desc_dif, style_corpo))
+
+    # ── Pagina: CASES E RESULTADOS ──
+    elements.append(PageBreak())
+    elements.append(Paragraph("CASES E RESULTADOS", style_subtitulo))
+    elements.append(Spacer(1, 0.5 * cm))
+
+    cases = [
+        ("Industria Metalurgica", "+35% OEE",
+         "Automacao de controle de producao com IoT e dashboard em tempo real. "
+         "Reducao de setup de 45min para 12min."),
+        ("Rede de Varejo", "-60% retrabalho",
+         "Integracao ERP + e-commerce + logistica. "
+         "Eliminacao de digitacao manual em 3 sistemas distintos."),
+        ("Escritorio Juridico", "8h/semana economizadas",
+         "Automacao de peticoes e acompanhamento processual. "
+         "IA gerando minutas com 95% de aproveitamento."),
+    ]
+    for case_nome, case_metric, case_desc in cases:
+        elements.append(Paragraph(
+            f"<b>{case_nome}</b>  —  <b>{case_metric}</b>",
+            ParagraphStyle("CaseTitulo", parent=style_corpo, fontSize=11,
+                          spaceBefore=12, spaceAfter=4, fontName="Helvetica-Bold"),
+        ))
+        elements.append(Paragraph(case_desc, style_corpo))
+
+    # ── Pagina: CTA FINAL + QR CODE ──
+    elements.append(PageBreak())
+    elements.append(Spacer(1, 3 * cm))
+    elements.append(Paragraph("VAMOS COMECAR?", ParagraphStyle(
+        "CTATitulo", parent=style_titulo, alignment=TA_CENTER, fontSize=28,
+        textColor=cor_acento,
+    )))
+    elements.append(Spacer(1, 1 * cm))
+    elements.append(Paragraph(
+        f"<b>{nome}</b>, estamos prontos para transformar a operacao da "
+        f"<b>{empresa}</b>. O proximo passo e uma conversa de 30 minutos "
+        f"para alinhar escopo e cronograma.",
+        ParagraphStyle("CTACorpo", parent=style_corpo, alignment=TA_CENTER,
+                       fontSize=12, leading=18),
+    ))
+    elements.append(Spacer(1, 1.5 * cm))
+
+    # QR Code (texto com URL do WhatsApp)
+    whatsapp_url = "https://wa.me/5543988372540?text=Oi%20GRADIOS%2C%20quero%20agendar%20uma%20conversa"
+    elements.append(Paragraph(
+        f'Fale conosco agora: <a href="{whatsapp_url}" color="#6366f1">'
+        f"(43) 98837-2540 (WhatsApp)</a>",
+        ParagraphStyle("CTAWA", parent=style_corpo, alignment=TA_CENTER,
+                       fontSize=13, fontName="Helvetica-Bold", textColor=cor_acento),
+    ))
+    elements.append(Spacer(1, 0.5 * cm))
+    elements.append(Paragraph(
+        "contato@gradios.co  |  gradios.co",
+        ParagraphStyle("CTAContato", parent=style_meta, alignment=TA_CENTER, fontSize=11),
+    ))
+
+    # ── Rodape / contato ──
+    elements.append(Spacer(1, 3 * cm))
+    elements.append(Paragraph("─" * 50, style_center))
+    elements.append(Spacer(1, 0.3 * cm))
+    elements.append(Paragraph(
+        f"Proposta gerada por JARVIS — {data_hoje}",
+        ParagraphStyle("Rodape", parent=style_meta, alignment=TA_CENTER, spaceAfter=2),
+    ))
+
+    doc.build(elements)
+
+    tempo_ms = int((time.perf_counter() - t0) * 1000)
+
+    # ── 4. Salvar historico no Supabase ──
+    await sb.insert("propostas", {
+        "cliente": empresa,
+        "lead_nome": nome,
+        "valor": valor_completo,
+        "status": "gerada",
+        "filename": filename,
+        "servicos": servicos_texto,
+        "segmento": segmento,
+    })
+
+    logger.info(
+        "Proposta PDF gerada: %s — %s — %dms",
+        filename, empresa, tempo_ms,
+    )
+
+    return {
+        "status": "ok",
+        "arquivo": str(filepath),
+        "filename": filename,
+        "lead": {
+            "nome": nome,
+            "empresa": empresa,
+            "segmento": segmento,
+            "score": lead_score,
+        },
+        "valores": {
+            "essencial": valor_essencial,
+            "completo": valor_completo,
+            "premium": valor_premium,
+        },
+        "tempo_geracao_ms": tempo_ms,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.get("/jarvis/crm/propostas")
+async def listar_propostas() -> list[dict]:
+    """Lista todas as propostas geradas, ordenadas por data."""
+    return await sb.select(
+        "propostas",
+        columns="id,cliente,lead_nome,valor,status,filename,servicos,segmento,created_at",
+        order="created_at.desc",
+        limit=50,
+    )
+
+
 # ─── Health check ──────────────────────────────────────────────────
 
 @app.get("/health")
 async def health() -> dict:
-    """Health check completo do sistema."""
+    """Health check completo do sistema — todos os servicos."""
+    import time as _time
+
+    results: dict[str, dict] = {}
+
     # Ollama
     ollama_ok = False
     models: list[str] = []
+    ollama_ms = 0
     try:
+        t0 = _time.perf_counter()
         async with httpx.AsyncClient(timeout=5.0) as client:
             r = await client.get(f"{OLLAMA_URL}/api/tags")
             r.raise_for_status()
             models = [m["name"] for m in r.json().get("models", [])]
         ollama_ok = True
+        ollama_ms = int((_time.perf_counter() - t0) * 1000)
     except Exception as e:
         logger.warning("Health check Ollama falhou: %s", e)
+    results["ollama"] = {"ok": ollama_ok, "models": models, "latency_ms": ollama_ms}
 
-    # Supabase (GET /jarvis_agents via REST)
-    supabase_ok = await sb.health_check()
+    # Supabase
+    sb_ok = False
+    sb_ms = 0
+    try:
+        t0 = _time.perf_counter()
+        sb_ok = await sb.health_check()
+        sb_ms = int((_time.perf_counter() - t0) * 1000)
+    except Exception:
+        pass
+    results["supabase"] = {"ok": sb_ok, "latency_ms": sb_ms}
+
+    # WhatsApp (Evolution API)
+    evo_ok = False
+    evo_ms = 0
+    try:
+        t0 = _time.perf_counter()
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            r = await client.get("http://localhost:8080/")
+            evo_ok = r.status_code < 500
+        evo_ms = int((_time.perf_counter() - t0) * 1000)
+    except Exception:
+        pass
+    results["whatsapp"] = {"ok": evo_ok, "latency_ms": evo_ms}
+
+    # N8N
+    n8n_ok = False
+    n8n_ms = 0
+    try:
+        t0 = _time.perf_counter()
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            r = await client.get("http://localhost:5678/healthz")
+            n8n_ok = r.status_code < 500
+        n8n_ms = int((_time.perf_counter() - t0) * 1000)
+    except Exception:
+        pass
+    results["n8n"] = {"ok": n8n_ok, "latency_ms": n8n_ms}
+
+    # Cloudflare Tunnel
+    tunnel_ok = False
+    try:
+        import subprocess
+        proc = subprocess.run(
+            ["cloudflared", "tunnel", "info", "gradios-jarvis"],
+            capture_output=True, text=True, timeout=5,
+        )
+        tunnel_ok = proc.returncode == 0
+    except Exception:
+        pass
+    results["cloudflare"] = {"ok": tunnel_ok}
+
+    # Claude API
+    claude_ok = bool(ANTHROPIC_KEY)
+    results["claude"] = {"ok": claude_ok}
+
+    all_ok = all(r["ok"] for r in results.values())
 
     return {
-        "status": "ok",
+        "status": "ok" if all_ok else "degraded",
         "ollama": ollama_ok,
         "models": models,
-        "supabase": supabase_ok,
-        "claude": bool(ANTHROPIC_KEY),
+        "supabase": sb_ok,
+        "claude": claude_ok,
         "agents": list(AGENTS.keys()),
-        "version": "2.1.0",
+        "agents_count": len(AGENTS),
+        "version": "3.0.0",
+        "services": results,
     }

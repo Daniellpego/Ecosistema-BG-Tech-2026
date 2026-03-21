@@ -59,6 +59,18 @@ async def _run_agente_noturno() -> None:
     await noturno_executar()
 
 
+async def _run_monitor_projetos() -> None:
+    """Executa monitor_projetos.py — alerta prazos proximos."""
+    from aiox.cron.monitor_projetos import executar as projetos_executar
+    await projetos_executar()
+
+
+async def _run_relatorio_semanal() -> None:
+    """Executa relatorio_semanal.py — consolidado semanal para socios."""
+    from aiox.cron.relatorio_semanal import executar as semanal_executar
+    await semanal_executar()
+
+
 CRONS = [
     {
         "nome": "crm_monitor",
@@ -71,6 +83,19 @@ CRONS = [
         "funcao": _run_agente_noturno,
         "intervalo_segundos": None,
         "horario_fixo": 7,  # 07:00
+    },
+    {
+        "nome": "monitor_projetos",
+        "funcao": _run_monitor_projetos,
+        "intervalo_segundos": None,
+        "horario_fixo": 18,  # 18:00
+    },
+    {
+        "nome": "relatorio_semanal",
+        "funcao": _run_relatorio_semanal,
+        "intervalo_segundos": None,
+        "horario_fixo": 8,  # 08:00
+        "dia_semana": 0,    # segunda-feira
     },
 ]
 
@@ -97,18 +122,31 @@ async def run_intervalo(cron: dict) -> None:
 
 
 async def run_horario_fixo(cron: dict) -> None:
-    """Roda cron uma vez por dia no horario fixo."""
+    """Roda cron uma vez por dia no horario fixo.
+
+    Se dia_semana estiver definido (0=seg, 6=dom), roda apenas nesse dia.
+    """
     nome = cron["nome"]
     hora = cron["horario_fixo"]
     funcao = cron["funcao"]
+    dia_semana = cron.get("dia_semana")  # None = todos os dias
 
-    logger.info("[%s] Iniciado — horario fixo: %02d:00", nome, hora)
+    desc = f"{hora:02d}:00"
+    if dia_semana is not None:
+        dias = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"]
+        desc += f" ({dias[dia_semana]})"
+    logger.info("[%s] Iniciado — horario fixo: %s", nome, desc)
 
     while True:
         agora = datetime.now()
         proximo = agora.replace(hour=hora, minute=0, second=0, microsecond=0)
         if proximo <= agora:
             proximo += timedelta(days=1)
+
+        # Se tem dia_semana, avanca ate o dia correto
+        if dia_semana is not None:
+            while proximo.weekday() != dia_semana:
+                proximo += timedelta(days=1)
 
         espera = (proximo - agora).total_seconds()
         logger.info(
