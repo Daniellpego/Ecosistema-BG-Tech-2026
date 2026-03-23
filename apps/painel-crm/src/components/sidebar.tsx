@@ -12,6 +12,7 @@ import {
   BarChart3,
   Handshake,
   Settings,
+  BookOpen,
   LogOut,
   Menu,
   X,
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/clientes', label: 'Clientes', icon: Handshake },
   { href: '/configuracoes', label: 'Configurações', icon: Settings },
+  { href: '/como-usar', label: 'Como Usar', icon: BookOpen },
 ] as const
 
 export function Sidebar() {

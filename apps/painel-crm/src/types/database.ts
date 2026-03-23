@@ -51,6 +51,8 @@ export interface Deal {
   updated_at: string
 }
 
+export type DealInsert = Omit<Deal, 'id' | 'created_at' | 'updated_at'>
+
 // ─── Atividade Types ───────────────────────────────────────
 
 export type AtividadeTipo = 'nota' | 'ligacao' | 'whatsapp' | 'email' | 'reuniao' | 'proposta_enviada' | 'followup' | 'sistema'
