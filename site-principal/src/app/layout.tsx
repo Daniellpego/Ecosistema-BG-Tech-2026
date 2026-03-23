@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { SmoothScrollProvider } from "@/providers/smooth-scroll";
 
 const geist = localFont({
   src: "./fonts/GeistVF.woff",
@@ -84,7 +85,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="scroll-smooth">
+    <html lang="pt-BR">
       <head>
         <link rel="canonical" href="https://gradios.co/" />
         <meta name="robots" content="index, follow" />
@@ -98,20 +99,22 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geist.variable} ${geistDisplay.variable} font-sans`}>
-        {/* Skip-link de acessibilidade */}
-        <a
-          href="#conteudo-principal"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-bold"
-        >
-          Pular para o conteúdo principal
-        </a>
-        <ScrollProgress />
-        <Navbar />
-        <main id="conteudo-principal" className="min-h-screen pt-20">
-          {children}
-        </main>
-        <Footer />
-        <WhatsAppFab />
+        <SmoothScrollProvider>
+          {/* Skip-link de acessibilidade */}
+          <a
+            href="#conteudo-principal"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-bold"
+          >
+            Pular para o conteúdo principal
+          </a>
+          <ScrollProgress />
+          <Navbar />
+          <main id="conteudo-principal" className="min-h-screen pt-20">
+            {children}
+          </main>
+          <Footer />
+          <WhatsAppFab />
+        </SmoothScrollProvider>
       </body>
     </html>
   );
