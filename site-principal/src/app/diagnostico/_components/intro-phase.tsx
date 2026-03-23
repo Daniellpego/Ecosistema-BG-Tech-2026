@@ -31,7 +31,7 @@ export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
       </span>
 
       <h1
-        className="mt-6 text-3xl sm:text-4xl md:text-5xl font-black text-text leading-tight"
+        className="mt-6 text-3xl sm:text-4xl md:text-5xl font-bold text-text leading-tight"
         style={{ letterSpacing: "-0.02em" }}
       >
         Descubra quanto sua empresa{" "}

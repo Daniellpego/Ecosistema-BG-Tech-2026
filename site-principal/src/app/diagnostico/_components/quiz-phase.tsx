@@ -83,7 +83,7 @@ export default function QuizPhase({
             <path d={activeTransition.icon} />
           </svg>
         </div>
-        <p className="text-2xl font-black text-text mb-2" style={{ letterSpacing: "-0.02em" }}>
+        <p className="text-2xl font-bold text-text mb-2" style={{ letterSpacing: "-0.02em" }}>
           {activeTransition.title}
         </p>
         <p className="text-text-muted max-w-sm">{activeTransition.subtitle}</p>
@@ -157,7 +157,7 @@ export default function QuizPhase({
 
       {/* Question */}
       <h2
-        className="text-2xl sm:text-3xl font-black text-text"
+        className="text-2xl sm:text-3xl font-bold text-text"
         style={{ letterSpacing: "-0.02em" }}
       >
         {q.pergunta}
@@ -178,10 +178,10 @@ export default function QuizPhase({
             <button
               key={idx}
               onClick={() => handleSelect(idx)}
-              className={`quiz-option w-full text-left px-5 py-4 rounded-card border-2 transition-all duration-200 text-sm font-medium group ${
+              className={`quiz-option w-full text-left px-5 py-4 rounded-card transition-all duration-200 text-sm group ${
                 selected
-                  ? "border-primary bg-primary/5 text-primary shadow-sm shadow-primary/10"
-                  : "border-card-border hover:border-primary/30 hover:bg-white text-text"
+                  ? "border border-primary bg-primary/5 text-primary font-medium shadow-sm shadow-primary/10"
+                  : "bg-white shadow-sm hover:shadow-md hover:border-primary/20 border border-transparent text-text"
               }`}
               style={{ animationDelay: `${idx * 0.04}s` }}
             >

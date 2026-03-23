@@ -35,7 +35,7 @@ export default function LoadingPhase({ empresa, city, loadingStep }: LoadingPhas
             </div>
           </div>
 
-          <p className="text-white text-xl sm:text-2xl font-black mb-1" style={{ letterSpacing: "-0.02em" }}>
+          <p className="text-white text-xl sm:text-2xl font-bold mb-1" style={{ letterSpacing: "-0.02em" }}>
             Analisando {empresa}
           </p>
           {city && <p className="text-[#64748B] text-sm mb-8">{city}</p>}

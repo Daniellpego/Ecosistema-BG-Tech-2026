@@ -23,7 +23,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
           Última etapa
         </span>
         <h2
-          className="mt-4 text-2xl sm:text-3xl font-black text-text"
+          className="mt-4 text-2xl sm:text-3xl font-bold text-text"
           style={{ letterSpacing: "-0.02em" }}
         >
           Seu diagnóstico está pronto.
@@ -54,7 +54,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-sm font-black text-text">{partialScore}</span>
+              <span className="text-sm font-bold text-text">{partialScore}</span>
             </div>
           </div>
           <div className="text-left">
