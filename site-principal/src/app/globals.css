@@ -280,6 +280,41 @@
     display: inline-block;
   }
 
+  /* ═══ ANIMATED GRADIENT MESH ═══ */
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animated-gradient-mesh {
+    background: linear-gradient(
+      -45deg,
+      #2546BD,
+      #1856C0,
+      #00BFFF,
+      #2546BD,
+      #0090D9
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 12s ease infinite;
+  }
+
+  /* ═══ MOBILE TOUCH FEEDBACK ═══ */
+  @keyframes touchPulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(0.97); }
+    100% { transform: scale(1); }
+  }
+
+  .touch-feedback {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .touch-feedback:active {
+    animation: touchPulse 0.2s ease;
+  }
+
   /* ═══ WHATSAPP PULSE — alive breathing ═══ */
   @keyframes wppBreath {
     0%, 100% {

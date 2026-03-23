@@ -1,5 +1,7 @@
 "use client";
 import { useScrollReveal, useStaggerReveal } from "@/hooks/useAnimations";
+import { WordReveal } from "./WordReveal";
+import { TiltCard } from "./TiltCard";
 
 export function Founders() {
   const header = useScrollReveal('up', 0, 0.1);
@@ -12,9 +14,10 @@ export function Founders() {
           <div className={`inline-flex items-center bg-primary/8 text-primary font-semibold border border-secondary/20 rounded-pill text-sm px-4 py-1.5 tracking-wide mb-6 ${header.className}`} style={header.style}>
             Quem Está Por Trás
           </div>
-          <h2 className={`text-4xl lg:text-5xl font-bold text-text text-center leading-tight mb-4 ${header.className}`} style={{ ...header.style, animationDelay: '100ms' }}>
-            Pessoas reais construindo<br className="hidden md:block" /> sua automação
-          </h2>
+          <WordReveal
+            text="Pessoas reais construindo sua automação"
+            className="text-4xl lg:text-5xl font-bold text-text text-center leading-tight mb-4"
+          />
           <p className={`text-text-muted text-lg text-center max-w-xl mx-auto ${header.className}`} style={{ ...header.style, animationDelay: '200ms' }}>
             Não somos uma agência genérica. Somos engenheiros que entendem de processo.
           </p>
@@ -25,7 +28,7 @@ export function Founders() {
           {(() => {
             const child = getChildProps(0, 'right', 180);
             return (
-              <div className={`bg-white border border-card-border rounded-card p-7 solution-card ${child.className}`} style={child.style}>
+              <TiltCard className={`bg-white border border-card-border rounded-card p-7 solution-card touch-feedback ${child.className}`} style={child.style}>
                 <div className="flex items-center gap-4 mb-5">
                   <div className="w-14 h-14 rounded-full bg-brand-gradient flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
                     <span className="text-white text-lg font-bold">GB</span>
@@ -54,7 +57,7 @@ export function Founders() {
                   </svg>
                   LinkedIn
                 </a>
-              </div>
+              </TiltCard>
             );
           })()}
 
@@ -62,7 +65,7 @@ export function Founders() {
           {(() => {
             const child = getChildProps(1, 'up', 180);
             return (
-              <div className={`bg-white border border-card-border rounded-card p-7 solution-card ${child.className}`} style={child.style}>
+              <TiltCard className={`bg-white border border-card-border rounded-card p-7 solution-card touch-feedback ${child.className}`} style={child.style}>
                 <div className="flex items-center gap-4 mb-5">
                   <div className="w-14 h-14 rounded-full bg-brand-gradient flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
                     <span className="text-white text-lg font-bold">DP</span>
@@ -91,7 +94,7 @@ export function Founders() {
                   </svg>
                   LinkedIn
                 </a>
-              </div>
+              </TiltCard>
             );
           })()}
 
@@ -99,7 +102,7 @@ export function Founders() {
           {(() => {
             const child = getChildProps(2, 'left', 180);
             return (
-              <div className={`bg-white border border-card-border rounded-card p-7 solution-card ${child.className}`} style={child.style}>
+              <TiltCard className={`bg-white border border-card-border rounded-card p-7 solution-card touch-feedback ${child.className}`} style={child.style}>
                 <div className="flex items-center gap-4 mb-5">
                   <div className="w-14 h-14 rounded-full bg-brand-gradient flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
                     <span className="text-white text-lg font-bold">BG</span>
@@ -128,7 +131,7 @@ export function Founders() {
                   </svg>
                   LinkedIn
                 </a>
-              </div>
+              </TiltCard>
             );
           })()}
         </div>
