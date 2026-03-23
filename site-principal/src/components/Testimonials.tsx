@@ -106,14 +106,34 @@ export function Testimonials() {
                 Automação completa do fluxo de aprovações, conciliação bancária e geração de relatórios. Eliminamos 90% do trabalho manual.
               </p>
             </div>
-            <div className="flex items-center gap-3 pt-4 border-t border-card-border">
-              <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-xs font-bold">CF</span>
+
+            {/* Testimonial + micro-CTA */}
+            <div className="pt-4 border-t border-card-border space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs font-bold">CF</span>
+                </div>
+                <div>
+                  <span className="text-sm text-text font-semibold block">CFO, empresa de serviços financeiros</span>
+                  <span className="text-xs text-text-muted italic">&ldquo;O fechamento que levava 3 dias agora termina antes do almoço.&rdquo;</span>
+                </div>
               </div>
-              <div>
-                <span className="text-sm text-text font-semibold block">CFO, empresa de serviços financeiros</span>
-                <span className="text-xs text-text-muted italic">&ldquo;O fechamento que levava 3 dias agora termina antes do almoço.&rdquo;</span>
-              </div>
+
+              {/* Micro-CTA — targeted conversion */}
+              <Link
+                href="/diagnostico"
+                className="group flex items-center gap-3 bg-primary/[0.04] hover:bg-primary/[0.08] border border-primary/15 hover:border-primary/30 rounded-xl px-4 py-3 transition-all duration-300"
+              >
+                <div className="w-8 h-8 rounded-full bg-brand-gradient flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-text">Seu fechamento financeiro também demora?</p>
+                  <p className="text-xs text-primary font-medium">Descubra como reduzir →</p>
+                </div>
+              </Link>
             </div>
           </motion.div>
 

@@ -197,6 +197,33 @@ export function Hero() {
               <span className="font-bold text-text">+17 empresas</span> já automatizaram com a Gradios
             </p>
           </motion.div>
+
+          {/* Trust bar — logos dos setores atendidos (transferência de autoridade) */}
+          <motion.div
+            className="mt-10 flex flex-col items-center gap-4"
+            variants={heroEntrance}
+            initial="hidden"
+            animate="visible"
+            custom={1.1}
+          >
+            <p className="text-xs text-text-muted/60 uppercase tracking-widest font-medium">Empresas que já automatizaram com a Gradios</p>
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+              {[
+                { name: "Financeiro", icon: "M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" },
+                { name: "Saúde", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
+                { name: "Varejo", icon: "M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" },
+                { name: "Logística", icon: "M1 3h15v13H1zM16 8h4l3 3v5h-7V8zM5.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM18.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" },
+                { name: "SaaS", icon: "M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z" },
+              ].map((sector, i) => (
+                <div key={i} className="flex items-center gap-2 text-text-muted/40 hover:text-primary/50 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={sector.icon} />
+                  </svg>
+                  <span className="text-sm font-semibold tracking-tight">{sector.name}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
         {/* DASHBOARD FULL-WIDTH */}

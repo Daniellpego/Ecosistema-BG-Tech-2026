@@ -76,6 +76,108 @@ export function FeatureShowcase() {
                 </div>
               ))}
             </div>
+
+            {/* Integration flow diagram — tangibiliza a automação */}
+            <motion.div
+              className="mt-10 bg-[#0f172a] rounded-2xl p-6 overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ type: "spring", stiffness: 80, damping: 18, delay: 0.2 }}
+            >
+              <p className="text-[10px] text-white/40 uppercase tracking-widest font-medium mb-5">Como a automação funciona</p>
+              <div className="flex items-center justify-between gap-2">
+                {/* Source nodes */}
+                <div className="flex flex-col gap-2 flex-shrink-0">
+                  {[
+                    { label: "WhatsApp", color: "#25D366", icon: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" },
+                    { label: "Planilhas", color: "#34A853", icon: "M3 3h18v18H3zM3 9h18M3 15h18M9 3v18" },
+                    { label: "ERP", color: "#4285F4", icon: "M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" },
+                  ].map((node, i) => (
+                    <motion.div
+                      key={i}
+                      className="flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] rounded-lg px-3 py-2"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.3 + i * 0.1 }}
+                    >
+                      <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${node.color}20` }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke={node.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d={node.icon} />
+                        </svg>
+                      </div>
+                      <span className="text-[10px] text-white/60 font-medium">{node.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Animated arrows → center */}
+                <div className="flex flex-col items-center gap-2 flex-shrink-0 px-1">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      className="flex items-center"
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.6 + i * 0.1 }}
+                    >
+                      <div className="w-6 sm:w-10 h-px bg-gradient-to-r from-white/10 to-secondary/40" />
+                      <svg className="w-2 h-2 text-secondary/60 -ml-0.5" viewBox="0 0 8 8" fill="currentColor">
+                        <path d="M0 0L8 4L0 8z" />
+                      </svg>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Center — Gradios engine */}
+                <motion.div
+                  className="flex flex-col items-center gap-1.5 flex-shrink-0"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 120, damping: 14, delay: 0.7 }}
+                >
+                  <div className="w-14 h-14 rounded-xl bg-brand-gradient flex items-center justify-center shadow-lg shadow-primary/30 relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-[#0f172a] animate-pulse" />
+                  </div>
+                  <span className="text-[9px] text-secondary font-bold uppercase tracking-wider">Gradios</span>
+                </motion.div>
+
+                {/* Arrow → output */}
+                <motion.div
+                  className="flex items-center flex-shrink-0 px-1"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.9 }}
+                >
+                  <div className="w-6 sm:w-10 h-px bg-gradient-to-r from-secondary/40 to-green-400/60" />
+                  <svg className="w-2 h-2 text-green-400/60 -ml-0.5" viewBox="0 0 8 8" fill="currentColor">
+                    <path d="M0 0L8 4L0 8z" />
+                  </svg>
+                </motion.div>
+
+                {/* Output — result */}
+                <motion.div
+                  className="flex flex-col items-center gap-1 flex-shrink-0"
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 100, damping: 15, delay: 1 }}
+                >
+                  <div className="w-14 h-14 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                    <span className="text-2xl">💰</span>
+                  </div>
+                  <span className="text-[9px] text-green-400 font-bold uppercase tracking-wider">Resultado</span>
+                </motion.div>
+              </div>
+            </motion.div>
           </motion.div>
 
           {/* COLUNA DIREITA — stagger from left */}
