@@ -78,27 +78,8 @@ export function Hero() {
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
-            {/* Pulsating Brain Icon */}
-            <div className="relative w-6 h-6 flex items-center justify-center">
-              {/* Neural glow ring */}
-              <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" style={{ animationDuration: '3s' }} />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 text-primary animate-brain-pulse relative z-10"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                {/* Brain SVG */}
-                <path d="M12 2C8.5 2 6 4.5 6 7c0 1.5.5 2.8 1.4 3.8C6.5 11.5 6 12.7 6 14c0 2.5 1.8 4.5 4 4.9V22h4v-3.1c2.2-.4 4-2.4 4-4.9 0-1.3-.5-2.5-1.4-3.2C17.5 9.8 18 8.5 18 7c0-2.5-2.5-5-6-5z" />
-                <path d="M12 2v20" className="animate-neural" />
-                <path d="M8 8c1.5 0 2.5 1 4 1s2.5-1 4-1" />
-                <path d="M8 14c1.5 0 2.5 1 4 1s2.5-1 4-1" />
-              </svg>
-            </div>
+            {/* Pulsating Brain Emoji */}
+            <span className="animate-brain-bounce text-lg leading-none" role="img" aria-label="cérebro">🧠</span>
             O cérebro da sua operação
           </div>
 
