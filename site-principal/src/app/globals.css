@@ -4,7 +4,6 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     scroll-padding-top: 88px;
   }
   body {
@@ -39,56 +38,61 @@
     @apply btn-pill bg-gradient-primary text-white hover:opacity-90 shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-primary;
   }
 
-  /* Classe de gradiente da marca — única fonte de verdade */
+  /* Brand gradient — single source of truth */
   .bg-brand-gradient {
     background: linear-gradient(135deg, #2546BD, #00BFFF);
   }
 
-  /* Spring easing — used globally */
-  .ease-spring {
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  /* ═══ INFINITE CSS ANIMATIONS — loops better kept in CSS ═══ */
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
   }
 
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(60px) scale(0.95); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
   }
 
-  @keyframes fadeSlideRight {
-    from { opacity: 0; transform: translateX(60px) scale(0.95); }
-    to   { opacity: 1; transform: translateX(0) scale(1); }
-  }
-
-  /* Hero mockup dramatic 3D entry */
-  @keyframes mockupEntry {
-    from {
-      opacity: 0;
-      transform: perspective(1200px) rotateX(8deg) rotateY(-4deg) translateY(60px) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: perspective(1200px) rotateX(4deg) rotateY(0deg) translateY(0) scale(1);
-    }
-  }
-
-  .animate-mockup-entry {
-    animation: mockupEntry 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
-  }
-
-  /* Hero text line stagger */
-  @keyframes textLineUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .animate-text-up {
-    animation: textLineUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  @keyframes ctaPulse {
+    0%, 100% { box-shadow: 0 4px 14px rgba(37, 70, 189, 0.25); }
+    50% { box-shadow: 0 4px 24px rgba(37, 70, 189, 0.45), 0 0 40px rgba(0, 191, 255, 0.15); }
   }
 
   @keyframes marquee {
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
   }
+
+  @keyframes brainBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+
+  @keyframes wppBreath {
+    0%, 100% {
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3),
+                  0 0 0 0px rgba(37, 211, 102, 0.4);
+    }
+    50% {
+      box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5),
+                  0 0 0 8px rgba(37, 211, 102, 0.08);
+    }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { filter: drop-shadow(0 0 8px var(--glow-color, #00BFFF60)); }
+    50% { filter: drop-shadow(0 0 16px var(--glow-color, #00BFFF80)); }
+  }
+
+  .animate-float { animation: float 4s ease-in-out infinite; }
+  .animate-shimmer { background-size: 200% auto; animation: shimmer 3s linear infinite; }
+  .animate-cta-pulse { animation: ctaPulse 3s ease-in-out infinite; }
+  .animate-marquee { animation: marquee 20s linear infinite; }
+  .animate-brain-bounce { animation: brainBounce 2.5s ease-in-out infinite; display: inline-block; }
+  .animate-wpp-breath { animation: wppBreath 2.5s ease-in-out infinite; }
+  .animate-pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
 
   /* Marquee pause on hover */
   .marquee-container:hover .animate-marquee {
@@ -106,52 +110,8 @@
     animation: drawLine 1.2s ease-out 0.8s forwards;
   }
 
-  .animate-fade-slide-up {
-    animation: fadeSlideUp 0.6s ease forwards;
-  }
-  .animate-fade-slide-right {
-    animation: fadeSlideRight 0.6s ease forwards;
-  }
-  .animate-marquee {
-    animation: marquee 20s linear infinite;
-  }
-  .opacity-0 { opacity: 0; }
+  /* ═══ HOVER EFFECTS — CSS transitions are fine for hover ═══ */
 
-  /* Animações globais */
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-12px); }
-  }
-
-  @keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-
-  /* CTA pulse glow */
-  @keyframes ctaPulse {
-    0%, 100% { box-shadow: 0 4px 14px rgba(37, 70, 189, 0.25); }
-    50% { box-shadow: 0 4px 24px rgba(37, 70, 189, 0.45), 0 0 40px rgba(0, 191, 255, 0.15); }
-  }
-
-  .animate-float {
-    animation: float 4s ease-in-out infinite;
-  }
-
-  .animate-shimmer {
-    background-size: 200% auto;
-    animation: shimmer 3s linear infinite;
-  }
-
-  .animate-cta-pulse {
-    animation: ctaPulse 3s ease-in-out infinite;
-  }
-
-  .duration-2000 {
-    transition-duration: 2000ms;
-  }
-
-  /* Hover nos cards de solução — cor da MARCA */
   .solution-card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -164,11 +124,6 @@
   .solution-card:hover .solution-icon {
     transform: scale(1.1);
     color: #00BFFF;
-  }
-
-  /* Progress bar animada */
-  .progress-bar {
-    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Link hover underline */
@@ -190,66 +145,10 @@
     width: 100%;
   }
 
-  /* ═══ SCROLL REVEAL KEYFRAMES — smooth, elegant, no bounce ═══ */
-
-  @keyframes revealUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .reveal-up { animation: revealUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
-
-  @keyframes revealDown {
-    from { opacity: 0; transform: translateY(-40px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .reveal-down { animation: revealDown 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
-
-  @keyframes revealLeft {
-    from { opacity: 0; transform: translateX(50px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  .reveal-left { animation: revealLeft 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
-
-  @keyframes revealRight {
-    from { opacity: 0; transform: translateX(-50px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  .reveal-right { animation: revealRight 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
-
-  @keyframes revealScale {
-    from { opacity: 0; transform: scale(0.92); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-  .reveal-scale { animation: revealScale 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
-
-  @keyframes revealBlur {
-    from { opacity: 0; filter: blur(8px); }
-    to   { opacity: 1; filter: blur(0); }
-  }
-  .reveal-blur { animation: revealBlur 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
-
-  @keyframes revealRotate {
-    from { opacity: 0; transform: rotate(3deg) translateY(30px); }
-    to   { opacity: 1; transform: rotate(0) translateY(0); }
-  }
-  .reveal-rotate { animation: revealRotate 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
-
-  /* ═══ BRAIN EMOJI PULSE — subtle ═══ */
-  @keyframes brainBounce {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.12); }
-  }
-
-  .animate-brain-bounce {
-    animation: brainBounce 2.5s ease-in-out infinite;
-    display: inline-block;
-  }
-
   /* ═══ MOBILE TOUCH FEEDBACK ═══ */
   .touch-feedback {
     -webkit-tap-highlight-color: transparent;
   }
-
   @media (hover: none) {
     .touch-feedback:active {
       transform: scale(0.98);
@@ -257,44 +156,42 @@
     }
   }
 
-  /* ═══ WHATSAPP PULSE — alive breathing ═══ */
-  @keyframes wppBreath {
-    0%, 100% {
-      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3),
-                  0 0 0 0px rgba(37, 211, 102, 0.4);
-    }
-    50% {
-      box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5),
-                  0 0 0 8px rgba(37, 211, 102, 0.08);
-    }
+  /* ═══ DIAGNOSTIC / LOADING — kept for quiz pages ═══ */
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(60px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  .animate-wpp-breath {
-    animation: wppBreath 2.5s ease-in-out infinite;
+  .animate-fade-slide-up {
+    animation: fadeSlideUp 0.6s ease forwards;
   }
 
-  /* Reduced motion */
+  .gauge-ring {
+    transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .quiz-option {
+    opacity: 0;
+    animation: fadeSlideUp 0.4s ease forwards;
+  }
+
+  /* ═══ REDUCED MOTION ═══ */
   @media (prefers-reduced-motion: reduce) {
     .animate-float,
     .animate-marquee,
     .animate-shimmer,
     .animate-cta-pulse,
     .animate-fade-slide-up,
-    .animate-fade-slide-right,
     .animate-pulse-glow,
     .animate-brain-bounce,
-    .animate-wpp-breath,
-    .reveal-up, .reveal-down,
-    .reveal-left, .reveal-right,
-    .reveal-scale, .reveal-blur,
-    .reveal-rotate {
+    .animate-wpp-breath {
       animation: none !important;
       opacity: 1 !important;
       transform: none !important;
       filter: none !important;
     }
     .solution-card,
-    .progress-bar,
     .path-anim {
       transition: none !important;
       animation: none !important;
@@ -304,104 +201,80 @@
       animation-duration: 0.01ms !important;
     }
   }
+}
 
-  /* ═══ DIAGNOSTIC RESULT — Dark Theme ═══ */
+/* ═══ DIAGNOSTIC RESULT — Dark Theme ═══ */
 
-  .result-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+.result-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
+.result-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0A1628 0%, #0F1D32 50%, #0A1628 100%);
+  border: 1px solid #1E293B;
+  border-radius: 1.25rem;
+  padding: 2rem 1.5rem;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
   .result-hero {
-    position: relative;
-    background: linear-gradient(135deg, #0A1628 0%, #0F1D32 50%, #0A1628 100%);
-    border: 1px solid #1E293B;
-    border-radius: 1.25rem;
-    padding: 2rem 1.5rem;
-    overflow: hidden;
-  }
-
-  @media (min-width: 640px) {
-    .result-hero {
-      padding: 2.5rem 2rem;
-    }
-  }
-
-  .result-data-card {
-    background: #131F35;
-    border: 1px solid #1E293B;
-    border-radius: 1rem;
-    padding: 1.25rem;
-    transition: all 0.3s ease;
-  }
-
-  .result-data-card:hover {
-    border-color: #334155;
-    background: #162236;
-  }
-
-  .result-section {
-    background: #131F35;
-    border: 1px solid #1E293B;
-    border-radius: 1.25rem;
-    padding: 1.5rem;
-  }
-
-  .result-cta {
-    position: relative;
-    background: linear-gradient(135deg, #0A1628, #0E2247);
-    border: 1px solid #00BFFF20;
-    border-radius: 1.25rem;
-    padding: 2rem 1.5rem;
-    overflow: hidden;
-  }
-
-  /* Loading container (dark) */
-  .loading-container {
-    position: relative;
-    background: linear-gradient(135deg, #0A1628 0%, #0F1D32 100%);
-    border: 1px solid #1E293B;
-    border-radius: 1.25rem;
-    padding: 2.5rem 1.5rem;
-  }
-
-  /* Gauge ring animation */
-  .gauge-ring {
-    transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Pulse glow for score */
-  @keyframes pulseGlow {
-    0%, 100% { filter: drop-shadow(0 0 8px var(--glow-color, #00BFFF60)); }
-    50% { filter: drop-shadow(0 0 16px var(--glow-color, #00BFFF80)); }
-  }
-
-  .animate-pulse-glow {
-    animation: pulseGlow 2s ease-in-out infinite;
-  }
-
-  /* ROI Card */
-  .roi-card {
-    position: relative;
-    background: linear-gradient(135deg, #1A0A0A, #1F0F0F, #0A1628);
-    border: 1px solid #EF444430;
-    border-radius: 1.25rem;
-    padding: 1.5rem;
-    overflow: hidden;
-  }
-
-  /* Quiz option entrance animation */
-  .quiz-option {
-    opacity: 0;
-    animation: fadeSlideUp 0.4s ease forwards;
+    padding: 2.5rem 2rem;
   }
 }
 
-/* ═══ PRINT STYLES — PDF Export ═══ */
+.result-data-card {
+  background: #131F35;
+  border: 1px solid #1E293B;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.result-data-card:hover {
+  border-color: #334155;
+  background: #162236;
+}
+
+.result-section {
+  background: #131F35;
+  border: 1px solid #1E293B;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+}
+
+.result-cta {
+  position: relative;
+  background: linear-gradient(135deg, #0A1628, #0E2247);
+  border: 1px solid #00BFFF20;
+  border-radius: 1.25rem;
+  padding: 2rem 1.5rem;
+  overflow: hidden;
+}
+
+.loading-container {
+  position: relative;
+  background: linear-gradient(135deg, #0A1628 0%, #0F1D32 100%);
+  border: 1px solid #1E293B;
+  border-radius: 1.25rem;
+  padding: 2.5rem 1.5rem;
+}
+
+.roi-card {
+  position: relative;
+  background: linear-gradient(135deg, #1A0A0A, #1F0F0F, #0A1628);
+  border: 1px solid #EF444430;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+/* ═══ PRINT STYLES ═══ */
 
 @media print {
-  /* Hide everything except the diagnostic */
   body::before {
     display: none !important;
   }
@@ -435,7 +308,6 @@
     print-color-adjust: exact;
   }
 
-  /* Force dark backgrounds to print */
   .result-hero {
     background: #0A1628 !important;
   }
@@ -444,7 +316,6 @@
     background: #131F35 !important;
   }
 
-  /* Remove animations for print */
   .animate-fade-slide-up,
   .opacity-0 {
     animation: none !important;
