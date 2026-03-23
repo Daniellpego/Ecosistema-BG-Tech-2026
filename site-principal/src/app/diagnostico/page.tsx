@@ -341,18 +341,15 @@ REGRAS ABSOLUTAS:
     trackEvent("quiz_start");
   }
 
-  const isDarkPhase = phase === "intro" || phase === "loading" || phase === "result";
-
   /* ════════════════════════════════════════════════════════════
-     RENDER
+     RENDER — Full dark mode tunnel (intro → quiz → capture → loading → result)
      ════════════════════════════════════════════════════════════ */
 
   return (
     <section
-      className={`relative z-10 min-h-screen transition-colors duration-700 ${isDarkPhase ? "bg-[#080E1A]" : ""}`}
-      style={isDarkPhase ? { background: "linear-gradient(180deg, #080E1A 0%, #0A1628 30%, #0F1D32 100%)" } : undefined}
+      className="relative z-10 min-h-screen bg-[#080E1A]"
+      style={{ background: "linear-gradient(180deg, #080E1A 0%, #0A1628 30%, #0F1D32 100%)" }}
     >
-      {!isDarkPhase && <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary" />}
 
       <div className="max-w-2xl mx-auto px-4 py-12 sm:py-20">
         {phase === "intro" && (
