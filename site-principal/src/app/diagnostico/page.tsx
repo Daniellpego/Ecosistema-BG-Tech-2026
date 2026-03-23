@@ -262,18 +262,8 @@ REGRAS ABSOLUTAS:
     const tierInfo = getTier(finalScore);
 
     const setor = answers.setor?.[0] != null ? QUESTIONS[2].opcoes[answers.setor[0]] : "Não informado";
-    const cargo = answers.cargo?.[0] != null ? QUESTIONS[0].opcoes[answers.cargo[0]] : "Não informado";
-    const porte = answers.tamanho?.[0] != null ? QUESTIONS[1].opcoes[answers.tamanho[0]] : "Não informado";
-    const gargalos = answers.gargalos?.map((i: number) => QUESTIONS[3].opcoes[i]).join(", ") || "Nenhum";
-    const processos = answers.processos?.[0] != null ? QUESTIONS[4].opcoes[answers.processos[0]] : "Não informado";
-    const sistemas = answers.sistemas?.[0] != null ? QUESTIONS[5].opcoes[answers.sistemas[0]] : "Não informado";
-    const tempo = answers.tempo?.[0] != null ? QUESTIONS[6].opcoes[answers.tempo[0]] : "Não informado";
-    const impactos = answers.impactos?.map((i: number) => QUESTIONS[7].opcoes[i]).join(", ") || "Nenhum";
-    const urgencia = answers.urgencia?.[0] != null ? QUESTIONS[8].opcoes[answers.urgencia[0]] : "Não informado";
-    const prioridade = answers.prioridade?.[0] != null ? QUESTIONS[9].opcoes[answers.prioridade[0]] : "Não informado";
 
-    // Webhooks (Discord + n8n) agora disparam via triggers no Supabase
-    // após INSERT em quiz_leads — imune a AdBlockers (migration 010)
+    // Webhooks (Discord + n8n) disparam via triggers Supabase (migration 010)
 
     // Meta Pixel
     trackEvent("lead_captured", { setor, tier: tierInfo.tier, score: finalScore });
