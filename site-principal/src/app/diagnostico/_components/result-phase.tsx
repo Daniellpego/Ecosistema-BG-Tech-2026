@@ -87,7 +87,7 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
         <div className="relative z-10">
           <p className="text-[#00BFFF] text-xs font-semibold tracking-[0.2em] uppercase mb-6">Diagnóstico Gradios</p>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight mb-2" style={{ letterSpacing: "-0.03em" }}>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mb-2" style={{ letterSpacing: "-0.03em" }}>
             {lead.nome.split(" ")[0]}, seu diagnóstico<br />está pronto.
           </h1>
           <p className="text-[#94A3B8] text-sm sm:text-base">
@@ -216,8 +216,8 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
           <p className="text-[#64748B] text-[10px] font-semibold tracking-wider uppercase mb-3">Gargalos identificados</p>
           <div className="flex flex-wrap gap-2">
             {gargalosTexts.map((g, i) => (
-              <span key={i} className="inline-flex items-center gap-1.5 bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#FCA5A5] text-xs font-medium px-3 py-1.5 rounded-pill">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
+              <span key={i} className="inline-flex items-center gap-1.5 bg-[#00BFFF]/10 border border-[#00BFFF]/20 text-[#7DD3FC] text-xs font-medium px-3 py-1.5 rounded-pill">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00BFFF]" />
                 {g.split(" — ")[0]}
               </span>
             ))}
@@ -231,8 +231,8 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
           <p className="text-[#64748B] text-[10px] font-semibold tracking-wider uppercase mb-3">Impactos na operação</p>
           <div className="flex flex-wrap gap-2">
             {impactosTexts.map((imp, i) => (
-              <span key={i} className="inline-flex items-center gap-1.5 bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#FCD34D] text-xs font-medium px-3 py-1.5 rounded-pill">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+              <span key={i} className="inline-flex items-center gap-1.5 bg-[#00BFFF]/8 border border-[#00BFFF]/15 text-[#7DD3FC] text-xs font-medium px-3 py-1.5 rounded-pill">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00BFFF]/60" />
                 {imp}
               </span>
             ))}
@@ -364,7 +364,7 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
         </div>
 
         <div className="relative z-10 text-center">
-          <p className="text-white text-xl sm:text-2xl font-black mb-2" style={{ letterSpacing: "-0.02em" }}>
+          <p className="text-white text-xl sm:text-2xl font-bold mb-2" style={{ letterSpacing: "-0.02em" }}>
             {tierInfo.tier === "A" ? "Falar com especialista (respondemos em até 2h)" :
              tierInfo.tier === "B" ? "Agendar diagnóstico aprofundado" :
              tierInfo.tier === "C" ? "Ver como empresas do seu setor automatizaram" :
