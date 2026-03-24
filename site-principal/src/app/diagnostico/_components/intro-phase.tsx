@@ -72,20 +72,11 @@ function NeuralGrid() {
    ═══════════════════════════════════════════════════════════ */
 
 export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
-  const [showContent, setShowContent] = useState(false);
   const headline = city
     ? `${city}. Quanto sua operação perde em processos manuais?`
     : "Quanto sua operação perde em processos manuais?";
   const { displayed, done } = useTypewriter(headline, 30, 800);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Show content after typewriter finishes
-  useEffect(() => {
-    if (done) {
-      const timer = setTimeout(() => setShowContent(true), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [done]);
 
   return (
     <div ref={containerRef} className="relative min-h-[70vh] flex flex-col items-center justify-center">
@@ -132,13 +123,13 @@ export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
           </h1>
         </div>
 
-        {/* Content reveals after typewriter */}
+        {/* Content — visível imediatamente, sem depender do typewriter */}
         <AnimatePresence>
-          {showContent && (
+          {true && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
               className="mt-6"
             >
               {/* Subheadline */}

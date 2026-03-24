@@ -83,22 +83,9 @@ export function Founders() {
                   </div>
                 </div>
                 <p className="text-sm text-text-muted leading-relaxed mb-4">{founder.bio}</p>
-                <blockquote className="text-sm text-text italic border-l-2 border-primary/30 pl-4 mb-5">
+                <blockquote className="text-sm text-text italic border-l-2 border-primary/30 pl-4">
                   &ldquo;{founder.quote}&rdquo;
                 </blockquote>
-                <a
-                  href="https://www.linkedin.com/company/gradios"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                    <rect x="2" y="9" width="4" height="12" />
-                    <circle cx="4" cy="4" r="2" />
-                  </svg>
-                  LinkedIn
-                </a>
               </TiltCard>
             </motion.div>
           ))}

@@ -159,7 +159,7 @@ export function Testimonials() {
                 <div className="w-6 h-6 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-[8px] font-bold">OP</span>
                 </div>
-                <span className="text-xs text-text-muted font-medium">Diretor de Operações, consultoria B2B, Londrina/PR</span>
+                <span className="text-xs text-text-muted font-medium">Diretor de Operações, consultoria B2B</span>
               </div>
             </motion.div>
 
@@ -183,7 +183,7 @@ export function Testimonials() {
                 <div className="w-6 h-6 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-[8px] font-bold">GF</span>
                 </div>
-                <span className="text-xs text-text-muted font-medium">Gestor Financeiro, distribuidora, interior do PR</span>
+                <span className="text-xs text-text-muted font-medium">Gestor Financeiro, distribuidora</span>
               </div>
             </motion.div>
           </div>

@@ -28,7 +28,7 @@ export function Benefits() {
           <polyline points="8 6 2 12 8 18" />
         </svg>
       ),
-      outcome: "Cada sistema feito sob medida para a operação do cliente",
+      outcome: "Sistema de onboarding que reduziu churn de 15% para 4% em 60 dias",
     },
     {
       title: "Integrações e APIs",
@@ -62,7 +62,7 @@ export function Benefits() {
           <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
         </svg>
       ),
-      outcome: "SLA de resposta garantido com time dedicado",
+      outcome: "Tempo médio de resposta: 2h. Resolução em menos de 24h",
     },
     {
       title: "IA Aplicada ao Negócio",

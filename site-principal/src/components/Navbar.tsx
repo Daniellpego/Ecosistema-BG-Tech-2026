@@ -7,13 +7,14 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_ITEMS = [
   { href: "#solucoes", label: "Soluções" },
+  { href: "#como-funciona", label: "Como Funciona" },
   { href: "#cases", label: "Cases" },
+  { href: "#contato", label: "Contato" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -21,29 +22,8 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Intersection Observer for active section detection
-  useEffect(() => {
-    const sectionIds = NAV_ITEMS.map((item) => item.href.replace("#", ""));
-    const observers: IntersectionObserver[] = [];
-
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) setActiveSection(`#${id}`);
-        },
-        { threshold: 0.3, rootMargin: "-80px 0px -50% 0px" }
-      );
-      observer.observe(el);
-      observers.push(observer);
-    });
-
-    return () => observers.forEach((obs) => obs.disconnect());
-  }, []);
-
   const handleResize = useCallback(() => {
-    if (window.innerWidth >= 768) setMenuOpen(false);
+    if (window.innerWidth >= 1024) setMenuOpen(false);
   }, []);
 
   useEffect(() => {
@@ -74,28 +54,21 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Links Nav */}
-          <nav className="hidden md:flex space-x-8" aria-label="Navegação principal">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-sm font-medium transition-colors relative py-1 ${
-                  activeSection === item.href ? "text-primary" : "text-text-muted hover:text-text"
-                }`}
-              >
-                {item.label}
-                <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-brand-gradient rounded-full transition-all duration-300 ${
-                    activeSection === item.href ? "w-full" : "w-0"
-                  }`}
-                />
-              </Link>
-            ))}
-          </nav>
+          {/* Right side: hamburger + CTA */}
+          <div className="flex items-center gap-3">
+            {/* Hamburger — all breakpoints */}
+            <button
+              className="p-2 rounded-lg hover:bg-bg-alt transition text-text"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={menuOpen}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d={menuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+              </svg>
+            </button>
 
-          {/* CTA */}
-          <div className="hidden md:flex items-center">
+            {/* CTA */}
             <Link
               href="/diagnostico"
               className="bg-brand-gradient text-white rounded-pill py-2.5 px-6 font-bold text-center text-sm relative overflow-hidden hover:shadow-lg hover:shadow-[#0A1B5C]/25 transition-all before:absolute before:inset-0 before:bg-white/20 before:-translate-x-full before:skew-x-12 hover:before:translate-x-[200%] before:transition-transform before:duration-700"
@@ -103,26 +76,14 @@ export function Navbar() {
               Diagnóstico Gratuito
             </Link>
           </div>
-
-          {/* Menu Mobile Button */}
-          <button
-            className="md:hidden p-2 rounded-lg hover:bg-bg-alt transition text-text"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
-            aria-expanded={menuOpen}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d={menuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
-          </button>
         </div>
       </div>
 
-      {/* Mobile dropdown — spring animation */}
+      {/* Dropdown menu — all breakpoints */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-b border-card-border shadow-lg overflow-hidden"
+            className="absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-b border-card-border shadow-lg overflow-hidden"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -131,28 +92,17 @@ export function Navbar() {
               opacity: { duration: 0.2 },
             }}
           >
-            <div className="py-4 px-6 flex flex-col gap-4">
+            <div className="py-4 px-6 max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
               {NAV_ITEMS.map((item, i) => (
                 <Link
                   key={i}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`font-medium py-2 border-b border-card-border/50 last:border-0 transition-colors ${
-                    activeSection === item.href ? "text-primary" : "text-text"
-                  }`}
+                  className="font-medium py-2 sm:py-0 border-b border-card-border/50 sm:border-0 last:border-0 text-text hover:text-primary transition-colors"
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="mt-2">
-                <Link
-                  href="/diagnostico"
-                  onClick={() => setMenuOpen(false)}
-                  className="bg-brand-gradient text-white rounded-pill px-6 py-3 font-bold text-center block relative overflow-hidden before:absolute before:inset-0 before:bg-white/20 before:-translate-x-full before:skew-x-12 hover:before:translate-x-[200%] before:transition-transform before:duration-700"
-                >
-                  Diagnóstico Gratuito
-                </Link>
-              </div>
             </div>
           </motion.div>
         )}

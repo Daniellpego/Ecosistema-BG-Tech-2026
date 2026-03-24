@@ -176,51 +176,31 @@ export function Hero() {
             </Link>
           </motion.div>
 
-          {/* Social proof */}
+          {/* Social proof — setores inline */}
           <motion.div
-            className="mt-8 flex items-center justify-center gap-3"
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2"
             variants={heroEntrance}
             initial="hidden"
             animate="visible"
             custom={0.9}
           >
-            <div className="flex -space-x-2">
-              {["G", "M", "R", "A"].map((initial, i) => (
-                <div key={i} className="w-7 h-7 rounded-full bg-brand-gradient border-2 border-white flex items-center justify-center relative" style={{ zIndex: 4 - i }}>
-                  <span className="text-white text-[10px] font-bold">{initial}</span>
-                </div>
-              ))}
-            </div>
-            <p className="text-sm text-text-muted">
-              <span className="font-bold text-text">+17 empresas</span> já automatizaram com a Gradios
+            <p className="text-sm text-text-muted w-full text-center mb-1">
+              Empresas de <span className="font-bold text-text">5 setores</span> já eliminaram processos manuais com a Gradios
             </p>
-          </motion.div>
-
-          {/* Trust bar — logos dos setores atendidos (transferência de autoridade) */}
-          <motion.div
-            className="mt-10 flex flex-col items-center gap-4"
-            variants={heroEntrance}
-            initial="hidden"
-            animate="visible"
-            custom={1.1}
-          >
-            <p className="text-xs text-text-muted/60 uppercase tracking-widest font-medium">Setores que já automatizaram com a Gradios</p>
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-              {[
-                { name: "Financeiro", icon: "M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" },
-                { name: "Saúde", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
-                { name: "Varejo", icon: "M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" },
-                { name: "Logística", icon: "M1 3h15v13H1zM16 8h4l3 3v5h-7V8zM5.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM18.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" },
-                { name: "SaaS", icon: "M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z" },
-              ].map((sector, i) => (
-                <div key={i} className="flex items-center gap-2 text-text-muted/40 hover:text-primary/50 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={sector.icon} />
-                  </svg>
-                  <span className="text-sm font-semibold tracking-tight">{sector.name}</span>
-                </div>
-              ))}
-            </div>
+            {[
+              { name: "Financeiro", icon: "M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" },
+              { name: "Saúde", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
+              { name: "Varejo", icon: "M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" },
+              { name: "Logística", icon: "M1 3h15v13H1zM16 8h4l3 3v5h-7V8zM5.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM18.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" },
+              { name: "SaaS", icon: "M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z" },
+            ].map((sector, i) => (
+              <div key={i} className="flex items-center gap-1.5 text-text-muted/50">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={sector.icon} />
+                </svg>
+                <span className="text-xs font-semibold tracking-tight">{sector.name}</span>
+              </div>
+            ))}
           </motion.div>
         </div>
 
@@ -338,13 +318,15 @@ export function Hero() {
                     {/* KPI Cards */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
                       {[
-                        { label: "Processos / dia", value: count ?? "...", delta: "+18%", up: true, icon: "⚡" },
-                        { label: "Economia / mês", value: "R$ 47k", delta: "+32% vs meta", up: true, icon: "💰" },
-                        { label: "Tempo médio", value: "4h", delta: "-68%", up: true, icon: "⏱" },
-                        { label: "Uptime", value: "99.8%", delta: "SLA garantido", up: false, icon: "🛡" },
+                        { label: "Processos / dia", value: count ?? "...", delta: "+18%", up: true, iconPath: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" },
+                        { label: "Economia / mês", value: "R$ 47k", delta: "+32% vs meta", up: true, iconPath: "M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" },
+                        { label: "Tempo médio", value: "4h", delta: "-68%", up: true, iconPath: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 6v6l4 2" },
+                        { label: "Uptime", value: "99.8%", delta: "SLA garantido", up: false, iconPath: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" },
                       ].map((kpi, i) => (
                         <div key={i} className="bg-white/[0.04] border border-white/[0.06] rounded-xl p-3 sm:p-4 relative overflow-hidden group hover:bg-white/[0.07] transition-colors">
-                          <div className="absolute top-2 right-2 text-lg opacity-20 group-hover:opacity-40 transition-opacity">{kpi.icon}</div>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-2 right-2 w-5 h-5 text-white/10 group-hover:text-white/20 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d={kpi.iconPath} />
+                          </svg>
                           <div className="text-[9px] sm:text-[10px] text-white/40 mb-1.5">{kpi.label}</div>
                           <div className={`text-lg sm:text-2xl font-bold ${i === 3 ? "text-secondary" : "text-white"}`}>{kpi.value}</div>
                           <div className={`text-[9px] sm:text-[10px] mt-1 ${kpi.up ? "text-green-400" : "text-white/30"}`}>{kpi.delta}</div>

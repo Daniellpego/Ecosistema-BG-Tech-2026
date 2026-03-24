@@ -15,10 +15,6 @@ const faqItems = [
     answer: "Automações simples ficam prontas em 5-10 dias. Projetos mais complexos levam de 3 a 6 semanas. No diagnóstico gratuito, você recebe um cronograma realista antes de comprometer qualquer investimento.",
   },
   {
-    question: "E se eu já tentei automatizar e não funcionou?",
-    answer: "Acontece mais do que você imagina. Geralmente o problema não é a tecnologia, é o diagnóstico errado. Por isso começamos sempre pelo mapeamento completo dos processos antes de tocar em qualquer ferramenta.",
-  },
-  {
     question: "Preciso trocar os sistemas que já uso?",
     answer: "Não. A automação integra os sistemas que você já tem: ERP, CRM, planilhas, WhatsApp, e-mail. Não substituímos nada, conectamos tudo.",
   },
@@ -29,18 +25,6 @@ const faqItems = [
   {
     question: "E se eu fizer o diagnóstico e não quiser contratar?",
     answer: "Sem problema nenhum. O diagnóstico é gratuito e sem compromisso. Você recebe um relatório com os gargalos identificados e pode implementar por conta própria se preferir.",
-  },
-  {
-    question: "Vocês vão me ligar insistentemente depois?",
-    answer: "Não. Você recebe o diagnóstico via WhatsApp, e a conversa acontece no seu ritmo. Zero pressão. Nosso modelo funciona por resultado, não por insistência.",
-  },
-  {
-    question: "Funciona pro meu setor?",
-    answer: "Se sua empresa tem processos manuais, planilhas sendo copiadas, ou sistemas que não conversam entre si, a gente resolve. Já atuamos em varejo, saúde, financeiro, logística, serviços e SaaS.",
-  },
-  {
-    question: "Minha equipe vai precisar aprender ferramentas novas?",
-    answer: "Não. As automações rodam no background. Sua equipe continua usando as mesmas ferramentas de sempre. Só que agora os dados fluem automaticamente entre elas.",
   },
   {
     question: "O que acontece depois da implementação?",
@@ -90,7 +74,7 @@ export function FAQ() {
             className="text-text-muted text-lg text-center max-w-lg mx-auto"
             variants={revealVariants("up")}
           >
-            Respondemos as 10 dúvidas mais comuns. Direto ao ponto.
+            Respondemos as dúvidas mais comuns. Direto ao ponto.
           </motion.p>
         </motion.div>
 

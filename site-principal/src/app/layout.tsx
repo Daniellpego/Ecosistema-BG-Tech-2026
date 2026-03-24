@@ -20,20 +20,20 @@ const geistDisplay = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Gradios | Automação e Software Sob Medida para Empresas B2B',
-  description: 'Automação de processos, software sob medida e integração de sistemas. Diagnóstico gratuito e resultado em até 2 semanas.',
+  title: 'Gradios | Elimine processos manuais e escale sua operação B2B',
+  description: 'Engenharia de software e IA para eliminar gargalos operacionais. Resultado em 14 dias. Diagnóstico gratuito.',
   keywords: ["automação b2b", "desenvolvimento de software sob medida", "integração de sistemas", "dashboards empresariais", "ia para negócios"],
   authors: [{ name: "Gradios" }],
   openGraph: {
     type: "website",
-    description: "Automação de processos, software sob medida e integração de sistemas para empresas B2B.",
+    description: "Engenharia de software e IA para eliminar gargalos operacionais. Resultado em 14 dias.",
     siteName: "Gradios",
     locale: "pt_BR",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gradios | Automação e Software Sob Medida para Empresas B2B",
-    description: "Automação de processos, software sob medida e integração de sistemas para empresas B2B.",
+    title: "Gradios | Elimine processos manuais e escale sua operação B2B",
+    description: "Engenharia de software e IA para eliminar gargalos operacionais. Resultado em 14 dias.",
   },
   robots: { index: true, follow: true },
 };
@@ -69,12 +69,11 @@ const jsonLdFaq = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "Quanto custa automatizar meus processos?", "acceptedAnswer": { "@type": "Answer", "text": "Depende da complexidade. Nossos projetos variam conforme o escopo, mas o diagnóstico gratuito identifica exatamente o que faz sentido para sua empresa. A maioria dos nossos clientes recupera o investimento em menos de 3 meses." } },
+    { "@type": "Question", "name": "Quanto custa automatizar meus processos?", "acceptedAnswer": { "@type": "Answer", "text": "Nossos projetos variam de R$ 3.000 a R$ 30.000 dependendo do escopo e complexidade. O diagnóstico gratuito define exatamente qual faixa faz sentido para sua operação. A maioria dos nossos clientes recupera o investimento em menos de 3 meses." } },
     { "@type": "Question", "name": "Quanto tempo leva para implementar?", "acceptedAnswer": { "@type": "Answer", "text": "Automações simples ficam prontas em 5-10 dias. Projetos mais complexos levam de 3 a 6 semanas." } },
     { "@type": "Question", "name": "Preciso trocar os sistemas que já uso?", "acceptedAnswer": { "@type": "Answer", "text": "Não. A automação integra os sistemas que você já tem: ERP, CRM, planilhas, WhatsApp, e-mail. Não substituímos nada, conectamos tudo." } },
     { "@type": "Question", "name": "Precisa de contrato longo?", "acceptedAnswer": { "@type": "Answer", "text": "Não. Trabalhamos com escopo definido e transparente. Você paga pelo que foi combinado, sem amarras." } },
     { "@type": "Question", "name": "E se eu fizer o diagnóstico e não quiser contratar?", "acceptedAnswer": { "@type": "Answer", "text": "Sem problema nenhum. O diagnóstico é gratuito e sem compromisso." } },
-    { "@type": "Question", "name": "Funciona pro meu setor?", "acceptedAnswer": { "@type": "Answer", "text": "Se sua empresa tem processos manuais, planilhas sendo copiadas, ou sistemas que não conversam entre si, a gente resolve. Já atuamos em varejo, saúde, financeiro, logística, serviços e SaaS." } },
     { "@type": "Question", "name": "O que acontece depois da implementação?", "acceptedAnswer": { "@type": "Answer", "text": "Oferecemos suporte contínuo. Monitoramos as automações, fazemos ajustes quando necessário e identificamos novas oportunidades de otimização." } },
   ],
 };
