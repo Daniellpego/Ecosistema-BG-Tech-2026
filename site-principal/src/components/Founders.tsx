@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { WordReveal } from "./WordReveal";
 import { TiltCard } from "./TiltCard";
@@ -9,6 +10,7 @@ const founders = [
   {
     initials: "GB",
     name: "Gustavo Batista",
+    photo: "/gustavo-batista.png",
     role: "Co-fundador & Head de Automação",
     bio: "Especialista em automação de processos B2B. Já ajudou dezenas de empresas a eliminar gargalos operacionais usando n8n, Make e integrações com IA.",
     quote: "A maioria das empresas perde dezenas de horas por semana em tarefas que deveriam ser automáticas. Meu trabalho é encontrar esses gargalos e eliminá-los.",
@@ -17,6 +19,7 @@ const founders = [
   {
     initials: "DP",
     name: "Daniel Pego",
+    photo: "/daniel-pego.png",
     role: "Co-fundador & Head de Engenharia",
     bio: "Engenheiro de software full-stack com experiência em arquitetura de sistemas, dashboards financeiros e integrações complexas.",
     quote: "Cada empresa tem um jeito próprio de operar. A gente não força template. Entende primeiro, constrói depois.",
@@ -25,6 +28,7 @@ const founders = [
   {
     initials: "BG",
     name: "Bryan Gradi",
+    photo: "/bryan-gradi.png",
     role: "Co-fundador & Head Comercial",
     bio: "Responsável pela estratégia comercial e relacionamento com clientes. Conecta a tecnologia ao resultado que o empresário precisa ver na prática.",
     quote: "A gente não vende software. A gente resolve problema. Se não faz sentido automatizar, a gente fala na lata.",
@@ -74,8 +78,14 @@ export function Founders() {
             <motion.div key={i} variants={revealVariants(founder.direction)}>
               <TiltCard className="bg-white border border-card-border rounded-card p-7 solution-card touch-feedback h-full">
                 <div className="flex items-center gap-4 mb-5">
-                  <div className="w-14 h-14 rounded-full bg-brand-gradient flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
-                    <span className="text-white text-lg font-bold">{founder.initials}</span>
+                  <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 shadow-lg shadow-primary/20 ring-2 ring-primary/20">
+                    <Image
+                      src={founder.photo}
+                      alt={founder.name}
+                      width={56}
+                      height={56}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-text">{founder.name}</h3>

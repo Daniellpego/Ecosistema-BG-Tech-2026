@@ -1,35 +1,47 @@
 "use client";
 
+import Image from "next/image";
+
+const clientLogos = [
+  { src: "/logo-cliente-1.jpg", alt: "Cliente 1" },
+  { src: "/logo-cliente-2.png", alt: "Cliente 2" },
+  { src: "/logo-cliente-3.png", alt: "Cliente 3" },
+  { src: "/logo-cliente-4.png", alt: "Cliente 4" },
+  { src: "/logo-cliente-5.png", alt: "Cliente 5" },
+  { src: "/logo-cliente-6.png", alt: "Cliente 6" },
+  { src: "/logo-cliente-7.png", alt: "Cliente 7" },
+  { src: "/logo-cliente-8.png", alt: "Cliente 8" },
+  { src: "/logo-cliente-9.png", alt: "Cliente 9" },
+];
+
 export function LogoStrip() {
-  const logos = [
-    "Varejo",
-    "Indústria",
-    "Logística",
-    "Saúde",
-    "Financeiro",
-    "SaaS"
-  ];
+  const logos = [...clientLogos, ...clientLogos, ...clientLogos];
 
   return (
     <section className="bg-white py-12 border-t border-b border-card-border overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <p className="text-sm text-text-muted tracking-wide text-center mb-8 font-medium">
-          Setores que já automatizaram com a Gradios:
+          Empresas que confiam na Gradios:
         </p>
-        
+
         <div className="relative overflow-hidden marquee-container">
-          {/* Máscara esquerda */}
+          {/* Gradient masks */}
           <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          {/* Máscara direita */}
           <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-          {/* marquee — pausa no hover */}
-          <div className="flex animate-marquee whitespace-nowrap gap-12 lg:gap-16 w-max">
-            {[...logos, ...logos, ...logos].map((logo, index) => (
+          {/* Marquee */}
+          <div className="flex animate-marquee whitespace-nowrap gap-12 lg:gap-16 w-max items-center">
+            {logos.map((logo, index) => (
               <div
                 key={index}
-                className="text-text-muted/40 font-bold text-lg lg:text-xl tracking-tight select-none flex-shrink-0 hover:text-primary/40 transition-colors"
+                className="flex-shrink-0 h-10 w-auto grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
               >
-                {logo}
+                <Image
+                  src={logo.src}
+                  alt={logo.alt}
+                  width={120}
+                  height={40}
+                  className="h-10 w-auto object-contain"
+                />
               </div>
             ))}
           </div>
