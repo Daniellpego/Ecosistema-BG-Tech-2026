@@ -98,6 +98,16 @@
     50% { filter: drop-shadow(0 0 16px var(--glow-color, #00BFFF80)); }
   }
 
+  /* Dashboard bar breathing — subtle idle animation */
+  @keyframes barBreath {
+    0%, 100% { transform: scaleY(1); opacity: 1; }
+    50% { transform: scaleY(1.06); opacity: 0.92; }
+  }
+  @keyframes progressPulse {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.85; filter: brightness(1.15); }
+  }
+
   .animate-float { animation: float 4s ease-in-out infinite; }
   .animate-shimmer { background-size: 200% auto; animation: shimmer 3s linear infinite; }
   .animate-cta-pulse { animation: ctaPulse 3s ease-in-out infinite; }
