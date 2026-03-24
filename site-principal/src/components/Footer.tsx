@@ -15,7 +15,7 @@ export function Footer() {
           {/* Brand Col */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2.5 mb-3">
-              <Image src="/logo.png" alt="Gradios" width={88} height={88} className="w-11 h-11 drop-shadow-md brightness-0 invert" />
+              <Image src="/logo.webp" alt="Gradios" width={88} height={88} className="w-11 h-11 drop-shadow-md brightness-0 invert" />
               <span className="text-xl font-bold text-white font-display">Gradios</span>
             </div>
             <p className="text-sm font-medium text-secondary mb-3">Automação e Software Sob Medida</p>
@@ -26,10 +26,8 @@ export function Footer() {
             {/* +17 empresas seal */}
             <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-pill px-3 py-2 mb-6 inline-flex">
               <div className="flex -space-x-1.5">
-                {["G", "M", "R"].map((initial, i) => (
-                  <div key={i} className="w-5 h-5 rounded-full bg-brand-gradient border border-[#0A1628] flex items-center justify-center" style={{ zIndex: 3 - i }}>
-                    <span className="text-white text-[8px] font-bold">{initial}</span>
-                  </div>
+                {["/logo-cliente-1.webp", "/logo-cliente-2.webp", "/logo-cliente-3.webp"].map((src, i) => (
+                  <Image key={i} src={src} alt="" width={20} height={20} className="w-5 h-5 rounded-full border border-[#0A1628] object-cover bg-white" style={{ zIndex: 3 - i }} />
                 ))}
               </div>
               <span className="text-xs text-[#94A3B8]"><span className="text-white font-semibold">+17</span> empresas atendidas</span>
@@ -68,6 +66,8 @@ export function Footer() {
               <li><Link href="#como-funciona" className="text-[#94A3B8] hover:text-white transition-colors block py-1.5">Como Funciona</Link></li>
               <li><Link href="#cases" className="text-[#94A3B8] hover:text-white transition-colors block py-1.5">Cases de Sucesso</Link></li>
               <li><Link href="/diagnostico" className="text-[#94A3B8] hover:text-white transition-colors block py-1.5">Diagnóstico Gratuito</Link></li>
+              <li><Link href="/sobre" className="text-[#94A3B8] hover:text-white transition-colors block py-1.5">Sobre a Gradios</Link></li>
+              <li><Link href="/respostas" className="text-[#94A3B8] hover:text-white transition-colors block py-1.5">Perguntas sobre Automação</Link></li>
               <li><Link href="#contato" className="text-[#94A3B8] hover:text-white transition-colors block py-1.5">Contato</Link></li>
             </ul>
           </div>
