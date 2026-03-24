@@ -63,7 +63,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
               {setor ? ` · ${setor}` : ""}
             </p>
             <p className="text-[#64748B] text-xs">
-              Score parcial: {partialScore}/100 · O diagnóstico completo calcula seu custo mensal em reais.
+              Score {partialScore}/100 · O resultado completo inclui o custo em R$ e o plano de ação.
             </p>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
 
         <div>
           <label className="block text-sm font-medium text-[#CBD5E1] mb-1.5">
-            Telefone para agendamento <span className="text-[#64748B] font-normal">(opcional)</span>
+            WhatsApp <span className="text-[#64748B] font-normal">(opcional — para enviar o PDF do resultado)</span>
           </label>
           <input
             type="tel"
