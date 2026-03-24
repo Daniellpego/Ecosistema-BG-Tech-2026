@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
 
 export const runtime = "edge";
 
@@ -8,11 +7,16 @@ const ACCESS_TOKEN = "EAF8ZAT6RwnPkBRIwuU25g1Q5WLDGBpLeBumTute6UgJxD1iP9YRpwG9rv
 
 /**
  * Hash PII data using SHA256 (Meta requirement)
+ * Using Web Crypto API for Edge Runtime compatibility
  */
-function hashData(data: string | undefined): string | undefined {
+async function hashData(data: string | undefined): Promise<string | undefined> {
   if (!data) return undefined;
   const normalized = data.toLowerCase().trim();
-  return crypto.createHash("sha256").update(normalized).digest("hex");
+  const encoder = new TextEncoder();
+  const dataBuffer = encoder.encode(normalized);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", dataBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -44,12 +48,12 @@ export async function POST(req: NextRequest) {
       client_user_agent: req.headers.get("user-agent"),
     };
 
-    if (userData?.email) hashedUserData.em = hashData(userData.email);
-    if (userData?.phone) hashedUserData.ph = hashData(userData.phone);
-    if (userData?.firstName) hashedUserData.fn = hashData(userData.firstName);
-    if (userData?.lastName) hashedUserData.ln = hashData(userData.lastName);
-    if (userData?.city) hashedUserData.ct = hashData(userData.city);
-    if (userData?.country) hashedUserData.country = hashData(userData.country);
+    if (userData?.email) hashedUserData.em = await hashData(userData.email);
+    if (userData?.phone) hashedUserData.ph = await hashData(userData.phone);
+    if (userData?.firstName) hashedUserData.fn = await hashData(userData.firstName);
+    if (userData?.lastName) hashedUserData.ln = await hashData(userData.lastName);
+    if (userData?.city) hashedUserData.ct = await hashData(userData.city);
+    if (userData?.country) hashedUserData.country = await hashData(userData.country);
 
     // Build event payload
     const eventData = {
