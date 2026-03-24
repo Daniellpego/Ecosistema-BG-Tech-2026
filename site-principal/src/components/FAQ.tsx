@@ -8,7 +8,7 @@ import { revealVariants, staggerParent, viewport } from "@/lib/motion";
 const faqItems = [
   {
     question: "Quanto custa automatizar meus processos?",
-    answer: "Depende da complexidade. Nossos projetos variam conforme o escopo, mas o diagnóstico gratuito identifica exatamente o que faz sentido para sua empresa. A maioria dos nossos clientes recupera o investimento em menos de 3 meses.",
+    answer: "Nossos projetos variam de R$ 3.000 a R$ 30.000 dependendo do escopo e complexidade. O diagnóstico gratuito define exatamente qual faixa faz sentido para sua operação. A maioria dos nossos clientes recupera o investimento em menos de 3 meses.",
   },
   {
     question: "Quanto tempo leva para implementar?",

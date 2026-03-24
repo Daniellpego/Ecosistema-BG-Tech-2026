@@ -1,8 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 export function WhatsAppFab() {
+  const pathname = usePathname();
+
+  // Esconder WhatsApp no funil do diagnóstico para não sobrepor CTAs
+  if (pathname === "/diagnostico") return null;
+
   return (
     <motion.a
       href="https://wa.me/5543988372540"

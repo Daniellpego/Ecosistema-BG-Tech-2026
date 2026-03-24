@@ -26,12 +26,12 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
           className="mt-4 text-2xl sm:text-3xl font-bold text-white"
           style={{ letterSpacing: "-0.02em" }}
         >
-          Falta pouco para o seu diagnóstico.
+          Seu diagnóstico está pronto.
           <br />
-          <span className="text-[#00BFFF]">Preencha seus dados abaixo.</span>
+          <span className="text-[#00BFFF]">Só falta onde enviar.</span>
         </h2>
         <p className="mt-2 text-[#94A3B8] text-sm">
-          Preencha seus dados para gerar o diagnóstico completo com IA.
+          Preencha seus dados para receber o diagnóstico completo gerado por IA.
         </p>
       </div>
 
@@ -121,11 +121,12 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
             placeholder="seu@empresa.com"
             className="w-full px-4 py-3 rounded-card border border-[#1E293B] bg-[#0F1D32] text-white text-sm placeholder:text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
           />
+          <p className="text-[10px] text-[#475569] mt-1">Usamos apenas para enviar seu diagnóstico. Sem spam.</p>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-[#CBD5E1] mb-1.5">
-            WhatsApp <span className="text-[#64748B] font-normal">(opcional)</span>
+            Telefone para agendamento <span className="text-[#64748B] font-normal">(opcional)</span>
           </label>
           <input
             type="tel"

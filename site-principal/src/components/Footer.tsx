@@ -35,35 +35,18 @@ export function Footer() {
               <span className="text-xs text-[#94A3B8]"><span className="text-white font-semibold">+17</span> empresas atendidas</span>
             </div>
 
-            {/* Redes Sociais */}
-            <div className="flex items-center gap-3">
-              <a
-                href="https://www.instagram.com/gradios"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram da Gradios"
-                className="w-9 h-9 rounded-lg bg-white/5 hover:bg-brand-gradient flex items-center justify-center text-[#94A3B8] hover:text-white transition-all duration-300"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-              </a>
-              <a
-                href="https://www.linkedin.com/company/gradios"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn da Gradios"
-                className="w-9 h-9 rounded-lg bg-white/5 hover:bg-brand-gradient flex items-center justify-center text-[#94A3B8] hover:text-white transition-all duration-300"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                  <rect x="2" y="9" width="4" height="12"></rect>
-                  <circle cx="4" cy="4" r="2"></circle>
-                </svg>
-              </a>
-            </div>
+            {/* Micro-CTA WhatsApp */}
+            <a
+              href="https://wa.me/5543988372540"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/20 rounded-pill px-4 py-2.5 text-sm font-semibold text-[#25D366] transition-all duration-300"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2z" />
+              </svg>
+              Falar com um especialista
+            </a>
           </div>
 
           {/* Soluções */}

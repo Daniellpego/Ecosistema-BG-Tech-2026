@@ -9,7 +9,7 @@ import Link from "next/link";
 function AnimatedNumber({ value, suffix }: { value: number; suffix: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
-  const [displayValue, setDisplayValue] = useState(0);
+  const [displayValue, setDisplayValue] = useState(value);
 
   useEffect(() => {
     if (!isInView) return;
@@ -114,7 +114,7 @@ export function Testimonials() {
                   <span className="text-white text-xs font-bold">CF</span>
                 </div>
                 <div>
-                  <span className="text-sm text-text font-semibold block">CFO, empresa de serviços financeiros</span>
+                  <span className="text-sm text-text font-semibold block">CFO de holding com 3 empresas no setor financeiro, Londrina/PR</span>
                   <span className="text-xs text-text-muted italic">&ldquo;O fechamento que levava 3 dias agora termina antes do almoço.&rdquo;</span>
                 </div>
               </div>
@@ -153,31 +153,38 @@ export function Testimonials() {
                 </div>
                 <div className="text-3xl font-bold font-display text-text mb-2">3x</div>
                 <p className="text-sm font-bold text-text mb-2">Volume sem contratar</p>
-                <p className="text-sm text-text-muted">Triplicamos a capacidade de atendimento com automação de processos internos.</p>
+                <p className="text-sm text-text-muted">Empresa de serviços B2B com 12 colaboradores triplicou a capacidade de atendimento em 6 semanas com automação de processos internos.</p>
               </div>
               <div className="pt-4 mt-4 border-t border-card-border flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-[8px] font-bold">OP</span>
                 </div>
-                <span className="text-xs text-text-muted font-medium">Setor de serviços B2B</span>
+                <span className="text-xs text-text-muted font-medium">Diretor de Operações, consultoria B2B, Londrina/PR</span>
               </div>
             </motion.div>
 
             <motion.div
-              className="bg-white border-2 border-dashed border-primary/20 rounded-card p-6 flex-1 flex flex-col items-center justify-center text-center hover:border-primary/40 hover:bg-primary/[0.02] transition-all duration-300"
+              className="solution-card bg-white border border-card-border rounded-card p-6 flex-1 flex flex-col justify-between"
               variants={revealVariants("left")}
             >
-              <div className="w-12 h-12 rounded-full bg-primary/8 flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs text-text-muted line-through">40h/mês</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                  <span className="text-xs font-bold text-green-600">2h/mês</span>
+                </div>
+                <div className="text-3xl font-bold font-display text-text mb-2">95%</div>
+                <p className="text-sm font-bold text-text mb-2">Menos tempo em emissão de notas</p>
+                <p className="text-sm text-text-muted">Processo de emissão de notas fiscais que consumia uma semana por mês passou a rodar automaticamente com validação inteligente.</p>
               </div>
-              <p className="text-sm font-bold text-text mb-2">Seu case aqui</p>
-              <p className="text-xs text-text-muted mb-4">Queremos mostrar o seu resultado.</p>
-              <Link href="#contato" className="text-xs font-bold text-primary hover:underline">
-                Fale com a gente →
-              </Link>
+              <div className="pt-4 mt-4 border-t border-card-border flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-[8px] font-bold">GF</span>
+                </div>
+                <span className="text-xs text-text-muted font-medium">Gestor Financeiro, distribuidora, interior do PR</span>
+              </div>
             </motion.div>
           </div>
         </motion.div>

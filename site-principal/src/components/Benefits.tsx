@@ -1,14 +1,11 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { TiltCard } from "./TiltCard";
 import { WordReveal } from "./WordReveal";
 import { revealVariants, staggerParent, viewport, type Direction } from "@/lib/motion";
 
 export function Benefits() {
-  const gridRef = useRef<HTMLDivElement>(null);
-  const gridInView = useInView(gridRef, { once: true, amount: 0.1 });
 
   const benefits = [
     {
@@ -20,9 +17,7 @@ export function Benefits() {
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
       ),
-      pct: 85,
-      label: "Eficiência",
-      color: "bg-gradient-primary",
+      outcome: "Aprovações que levavam 3 dias agora rodam em minutos",
     },
     {
       title: "Desenvolvimento Sob Medida",
@@ -33,22 +28,18 @@ export function Benefits() {
           <polyline points="8 6 2 12 8 18" />
         </svg>
       ),
-      pct: 75,
-      label: "Personalização",
-      color: "bg-primary",
+      outcome: "Cada sistema feito sob medida para a operação do cliente",
     },
     {
       title: "Integrações e APIs",
-      description: "Seu time para de copiar dado de um sistema pro outro. A gente conecta tudo e isso some da vida de vocês.",
+      description: "Seu time para de copiar dado de um sistema pro outro. Conectamos ERPs, CRMs e planilhas num fluxo único.",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-primary group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
         </svg>
       ),
-      pct: 90,
-      label: "Conectividade",
-      color: "bg-secondary",
+      outcome: "De 5 sistemas isolados para 1 fluxo integrado",
     },
     {
       title: "Dashboards e Relatórios",
@@ -60,9 +51,7 @@ export function Benefits() {
           <line x1="6" y1="20" x2="6" y2="14" />
         </svg>
       ),
-      pct: 70,
-      label: "Visibilidade",
-      color: "bg-gradient-primary",
+      outcome: "Fechamento financeiro: de 3 dias para 4 horas",
     },
     {
       title: "Suporte e Evolução Contínua",
@@ -73,9 +62,7 @@ export function Benefits() {
           <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
         </svg>
       ),
-      pct: 0,
-      label: "online",
-      color: "",
+      outcome: "SLA de resposta garantido com time dedicado",
     },
     {
       title: "IA Aplicada ao Negócio",
@@ -86,9 +73,7 @@ export function Benefits() {
           <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />
         </svg>
       ),
-      pct: 60,
-      label: "Automação IA",
-      color: "bg-gradient-primary",
+      outcome: "Diagnósticos que levavam 2h agora são gerados por IA em segundos",
     },
   ];
 
@@ -125,7 +110,6 @@ export function Benefits() {
 
         {/* Grid de Cards — stagger reveal */}
         <motion.div
-          ref={gridRef}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16 items-stretch"
           initial="hidden"
           whileInView="visible"
@@ -141,29 +125,14 @@ export function Benefits() {
                   <p className="text-sm text-text-muted mb-6">{benefit.description}</p>
                 </div>
 
-                {/* Mini Visual CSS no Rodapé */}
+                {/* Outcome real no rodapé */}
                 <div className="mt-4 pt-4 border-t border-card-border">
-                  {benefit.pct > 0 ? (
-                    <>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-text-muted">{benefit.label}</span>
-                        <span className="text-xs font-bold text-primary">{benefit.pct}%</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-card-border rounded-full overflow-hidden">
-                        <motion.div
-                          className={`h-full ${benefit.color} rounded-full`}
-                          initial={{ width: 0 }}
-                          animate={gridInView ? { width: `${benefit.pct}%` } : { width: 0 }}
-                          transition={{ type: "spring", stiffness: 50, damping: 20, delay: 0.3 + index * 0.1 }}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex items-center gap-2 py-1">
-                      <div className="h-2.5 w-2.5 bg-green-500 rounded-full animate-pulse" />
-                      <span className="text-sm font-bold text-text">Online agora</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2 py-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-green-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span className="text-xs text-text-muted font-medium">{benefit.outcome}</span>
+                  </div>
                 </div>
               </TiltCard>
             </motion.div>

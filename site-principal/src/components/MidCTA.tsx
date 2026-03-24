@@ -34,7 +34,7 @@ export function MidCTA() {
         </motion.h2>
 
         <motion.p className="text-white/80 text-lg mb-6 max-w-2xl mx-auto" variants={revealVariants("up")}>
-          Responda 5 perguntas rápidas (leva 2 minutos) e receba um diagnóstico gratuito mostrando:
+          Responda nosso diagnóstico (leva apenas 2 minutos) e receba gratuitamente:
         </motion.p>
 
         <motion.div

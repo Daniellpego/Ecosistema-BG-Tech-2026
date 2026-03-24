@@ -7,10 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_ITEMS = [
   { href: "#solucoes", label: "Soluções" },
-  { href: "#como-funciona", label: "Como Funciona" },
   { href: "#cases", label: "Cases" },
-  { href: "/diagnostico", label: "Diagnóstico" },
-  { href: "#contato", label: "Contato" },
 ];
 
 export function Navbar() {

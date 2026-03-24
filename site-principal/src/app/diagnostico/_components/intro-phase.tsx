@@ -142,9 +142,28 @@ export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
               className="mt-6"
             >
               {/* Subheadline */}
-              <p className="text-[#94A3B8] text-base sm:text-lg mb-8">
-                10 perguntas. 2 minutos. Diagnóstico personalizado da sua operação, gerado por IA.
+              <p className="text-[#94A3B8] text-base sm:text-lg mb-4">
+                Diagnóstico personalizado da sua operação em apenas 2 minutos, gerado por IA.
               </p>
+
+              {/* Prévia do resultado */}
+              <div className="bg-[#131F35] border border-[#1E293B] rounded-xl p-4 mb-8 text-left max-w-sm mx-auto">
+                <p className="text-[10px] font-semibold text-[#00BFFF] tracking-wider uppercase mb-3">Você vai receber</p>
+                <div className="space-y-2.5">
+                  {[
+                    "Mapa dos seus gargalos ordenados por impacto financeiro",
+                    "Custo mensal estimado do retrabalho em reais",
+                    "Plano de automação prioritário gerado por IA",
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-0.5 flex-shrink-0">
+                        <path d="M3 7L6 10L11 4" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="text-[#CBD5E1] text-sm">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* CTA */}
               <motion.button
@@ -153,7 +172,7 @@ export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
                 whileTap={{ scale: 0.98 }}
                 className="bg-gradient-to-r from-[#2546BD] to-[#00BFFF] text-white rounded-pill px-8 py-4 font-bold text-lg shadow-lg shadow-[#2546BD]/30 hover:shadow-xl hover:shadow-[#00BFFF]/20 transition-shadow duration-300 relative overflow-hidden"
               >
-                <span className="relative z-10">Iniciar diagnóstico</span>
+                <span className="relative z-10">Iniciar análise agora</span>
                 <div className="absolute inset-0 bg-white/10 -translate-x-full skew-x-12 hover:translate-x-[200%] transition-transform duration-700" />
               </motion.button>
 

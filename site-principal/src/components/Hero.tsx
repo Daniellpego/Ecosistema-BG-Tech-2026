@@ -122,21 +122,22 @@ export function Hero() {
             animate="visible"
             custom={0}
           >
-            <span className="animate-brain-float text-lg leading-none" role="img" aria-label="cérebro">
-              🧠
-            </span>
-            Automação e Software B2B
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            Engenharia de Automação B2B
           </motion.div>
 
           {/* H1 com text reveal — spring physics */}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-text leading-[1.1] mb-6">
+          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold text-text leading-[1.1] mb-6">
             <motion.span className="block" variants={textLineVariants} initial="hidden" animate="visible" custom={0}>
-              Sua operação pode render mais
+              Sua operação perde dinheiro
             </motion.span>
             <motion.span className="block" variants={textLineVariants} initial="hidden" animate="visible" custom={0.1}>
-              com o{" "}
+              em processos que já deveriam ser{" "}
               <span className="relative inline-block whitespace-nowrap">
-                mesmo time.
+                automáticos.
                 <svg className="absolute -bottom-2 left-0 w-full overflow-visible" height="8" viewBox="0 0 300 8" fill="none" preserveAspectRatio="none">
                   <path d="M0 4 Q150 0 300 4" stroke="url(#underline-grad)" strokeWidth="5" strokeLinecap="round" fill="none" className="path-anim" />
                   <defs>
@@ -157,7 +158,7 @@ export function Hero() {
             animate="visible"
             custom={0.6}
           >
-            Mapeamos o gargalo, construímos a automação e você vê resultado em 2 semanas. Escopo fechado, sem contrato longo.
+            Engenharia de software e inteligência artificial para eliminar gargalos manuais. Escopo fechado. Resultado em 14 dias.
           </motion.p>
 
           <motion.div
@@ -172,12 +173,6 @@ export function Hero() {
               className="animate-cta-pulse bg-brand-gradient text-white rounded-pill px-8 py-4 font-bold hover:shadow-lg hover:shadow-[#2546BD]/30 hover:opacity-90 transition-all text-center w-full sm:w-auto relative overflow-hidden before:absolute before:inset-0 before:bg-white/20 before:-translate-x-full before:skew-x-12 hover:before:translate-x-[200%] before:transition-transform before:duration-700"
             >
               Diagnóstico Gratuito
-            </Link>
-            <Link
-              href="#como-funciona"
-              className="text-text font-medium px-6 py-4 hover:text-primary transition-colors flex items-center gap-2 border border-card-border rounded-pill hover:border-primary/30"
-            >
-              Ver como funciona &rarr;
             </Link>
           </motion.div>
 
