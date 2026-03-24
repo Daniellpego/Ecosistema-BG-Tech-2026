@@ -17,7 +17,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
   const setor = answers.setor?.[0] != null ? QUESTIONS[2].opcoes[answers.setor[0]] : null;
 
   return (
-    <div className="animate-fade-slide-up">
+    <div className="animate-fade-slide-up overflow-y-auto pb-32">
       <div className="text-center mb-8">
         <span className="inline-flex items-center bg-[#00BFFF]/10 text-[#00BFFF] font-semibold border border-[#00BFFF]/20 rounded-pill text-sm px-4 py-1.5 tracking-wide">
           Última etapa

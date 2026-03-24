@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface IntroPhaseProps {
-  city: string;
   onStart: () => void;
 }
 
@@ -71,10 +71,8 @@ function NeuralGrid() {
    INTRO PHASE — Dark Mode + Typewriter + Neural Immersion
    ═══════════════════════════════════════════════════════════ */
 
-export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
-  const headline = city
-    ? `${city}, quanto seu time perde por semana em tarefas que uma máquina faz em minutos?`
-    : "Quanto seu time perde por semana em tarefas que uma máquina faz em minutos?";
+export default function IntroPhase({ onStart }: IntroPhaseProps) {
+  const headline = "Quanto sua operação desperdiça por mês em processos manuais?";
   const { displayed, done } = useTypewriter(headline, 30, 800);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -189,7 +187,7 @@ export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
                 ))}
               </div>
 
-              {/* Social proof bar */}
+              {/* Social proof bar — fotos reais */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -197,18 +195,23 @@ export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
                 className="mt-10 flex items-center justify-center gap-3"
               >
                 <div className="flex -space-x-2">
-                  {["#2546BD", "#1856C0", "#0090D9", "#00BFFF"].map((c, i) => (
+                  {[
+                    { src: "/logo-cliente-1.webp", alt: "Cliente 1" },
+                    { src: "/logo-cliente-2.webp", alt: "Cliente 2" },
+                    { src: "/logo-cliente-4.webp", alt: "Cliente 3" },
+                    { src: "/logo-cliente-5.webp", alt: "Cliente 4" },
+                  ].map((client, i) => (
                     <div
                       key={i}
-                      className="w-7 h-7 rounded-full border-2 border-[#0A1628] flex items-center justify-center text-white text-[9px] font-bold"
-                      style={{ background: c, zIndex: 4 - i }}
+                      className="w-7 h-7 rounded-full border-2 border-[#0A1628] overflow-hidden flex-shrink-0"
+                      style={{ zIndex: 4 - i }}
                     >
-                      {["G", "M", "R", "T"][i]}
+                      <Image src={client.src} alt={client.alt} width={28} height={28} className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
                 <p className="text-[#64748B] text-sm">
-                  <span className="font-bold text-[#94A3B8]">+17</span> empresas já passaram por aqui
+                  <span className="font-bold text-[#94A3B8]">+17 empresas</span> · R$ 47k/mês economizados em média
                 </p>
               </motion.div>
 
@@ -231,12 +234,12 @@ export default function IntroPhase({ city, onStart }: IntroPhaseProps) {
                     &ldquo;A gente sabia que tinha problema. Não sabia que custava R$ 14 mil por mês. O diagnóstico colocou número no que era só intuição.&rdquo;
                   </p>
                   <div className="flex items-center gap-2 mt-3">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#2546BD] to-[#00BFFF] flex items-center justify-center text-white text-[10px] font-bold">
-                      GB
+                    <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
+                      <Image src="/logo-cliente-4.webp" alt="Cliente setor financeiro" width={28} height={28} className="w-full h-full object-cover" />
                     </div>
                     <div>
-                      <p className="text-[#CBD5E1] text-xs font-bold">Gestor de operações</p>
-                      <p className="text-[#475569] text-[10px]">Setor de serviços financeiros</p>
+                      <p className="text-[#CBD5E1] text-xs font-bold">Carlos F. · COO</p>
+                      <p className="text-[#475569] text-[10px]">Holding financeira, Londrina/PR</p>
                     </div>
                   </div>
                 </div>
