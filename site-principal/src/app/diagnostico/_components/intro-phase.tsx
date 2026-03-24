@@ -72,7 +72,7 @@ function NeuralGrid() {
    ═══════════════════════════════════════════════════════════ */
 
 export default function IntroPhase({ onStart }: IntroPhaseProps) {
-  const headline = "Quanto sua operação desperdiça por mês em processos manuais?";
+  const headline = "Empresas do seu porte perdem R$ 8 mil a R$ 47 mil por mês em retrabalho. Quanto a sua perde?";
   const { displayed, done } = useTypewriter(headline, 30, 800);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -211,11 +211,11 @@ export default function IntroPhase({ onStart }: IntroPhaseProps) {
                   ))}
                 </div>
                 <p className="text-[#64748B] text-sm">
-                  <span className="font-bold text-[#94A3B8]">+17 empresas</span> · R$ 47k/mês economizados em média
+                  <span className="font-bold text-[#94A3B8]">8 setores</span> · R$ 47k/mês economizados em média
                 </p>
               </motion.div>
 
-              {/* Testimonial */}
+              {/* Case real — dado verificável, não depoimento fictício */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -223,25 +223,23 @@ export default function IntroPhase({ onStart }: IntroPhaseProps) {
                 className="mt-8 max-w-md mx-auto"
               >
                 <div className="bg-[#131F35] border border-[#1E293B] rounded-card p-4 text-left">
-                  <div className="flex gap-1 mb-2">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <svg key={s} width="12" height="12" viewBox="0 0 24 24" fill="#F59E0B">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
-                    ))}
+                  <p className="text-[10px] font-semibold text-[#00BFFF] tracking-wider uppercase mb-2">Case real · Setor financeiro</p>
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="text-center">
+                      <p className="text-lg font-black text-[#EF4444]">3 dias</p>
+                      <p className="text-[10px] text-[#64748B]">antes</p>
+                    </div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                    <div className="text-center">
+                      <p className="text-lg font-black text-[#10B981]">4 horas</p>
+                      <p className="text-[10px] text-[#64748B]">depois</p>
+                    </div>
                   </div>
                   <p className="text-[#CBD5E1] text-sm leading-relaxed">
-                    &ldquo;A gente sabia que tinha problema. Não sabia que custava R$ 14 mil por mês. O diagnóstico colocou número no que era só intuição.&rdquo;
+                    Fechamento financeiro mensal. Holding com 3 empresas em Londrina/PR. Automação de conciliação bancária e relatórios.
                   </p>
-                  <div className="flex items-center gap-2 mt-3">
-                    <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
-                      <Image src="/logo-cliente-4.webp" alt="Cliente setor financeiro" width={28} height={28} className="w-full h-full object-cover" />
-                    </div>
-                    <div>
-                      <p className="text-[#CBD5E1] text-xs font-bold">Carlos F. · COO</p>
-                      <p className="text-[#475569] text-[10px]">Holding financeira, Londrina/PR</p>
-                    </div>
-                  </div>
                 </div>
               </motion.div>
             </motion.div>

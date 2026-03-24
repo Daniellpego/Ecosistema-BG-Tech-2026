@@ -124,19 +124,6 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
           <p className="text-[10px] text-[#475569] mt-1">Só para enviar seu diagnóstico e dicas relevantes. Pode cancelar a qualquer momento.</p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-[#CBD5E1] mb-1.5">
-            WhatsApp <span className="text-[#64748B] font-normal">(opcional — para enviar o PDF do resultado)</span>
-          </label>
-          <input
-            type="tel"
-            value={lead.whatsapp}
-            onChange={(e) => setLead((p) => ({ ...p, whatsapp: e.target.value }))}
-            placeholder="(00) 00000-0000"
-            className="w-full px-4 py-3 rounded-card border border-[#1E293B] bg-[#0F1D32] text-white text-sm placeholder:text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
-          />
-        </div>
-
         <button
           onClick={onSubmit}
           disabled={!isFilled || isSubmitting}

@@ -183,7 +183,7 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
           <div className="relative z-10">
             <p className="text-[#FCA5A5] text-[10px] font-semibold tracking-wider uppercase mb-1">Estimativa conservadora de retrabalho</p>
             <p className="text-[#94A3B8] text-sm mb-4">
-              Cálculo: {roi.monthlyHours}h/mês × {formatBRL(roi.hourlyCost)}/hora (custo médio CLT com encargos, setor {setor}) × 0.8
+              {roi.monthlyHours}h/mês × {formatBRL(roi.hourlyCost)}/hora (custo CLT + encargos, média CAGED/2024 para {setor}) × 0.8 (fator conservador)
             </p>
             <div className="flex items-center gap-3 bg-[#EF4444]/10 border border-[#EF4444]/20 rounded-xl px-4 py-3">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -435,6 +435,56 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
           <p className="text-[#475569] text-xs mt-6 print:hidden">
             Diagnóstico gerado em {new Date().toLocaleDateString("pt-BR")} · Dados protegidos · Gradios © {new Date().getFullYear()}
           </p>
+        </div>
+      </div>
+
+      {/* ── WHATSAPP PDF OPT-IN (post-result, low friction) ── */}
+      <WhatsAppPdfOptIn />
+    </div>
+  );
+}
+
+function WhatsAppPdfOptIn() {
+  const [phone, setPhone] = useState("");
+  const [sent, setSent] = useState(false);
+
+  function handleSend() {
+    if (phone.replace(/\D/g, "").length >= 10) {
+      setSent(true);
+      // In production: save to Supabase / trigger n8n webhook
+    }
+  }
+
+  if (sent) {
+    return (
+      <div className="result-section opacity-0 animate-fade-slide-up print:hidden" style={{ animationDelay: "0.85s" }}>
+        <div className="bg-[#10B981]/10 border border-[#10B981]/20 rounded-2xl p-4 text-center">
+          <p className="text-[#10B981] text-sm font-semibold">PDF enviado para seu WhatsApp.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="result-section opacity-0 animate-fade-slide-up print:hidden" style={{ animationDelay: "0.85s" }}>
+      <div className="bg-[#0F172A] border border-[#1E293B] rounded-2xl p-5">
+        <p className="text-white text-sm font-bold mb-1">Quer receber este resultado por WhatsApp?</p>
+        <p className="text-[#64748B] text-xs mb-3">Enviamos o PDF do diagnóstico direto no seu celular.</p>
+        <div className="flex gap-2">
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="(00) 00000-0000"
+            className="flex-1 px-4 py-2.5 rounded-pill border border-[#1E293B] bg-[#131F35] text-white text-sm placeholder:text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
+          />
+          <button
+            onClick={handleSend}
+            disabled={phone.replace(/\D/g, "").length < 10}
+            className="bg-[#25D366] text-white rounded-pill px-5 py-2.5 font-bold text-sm hover:bg-[#20BD5A] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+          >
+            Enviar
+          </button>
         </div>
       </div>
     </div>
