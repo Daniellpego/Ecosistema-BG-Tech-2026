@@ -1,25 +1,84 @@
 "use client";
 
 import { motion, useInView, animate } from "framer-motion";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { WordReveal } from "./WordReveal";
 import { spring, revealVariants, staggerParent, viewport } from "@/lib/motion";
 import Image from "next/image";
 import Link from "next/link";
 
-/* ── Interactive Before/After Slider ── */
+/* ── Neural Network Node Generator ── */
+function generateNodes(count: number, seed: number) {
+  const nodes: { x: number; y: number }[] = [];
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2 + seed;
+    const radius = 20 + ((i * 17 + seed * 7) % 30);
+    nodes.push({
+      x: 50 + Math.cos(angle) * radius + ((i * 13 + seed * 3) % 10) - 5,
+      y: 50 + Math.sin(angle) * radius + ((i * 11 + seed * 5) % 10) - 5,
+    });
+  }
+  return nodes;
+}
+
+/* ── Neural Network SVG Background ── */
+function NeuralNetwork({ chaos, side }: { chaos: number; side: "before" | "after" }) {
+  const nodes = useMemo(() => generateNodes(12, side === "before" ? 1 : 5), [side]);
+
+  const color = side === "before" ? "rgba(239,68,68," : "rgba(0,191,255,";
+  const jitter = chaos * 3;
+
+  return (
+    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+      {/* Connections */}
+      {nodes.map((node, i) =>
+        nodes.slice(i + 1).filter((_, j) => (i + j) % 3 === 0).map((target, j) => (
+          <line
+            key={`${i}-${j}`}
+            x1={node.x + (side === "before" ? Math.sin(i * chaos * 0.5) * jitter : 0)}
+            y1={node.y + (side === "before" ? Math.cos(i * chaos * 0.3) * jitter : 0)}
+            x2={target.x + (side === "before" ? Math.sin(j * chaos * 0.7) * jitter : 0)}
+            y2={target.y + (side === "before" ? Math.cos(j * chaos * 0.4) * jitter : 0)}
+            stroke={`${color}${side === "before" ? 0.08 + chaos * 0.04 : 0.12 - chaos * 0.02})`}
+            strokeWidth={side === "before" ? 0.3 + chaos * 0.15 : 0.2}
+          />
+        ))
+      )}
+      {/* Nodes */}
+      {nodes.map((node, i) => (
+        <circle
+          key={i}
+          cx={node.x + (side === "before" ? Math.sin(i * chaos * 0.6) * jitter : 0)}
+          cy={node.y + (side === "before" ? Math.cos(i * chaos * 0.4) * jitter : 0)}
+          r={side === "before" ? 0.8 + chaos * 0.3 : 1}
+          fill={`${color}${side === "before" ? 0.15 + chaos * 0.1 : 0.25 - chaos * 0.05})`}
+        />
+      ))}
+    </svg>
+  );
+}
+
+/* ── Interactive Before/After Slider — Neural Engineering ── */
 function BeforeAfterSlider() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [sliderPos, setSliderPos] = useState(50); // percentage
+  const [sliderPos, setSliderPos] = useState(65);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+
+  // Derived values based on slider position
+  const beforeHours = 72; // 3 days = 72h
+  const afterHours = 4;
+  const economyHours = Math.round(((sliderPos / 100) * (beforeHours - afterHours)));
+  const chaosLevel = sliderPos / 100; // 0 = all green, 1 = all red
 
   const updatePosition = useCallback((clientX: number) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
-    const pct = Math.max(2, Math.min(98, (x / rect.width) * 100));
+    const pct = Math.max(5, Math.min(95, (x / rect.width) * 100));
     setSliderPos(pct);
-  }, []);
+    if (!hasInteracted) setHasInteracted(true);
+  }, [hasInteracted]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     setIsDragging(true);
@@ -39,69 +98,159 @@ function BeforeAfterSlider() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full rounded-2xl overflow-hidden select-none touch-none cursor-col-resize"
+      className="relative w-full rounded-2xl overflow-hidden select-none touch-none cursor-col-resize border border-white/[0.06]"
       style={{ aspectRatio: "16/7" }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
-      {/* DEPOIS (background - full width) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center p-6 sm:p-10">
-        <div className="max-w-md ml-auto mr-8 sm:mr-16">
-          <div className="text-xs font-bold text-green-500 uppercase tracking-wider mb-2">Depois</div>
-          <div className="text-4xl sm:text-5xl font-bold font-display text-green-600 mb-2">4 horas</div>
-          <p className="text-sm sm:text-base text-green-600/70">Automatizado, sem erro, relatório pronto</p>
-          <div className="mt-4 flex items-center gap-2">
-            <div className="h-2 w-16 bg-green-200 rounded-full overflow-hidden">
-              <div className="h-full w-[5.5%] bg-green-500 rounded-full" />
+      {/* ═══ DEPOIS (background - full width) ═══ */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#071520] via-[#0a1e30] to-[#0d2a3d]">
+        <NeuralNetwork chaos={chaosLevel} side="after" />
+        <div className="absolute inset-0 flex flex-col justify-center p-6 sm:p-10">
+          <div className="max-w-sm ml-auto mr-6 sm:mr-12 lg:mr-20">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-[#00BFFF] animate-pulse" />
+              <span className="text-[10px] font-bold text-[#00BFFF] uppercase tracking-widest">Sistema ativo</span>
             </div>
-            <span className="text-xs text-green-500 font-semibold">5.5% do tempo original</span>
+            <div className="text-3xl sm:text-5xl font-bold font-display text-white mb-1">4 horas</div>
+            <p className="text-sm sm:text-base text-[#00BFFF]/70 mb-4">Automatizado. Zero erro. Relatório pronto.</p>
+
+            {/* Progress bar — stable, clean */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-[10px]">
+                <span className="text-white/40">Conformidade</span>
+                <span className="text-[#00BFFF] font-bold">100%</span>
+              </div>
+              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-gradient-to-r from-[#2546BD] to-[#00BFFF]" style={{ width: "100%" }} />
+              </div>
+              <div className="flex justify-between text-[10px]">
+                <span className="text-white/40">Tempo de execução</span>
+                <span className="text-green-400 font-bold">5.5%</span>
+              </div>
+              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-green-400" style={{ width: "5.5%" }} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ANTES (overlay - clipped) */}
+      {/* ═══ ANTES (overlay - clipped) ═══ */}
       <div
-        className="absolute inset-0 bg-gradient-to-br from-red-50 to-rose-50 flex flex-col justify-center p-6 sm:p-10"
+        className="absolute inset-0 bg-gradient-to-br from-[#1a0a0a] via-[#1f0f0f] to-[#180808]"
         style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
       >
-        <div className="max-w-md ml-8 sm:ml-16">
-          <div className="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">Antes</div>
-          <div className="text-4xl sm:text-5xl font-bold font-display text-red-600 mb-2">3 dias</div>
-          <p className="text-sm sm:text-base text-red-500/70">Processo manual, planilhas, erros frequentes</p>
-          <div className="mt-4 flex items-center gap-2">
-            <div className="h-2 w-16 bg-red-200 rounded-full overflow-hidden">
-              <div className="h-full w-full bg-red-500 rounded-full" />
+        <NeuralNetwork chaos={chaosLevel} side="before" />
+        {/* Scan lines for chaos effect */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{
+            backgroundImage: "repeating-linear-gradient(0deg, rgba(239,68,68,0.3) 0px, transparent 1px, transparent 3px)",
+            backgroundSize: "100% 3px",
+          }}
+        />
+        <div className="absolute inset-0 flex flex-col justify-center p-6 sm:p-10">
+          <div className="max-w-sm ml-6 sm:ml-12 lg:ml-20">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-red-500" style={{ animation: "pulse 0.8s ease-in-out infinite" }} />
+              <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Processo manual</span>
             </div>
-            <span className="text-xs text-red-400 font-semibold">100% do tempo</span>
+            <div className="text-3xl sm:text-5xl font-bold font-display text-white mb-1">3 dias</div>
+            <p className="text-sm sm:text-base text-red-400/70 mb-4">Planilhas. Retrabalho. Erros frequentes.</p>
+
+            {/* Progress bars — unstable, glitchy */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-[10px]">
+                <span className="text-white/40">Risco de fraude</span>
+                <span className="text-red-400 font-bold">Alto</span>
+              </div>
+              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-red-500"
+                  style={{ width: `${78 + chaosLevel * 12}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px]">
+                <span className="text-white/40">Tempo consumido</span>
+                <span className="text-red-400 font-bold">100%</span>
+              </div>
+              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-red-500" style={{ width: "100%" }} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Slider handle */}
-      <div
+      {/* ═══ SLIDER HANDLE — Régua de Tempo ═══ */}
+      <motion.div
         className="absolute top-0 bottom-0 z-20 flex items-center"
-        style={{ left: `${sliderPos}%`, transform: "translateX(-50%)" }}
+        style={{ left: `${sliderPos}%`, x: "-50%" }}
+        whileTap={{ scale: 1.05 }}
       >
-        <div className="w-[2px] h-full bg-white shadow-[0_0_8px_rgba(0,0,0,0.3)]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center border-2 border-gray-200">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8l4 4-4 4" />
-            <path d="M6 8l-4 4 4 4" />
-          </svg>
-        </div>
-      </div>
+        {/* Vertical line with glow */}
+        <div
+          className="w-[2px] h-full"
+          style={{
+            background: "linear-gradient(to bottom, transparent, #00BFFF, transparent)",
+            boxShadow: isDragging
+              ? "0 0 20px rgba(0,191,255,0.5), 0 0 40px rgba(0,191,255,0.2)"
+              : "0 0 8px rgba(0,191,255,0.3)",
+          }}
+        />
+
+        {/* Handle knob with economy counter */}
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1"
+          animate={{
+            scale: isDragging ? 1.1 : 1,
+          }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        >
+          {/* Counter pill */}
+          <div
+            className="bg-[#0A1628] border border-[#00BFFF]/40 rounded-full px-3 py-1 whitespace-nowrap"
+            style={{
+              boxShadow: "0 0 15px rgba(0,191,255,0.25)",
+            }}
+          >
+            <span className="text-[10px] font-bold text-[#00BFFF]">
+              Economia: {economyHours}h
+            </span>
+          </div>
+
+          {/* Drag handle */}
+          <div
+            className="w-11 h-11 rounded-full bg-[#0A1628] border-2 border-[#00BFFF]/60 flex items-center justify-center"
+            style={{
+              boxShadow: isDragging
+                ? "0 0 24px rgba(0,191,255,0.4), inset 0 0 8px rgba(0,191,255,0.1)"
+                : "0 0 12px rgba(0,191,255,0.2)",
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-[#00BFFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8l4 4-4 4" />
+              <path d="M6 8l-4 4 4 4" />
+            </svg>
+          </div>
+        </motion.div>
+      </motion.div>
 
       {/* Labels */}
-      <div className="absolute top-3 left-3 z-10 bg-red-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+      <div className="absolute top-3 left-3 z-10 bg-red-500/20 backdrop-blur-sm text-red-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-red-500/20">
         Antes
       </div>
-      <div className="absolute top-3 right-3 z-10 bg-green-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+      <div className="absolute top-3 right-3 z-10 bg-[#00BFFF]/15 backdrop-blur-sm text-[#00BFFF] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-[#00BFFF]/20">
         Depois
       </div>
 
-      {/* Hint on first load */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 bg-black/50 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full pointer-events-none opacity-60">
+      {/* Hint — fades after interaction */}
+      <div
+        className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 bg-white/10 backdrop-blur-md text-white/80 text-[10px] font-medium px-3 py-1.5 rounded-full pointer-events-none transition-opacity duration-500"
+        style={{ opacity: hasInteracted ? 0 : 0.8 }}
+      >
         Arraste para comparar
       </div>
     </div>
@@ -168,7 +317,7 @@ export function Testimonials() {
           </motion.p>
         </motion.div>
 
-        {/* Case principal — slider interativo */}
+        {/* Case principal — slider interativo neural */}
         <motion.div
           className="mt-16"
           initial="hidden"
@@ -193,7 +342,7 @@ export function Testimonials() {
               </div>
             </div>
 
-            {/* Before/After Slider */}
+            {/* Before/After Neural Slider */}
             <BeforeAfterSlider />
 
             <p className="text-text-muted leading-relaxed mt-6">
