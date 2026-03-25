@@ -11,7 +11,9 @@ interface CapturePhaseProps {
 }
 
 export default function CapturePhase({ lead, setLead, answers, isSubmitting, onSubmit }: CapturePhaseProps) {
-  const isFilled = lead.nome.trim() && lead.empresa.trim() && lead.email.trim();
+  const whatsAppDigits = lead.whatsapp.replace(/\D/g, "");
+  const isWhatsAppValid = whatsAppDigits.length >= 10 && whatsAppDigits.length <= 13;
+  const isFilled = lead.nome.trim() && lead.empresa.trim() && lead.email.trim() && isWhatsAppValid;
   const partialScore = calculatePartialScore(answers);
   const gargalosCount = answers.gargalos?.length ?? 0;
   const setor = answers.setor?.[0] != null ? QUESTIONS[2].opcoes[answers.setor[0]] : null;
@@ -122,6 +124,21 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
             className="w-full px-4 py-3 rounded-card border border-[#1E293B] bg-[#0F1D32] text-white text-sm placeholder:text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
           />
           <p className="text-[10px] text-[#475569] mt-1">Só para enviar seu diagnóstico e dicas relevantes. Pode cancelar a qualquer momento.</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-[#CBD5E1] mb-1.5">WhatsApp *</label>
+          <input
+            type="tel"
+            value={lead.whatsapp}
+            onChange={(e) => setLead((p) => ({ ...p, whatsapp: e.target.value }))}
+            placeholder="Seu WhatsApp para receber o diagnóstico"
+            className="w-full px-4 py-3 rounded-card border border-[#1E293B] bg-[#0F1D32] text-white text-sm placeholder:text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
+          />
+          {lead.whatsapp && !isWhatsAppValid && (
+            <p className="text-[10px] text-[#EF4444] mt-1">Informe um WhatsApp válido (ex: 43 99999-9999)</p>
+          )}
+          <p className="text-[10px] text-[#475569] mt-1">Enviamos seu resultado personalizado pelo WhatsApp</p>
         </div>
 
         <button
