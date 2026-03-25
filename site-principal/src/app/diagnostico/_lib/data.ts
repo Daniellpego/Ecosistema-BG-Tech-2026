@@ -59,21 +59,21 @@ export const QUESTIONS: Question[] = [
     id: "tamanho",
     categoria: "Empresa",
     pergunta: "Qual é o porte da empresa hoje?",
-    sub: "Cada tamanho tem gargalos diferentes — e soluções diferentes.",
+    sub: "Cada tamanho tem gargalos diferentes. E soluções diferentes.",
     tipo: "single",
     opcoes: ["Até 10", "11 a 50", "51 a 200", "201 a 500", "Mais de 500"],
     scores: [2, 5, 12, 18, 20],
     reactions: {
-      2: "Nessa faixa, cada processo manual custa proporcionalmente mais. Vamos medir.",
-      3: "200+ pessoas. Um gargalo que custa 2h/dia = 400h/mês de empresa. Vamos calcular.",
-      4: "Escala grande. Qualquer ineficiência se multiplica. Bom contexto para o diagnóstico.",
+      2: "51-200 pessoas. Qualquer gargalo aqui custa caro. Um processo de 2h/dia = 10k horas/ano desperdiçadas.",
+      3: "201-500 pessoas. Um gargalo de 2h/dia = 400h/mês de empresa. Isso é 1 pessoa inteira só corrigindo erro.",
+      4: "+500 pessoas. Escala grande. Qualquer ineficiência se multiplica. Bom contexto para o diagnóstico.",
     },
   },
   {
     id: "setor",
     categoria: "Empresa",
     pergunta: "Em qual setor vocês atuam?",
-    sub: "Cada setor tem seus gargalos típicos — a gente conhece todos.",
+    sub: "Cada setor tem seus gargalos típicos. A gente conhece todos.",
     tipo: "single",
     opcoes: [
       "Varejo/E-commerce",
@@ -85,22 +85,20 @@ export const QUESTIONS: Question[] = [
       "Serviços em geral",
       "Outro",
     ],
-    scores: null,
+    scores: [8, 10, 9, 12, 15, 18, 7, 5],
   },
   {
     id: "gargalos",
     categoria: "Operação",
     pergunta: "Onde estão os maiores gargalos da operação hoje?",
-    sub: "Selecione tudo que se aplica — seja honesto, quanto mais marcar, mais preciso o diagnóstico.",
+    sub: "Selecione tudo que se aplica. Seja honesto, quanto mais marcar, mais preciso o diagnóstico.",
     tipo: "multi",
     opcoes: [
-      "Financeiro — fechamentos manuais",
-      "Comercial — CRM desatualizado",
-      "Atendimento — respostas lentas",
-      "Operações — dependem de pessoas",
-      "Logística/Estoque — planilha como sistema",
-      "RH — onboarding manual",
-      "Dados/Relatórios — fechamento leva dias",
+      "Financeiro (fechamentos lentos)",
+      "Comercial (CRM desatualizado)",
+      "Operação (falhas na transição)",
+      "Atendimento (suporte sobrecarregado)",
+      "Gestão (falta de dados rápidos)",
     ],
     scores: null,
     reactions: {
@@ -128,15 +126,15 @@ export const QUESTIONS: Question[] = [
     sub: "ERP sem CRM. Planilha paralela. O sistema que só o João sabe usar.",
     tipo: "single",
     opcoes: [
-      "Poucos sistemas",
-      "2 a 3 parcialmente integrados",
-      "4 a 6 desconectados",
-      "7 ou mais",
+      "1 a 2 sistemas (bem integrados)",
+      "3 a 5 sistemas (alguns conectados)",
+      "6 a 10 sistemas (maioria isolada)",
+      "Mais de 10 sistemas (caos total)",
     ],
     scores: [3, 8, 13, 15],
     reactions: {
-      2: "4-6 sistemas sem integração. Dado entra num, não chega no outro.",
-      3: "7+ sistemas. Cada um é uma ilha. Isso custa caro.",
+      2: "6-10 sistemas isolados. Dado entra num, não chega no outro. Isso é retrabalho garantido.",
+      3: "+10 sistemas. Cada um é uma ilha. Custo operacional invisível altíssimo.",
     },
   },
   {
@@ -160,36 +158,58 @@ export const QUESTIONS: Question[] = [
     sub: "Selecione tudo que acontece com frequência na operação.",
     tipo: "multi",
     opcoes: [
-      "Atrasos em entregas",
-      "Erros por dado desatualizado",
-      "Decisões sem dado em tempo real",
-      "Custo alto com equipe em tarefas automáticas",
-      "Perda de cliente por lentidão",
-      "Dificuldade de escalar",
+      "Decisões atrasadas por falta de dados rápidos",
+      "Clientes perdidos por lentidão no atendimento",
+      "Erro humano recorrente (lançamentos, NF, estoque)",
+      "Impossível escalar sem contratar mais gente",
+      "Time sobrecarregado com tarefas repetitivas",
+      "Dependência crítica de pessoas-chave",
     ],
     scores: null,
     reactions: {
-      4: "Cliente perdido por lentidão não aparece no DRE, mas destrói o MRR.",
-      5: "Sem escalar, receita tem teto. Automação remove o teto sem contratar.",
+      1: "Cliente perdido por lentidão não aparece no DRE, mas destrói o MRR.",
+      3: "Sem escalar, receita tem teto. Automação remove o teto sem contratar.",
+      4: "Time sobrecarregado vira time desmotivado. Retenção cai, custo de contratação sobe.",
     },
   },
   {
     id: "urgencia",
     categoria: "Prioridade",
     pergunta: "Quando vocês precisam resolver isso?",
-    sub: "Sem julgamento — define como a gente prioriza a recomendação.",
+    sub: "Sem julgamento. Define como a gente prioriza a recomendação.",
     tipo: "single",
     opcoes: [
-      "Só estou mapeando",
+      "Só estou mapeando (sem prazo definido)",
       "Próximos 6 meses",
-      "Próximos 3 meses",
+      "Próximos 90 dias",
       "Próximos 30 dias",
-      "Prioridade imediata",
+      "Urgência imediata (preciso resolver agora)",
     ],
     scores: [1, 4, 7, 9, 10],
     reactions: {
-      3: "30 dias. Janela curta. Vamos priorizar o que dá resultado mais rápido.",
-      4: "Prioridade imediata. O diagnóstico vai mostrar exatamente o primeiro passo.",
+      3: "90 dias. Janela boa pra implementar algo sólido sem atropelo.",
+      4: "Urgência imediata. O diagnóstico vai mostrar exatamente o primeiro passo.",
+    },
+  },
+  {
+    id: "budget",
+    categoria: "Prioridade",
+    pergunta: "Qual é a realidade de investimento da empresa hoje?",
+    sub: "Ajuda a Gradios a sugerir a solução certa pro seu momento. Atendemos desde automações pequenas até projetos completos.",
+    tipo: "single",
+    opcoes: [
+      "Ainda estou mapeando (sem orçamento definido)",
+      "Até R$ 5 mil (automação pontual, quick win)",
+      "R$ 5k a R$ 20k (integração de 2-3 processos)",
+      "R$ 20k a R$ 80k (projeto estruturado)",
+      "Acima de R$ 80k (solução completa ou software custom)",
+    ],
+    scores: [0, 5, 10, 13, 15],
+    reactions: {
+      1: "R$ 5k. Perfeito pra começar com quick wins. ROI rápido, baixo risco.",
+      2: "R$ 5k-20k. Faixa ideal pra resolver 2-3 gargalos críticos com impacto imediato.",
+      3: "R$ 20k-80k. Dá pra estruturar um projeto sólido com ROI mensurável.",
+      4: "Acima de R$ 80k. Escopo robusto. A Gradios trabalha com projetos desse porte com frequência.",
     },
   },
   {
@@ -203,13 +223,13 @@ export const QUESTIONS: Question[] = [
       "Integrar sistemas",
       "Software sob medida",
       "Dashboard e KPIs",
-      "IA no atendimento/análise",
+      "Automação inteligente (atendimento/análise)",
       "Ainda não sei",
     ],
     scores: null,
     reactions: {
       0: "Processos manuais primeiro. Menor investimento, maior retorno. Escolha certa.",
-      4: "IA aplicada. Temos cases rodando com Groq + n8n. O diagnóstico vai detalhar.",
+      4: "Automação inteligente. Temos cases rodando com Groq + n8n. O diagnóstico vai detalhar.",
     },
   },
 ];
@@ -260,21 +280,25 @@ export function calculateScore(answers: Record<string, number[]>): number {
 
   if (answers.cargo?.[0] != null) raw += [10, 10, 8, 5, 0, 3][answers.cargo[0]];
   if (answers.tamanho?.[0] != null) raw += [2, 5, 12, 18, 20][answers.tamanho[0]];
+  if (answers.setor?.[0] != null) raw += [8, 10, 9, 12, 15, 18, 7, 5][answers.setor[0]];
   if (answers.gargalos) raw += multiScore(answers.gargalos.length);
   if (answers.processos?.[0] != null) raw += [0, 5, 12, 18, 20][answers.processos[0]];
   if (answers.sistemas?.[0] != null) raw += [3, 8, 13, 15][answers.sistemas[0]];
   if (answers.tempo?.[0] != null) raw += [3, 8, 13, 15][answers.tempo[0]];
   if (answers.impactos) raw += multiScore(answers.impactos.length);
   if (answers.urgencia?.[0] != null) raw += [1, 4, 7, 9, 10][answers.urgencia[0]];
+  if (answers.budget?.[0] != null) raw += [0, 5, 10, 13, 15][answers.budget[0]];
 
-  let score = Math.min(100, Math.round((raw / 94) * 100));
+  let score = Math.min(100, Math.round((raw / 127) * 100));
 
-  // Soft penalty: Analista/Operação → -20 pontos (ainda pode subir de tier)
-  if (answers.cargo?.[0] === 4) score = Math.max(0, score - 20);
-  // Soft penalty: "Até 10" funcionários → -15 pontos
-  if (answers.tamanho?.[0] === 0) score = Math.max(0, score - 15);
+  // Soft penalty: Analista/Operação → -15 pontos (mas ainda pode atingir Tier A com urgência alta)
+  if (answers.cargo?.[0] === 4) score = Math.max(0, score - 15);
   // Urgência imediata garante mínimo Tier B
   if (answers.urgencia?.[0] === 4) score = Math.max(score, 55);
+  // Budget alto + urgência alta garante Tier A (microempreendedor com dor real = cliente válido)
+  if (answers.urgencia?.[0] === 4 && answers.budget?.[0] != null && answers.budget[0] >= 2) {
+    score = Math.max(score, 60);
+  }
 
   return score;
 }
@@ -293,15 +317,17 @@ export function calculatePartialScore(answers: Record<string, number[]>): number
 
   if (answers.cargo?.[0] != null) { raw += [10, 10, 8, 5, 0, 3][answers.cargo[0]]; answeredScored++; }
   if (answers.tamanho?.[0] != null) { raw += [2, 5, 12, 18, 20][answers.tamanho[0]]; answeredScored++; }
+  if (answers.setor?.[0] != null) { raw += [8, 10, 9, 12, 15, 18, 7, 5][answers.setor[0]]; answeredScored++; }
   if (answers.processos?.[0] != null) { raw += [0, 5, 12, 18, 20][answers.processos[0]]; answeredScored++; }
   if (answers.sistemas?.[0] != null) { raw += [3, 8, 13, 15][answers.sistemas[0]]; answeredScored++; }
   if (answers.tempo?.[0] != null) { raw += [3, 8, 13, 15][answers.tempo[0]]; answeredScored++; }
   if (answers.urgencia?.[0] != null) { raw += [1, 4, 7, 9, 10][answers.urgencia[0]]; answeredScored++; }
+  if (answers.budget?.[0] != null) { raw += [0, 5, 10, 13, 15][answers.budget[0]]; answeredScored++; }
   if (answers.gargalos) raw += multiScore(answers.gargalos.length);
   if (answers.impactos) raw += multiScore(answers.impactos.length);
 
   if (answeredScored === 0) return 0;
-  return Math.min(100, Math.round((raw / 94) * 100));
+  return Math.min(100, Math.round((raw / 127) * 100));
 }
 
 /* ════════════════════════════════════════════════════════════

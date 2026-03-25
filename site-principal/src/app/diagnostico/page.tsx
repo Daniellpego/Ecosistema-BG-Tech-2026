@@ -120,7 +120,40 @@ export default function DiagnosticoPage() {
   function trackEvent(event: string, params?: Record<string, unknown>) {
     try {
       if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
-        (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", event, params);
+        const fbq = (window as unknown as { fbq: (...args: unknown[]) => void }).fbq;
+
+        // Map custom events to Meta Pixel standard events
+        switch (event) {
+          case "quiz_start":
+            fbq("track", "ViewContent", { content_name: "Quiz Diagnóstico Gradios", content_category: "Quiz" });
+            break;
+          case "quiz_answer":
+            fbq("trackCustom", "QuizAnswer", params);
+            break;
+          case "quiz_completed":
+            fbq("track", "InitiateCheckout", { content_name: "Quiz Completo", num_items: params?.questions_answered || 0 });
+            break;
+          case "lead_captured":
+            fbq("track", "Lead", {
+              content_name: "Diagnóstico Gradios",
+              content_category: params?.setor || "Não informado",
+              value: 0,
+              currency: "BRL"
+            });
+            break;
+          case "diagnosis_viewed":
+            fbq("track", "CompleteRegistration", {
+              content_name: "Resultado Diagnóstico",
+              status: `Tier ${params?.tier}`,
+              value: (params?.score as number) || 0
+            });
+            break;
+          case "quiz_abandoned":
+            fbq("trackCustom", "QuizAbandoned", params);
+            break;
+          default:
+            fbq("trackCustom", event, params);
+        }
       }
       // Also push to dataLayer for GTM/GA4 if available
       if (typeof window !== "undefined" && (window as unknown as { dataLayer?: unknown[] }).dataLayer) {
@@ -167,7 +200,7 @@ export default function DiagnosticoPage() {
       const impactosLabels = answers.impactos?.map((i) => QUESTIONS[7].opcoes[i]).join(", ") || "Nenhum";
       const sectorCtx = SECTOR_CONTEXT[setor] || SECTOR_CONTEXT["Outro"];
 
-      const systemPrompt = `Você é o Gustavo, sócio da Gradios. Londrina, PR. Automação de processos, integrações sob medida, software custom. Você fala como um cara técnico que entende de negócio — direto, sem firula, com autoridade.
+      const systemPrompt = `Você é o Gustavo, sócio da Gradios. Londrina, PR. Automação de processos, integrações sob medida, software custom. Você fala como um cara técnico que entende de negócio. Direto, sem firula, com autoridade.
 
 DADOS DO LEAD (use TODOS no texto, não invente nada):
 - Nome: ${lead.nome.split(" ")[0]}
@@ -182,36 +215,49 @@ DADOS DO LEAD (use TODOS no texto, não invente nada):
 - Tempo perdido em retrabalho: ${tempoExpandido}
 - Impactos reais: ${impactosLabels}
 - Urgência: ${answers.urgencia?.[0] != null ? QUESTIONS[8].opcoes[answers.urgencia[0]] : "Não informado"}
-- Prioridade: ${answers.prioridade?.[0] != null ? QUESTIONS[9].opcoes[answers.prioridade[0]] : "Não informado"}
+- Budget disponível: ${answers.budget?.[0] != null ? QUESTIONS[9].opcoes[answers.budget[0]] : "Não informado"}
+- Prioridade: ${answers.prioridade?.[0] != null ? QUESTIONS[10].opcoes[answers.prioridade[0]] : "Não informado"}
 - Score: ${finalScore}/100
 
 CONTEXTO REAL DO SETOR (referência para o diagnóstico):
 ${sectorCtx}
 
-FORMATO — texto corrido, 5 blocos separados por linha em branco. Sem markdown. Sem asteriscos. Sem bullet points. Sem títulos.
+FORMATO: texto corrido, 5 blocos separados por linha em branco. Sem markdown. Sem asteriscos. Sem bullet points. Sem títulos.
 
-BLOCO 1 — ABERTURA (2 frases):
-Chame pelo primeiro nome. Mencione a cidade se disponível. Diga que cruzou os dados da ${lead.empresa} e o resultado é claro. Tom: direto, como se já conhecesse a empresa. Não diga "obrigado por responder".
+BLOCO 1 (ABERTURA - 2 frases):
+Chame pelo primeiro nome. Mencione a cidade se disponível. Diga que cruzou os dados da ${lead.empresa} e o resultado é claro. Tom direto, como se já conhecesse a empresa. Não diga "obrigado por responder".
 
-BLOCO 2 — DIAGNÓSTICO CIRÚRGICO (3-4 frases):
-Vá direto nos problemas. Cite os gargalos EXATOS que o lead marcou, os ${tempoExpandido} de retrabalho, os sistemas desconectados. Use números reais das respostas. Explique o custo invisível disso — horas desperdiçadas, decisões atrasadas, operação frágil. Fale como quem já viu esse cenário 50 vezes.
+BLOCO 2 (DIAGNÓSTICO - 3-4 frases):
+Vá direto nos problemas. Cite os gargalos EXATOS que o lead marcou, os ${tempoExpandido} de retrabalho, os sistemas desconectados. Use números reais das respostas. Explique o custo invisível disso (horas desperdiçadas, decisões atrasadas, operação frágil). Fale como quem já viu esse cenário 50 vezes.
 
-BLOCO 3 — CONTEXTO DO SETOR (2 frases):
-Compare com empresas parecidas do mesmo setor. Cite resultados reais que a Gradios entrega (use o contexto do setor acima). Números concretos — % de redução, horas economizadas.
+BLOCO 3 (CONTEXTO DO SETOR - 2 frases):
+Compare com empresas parecidas do mesmo setor. Cite resultados reais que a Gradios entrega (use o contexto do setor acima). Números concretos (% de redução, horas economizadas).
 
-BLOCO 4 — O QUE A GRADIOS FARIA (2-3 frases):
-Baseado na prioridade "${answers.prioridade?.[0] != null ? QUESTIONS[9].opcoes[answers.prioridade[0]] : "não definida"}", diga EXATAMENTE o que a Gradios faria primeiro. Seja específico — qual sistema conectar com qual, qual processo automatizar, que tipo de dashboard montar. Nada vago.
+BLOCO 4 (O QUE A GRADIOS FARIA - 2-3 frases):
+Baseado na prioridade "${answers.prioridade?.[0] != null ? QUESTIONS[10].opcoes[answers.prioridade[0]] : "não definida"}" e no budget disponível "${answers.budget?.[0] != null ? QUESTIONS[9].opcoes[answers.budget[0]] : "não informado"}", diga EXATAMENTE o que a Gradios faria primeiro. Seja específico (qual sistema conectar com qual, qual processo automatizar, que tipo de dashboard montar). Se budget for baixo, sugira quick wins. Se for alto, sugira solução robusta. Nada vago.
 
-BLOCO 5 — FECHAMENTO (1 frase):
-Diga que nos próximos dias a equipe vai entrar em contato para uma conversa rápida de 30 minutos — sem compromisso, sem proposta, só entender o cenário de perto.
+BLOCO 5 (FECHAMENTO - 1 frase):
+Diga que nos próximos dias a equipe vai entrar em contato para uma conversa rápida de 10 minutos. Sem compromisso, sem proposta, só pra entender a operação de perto.
 
-REGRAS ABSOLUTAS:
+REGRAS ABSOLUTAS (VIOLAÇÃO = DIAGNÓSTICO REJEITADO):
 - Máximo 280 palavras
-- PROIBIDO: "incrível", "fantástico", "transformação digital", "jornada", "alavancar", "potencializar", "ecossistema", "revolucionar", "otimizar", "sinergia", "robusto", "escalável", "holístico", "paradigma", "agregar valor". Se usar qualquer uma dessas palavras, o diagnóstico é descartado.
-- NUNCA use as palavras: transformação digital, disruptivo, revolucionário, inteligência artificial, machine learning, inovação, ecossistema, alavancar, potencializar, sinergia, robusto, escalável. Use linguagem direta de processo: automatizar, conectar sistemas, eliminar retrabalho, reduzir horas manuais, integrar, simplificar.
+- LISTA PROIBIDA (se usar UMA palavra dessa lista, o diagnóstico será REJEITADO e você terá que refazer): "incrível", "fantástico", "transformação digital", "disruptivo", "revolucionário", "jornada", "alavancar", "potencializar", "ecossistema", "sinergia", "robusto", "escalável", "holístico", "paradigma", "agregar valor", "inteligência artificial", "machine learning", "inovação", "otimizar".
+- SUBSTITUA POR: automatizar, conectar, integrar, eliminar, reduzir, mapear, simplificar, acelerar, unificar.
 - NÃO comece frases com "Com base nas suas respostas" ou "Analisando o questionário"
 - Tom: consultor que cobra caro e fala pouco. Cada frase tem que ter peso.
-- Use vírgulas curtas. Frases diretas. Parece conversa de bar entre dois donos de empresa, não relatório corporativo.`;
+- Use vírgulas curtas. Frases diretas. Parece conversa de bar entre dois donos de empresa, não relatório corporativo.
+- Se você usar qualquer palavra da LISTA PROIBIDA, o diagnóstico será descartado automaticamente.
+
+EXEMPLO DE OUTPUT EXATO (Tom, Estilo e Tamanho):
+João, cruzei os dados da Alfa LTDA e o cenário é claro.
+
+Com 3 a 5 processos mapeados e o uso de 8 a 15 sistemas fragmentados, vocês perdem de 16 a 40 horas por mês em retrabalho puro. O financeiro lento e a dificuldade de escalar não são coincidências; a operação depende de pessoas pivotando dados, o que gera erros e custa receita.
+
+Empresas de serviços do seu porte que automatizam essa camada reduzem o custo operacional em até 30% e dão escala sem precisar inchar a folha.
+
+Para resolver a gestão cega, começaríamos conectando o faturamento e as vendas num fluxo único, sem intervenção humana. Cortar essa digitação cruzada é o que vai dar visibilidade de caixa imediata.
+
+Nos próximos dias nossa equipe vai entrar em contato para uma conversa rápida de 10 minutos. Sem proposta, só pra entender a operação de perto.`;
 
       try {
         const res = await fetch("/api/diagnostico", {
@@ -281,8 +327,40 @@ REGRAS ABSOLUTAS:
 
     // Webhooks (Discord + n8n) disparam via triggers Supabase (migration 010)
 
-    // Meta Pixel
+    // Generate unique event ID for deduplication between Pixel and Conversions API
+    const eventId = `lead_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    // Meta Pixel (client-side)
     trackEvent("lead_captured", { setor, tier: tierInfo.tier, score: finalScore });
+
+    // Meta Conversions API (server-side) - fire and forget
+    fetch("/api/meta-conversion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventName: "Lead",
+        eventSourceUrl: window.location.href,
+        userData: {
+          email: lead.email,
+          phone: lead.whatsapp,
+          firstName: lead.nome.split(" ")[0],
+          lastName: lead.nome.split(" ").slice(1).join(" "),
+          city: city,
+          country: "br",
+        },
+        customData: {
+          content_name: "Diagnóstico Gradios",
+          content_category: setor,
+          tier: tierInfo.tier,
+          score: finalScore,
+          value: 0,
+          currency: "BRL",
+        },
+        eventId,
+      }),
+    }).catch(() => {
+      // Silently fail if Conversions API is down
+    });
 
     // Supabase — save lead
     try {
@@ -295,7 +373,7 @@ REGRAS ABSOLUTAS:
           nome: lead.nome,
           empresa: lead.empresa,
           email: lead.email,
-          whatsapp: lead.whatsapp || null,
+          whatsapp: lead.whatsapp,
           cidade: city || null,
           score: finalScore,
           tier: tierInfo.tier,
@@ -309,10 +387,12 @@ REGRAS ABSOLUTAS:
           tempo_horas_mes: getHorasMes(answers.tempo?.[0]),
           impactos: getMultiOptionTexts("impactos", answers.impactos),
           urgencia: getOptionText("urgencia", answers.urgencia?.[0]),
+          budget: getOptionText("budget", answers.budget?.[0]),
           prioridade: getOptionText("prioridade", answers.prioridade?.[0]),
           utm_source: params.get("utm_source"),
           utm_medium: params.get("utm_medium"),
           utm_campaign: params.get("utm_campaign"),
+          utm_content: params.get("utm_content"),
         })
         .select("id")
         .single();
@@ -384,7 +464,14 @@ REGRAS ABSOLUTAS:
         )}
 
         {phase === "loading" && (
-          <LoadingPhase empresa={lead.empresa} city={city} loadingStep={loadingStep} />
+          <LoadingPhase
+            empresa={lead.empresa}
+            city={city}
+            loadingStep={loadingStep}
+            gargalosCount={answers.gargalos?.length ?? 0}
+            horasMes={answers.tempo?.[0] != null ? ["~20h", "~40-60h", "~65-160h", "+160h"][answers.tempo[0]] : "0h"}
+            setor={answers.setor?.[0] != null ? QUESTIONS[2].opcoes[answers.setor[0]] : "vários setores"}
+          />
         )}
 
         {phase === "result" && (

@@ -73,7 +73,7 @@ function NeuralGrid() {
 
 export default function IntroPhase({ onStart }: IntroPhaseProps) {
   const headline = "Empresas do seu porte perdem R$ 8 mil a R$ 47 mil por mês em retrabalho. Quanto a sua perde?";
-  const { displayed, done } = useTypewriter(headline, 30, 800);
+  const { displayed, done } = useTypewriter(headline, 10, 200);
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -142,7 +142,7 @@ export default function IntroPhase({ onStart }: IntroPhaseProps) {
                   {[
                     "Quais processos estão drenando mais tempo e dinheiro",
                     "O custo mensal exato do retrabalho na sua operação",
-                    "Por onde começar a automatizar (plano gerado por IA)",
+                    "Por onde começar a automatizar (plano personalizado)",
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-2">
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-0.5 flex-shrink-0">
@@ -169,7 +169,7 @@ export default function IntroPhase({ onStart }: IntroPhaseProps) {
               <div className="mt-10 flex items-center justify-center gap-8 sm:gap-12">
                 {[
                   { value: "2 min", label: "do seu tempo" },
-                  { value: "IA", label: "análise real" },
+                  { value: "Real", label: "análise real" },
                   { value: "R$", label: "valor na ponta do lápis" },
                 ].map((item, i) => (
                   <motion.div
