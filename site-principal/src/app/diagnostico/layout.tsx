@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Diagnóstico Gratuito de Automação | Gradios",
-  description: "Descubra em 2 minutos quanto sua empresa perde por mês com processos manuais. Diagnóstico personalizado por IA com plano de ação.",
+  title: "Sua Empresa Perde R$ 8k-47k/Mês? Descubra em 2min (Grátis) | Gradios",
+  description: "Quiz de IA calcula o custo REAL do retrabalho na sua operação. Resultado instantâneo com plano de ação. 8 setores, 200+ empresas. 100% grátis.",
   openGraph: {
-    title: "Diagnóstico Gratuito de Automação | Gradios",
-    description: "Descubra em 2 minutos quanto sua empresa perde com processos manuais. Resultado por IA.",
+    title: "Descubra Quanto Sua Empresa Perde Por Mês em Retrabalho",
+    description: "2 minutos. 10 perguntas. Resultado com custo em R$ e plano de ação gerado por IA. Usado por 200+ empresas.",
     type: "website",
   },
   robots: { index: true, follow: true },

@@ -4,17 +4,19 @@ interface LoadingPhaseProps {
   empresa: string;
   city: string;
   loadingStep: number;
+  gargalosCount: number;
+  horasMes: string;
+  setor: string;
 }
 
-const STEPS = [
-  { label: "Mapeando gargalos operacionais", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
-  { label: "Calculando custo invisível do retrabalho", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" },
-  { label: "Cruzando dados com empresas do setor", icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" },
-  { label: "Consultando base de soluções aplicáveis", icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 2h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 8.172V3L8 2z" },
-  { label: "Gerando diagnóstico personalizado com IA", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
-];
-
-export default function LoadingPhase({ empresa, city, loadingStep }: LoadingPhaseProps) {
+export default function LoadingPhase({ empresa, city, loadingStep, gargalosCount, horasMes, setor }: LoadingPhaseProps) {
+  const STEPS = [
+    { label: `Mapeando ${gargalosCount} gargalos identificados`, icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
+    { label: `Calculando custo de ${horasMes}/mês em retrabalho`, icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" },
+    { label: `Comparando com empresas de ${setor}`, icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" },
+    { label: "Consultando base de soluções aplicáveis", icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 2h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 8.172V3L8 2z" },
+    { label: "Gerando plano de ação personalizado", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
+  ];
   return (
     <div className="animate-fade-slide-up">
       <div className="loading-container">

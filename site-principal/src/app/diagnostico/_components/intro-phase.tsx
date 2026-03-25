@@ -73,7 +73,7 @@ function NeuralGrid() {
 
 export default function IntroPhase({ onStart }: IntroPhaseProps) {
   const headline = "Empresas do seu porte perdem R$ 8 mil a R$ 47 mil por mês em retrabalho. Quanto a sua perde?";
-  const { displayed, done } = useTypewriter(headline, 30, 800);
+  const { displayed, done } = useTypewriter(headline, 10, 200);
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (

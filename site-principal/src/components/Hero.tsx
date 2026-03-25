@@ -9,6 +9,7 @@ import { trackCTAClick } from "@/lib/meta-pixel";
 
 export function Hero() {
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
 
   const [count, setCount] = useState<number | null>(null);
   const dashRef = useRef<HTMLDivElement>(null);
@@ -24,9 +25,14 @@ export function Hero() {
   const glowOpacity = useMotionValue(0);
 
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
     const t = setTimeout(() => setMounted(true), 150);
     return () => {
       clearTimeout(t);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -69,14 +75,14 @@ export function Hero() {
   const mockupVariants = {
     hidden: {
       opacity: 0,
-      rotateX: 8,
-      rotateY: -4,
-      y: 60,
+      rotateX: isMobile ? 0 : 8,
+      rotateY: isMobile ? 0 : -4,
+      y: isMobile ? 20 : 60,
       scale: 0.95,
     },
     visible: {
       opacity: 1,
-      rotateX: 4,
+      rotateX: isMobile ? 0 : 4,
       rotateY: 0,
       y: 0,
       scale: 1,
@@ -156,7 +162,7 @@ export function Hero() {
             animate="visible"
             custom={0.6}
           >
-            A Gradios conecta seus sistemas, elimina retrabalho e entrega resultado em 14 dias. Sem contrato longo.
+            Nós conectamos seus sistemas e eliminamos o retrabalho manual. Uma operação eficiente não depende de esforço, e sim de inteligência.
           </motion.p>
 
           <motion.div
@@ -246,7 +252,7 @@ export function Hero() {
             variants={mockupVariants}
             initial="hidden"
             animate="visible"
-            style={{ y: springParallaxY, transformStyle: "preserve-3d" }}
+            style={{ y: isMobile ? 0 : springParallaxY, transformStyle: "preserve-3d" }}
           >
             {/* Cursor glow — zero re-renders */}
             <motion.div

@@ -1,6 +1,6 @@
 "use client";
 
-import { calculatePartialScore, QUESTIONS, type LeadData } from "../_lib/data";
+import { QUESTIONS, type LeadData } from "../_lib/data";
 
 interface CapturePhaseProps {
   lead: LeadData;
@@ -11,8 +11,7 @@ interface CapturePhaseProps {
 }
 
 export default function CapturePhase({ lead, setLead, answers, isSubmitting, onSubmit }: CapturePhaseProps) {
-  const isFilled = lead.nome.trim() && lead.empresa.trim() && lead.email.trim();
-  const partialScore = calculatePartialScore(answers);
+  const isFilled = lead.nome.trim() && lead.empresa.trim() && lead.email.trim() && lead.whatsapp.trim();
   const gargalosCount = answers.gargalos?.length ?? 0;
   const setor = answers.setor?.[0] != null ? QUESTIONS[2].opcoes[answers.setor[0]] : null;
 
@@ -31,7 +30,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
           <span className="text-[#00BFFF]">Para quem a gente envia?</span>
         </h2>
         <p className="mt-2 text-[#94A3B8] text-sm">
-          Preencha abaixo e receba a análise completa com custo em reais.
+          A IA vai cruzar seus dados em tempo real e entregar o diagnóstico completo com custo em R$, gargalos priorizados e plano de ação.
         </p>
       </div>
 
@@ -39,31 +38,18 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
       <div className="bg-[#00BFFF]/[0.04] border border-[#00BFFF]/10 rounded-card p-4 mb-6 space-y-3">
         <p className="text-[10px] font-semibold text-[#00BFFF] tracking-wider uppercase">Prévia do seu diagnóstico</p>
         <div className="flex items-center gap-4">
-          {/* Mini gauge */}
-          <div className="relative w-14 h-14 flex-shrink-0">
-            <svg className="w-full h-full -rotate-90" viewBox="0 0 60 60">
-              <circle cx="30" cy="30" r="25" fill="none" stroke="#1E293B" strokeWidth="5" />
-              <circle
-                cx="30" cy="30" r="25" fill="none"
-                stroke="#00BFFF"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeDasharray={2 * Math.PI * 25}
-                strokeDashoffset={2 * Math.PI * 25 - (2 * Math.PI * 25 * partialScore) / 100}
-                style={{ transition: "stroke-dashoffset 0.5s ease" }}
-              />
+          {/* Icon instead of gauge */}
+          <div className="relative w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-[#2546BD] to-[#00BFFF] flex items-center justify-center shadow-lg shadow-[#00BFFF]/20">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-sm font-bold text-white">{partialScore}</span>
-            </div>
           </div>
           <div className="text-left">
             <p className="text-white text-sm font-bold">
-              {gargalosCount} gargalos identificados
-              {setor ? ` · ${setor}` : ""}
+              {gargalosCount} gargalos identificados · {setor || "Diagnóstico quase pronto"}
             </p>
             <p className="text-[#64748B] text-xs">
-              Score {partialScore}/100 · O resultado completo inclui o custo em R$ e o plano de ação.
+              O resultado completo inclui score, custo em R$ e plano de ação personalizado.
             </p>
           </div>
         </div>
@@ -122,6 +108,18 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
             className="w-full px-4 py-3 rounded-card border border-[#1E293B] bg-[#0F1D32] text-white text-sm placeholder:text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
           />
           <p className="text-[10px] text-[#475569] mt-1">Só para enviar seu diagnóstico e dicas relevantes. Pode cancelar a qualquer momento.</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-[#CBD5E1] mb-1.5">WhatsApp *</label>
+          <input
+            type="tel"
+            value={lead.whatsapp}
+            onChange={(e) => setLead((p) => ({ ...p, whatsapp: e.target.value }))}
+            placeholder="(43) 98837-2540"
+            className="w-full px-4 py-3 rounded-card border border-[#1E293B] bg-[#0F1D32] text-white text-sm placeholder:text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
+          />
+          <p className="text-[10px] text-[#475569] mt-1">Para recebermos seu diagnóstico mais rápido e você poder tirar dúvidas direto com a equipe.</p>
         </div>
 
         <button
