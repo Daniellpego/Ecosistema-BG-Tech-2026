@@ -11,7 +11,9 @@ interface CapturePhaseProps {
 }
 
 export default function CapturePhase({ lead, setLead, answers, isSubmitting, onSubmit }: CapturePhaseProps) {
-  const isFilled = lead.nome.trim() && lead.empresa.trim() && lead.email.trim() && lead.whatsapp.trim();
+  const whatsAppDigits = lead.whatsapp.replace(/\D/g, "");
+  const isWhatsAppValid = whatsAppDigits.length >= 10 && whatsAppDigits.length <= 13;
+  const isFilled = lead.nome.trim() && lead.empresa.trim() && lead.email.trim() && isWhatsAppValid;
   const gargalosCount = answers.gargalos?.length ?? 0;
   const setor = answers.setor?.[0] != null ? QUESTIONS[2].opcoes[answers.setor[0]] : null;
 
@@ -119,6 +121,9 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
             placeholder="(43) 98837-2540"
             className="w-full px-4 py-4 rounded-card border border-[#1E293B] bg-[#0F1D32] text-white text-base placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
           />
+          {lead.whatsapp && !isWhatsAppValid && (
+            <p className="text-xs text-[#EF4444] mt-1.5">Informe um WhatsApp válido (ex: 43 99999-9999)</p>
+          )}
           <p className="text-xs text-[#64748B] mt-1.5">Para recebermos seu diagnóstico mais rápido e você poder tirar dúvidas direto com a equipe.</p>
         </div>
 
