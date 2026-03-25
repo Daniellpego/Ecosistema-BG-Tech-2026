@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { SmoothScrollProvider } from "@/providers/smooth-scroll";
 
@@ -201,7 +200,6 @@ fbq('track', 'PageView');
             {children}
           </main>
           <Footer />
-          <WhatsAppFab />
         </SmoothScrollProvider>
       </body>
     </html>
