@@ -140,7 +140,7 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
                 {tierInfo.tier === "A" && "Sua operação tem alto potencial de automação. Os gargalos são claros e o retorno é rápido."}
                 {tierInfo.tier === "B" && "Identificamos gargalos concretos. Com as automações certas, o ganho operacional é significativo."}
                 {tierInfo.tier === "C" && "Identificamos oportunidades reais de automação. Começar pequeno já traz resultado visível."}
-                {tierInfo.tier === "D" && "Seu perfil está em fase de mapeamento. A Gradios trabalha com projetos de todos os tamanhos — quando quiser avançar, o caminho está mapeado."}
+                {tierInfo.tier === "D" && "Seu perfil está em fase de mapeamento. A Gradios trabalha com projetos de todos os tamanhos. Quando quiser avançar, o caminho está mapeado."}
               </p>
             </div>
           </div>
@@ -263,7 +263,7 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
           </div>
           <div>
             <p className="text-white text-sm font-bold">Análise da Gradios</p>
-            <p className="text-[#64748B] text-[10px]">Gerado por IA com dados reais da sua operação</p>
+            <p className="text-[#64748B] text-[10px]">Análise baseada nos dados reais da sua operação</p>
           </div>
         </div>
 
@@ -348,7 +348,7 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
               Para implementar, você vai precisar do aval da diretoria.
             </p>
             <p className="text-[#CBD5E1] text-sm">
-              A gente monta um resumo executivo com ROI e diagnóstico formatado pra decisor — pronto pra você apresentar.
+              A gente monta um resumo executivo com ROI e diagnóstico formatado pra decisor. Pronto pra você apresentar.
             </p>
             <a
               href={`https://wa.me/5543988372540?text=${encodeURIComponent(
@@ -389,8 +389,8 @@ export default function ResultPhase({ lead, answers, score, city, aiText }: Resu
               : tierInfo.tier === "B"
               ? `${lead.nome.split(" ")[0]}, os gargalos são claros. Uma conversa rápida de 15 minutos mostra exatamente o que dá pra resolver primeiro.`
               : tierInfo.tier === "C"
-              ? `${lead.nome.split(" ")[0]}, identificamos por onde começar. A Gradios atende desde automações pontuais até projetos completos. Sem compromisso, sem proposta — só uma conversa.`
-              : `${lead.nome.split(" ")[0]}, vamos te enviar conteúdo prático sobre automação e casos reais. Quando quiser conversar, é só chamar — atendemos projetos de todos os tamanhos.`
+              ? `${lead.nome.split(" ")[0]}, identificamos por onde começar. A Gradios atende desde automações pontuais até projetos completos. Sem compromisso, sem proposta. Só uma conversa.`
+              : `${lead.nome.split(" ")[0]}, vamos te enviar conteúdo prático sobre automação e casos reais. Quando quiser conversar, é só chamar. Atendemos projetos de todos os tamanhos.`
             }
           </p>
 

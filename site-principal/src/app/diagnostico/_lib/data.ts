@@ -59,12 +59,12 @@ export const QUESTIONS: Question[] = [
     id: "tamanho",
     categoria: "Empresa",
     pergunta: "Qual é o porte da empresa hoje?",
-    sub: "Cada tamanho tem gargalos diferentes — e soluções diferentes.",
+    sub: "Cada tamanho tem gargalos diferentes. E soluções diferentes.",
     tipo: "single",
     opcoes: ["Até 10", "11 a 50", "51 a 200", "201 a 500", "Mais de 500"],
     scores: [2, 5, 12, 18, 20],
     reactions: {
-      2: "51-200 pessoas. Qualquer gargalo aqui custa caro — um processo de 2h/dia = 10k horas/ano desperdiçadas.",
+      2: "51-200 pessoas. Qualquer gargalo aqui custa caro. Um processo de 2h/dia = 10k horas/ano desperdiçadas.",
       3: "201-500 pessoas. Um gargalo de 2h/dia = 400h/mês de empresa. Isso é 1 pessoa inteira só corrigindo erro.",
       4: "+500 pessoas. Escala grande. Qualquer ineficiência se multiplica. Bom contexto para o diagnóstico.",
     },
@@ -73,7 +73,7 @@ export const QUESTIONS: Question[] = [
     id: "setor",
     categoria: "Empresa",
     pergunta: "Em qual setor vocês atuam?",
-    sub: "Cada setor tem seus gargalos típicos — a gente conhece todos.",
+    sub: "Cada setor tem seus gargalos típicos. A gente conhece todos.",
     tipo: "single",
     opcoes: [
       "Varejo/E-commerce",
@@ -91,7 +91,7 @@ export const QUESTIONS: Question[] = [
     id: "gargalos",
     categoria: "Operação",
     pergunta: "Onde estão os maiores gargalos da operação hoje?",
-    sub: "Selecione tudo que se aplica — seja honesto, quanto mais marcar, mais preciso o diagnóstico.",
+    sub: "Selecione tudo que se aplica. Seja honesto, quanto mais marcar, mais preciso o diagnóstico.",
     tipo: "multi",
     opcoes: [
       "Financeiro (fechamentos lentos)",
@@ -176,7 +176,7 @@ export const QUESTIONS: Question[] = [
     id: "urgencia",
     categoria: "Prioridade",
     pergunta: "Quando vocês precisam resolver isso?",
-    sub: "Sem julgamento — define como a gente prioriza a recomendação.",
+    sub: "Sem julgamento. Define como a gente prioriza a recomendação.",
     tipo: "single",
     opcoes: [
       "Só estou mapeando (sem prazo definido)",
@@ -195,7 +195,7 @@ export const QUESTIONS: Question[] = [
     id: "budget",
     categoria: "Prioridade",
     pergunta: "Qual é a realidade de investimento da empresa hoje?",
-    sub: "Ajuda a Gradios a sugerir a solução certa pro seu momento — atendemos desde automações pequenas até projetos completos.",
+    sub: "Ajuda a Gradios a sugerir a solução certa pro seu momento. Atendemos desde automações pequenas até projetos completos.",
     tipo: "single",
     opcoes: [
       "Ainda estou mapeando (sem orçamento definido)",
@@ -223,13 +223,13 @@ export const QUESTIONS: Question[] = [
       "Integrar sistemas",
       "Software sob medida",
       "Dashboard e KPIs",
-      "IA no atendimento/análise",
+      "Automação inteligente (atendimento/análise)",
       "Ainda não sei",
     ],
     scores: null,
     reactions: {
       0: "Processos manuais primeiro. Menor investimento, maior retorno. Escolha certa.",
-      4: "IA aplicada. Temos cases rodando com Groq + n8n. O diagnóstico vai detalhar.",
+      4: "Automação inteligente. Temos cases rodando com Groq + n8n. O diagnóstico vai detalhar.",
     },
   },
 ];

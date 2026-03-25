@@ -20,20 +20,30 @@ export default function LoadingPhase({ empresa, city, loadingStep, gargalosCount
   return (
     <div className="animate-fade-slide-up">
       <div className="loading-container">
-        {/* Background effects */}
+        {/* Background effects — brighter, more vibrant */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full opacity-20 animate-pulse" style={{ background: "radial-gradient(circle, #00BFFF, transparent 70%)" }} />
+          {/* Primary cyan glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-30 animate-pulse" style={{ background: "radial-gradient(circle, #00BFFF, transparent 65%)", animationDuration: "3s" }} />
+          {/* Secondary blue glow */}
+          <div className="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full opacity-20 animate-pulse" style={{ background: "radial-gradient(circle, #2546BD, transparent 70%)", animationDuration: "4s", animationDelay: "1s" }} />
+          {/* Floating particles */}
+          <div className="absolute top-[20%] left-[15%] w-2 h-2 rounded-full bg-[#00BFFF]/40 animate-pulse" style={{ animationDuration: "2s" }} />
+          <div className="absolute top-[70%] right-[20%] w-1.5 h-1.5 rounded-full bg-[#2546BD]/30 animate-pulse" style={{ animationDuration: "3s", animationDelay: "0.5s" }} />
+          <div className="absolute top-[40%] right-[10%] w-2.5 h-2.5 rounded-full bg-[#00BFFF]/25 animate-pulse" style={{ animationDuration: "2.5s", animationDelay: "1.5s" }} />
         </div>
 
         <div className="relative z-10 flex flex-col items-center text-center">
-          {/* Animated scanner ring */}
+          {/* Animated scanner ring — brighter colors */}
           <div className="w-24 h-24 mb-8 relative">
-            <div className="absolute inset-0 rounded-full border-2 border-[#1E293B]" />
-            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#00BFFF] animate-spin" style={{ animationDuration: "1.5s" }} />
-            <div className="absolute inset-2 rounded-full border border-[#1E293B]" />
-            <div className="absolute inset-2 rounded-full border border-transparent border-b-[#0A1B5C] animate-spin" style={{ animationDuration: "2.5s", animationDirection: "reverse" }} />
+            {/* Outer ring */}
+            <div className="absolute inset-0 rounded-full border-2 border-[#2546BD]/40" />
+            <div className="absolute inset-0 rounded-full border-3 border-transparent border-t-[#00BFFF] animate-spin" style={{ animationDuration: "1.2s", boxShadow: "0 0 15px #00BFFF40" }} />
+            {/* Inner ring */}
+            <div className="absolute inset-2 rounded-full border-2 border-[#2546BD]/30" />
+            <div className="absolute inset-2 rounded-full border-2 border-transparent border-b-[#2546BD] animate-spin" style={{ animationDuration: "2s", animationDirection: "reverse" }} />
+            {/* Center pulse — much brighter glow */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-3 h-3 rounded-full bg-[#00BFFF] animate-pulse" style={{ boxShadow: "0 0 20px #00BFFF60" }} />
+              <div className="w-4 h-4 rounded-full bg-[#00BFFF] animate-pulse" style={{ boxShadow: "0 0 30px #00BFFF, 0 0 60px #00BFFF40", animationDuration: "1.5s" }} />
             </div>
           </div>
 
@@ -50,10 +60,10 @@ export default function LoadingPhase({ empresa, city, loadingStep, gargalosCount
                 key={idx}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-500 ${
                   loadingStep > idx
-                    ? "bg-[#10B981]/10 border border-[#10B981]/20"
+                    ? "bg-[#10B981]/15 border border-[#10B981]/30 shadow-sm shadow-[#10B981]/10"
                     : loadingStep === idx
-                    ? "bg-[#00BFFF]/10 border border-[#00BFFF]/20"
-                    : "bg-[#0F172A]/50 border border-[#1E293B]"
+                    ? "bg-[#00BFFF]/15 border border-[#00BFFF]/40 shadow-md shadow-[#00BFFF]/20"
+                    : "bg-[#131F35]/80 border border-[#2546BD]/20"
                 }`}
               >
                 {loadingStep > idx ? (
@@ -65,8 +75,8 @@ export default function LoadingPhase({ empresa, city, loadingStep, gargalosCount
                 ) : loadingStep === idx ? (
                   <div className="w-7 h-7 rounded-full border-2 border-[#00BFFF] border-t-transparent animate-spin flex-shrink-0" />
                 ) : (
-                  <div className="w-7 h-7 rounded-full border border-[#1E293B] flex items-center justify-center flex-shrink-0">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#334155" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="w-7 h-7 rounded-full border border-[#2546BD]/30 bg-[#2546BD]/5 flex items-center justify-center flex-shrink-0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d={step.icon} />
                     </svg>
                   </div>

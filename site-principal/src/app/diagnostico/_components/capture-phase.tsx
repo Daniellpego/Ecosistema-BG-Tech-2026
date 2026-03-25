@@ -30,7 +30,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
           <span className="text-[#00BFFF]">Para quem a gente envia?</span>
         </h2>
         <p className="mt-2 text-[#94A3B8] text-sm">
-          A IA vai cruzar seus dados em tempo real e entregar o diagnóstico completo com custo em R$, gargalos priorizados e plano de ação.
+          O método Gradios vai cruzar seus dados em tempo real e entregar o diagnóstico completo com custo em R$, gargalos priorizados e plano de ação.
         </p>
       </div>
 
@@ -58,7 +58,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
         <div className="flex flex-wrap gap-2">
           {[
             "Custo do retrabalho em R$",
-            "Análise por IA",
+            "Análise Gradios",
             "Gargalos priorizados",
             "Plano de ação",
           ].map((item) => (
