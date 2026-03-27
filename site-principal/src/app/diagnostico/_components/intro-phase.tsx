@@ -132,7 +132,7 @@ export default function IntroPhase({ onStart }: IntroPhaseProps) {
             >
               {/* Subheadline */}
               <p className="text-[#94A3B8] text-base sm:text-lg mb-4">
-                10 perguntas. 2 minutos. Um diagnóstico real com custo em reais.
+                2 minutos. Um diagnóstico real com custo em reais.
               </p>
 
               {/* Prévia do resultado */}

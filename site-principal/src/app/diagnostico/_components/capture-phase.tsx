@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef } from "react";
 import { QUESTIONS, type LeadData } from "../_lib/data";
 
 interface CapturePhaseProps {
@@ -12,8 +13,10 @@ interface CapturePhaseProps {
 
 export default function CapturePhase({ lead, setLead, answers, isSubmitting, onSubmit }: CapturePhaseProps) {
   const whatsAppDigits = lead.whatsapp.replace(/\D/g, "");
-  const isWhatsAppValid = whatsAppDigits.length >= 10 && whatsAppDigits.length <= 13;
-  const isFilled = lead.nome.trim() && lead.empresa.trim() && lead.email.trim() && isWhatsAppValid;
+  const isWhatsAppValid = !lead.whatsapp.trim() || (whatsAppDigits.length >= 10 && whatsAppDigits.length <= 13);
+  const isFilled = lead.nome.trim() && lead.empresa.trim() && lead.email.trim() && lead.whatsapp.trim() && whatsAppDigits.length >= 10 && whatsAppDigits.length <= 13;
+  const [showErrors, setShowErrors] = useState(false);
+  const whatsAppRef = useRef<HTMLInputElement>(null);
   const gargalosCount = answers.gargalos?.length ?? 0;
   const setor = answers.setor?.[0] != null ? QUESTIONS[2].opcoes[answers.setor[0]] : null;
 
@@ -115,11 +118,14 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
         <div>
           <label className="block text-base font-medium text-[#CBD5E1] mb-2">WhatsApp *</label>
           <input
+            ref={whatsAppRef}
             type="tel"
             value={lead.whatsapp}
             onChange={(e) => setLead((p) => ({ ...p, whatsapp: e.target.value }))}
             placeholder="(43) 98837-2540"
-            className="w-full px-4 py-4 rounded-card border border-[#1E293B] bg-[#0F1D32] text-white text-base placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all"
+            className={`w-full px-4 py-4 rounded-card border bg-[#0F1D32] text-white text-base placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#00BFFF]/20 focus:border-[#00BFFF] transition-all ${
+              showErrors && !lead.whatsapp.trim() ? "border-[#EF4444]" : "border-[#1E293B]"
+            }`}
           />
           {lead.whatsapp && !isWhatsAppValid && (
             <p className="text-xs text-[#EF4444] mt-1.5">Informe um WhatsApp válido (ex: 43 99999-9999)</p>
@@ -128,12 +134,43 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
         </div>
 
         <button
-          onClick={onSubmit}
-          disabled={!isFilled || isSubmitting}
-          className="w-full mt-2 bg-gradient-to-r from-[#2546BD] to-[#00BFFF] text-white rounded-pill px-8 py-4 font-bold hover:opacity-90 hover:shadow-lg hover:shadow-[#00BFFF]/25 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+          onClick={() => {
+            console.log("[Gradios Quiz] Submit clicked", {
+              nome: !!lead.nome.trim(),
+              empresa: !!lead.empresa.trim(),
+              email: !!lead.email.trim(),
+              whatsapp: lead.whatsapp,
+              whatsappDigits: whatsAppDigits.length,
+              isFilled,
+            });
+            if (!isFilled) {
+              setShowErrors(true);
+              if (!lead.whatsapp.trim() || whatsAppDigits.length < 10) {
+                whatsAppRef.current?.focus();
+              }
+              return;
+            }
+            onSubmit();
+          }}
+          disabled={isSubmitting}
+          className={`w-full mt-2 text-white rounded-pill px-8 py-4 font-bold transition-all duration-300 ${
+            isFilled
+              ? "bg-gradient-to-r from-[#2546BD] to-[#00BFFF] hover:opacity-90 hover:shadow-lg hover:shadow-[#00BFFF]/25"
+              : "bg-gradient-to-r from-[#2546BD] to-[#00BFFF] opacity-70"
+          } disabled:opacity-40 disabled:cursor-not-allowed`}
         >
           {isSubmitting ? "Gerando..." : "Ver meu resultado agora →"}
         </button>
+
+        {showErrors && !isFilled && (
+          <p className="text-xs text-[#F59E0B] mt-2 text-center animate-fade-slide-up">
+            {!lead.nome.trim() ? "Preencha seu nome" :
+             !lead.empresa.trim() ? "Preencha o nome da empresa" :
+             !lead.email.trim() ? "Preencha seu e-mail" :
+             !lead.whatsapp.trim() ? "Preencha seu WhatsApp para receber o diagnóstico" :
+             "Informe um WhatsApp válido (ex: 43 99999-9999)"}
+          </p>
+        )}
 
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-[#64748B] mt-4">
           <span className="flex items-center gap-1.5">
