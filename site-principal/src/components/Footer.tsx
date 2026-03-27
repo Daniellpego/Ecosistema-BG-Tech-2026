@@ -99,6 +99,7 @@ export function Footer() {
               <ul className="space-y-1 text-sm">
                 <li><Link href="/termos" className="text-[#94A3B8] hover:text-white transition-colors block py-1.5">Termos de Uso</Link></li>
                 <li><Link href="/privacidade" className="text-[#94A3B8] hover:text-white transition-colors block py-1.5">Política de Privacidade</Link></li>
+                <li><a href="/llms.txt" className="text-xs text-gray-400 hover:text-gray-300">llms.txt</a></li>
               </ul>
             </div>
           </div>
