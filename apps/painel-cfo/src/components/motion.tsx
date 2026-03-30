@@ -10,6 +10,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
+      style={{ willChange: 'transform, opacity' }}
     >
       {children}
     </motion.div>
@@ -41,6 +42,7 @@ export function StaggerItem({ children, className }: { children: ReactNode; clas
         visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
       }}
       className={className}
+      style={{ willChange: 'transform, opacity' }}
     >
       {children}
     </motion.div>
@@ -74,6 +76,7 @@ export const MotionCard = forwardRef<HTMLDivElement, HTMLMotionProps<'div'> & { 
       ref={ref}
       whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
       className={className}
+      style={{ willChange: 'transform' }}
       {...props}
     >
       {children}

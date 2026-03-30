@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -53,6 +51,7 @@
   .card-glass-hover {
     @apply card-glass transition-all hover:bg-slate-50/50 hover:shadow-md;
     transform: translateY(0);
+    will-change: transform;
   }
   .card-glass-hover:hover {
     transform: translateY(-2px);
