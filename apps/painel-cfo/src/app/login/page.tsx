@@ -65,11 +65,13 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-16 h-16">
-            <Image 
-              src="/logo.png" 
-              alt="Gradios" 
-              fill 
+            <Image
+              src="/logo.png"
+              alt="Gradios"
+              width={64}
+              height={64}
               className="object-contain drop-shadow-md"
+              sizes="64px"
               priority
             />
           </div>

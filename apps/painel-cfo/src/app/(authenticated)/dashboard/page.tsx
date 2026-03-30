@@ -2,11 +2,9 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import {
-  LayoutDashboard,
   TrendingUp,
-  TrendingDown,
   Repeat,
   Flame,
   Lock,
@@ -17,23 +15,8 @@ import {
   HelpCircle,
   X,
   Sparkles,
-  AlertTriangle,
 } from 'lucide-react'
 import { PageTransition } from '@/components/motion'
-import {
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts'
 import { cn } from '@/lib/utils'
 import { formatCurrency, formatPercent } from '@/lib/format'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -50,6 +33,10 @@ import type { DashboardAlert, HealthStatus } from '@/hooks/use-dashboard'
 import { useTax } from '@/providers/tax-provider'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
+
+// Lazy load heavy chart components (below the fold)
+const RevenueExpensesChart = lazy(() => import('@/components/charts/revenue-expenses-chart'))
+const CostDistributionChart = lazy(() => import('@/components/charts/cost-distribution-chart'))
 
 // ── Health Banner ────────────────────────────────────────────────────
 const HEALTH_CONFIG: Record<
@@ -226,29 +213,6 @@ function AlertCard({
       >
         <X className="h-4 w-4" />
       </button>
-    </div>
-  )
-}
-
-// ── Custom Recharts Tooltip ──────────────────────────────────────────
-function ChartTooltipContent({
-  active,
-  payload,
-  label,
-}: {
-  active?: boolean
-  payload?: Array<{ name: string; value: number; color: string }>
-  label?: string
-}) {
-  if (!active || !payload) return null
-  return (
-    <div className="tooltip-brand shadow-lg">
-      <p className="text-xs text-text-secondary mb-1">{label}</p>
-      {payload.map((entry) => (
-        <p key={entry.name} className="text-xs" style={{ color: entry.color }}>
-          {entry.name}: {formatCurrency(entry.value)}
-        </p>
-      ))}
     </div>
   )
 }
@@ -444,56 +408,14 @@ export default function DashboardPage() {
         {isLoading ? (
           <Skeleton className="h-72 w-full rounded-lg" />
         ) : chartData.length === 0 ? (
-          <EmptyState 
-            title="Gráfico indisponível" 
+          <EmptyState
+            title="Gráfico indisponível"
             description="Adicione receitas e despesas nos menus laterais para visualizar o histórico."
           />
         ) : (
-          <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-              <XAxis
-                dataKey="month"
-                tick={{ fill: '#94A3B8', fontSize: 12 }}
-                axisLine={{ stroke: '#F1F5F9' }}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: '#94A3B8', fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(v: number) =>
-                  v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)
-                }
-              />
-              <RechartsTooltip content={<ChartTooltipContent />} />
-              <Legend
-                wrapperStyle={{ fontSize: 12, color: '#94A3B8' }}
-              />
-              <Bar
-                dataKey="receita"
-                name="Receita"
-                fill="#10B981"
-                radius={[4, 4, 0, 0]}
-                barSize={24}
-              />
-              <Bar
-                dataKey="custos"
-                name="Custos"
-                fill="#EF4444"
-                radius={[4, 4, 0, 0]}
-                barSize={24}
-              />
-              <Line
-                type="monotone"
-                dataKey="resultado"
-                name="Resultado"
-                stroke="#00C8F0"
-                strokeWidth={2}
-                dot={{ fill: '#00C8F0', r: 4 }}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
+          <Suspense fallback={<Skeleton className="h-72 w-full rounded-lg" />}>
+            <RevenueExpensesChart data={chartData} />
+          </Suspense>
         )}
       </div>
 
@@ -505,59 +427,15 @@ export default function DashboardPage() {
         {isLoading ? (
           <Skeleton className="h-72 w-full rounded-lg" />
         ) : costDistribution.length === 0 ? (
-          <EmptyState 
-            title="Sem custos registrados" 
+          <EmptyState
+            title="Sem custos registrados"
             description="Não há dados de custos fixos ou variáveis para este período."
             className="py-8"
           />
         ) : (
-          <div className="flex flex-col lg:flex-row items-center gap-6">
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie
-                  data={costDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={110}
-                  paddingAngle={2}
-                  dataKey="value"
-                  nameKey="name"
-                >
-                  {costDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <RechartsTooltip
-                  formatter={(value: number) => formatCurrency(value)}
-                  contentStyle={{
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
-                    borderRadius: '8px',
-                    fontSize: 12,
-                    color: '#0F172A',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex flex-wrap gap-3 justify-center lg:flex-col lg:gap-2 lg:min-w-[180px]">
-              {costDistribution.map((item) => (
-                <div key={item.name} className="flex items-center gap-2">
-                  <div
-                    className="h-3 w-3 rounded-full shrink-0"
-                    style={{ backgroundColor: item.color }}
-                  />
-                  <span className="text-xs text-text-secondary whitespace-nowrap">
-                    {item.name}
-                  </span>
-                  <span className="text-xs text-text-primary font-medium">
-                    {formatCurrency(item.value)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <Suspense fallback={<Skeleton className="h-72 w-full rounded-lg" />}>
+            <CostDistributionChart data={costDistribution} />
+          </Suspense>
         )}
       </div>
 

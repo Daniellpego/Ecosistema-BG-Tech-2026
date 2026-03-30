@@ -10,11 +10,13 @@ export function Logo({ collapsed = false, className }: LogoProps) {
   return (
     <div className={cn('flex items-center gap-3', className)}>
       <div className="relative w-10 h-10 shrink-0">
-        <Image 
-          src="/logo.png" 
+        <Image
+          src="/logo.png"
           alt="Gradios Logo"
-          fill 
+          width={40}
+          height={40}
           className="object-contain drop-shadow-sm"
+          sizes="40px"
         />
       </div>
       {!collapsed && (
