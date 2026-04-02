@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "edge";
 
-const PIXEL_ID = "1826186485006703";
-const ACCESS_TOKEN = "EAF8ZAT6RwnPkBRIwuU25g1Q5WLDGBpLeBumTute6UgJxD1iP9YRpwG9rvcLJakAp5CP9MKfT3UuMOvKW6EbHQZASxApGofsbU4znWJqOts4MZBKTSxOHU7t5pt5z70tvVrcHbYqkDCkrSK1Q2W3iJK6ZCuPB1PECknqqdSO1MtctYvi2kYjucYrEJwZBX6wZDZD";
+const PIXEL_ID = process.env.META_PIXEL_ID;
+const ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
 
 /**
  * Hash PII data using SHA256 (Meta requirement)
@@ -25,6 +25,13 @@ async function hashData(data: string | undefined): Promise<string | undefined> {
  */
 export async function POST(req: NextRequest) {
   try {
+    if (!PIXEL_ID || !ACCESS_TOKEN) {
+      return NextResponse.json(
+        { error: "META_PIXEL_ID or META_ACCESS_TOKEN not configured" },
+        { status: 500 }
+      );
+    }
+
     const body = await req.json();
     const {
       eventName,

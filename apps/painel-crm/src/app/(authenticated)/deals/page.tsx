@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/select'
 import { useDeals, useCreateDeal, type DealInsert } from '@/hooks/use-deals'
 import { useAllLeads } from '@/hooks/use-leads'
+import type { Lead } from '@/types/database'
 import { useToast } from '@/components/toast-provider'
 import { formatCurrency, formatDate } from '@/lib/format'
 import type { DealStatus, TipoServico } from '@/types/database'
@@ -95,6 +96,15 @@ export default function DealsPage() {
 
   const { data: deals, isLoading } = useDeals(filters)
   const { data: allLeads } = useAllLeads()
+  const leadMap = useMemo(() => {
+    const map = new Map<string, Lead>()
+    if (allLeads) {
+      for (const lead of allLeads) {
+        map.set(lead.id, lead)
+      }
+    }
+    return map
+  }, [allLeads])
   const createDeal = useCreateDeal()
 
   const hasFilters = search !== '' || statusFilter !== 'all' || tipoServicoFilter !== 'all'
@@ -324,7 +334,7 @@ export default function DealsPage() {
                 </tr>
               ) : (
                 deals.map((deal) => {
-                  const lead = allLeads?.find(l => l.id === deal.lead_id)
+                  const lead = deal.lead_id ? leadMap.get(deal.lead_id) : undefined
                   return (
                     <tr
                       key={deal.id}

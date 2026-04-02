@@ -60,6 +60,8 @@ export function useLeads(filters?: {
         )
       }
 
+      query = query.limit(200)
+
       const { data, error } = await query
       if (error) throw error
       return data as Lead[]
@@ -77,6 +79,7 @@ export function useAllLeads() {
         .from('leads')
         .select('*')
         .order('created_at', { ascending: false })
+        .limit(1000)
 
       if (error) throw error
       return data as Lead[]
@@ -275,6 +278,7 @@ export function usePipelineLeads() {
         .select('*')
         .not('status', 'eq', 'fechado_perdido')
         .order('created_at', { ascending: false })
+        .limit(500)
 
       if (error) throw error
       return data as Lead[]

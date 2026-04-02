@@ -3,7 +3,7 @@
 Supabase conectado via REST API (httpx) — zero dependencia de supabase-py.
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -24,10 +24,30 @@ OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen2.5:14b")
 ANTHROPIC_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "")
+JARVIS_API_KEY: str = os.getenv("JARVIS_API_KEY", "")
+ALLOWED_ORIGINS: list[str] = [
+    o.strip()
+    for o in os.getenv(
+        "ALLOWED_ORIGINS",
+        "http://localhost:3000,http://localhost:3001"
+    ).split(",")
+    if o.strip()
+]
 
 MAX_RETRIES: int = 3
 OLLAMA_TIMEOUT: float = 120.0
 AGENT_TIMEOUT: float = 30.0
+
+async def verify_api_key(authorization: str = Header(None)) -> str:
+    """Valida Bearer token contra JARVIS_API_KEY."""
+    if not JARVIS_API_KEY:
+        raise HTTPException(500, "JARVIS_API_KEY nao configurada no servidor")
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "Header Authorization com Bearer token obrigatorio")
+    token = authorization.removeprefix("Bearer ")
+    if token != JARVIS_API_KEY:
+        raise HTTPException(403, "API key invalida")
+    return token
 
 # ─── Logging ────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -538,9 +558,9 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
@@ -873,7 +893,7 @@ async def root() -> dict:
 
 
 @app.get("/agents")
-async def list_agents() -> dict:
+async def list_agents(_key: str = Depends(verify_api_key)) -> dict:
     """Lista todos os agents com nome e titulo."""
     return {
         k: {"name": v["name"], "title": v["title"]}
@@ -884,7 +904,7 @@ async def list_agents() -> dict:
 # ─── Streaming ──────────────────────────────────────────────────────
 
 @app.post("/jarvis/{agent}/stream")
-async def stream_agent(agent: str, req: JarvisRequest) -> StreamingResponse:
+async def stream_agent(agent: str, req: JarvisRequest, _key: str = Depends(verify_api_key)) -> StreamingResponse:
     """Chama um agent com streaming via SSE."""
     if agent not in AGENTS:
         raise HTTPException(404, "Agent nao existe")
@@ -925,7 +945,7 @@ async def stream_agent(agent: str, req: JarvisRequest) -> StreamingResponse:
 # ─── Orquestracao ───────────────────────────────────────────────────
 
 @app.post("/jarvis/orchestrate")
-async def orchestrate(req: JarvisRequest) -> dict:
+async def orchestrate(req: JarvisRequest, _key: str = Depends(verify_api_key)) -> dict:
     """Endpoint de orquestracao inteligente — detecta e consulta agents relevantes."""
     import asyncio
 
@@ -979,7 +999,7 @@ async def orchestrate(req: JarvisRequest) -> dict:
 # ─── Endpoints CRM integrado ──────────────────────────────────────
 
 @app.get("/jarvis/crm/leads")
-async def crm_leads_analysis() -> dict:
+async def crm_leads_analysis(_key: str = Depends(verify_api_key)) -> dict:
     """Retorna analise dos leads atuais com IA."""
     pipeline = await get_pipeline_summary()
     if "error" in pipeline:
@@ -1021,7 +1041,7 @@ def classificar_lead(score: int) -> dict:
 
 
 @app.post("/jarvis/crm/novo-lead")
-async def crm_novo_lead(payload: NovoLeadPayload) -> dict:
+async def crm_novo_lead(payload: NovoLeadPayload, _key: str = Depends(verify_api_key)) -> dict:
     """Recebe novo lead do quiz e gera analise CRM automatica.
 
     Chamado pelo webhook/trigger do Supabase quando INSERT em quiz_leads.
@@ -1137,7 +1157,7 @@ async def crm_novo_lead(payload: NovoLeadPayload) -> dict:
 # ─── Gerar proposta comercial com 1 clique ────────────────────────
 
 @app.post("/jarvis/crm/gerar-proposta")
-async def crm_gerar_proposta(payload: GerarPropostaPayload) -> dict:
+async def crm_gerar_proposta(payload: GerarPropostaPayload, _key: str = Depends(verify_api_key)) -> dict:
     """Gera proposta comercial completa em markdown usando agents Copy + CRM.
 
     Busca dados do lead no Supabase (se lead_id informado) ou usa dados_lead.
@@ -1343,7 +1363,7 @@ async def cfo_resumo_analysis() -> dict:
 # ─── Agent call (com contexto automatico CRM/CFO) ─────────────────
 
 @app.post("/jarvis/{agent}", response_model=JarvisResponse)
-async def call_agent(agent: str, req: JarvisRequest) -> JarvisResponse:
+async def call_agent(agent: str, req: JarvisRequest, _key: str = Depends(verify_api_key)) -> JarvisResponse:
     """Chama um agent. CRM e CFO recebem contexto real do Supabase automaticamente."""
     if agent == "crm" and sb.enabled:
         crm_context = await get_leads_context()

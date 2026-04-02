@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-brand-blue-deep/30;
+  }
+
+  body {
+    @apply bg-bg-navy text-text-primary font-poppins antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0, 200, 240, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 200, 240, 0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0E1B30;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-brand-blue-deep rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-brand-blue;
+  }
+}
+
+@layer components {
+  /* ── Cards ── */
+  .card-glass {
+    @apply bg-bg-card border border-brand-blue-deep/30 p-5 shadow-sm;
+    border-radius: 14px;
+  }
+
+  .card-glass-hover {
+    @apply card-glass transition-all duration-200;
+    will-change: transform;
+  }
+
+  .card-glass-hover:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 200, 240, 0.25);
+    box-shadow: 0 8px 24px rgba(0, 200, 240, 0.08);
+  }
+
+  /* ── Gradients ── */
+  .gradient-cyan {
+    background: linear-gradient(135deg, #00C8F0, #1A6AAA);
+  }
+
+  .gradient-navy {
+    background: linear-gradient(135deg, #0A1628, #131F35);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #00C8F0, #1A6AAA);
+  }
+
+  /* ── Badges ── */
+  .badge-positive {
+    @apply text-status-positive text-xs font-semibold px-2.5 py-0.5;
+    background: rgba(16, 185, 129, 0.12);
+    border-radius: 6px;
+  }
+
+  .badge-negative {
+    @apply text-status-negative text-xs font-semibold px-2.5 py-0.5;
+    background: rgba(239, 68, 68, 0.12);
+    border-radius: 6px;
+  }
+
+  .badge-warning {
+    @apply text-status-warning text-xs font-semibold px-2.5 py-0.5;
+    background: rgba(245, 158, 11, 0.12);
+    border-radius: 6px;
+  }
+
+  .badge-cyan {
+    @apply text-brand-cyan text-xs font-semibold px-2.5 py-0.5;
+    background: rgba(0, 200, 240, 0.12);
+    border-radius: 6px;
+  }
+
+  .badge-muted {
+    @apply text-text-secondary text-xs font-semibold px-2.5 py-0.5;
+    background: rgba(148, 163, 184, 0.12);
+    border-radius: 6px;
+  }
+
+  /* ── Kanban ── */
+  .kanban-column {
+    @apply bg-bg-navy/50 rounded-xl p-3 min-w-[280px] max-w-[320px] flex flex-col gap-2;
+    border: 1px solid rgba(21, 59, 95, 0.4);
+  }
+
+  .kanban-card {
+    @apply card-glass cursor-grab active:cursor-grabbing transition-all duration-150;
+  }
+
+  .kanban-card:hover {
+    border-color: rgba(0, 200, 240, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 200, 240, 0.06);
+  }
+
+  .kanban-card.dragging {
+    @apply opacity-50 scale-[1.02] rotate-1;
+    box-shadow: 0 12px 32px rgba(0, 200, 240, 0.15);
+  }
+
+  /* ── Tables ── */
+  .table-header {
+    @apply bg-bg-card text-text-secondary text-xs font-semibold uppercase tracking-wider;
+  }
+
+  .table-row {
+    @apply border-b transition-colors;
+    border-color: rgba(21, 59, 95, 0.3);
+  }
+
+  .table-row:hover {
+    @apply bg-bg-hover;
+  }
+
+  /* ── Progress Bar ── */
+  .progress-bar {
+    @apply h-2 rounded-full overflow-hidden;
+    background: rgba(21, 59, 95, 0.5);
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-500;
+    background: linear-gradient(90deg, #1A6AAA, #00C8F0);
+  }
+
+  /* ── Tooltip ── */
+  .tooltip-brand {
+    @apply text-sm text-text-primary bg-bg-card shadow-xl;
+    border: 1px solid rgba(21, 59, 95, 0.5);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+
+  /* ── Status Pulse ── */
+  .status-pulse {
+    @apply relative;
+  }
+
+  .status-pulse::before {
+    content: '';
+    @apply absolute -inset-1 rounded-full animate-pulse-glow;
+  }
+
+  /* ── Priority indicator ── */
+  .priority-bar {
+    @apply absolute left-0 top-0 bottom-0 w-1 rounded-l-card;
+  }
+}
