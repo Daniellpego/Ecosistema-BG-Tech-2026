@@ -52,9 +52,7 @@ export function KanbanBoard({ projetos }: KanbanBoardProps) {
       // Dropped onto a card — find which column that card belongs to
       const targetProjeto = projetos.find((p) => p.id === (over.id as string))
       if (!targetProjeto) return
-      // em_revisao is a legacy alias mapped to the revisao column
-      const mappedStatus = targetProjeto.status === 'em_revisao' ? 'revisao' : targetProjeto.status
-      targetColumn = mappedStatus as ProjetoStatus
+      targetColumn = targetProjeto.status
       if (!validStatuses.includes(targetColumn)) return
     }
 
@@ -76,7 +74,7 @@ export function KanbanBoard({ projetos }: KanbanBoardProps) {
           <KanbanColumn
             key={col.id}
             {...col}
-            projetos={projetos.filter((p) => col.id === 'revisao' ? (p.status === 'revisao' || p.status === 'em_revisao') : p.status === col.id)}
+            projetos={projetos.filter((p) => p.status === col.id)}
           />
         ))}
       </div>

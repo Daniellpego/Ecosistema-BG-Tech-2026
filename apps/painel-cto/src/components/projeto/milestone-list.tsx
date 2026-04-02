@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, CheckCircle2, Calendar, Milestone as MilestoneIcon } from 'lucide-react'
+import { Plus, CheckCircle2, Calendar, Milestone as MilestoneIcon, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -10,13 +10,14 @@ import { Label } from '@/components/ui/label'
 import { MilestoneBadge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
-import { useMilestones, useCreateMilestone, useUpdateMilestone } from '@/hooks/use-milestones'
+import { useMilestones, useCreateMilestone, useUpdateMilestone, useDeleteMilestone } from '@/hooks/use-milestones'
 import { formatDate, daysUntil } from '@/lib/format'
 
 export function MilestoneList({ projetoId }: { projetoId: string }) {
   const { data: milestones, isLoading } = useMilestones(projetoId)
   const createMilestone = useCreateMilestone()
   const updateMilestone = useUpdateMilestone()
+  const deleteMilestone = useDeleteMilestone()
   const [showForm, setShowForm] = useState(false)
   const [titulo, setTitulo] = useState('')
   const [dataPrevista, setDataPrevista] = useState('')
@@ -116,7 +117,16 @@ export function MilestoneList({ projetoId }: { projetoId: string }) {
                   </div>
                 </div>
               </div>
-              <MilestoneBadge status={m.status} />
+              <div className="flex items-center gap-2">
+                <MilestoneBadge status={m.status} />
+                <button
+                  onClick={() => deleteMilestone.mutate({ id: m.id, projeto_id: projetoId })}
+                  className="opacity-0 group-hover:opacity-100 text-text-muted hover:text-status-negative transition-all"
+                  title="Excluir milestone"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </motion.div>
           )
         })}

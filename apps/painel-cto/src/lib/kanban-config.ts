@@ -9,7 +9,6 @@ export const KANBAN_COLUMNS: {
   { id: 'backlog', label: 'Backlog', color: '#94A3B8', bgColor: 'rgba(148, 163, 184, 0.08)' },
   { id: 'em_andamento', label: 'Em Andamento', color: '#00C8F0', bgColor: 'rgba(0, 200, 240, 0.08)' },
   { id: 'revisao', label: 'Revisao', color: '#F59E0B', bgColor: 'rgba(245, 158, 11, 0.08)' },
-  // Legacy compat: em_revisao maps to same column visually
   { id: 'entregue', label: 'Entregue', color: '#10B981', bgColor: 'rgba(16, 185, 129, 0.08)' },
 ]
 

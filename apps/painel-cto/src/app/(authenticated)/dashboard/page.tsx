@@ -10,6 +10,7 @@ import { useDashboardCTO } from '@/hooks/use-dashboard-cto'
 import { useGlobalUpdates } from '@/hooks/use-updates'
 import { formatCurrency, formatDate, formatRelative, daysUntil } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { ErrorState } from '@/components/ui/error-state'
 
 function KPICard({ icon: Icon, label, value, format, color, alert }: {
   icon: React.ElementType; label: string; value: number
@@ -36,8 +37,12 @@ function KPICard({ icon: Icon, label, value, format, color, alert }: {
 }
 
 export default function DashboardPage() {
-  const { isLoading, kpis, statusDistribuicao, proximasEntregas, proximosMilestones } = useDashboardCTO()
+  const { isLoading, error, kpis, statusDistribuicao, proximasEntregas, proximosMilestones } = useDashboardCTO()
   const { data: recentUpdates } = useGlobalUpdates(8)
+
+  if (error) {
+    return <PageTransition><ErrorState message="Erro ao carregar dados do dashboard" /></PageTransition>
+  }
 
   if (isLoading) {
     return (
@@ -101,16 +106,16 @@ export default function DashboardPage() {
               {proximasEntregas.length === 0 && (
                 <p className="text-xs text-text-muted py-4 text-center">Nenhuma entrega proxima</p>
               )}
-              {proximasEntregas.map((p: Record<string, unknown>) => {
-                const days = daysUntil(p.data_entrega as string)
+              {proximasEntregas.map((p) => {
+                const days = p.data_entrega ? daysUntil(p.data_entrega) : 0
                 return (
-                  <div key={p.id as string} className="flex items-center justify-between py-2 border-b border-brand-blue-deep/20 last:border-0">
+                  <div key={p.id} className="flex items-center justify-between py-2 border-b border-brand-blue-deep/20 last:border-0">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-text-primary truncate">{p.titulo as string}</p>
-                      <p className="text-xs text-text-muted">{p.cliente as string}</p>
+                      <p className="text-sm font-medium text-text-primary truncate">{p.titulo ?? 'Sem titulo'}</p>
+                      <p className="text-xs text-text-muted">{p.cliente ?? '-'}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <Progress value={p.progresso as number} className="w-16" />
+                      <Progress value={p.progresso} className="w-16" />
                       <span className={cn('text-xs font-semibold', days <= 2 ? 'text-status-negative' : 'text-status-warning')}>
                         {days}d
                       </span>
@@ -131,13 +136,13 @@ export default function DashboardPage() {
               {proximosMilestones.length === 0 && (
                 <p className="text-xs text-text-muted py-4 text-center">Nenhum milestone proximo</p>
               )}
-              {proximosMilestones.map((m: Record<string, unknown>) => (
-                <div key={m.id as string} className="flex items-center justify-between py-2 border-b border-brand-blue-deep/20 last:border-0">
+              {proximosMilestones.map((m) => (
+                <div key={m.id} className="flex items-center justify-between py-2 border-b border-brand-blue-deep/20 last:border-0">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-text-primary truncate">{m.titulo as string}</p>
-                    <p className="text-xs text-text-muted">{(m as { projetos?: { titulo: string } }).projetos?.titulo}</p>
+                    <p className="text-sm font-medium text-text-primary truncate">{m.titulo}</p>
+                    <p className="text-xs text-text-muted">{m.projetos?.titulo ?? '-'}</p>
                   </div>
-                  <span className="text-xs text-text-secondary shrink-0">{formatDate(m.data_prevista as string)}</span>
+                  <span className="text-xs text-text-secondary shrink-0">{formatDate(m.data_prevista)}</span>
                 </div>
               ))}
             </div>

@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useUpdates, useCreateUpdate } from '@/hooks/use-updates'
+import { useCurrentUser } from '@/hooks/use-current-user'
 import { formatRelative } from '@/lib/format'
 import type { UpdateTipo } from '@/types/database'
 
@@ -25,6 +26,7 @@ const TIPO_CONFIG: Record<UpdateTipo, { icon: React.ElementType; color: string; 
 export function UpdateFeed({ projetoId }: { projetoId: string }) {
   const { data: updates, isLoading } = useUpdates(projetoId)
   const createUpdate = useCreateUpdate()
+  const { data: currentUser } = useCurrentUser()
   const [conteudo, setConteudo] = useState('')
   const [tipo, setTipo] = useState<UpdateTipo>('nota')
   const [visivelSocio, setVisivelSocio] = useState(true)
@@ -33,7 +35,7 @@ export function UpdateFeed({ projetoId }: { projetoId: string }) {
     if (!conteudo.trim()) return
     createUpdate.mutate({
       projeto_id: projetoId,
-      autor: 'Daniel',
+      autor: currentUser?.nome ?? 'Usuario',
       tipo,
       conteudo: conteudo.trim(),
       visivel_socio: visivelSocio,

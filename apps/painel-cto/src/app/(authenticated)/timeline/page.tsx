@@ -5,6 +5,7 @@ import { PageTransition } from '@/components/motion'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { useProjetos } from '@/hooks/use-projetos'
+import { ErrorState } from '@/components/ui/error-state'
 import { formatDate } from '@/lib/format'
 import { getProjetoTitulo, getProjetoEntrega, type Projeto } from '@/types/database'
 
@@ -46,7 +47,7 @@ function GanttBar({ projeto, minDate, totalDays }: { projeto: Projeto; minDate: 
 }
 
 export default function TimelinePage() {
-  const { data: projetos, isLoading } = useProjetos()
+  const { data: projetos, isLoading, error } = useProjetos()
 
   const { sortedProjetos, minDate, totalDays, monthHeaders } = useMemo(() => {
     const list = (projetos ?? []).filter((p) => p.status !== 'cancelado' && (p.data_inicio || getProjetoEntrega(p)))
@@ -76,6 +77,10 @@ export default function TimelinePage() {
 
     return { sortedProjetos: sorted, minDate: min, totalDays: days, monthHeaders: headers }
   }, [projetos])
+
+  if (error) {
+    return <PageTransition><ErrorState message="Erro ao carregar projetos" /></PageTransition>
+  }
 
   if (isLoading) {
     return (

@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import type { Projeto, ProjetoInsert, ProjetoStatus } from '@/types/database'
+import { normalizeProjetoStatus, type Projeto, type ProjetoInsert, type ProjetoStatus } from '@/types/database'
 
 export function useProjetos() {
   const supabase = createClient()
@@ -15,7 +15,7 @@ export function useProjetos() {
         .neq('status', 'cancelado')
         .order('updated_at', { ascending: false })
       if (error) throw error
-      return data as Projeto[]
+      return (data as Projeto[]).map((p) => ({ ...p, status: normalizeProjetoStatus(p.status) }))
     },
   })
 }
@@ -31,7 +31,7 @@ export function useProjetosByStatus(status: ProjetoStatus) {
         .eq('status', status)
         .order('updated_at', { ascending: false })
       if (error) throw error
-      return data as Projeto[]
+      return (data as Projeto[]).map((p) => ({ ...p, status: normalizeProjetoStatus(p.status) }))
     },
   })
 }
@@ -47,7 +47,8 @@ export function useProjeto(id: string) {
         .eq('id', id)
         .single()
       if (error) throw error
-      return data as Projeto
+      const p = data as Projeto
+      return { ...p, status: normalizeProjetoStatus(p.status) }
     },
     enabled: !!id,
   })

@@ -9,6 +9,7 @@ import { PrioridadeBadge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { formatDate, daysUntil } from '@/lib/format'
 import { getProjetoTitulo, getProjetoEntrega, type Projeto } from '@/types/database'
+import { useTarefaCount } from '@/hooks/use-tarefas'
 
 interface KanbanCardProps {
   projeto: Projeto
@@ -26,6 +27,7 @@ export function KanbanCard({ projeto, overlay }: KanbanCardProps) {
     transition,
   }
 
+  const { data: taskCount } = useTarefaCount(projeto.id)
   const entrega = getProjetoEntrega(projeto)
   const days = entrega ? daysUntil(entrega) : null
   const isLate = days !== null && days < 0
@@ -65,9 +67,12 @@ export function KanbanCard({ projeto, overlay }: KanbanCardProps) {
               {formatDate(entrega)}
             </div>
           )}
-          <div className="flex items-center gap-1 text-text-muted">
-            <ListTodo className="h-3 w-3" />
-          </div>
+          {taskCount && taskCount.total > 0 && (
+            <div className="flex items-center gap-1 text-text-muted">
+              <ListTodo className="h-3 w-3" />
+              <span className="text-xs">{taskCount.done}/{taskCount.total}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

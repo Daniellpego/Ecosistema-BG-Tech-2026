@@ -6,10 +6,9 @@ export async function createServerSupabaseClient() {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseKey) {
-    const cookieStore = await cookies()
-    return createServerClient('https://placeholder.supabase.co', 'placeholder-key', {
-      cookies: { getAll() { return cookieStore.getAll() }, setAll() {} },
-    })
+    throw new Error(
+      'Supabase nao configurado. Crie o arquivo .env.local com NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY'
+    )
   }
 
   const cookieStore = await cookies()
@@ -21,7 +20,9 @@ export async function createServerSupabaseClient() {
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options as Record<string, unknown>)
           )
-        } catch {}
+        } catch {
+          // setAll can fail in Server Components — safe to ignore
+        }
       },
     },
   })

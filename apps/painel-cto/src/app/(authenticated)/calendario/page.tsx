@@ -38,8 +38,8 @@ export default function CalendarioPage() {
       title: m.titulo,
       date: m.data_prevista,
       type: 'milestone' as const,
-      color: (m as unknown as { projetos?: { cor?: string } }).projetos?.cor ?? '#00C8F0',
-      project: (m as unknown as { projetos?: { titulo?: string } }).projetos?.titulo,
+      color: m.projetos?.cor ?? '#00C8F0',
+      project: m.projetos?.titulo ?? undefined,
     }))
   }, [milestones])
 

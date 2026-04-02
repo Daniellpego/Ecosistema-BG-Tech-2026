@@ -50,7 +50,7 @@ export default function PortalPage() {
 
   const activeProjetos = (projetos ?? []).filter((p) => p.status !== 'cancelado')
     .sort((a, b) => {
-      const order: Record<string, number> = { em_andamento: 0, revisao: 1, em_revisao: 1, backlog: 2, entregue: 3, cancelado: 4 }
+      const order: Record<string, number> = { em_andamento: 0, revisao: 1, backlog: 2, entregue: 3, cancelado: 4 }
       return (order[a.status] ?? 9) - (order[b.status] ?? 9)
     })
 

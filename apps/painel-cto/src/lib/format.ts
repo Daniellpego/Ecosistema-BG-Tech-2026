@@ -48,7 +48,6 @@ export function daysUntil(date: string): number {
 const STATUS_LABELS: Record<string, string> = {
   backlog: 'Backlog',
   em_andamento: 'Em Andamento',
-  em_revisao: 'Em Revisao',
   revisao: 'Em Revisao',
   entregue: 'Entregue',
   cancelado: 'Cancelado',

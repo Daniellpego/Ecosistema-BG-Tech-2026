@@ -1,23 +1,28 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, Filter } from 'lucide-react'
+import { Filter } from 'lucide-react'
 import { PageTransition } from '@/components/motion'
 import { KanbanBoard } from '@/components/kanban/kanban-board'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ErrorState } from '@/components/ui/error-state'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ProjetoFormDialog } from '@/components/projeto/projeto-form-dialog'
 import { useProjetos } from '@/hooks/use-projetos'
 import type { Prioridade } from '@/types/database'
 
 export default function KanbanPage() {
-  const { data: projetos, isLoading } = useProjetos()
+  const { data: projetos, isLoading, error } = useProjetos()
   const [filterPrioridade, setFilterPrioridade] = useState<Prioridade | 'all'>('all')
 
   const filteredProjetos = (projetos ?? []).filter((p) => {
     if (filterPrioridade !== 'all' && p.prioridade !== filterPrioridade) return false
     return true
   })
+
+  if (error) {
+    return <PageTransition><ErrorState message="Erro ao carregar projetos. Verifique sua conexao." /></PageTransition>
+  }
 
   if (isLoading) {
     return (
@@ -51,6 +56,7 @@ export default function KanbanPage() {
                 <SelectItem value="baixa">Baixa</SelectItem>
               </SelectContent>
             </Select>
+            <ProjetoFormDialog />
           </div>
         </div>
 
