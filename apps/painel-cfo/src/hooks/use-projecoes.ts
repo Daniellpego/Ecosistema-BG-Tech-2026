@@ -2,9 +2,10 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { usePeriod } from '@/providers/period-provider'
-import type { Projecao, CustoFixo, Caixa } from '@/types/database'
+import type { Projecao } from '@/types/database'
 
 export interface ProjecaoMes {
   mes: number
@@ -73,7 +74,7 @@ export function useProjecoes(): UseProjecoesResult {
         .eq('status', 'ativo')
 
       if (error) throw error
-      return data as CustoFixo[]
+      return data as import('@/types/database').CustoFixo[]
     },
   })
 
@@ -88,7 +89,7 @@ export function useProjecoes(): UseProjecoesResult {
         .limit(1)
 
       if (error) throw error
-      return data as Caixa[]
+      return data as import('@/types/database').Caixa[]
     },
   })
 
@@ -195,7 +196,7 @@ export function useProjecoes(): UseProjecoesResult {
 
       // Mês de break-even (primeiro mês com resultado positivo)
       const mesBreakEvenIdx = mesesProj.findIndex((m) => m.resultado >= 0)
-      const mesBreakEven = mesBreakEvenIdx >= 0 ? mesesProj[mesBreakEvenIdx]!.label : 'N/A'
+      const mesBreakEven = mesBreakEvenIdx >= 0 ? (mesesProj[mesBreakEvenIdx]?.label ?? 'N/A') : 'N/A'
 
       return {
         cenario,
@@ -209,7 +210,7 @@ export function useProjecoes(): UseProjecoesResult {
         breakEven,
         runwayAtual,
         mesBreakEven,
-      } as ProjecaoCalculada
+      }
     })
   }, [cenarios, custosFixos, caixaData, month, year])
 
@@ -243,7 +244,11 @@ export function useCreateProjecao() {
       return data as Projecao
     },
     onSuccess: () => {
+      toast.success('Projeção criada com sucesso!')
       queryClient.invalidateQueries({ queryKey: ['projecoes-cenarios'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao criar projeção: ${error.message}`)
     },
   })
 }
@@ -265,7 +270,11 @@ export function useUpdateProjecao() {
       return data as Projecao
     },
     onSuccess: () => {
+      toast.success('Projeção atualizada!')
       queryClient.invalidateQueries({ queryKey: ['projecoes-cenarios'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar projeção: ${error.message}`)
     },
   })
 }
@@ -284,7 +293,11 @@ export function useDeleteProjecao() {
       if (error) throw error
     },
     onSuccess: () => {
+      toast.success('Projeção removida.')
       queryClient.invalidateQueries({ queryKey: ['projecoes-cenarios'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao excluir projeção: ${error.message}`)
     },
   })
 }

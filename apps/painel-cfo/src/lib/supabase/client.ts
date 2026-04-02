@@ -1,6 +1,11 @@
 import { createBrowserClient } from '@supabase/ssr'
 
+// Module-level singleton — one client per browser session
+let _client: ReturnType<typeof createBrowserClient> | null = null
+
 export function createClient() {
+  if (_client) return _client
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
@@ -14,5 +19,6 @@ export function createClient() {
     )
   }
 
-  return createBrowserClient(supabaseUrl, supabaseKey)
+  _client = createBrowserClient(supabaseUrl, supabaseKey)
+  return _client
 }

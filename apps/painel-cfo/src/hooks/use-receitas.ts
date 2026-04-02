@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { usePeriod } from '@/providers/period-provider'
 import type { Receita, ReceitaTipo, ReceitaStatus } from '@/types/database'
@@ -111,7 +112,7 @@ export function useCreateReceita() {
     mutationFn: async (receita: ReceitaInsert) => {
       const { data, error } = await supabase
         .from('receitas')
-        .insert(receita as unknown as Record<string, unknown>)
+        .insert({ ...receita, taxas: receita.taxas ?? 0 } as unknown as Record<string, unknown>)
         .select()
         .single()
 
@@ -119,10 +120,14 @@ export function useCreateReceita() {
       return data as Receita
     },
     onSuccess: () => {
+      toast.success('Receita criada com sucesso!')
       queryClient.invalidateQueries({ queryKey: ['receitas'] })
       queryClient.invalidateQueries({ queryKey: ['receitas-ano'] })
       queryClient.invalidateQueries({ queryKey: ['receitas-prev'] })
       queryClient.invalidateQueries({ queryKey: ['clientes-suggestions'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao criar receita: ${error.message}`)
     },
   })
 }
@@ -144,9 +149,13 @@ export function useUpdateReceita() {
       return data as Receita
     },
     onSuccess: () => {
+      toast.success('Receita atualizada!')
       queryClient.invalidateQueries({ queryKey: ['receitas'] })
       queryClient.invalidateQueries({ queryKey: ['receitas-ano'] })
       queryClient.invalidateQueries({ queryKey: ['receitas-prev'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar receita: ${error.message}`)
     },
   })
 }
@@ -165,10 +174,14 @@ export function useDeleteReceita() {
       if (error) throw error
     },
     onSuccess: () => {
+      toast.success('Receita removida.')
       queryClient.invalidateQueries({ queryKey: ['receitas'] })
       queryClient.invalidateQueries({ queryKey: ['receitas-ano'] })
       queryClient.invalidateQueries({ queryKey: ['receitas-prev'] })
       queryClient.invalidateQueries({ queryKey: ['clientes-suggestions'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao excluir receita: ${error.message}`)
     },
   })
 }

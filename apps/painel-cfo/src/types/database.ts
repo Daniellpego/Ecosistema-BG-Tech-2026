@@ -157,20 +157,71 @@ export interface QuizSession {
 export interface Database {
   public: {
     Tables: {
-      receitas: { Row: Receita; Insert: Omit<Receita, 'id' | 'valor_liquido' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Receita, 'id' | 'valor_liquido' | 'created_at' | 'updated_at'>> }
-      custos_fixos: { Row: CustoFixo; Insert: Omit<CustoFixo, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<CustoFixo, 'id' | 'created_at' | 'updated_at'>> }
-      gastos_variaveis: { Row: GastoVariavel; Insert: Omit<GastoVariavel, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<GastoVariavel, 'id' | 'created_at' | 'updated_at'>> }
-      caixa: { Row: Caixa; Insert: Omit<Caixa, 'id' | 'created_at'>; Update: Partial<Omit<Caixa, 'id' | 'created_at'>> }
-      metas_financeiras: { Row: MetaFinanceira; Insert: Omit<MetaFinanceira, 'id' | 'created_at'>; Update: Partial<Omit<MetaFinanceira, 'id' | 'created_at'>> }
-      emprestimo_socio: { Row: EmprestimoSocio; Insert: Omit<EmprestimoSocio, 'id' | 'created_at'>; Update: Partial<Omit<EmprestimoSocio, 'id' | 'created_at'>> }
-      historico_decisoes: { Row: HistoricoDecisao; Insert: Omit<HistoricoDecisao, 'id' | 'created_at'>; Update: Partial<Omit<HistoricoDecisao, 'id' | 'created_at'>> }
-      projecoes: { Row: Projecao; Insert: Omit<Projecao, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Projecao, 'id' | 'created_at' | 'updated_at'>> }
-      quiz_sessions: { Row: QuizSession; Insert: Omit<QuizSession, 'id' | 'created_at'>; Update: Partial<Omit<QuizSession, 'id' | 'created_at'>> }
+      receitas: {
+        Row: Receita
+        Insert: Omit<Receita, 'id' | 'valor_liquido' | 'created_at' | 'updated_at' | 'created_by' | 'taxas'> & { created_by?: string | null; taxas?: number }
+        Update: Partial<Omit<Receita, 'id' | 'valor_liquido' | 'created_at' | 'updated_at'>>
+        Relationships: []
+      }
+      custos_fixos: {
+        Row: CustoFixo
+        Insert: Omit<CustoFixo, 'id' | 'created_at' | 'updated_at' | 'created_by'> & { created_by?: string | null }
+        Update: Partial<Omit<CustoFixo, 'id' | 'created_at' | 'updated_at'>>
+        Relationships: []
+      }
+      gastos_variaveis: {
+        Row: GastoVariavel
+        Insert: Omit<GastoVariavel, 'id' | 'created_at' | 'updated_at' | 'created_by'> & { created_by?: string | null }
+        Update: Partial<Omit<GastoVariavel, 'id' | 'created_at' | 'updated_at'>>
+        Relationships: []
+      }
+      caixa: {
+        Row: Caixa
+        Insert: Omit<Caixa, 'id' | 'created_at' | 'created_by'> & { created_by?: string | null }
+        Update: Partial<Omit<Caixa, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      metas_financeiras: {
+        Row: MetaFinanceira
+        Insert: Omit<MetaFinanceira, 'id' | 'created_at' | 'created_by'> & { created_by?: string | null }
+        Update: Partial<Omit<MetaFinanceira, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      emprestimo_socio: {
+        Row: EmprestimoSocio
+        Insert: Omit<EmprestimoSocio, 'id' | 'created_at'>
+        Update: Partial<Omit<EmprestimoSocio, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      historico_decisoes: {
+        Row: HistoricoDecisao
+        Insert: Omit<HistoricoDecisao, 'id' | 'created_at'>
+        Update: Partial<Omit<HistoricoDecisao, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      projecoes: {
+        Row: Projecao
+        Insert: Omit<Projecao, 'id' | 'created_at' | 'updated_at' | 'created_by'> & { created_by?: string | null }
+        Update: Partial<Omit<Projecao, 'id' | 'created_at' | 'updated_at'>>
+        Relationships: []
+      }
+      quiz_sessions: {
+        Row: QuizSession
+        Insert: Omit<QuizSession, 'id' | 'created_at'>
+        Update: Partial<Omit<QuizSession, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      configuracoes_cfo: {
+        Row: { id: string; aliquota_simples: number; prolabore_valor: number; prolabore_socios: number; prolabore_inss_percentual: number; updated_at: string }
+        Insert: { aliquota_simples: number; prolabore_valor: number; prolabore_socios: number; prolabore_inss_percentual: number; updated_at?: string }
+        Update: Partial<{ aliquota_simples: number; prolabore_valor: number; prolabore_socios: number; prolabore_inss_percentual: number; updated_at: string }>
+        Relationships: []
+      }
     }
     Views: {
-      vw_resumo_mensal: { Row: ResumoMensal }
-      vw_custos_fixos_mensal: { Row: { mes: string; total_custos_fixos: number } }
-      vw_gastos_variaveis_mensal: { Row: { mes: string; total_gastos_variaveis: number; gasto_marketing: number; impostos_variaveis: number } }
+      vw_resumo_mensal: { Row: ResumoMensal; Relationships: [] }
+      vw_custos_fixos_mensal: { Row: { mes: string; total_custos_fixos: number }; Relationships: [] }
+      vw_gastos_variaveis_mensal: { Row: { mes: string; total_gastos_variaveis: number; gasto_marketing: number; impostos_variaveis: number }; Relationships: [] }
     }
   }
 }
