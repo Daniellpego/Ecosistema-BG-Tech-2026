@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { usePeriod } from '@/providers/period-provider'
 import type { Receita, CustoFixo, GastoVariavel } from '@/types/database'
-
 export interface DRELine {
   label: string
   month: number
@@ -44,7 +43,7 @@ function getMonthRange(year: number, month: number) {
   return { start, end }
 }
 
-function computeMonthDRE(
+export function computeMonthDRE(
   receitas: Receita[],
   custosFixos: CustoFixo[],
   gastosVariaveis: GastoVariavel[]
@@ -261,8 +260,10 @@ export function useDRE() {
         }
       }
 
-      const first = ranges[0]!
-      const last = ranges[ranges.length - 1]!
+      const first = ranges[0]
+      const last = ranges[ranges.length - 1]
+
+      if (!first || !last) return []
 
       const [recRes, gvRes] = await Promise.all([
         supabase

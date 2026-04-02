@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 
 export interface ConfigCFO {
@@ -44,14 +45,14 @@ export function useUpdateConfigCFO() {
 
   return useMutation({
     mutationFn: async (updates: ConfigCFOUpdate) => {
-      // Get the single config row
-      const { data: existing } = await supabase
+      const { data: existingRaw } = await supabase
         .from('configuracoes_cfo')
         .select('id')
         .limit(1)
         .single()
 
-      if (!existing) throw new Error('Config not found')
+      const existing = existingRaw as { id: string } | null
+      if (!existing) throw new Error('Configuração não encontrada')
 
       const { data, error } = await supabase
         .from('configuracoes_cfo')
@@ -64,7 +65,11 @@ export function useUpdateConfigCFO() {
       return data as ConfigCFO
     },
     onSuccess: () => {
+      toast.success('Configurações salvas!')
       queryClient.invalidateQueries({ queryKey: ['config-cfo'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar configurações: ${error.message}`)
     },
   })
 }

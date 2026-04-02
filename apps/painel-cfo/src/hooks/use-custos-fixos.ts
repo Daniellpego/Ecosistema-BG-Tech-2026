@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import type { CustoFixo, CustoFixoCategoria, CustoFixoRecorrencia, CustoFixoStatus } from '@/types/database'
 
@@ -50,7 +51,11 @@ export function useCreateCustoFixo() {
       return data as CustoFixo
     },
     onSuccess: () => {
+      toast.success('Custo fixo criado com sucesso!')
       queryClient.invalidateQueries({ queryKey: ['custos-fixos'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao criar custo fixo: ${error.message}`)
     },
   })
 }
@@ -72,7 +77,11 @@ export function useUpdateCustoFixo() {
       return data as CustoFixo
     },
     onSuccess: () => {
+      toast.success('Custo fixo atualizado!')
       queryClient.invalidateQueries({ queryKey: ['custos-fixos'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar custo fixo: ${error.message}`)
     },
   })
 }
@@ -91,7 +100,11 @@ export function useDeleteCustoFixo() {
       if (error) throw error
     },
     onSuccess: () => {
+      toast.success('Custo fixo removido.')
       queryClient.invalidateQueries({ queryKey: ['custos-fixos'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao excluir custo fixo: ${error.message}`)
     },
   })
 }

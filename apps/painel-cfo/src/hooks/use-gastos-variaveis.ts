@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { usePeriod } from '@/providers/period-provider'
 import type { GastoVariavel, GastoVariavelCategoria, GastoVariavelTipo, GastoVariavelStatus } from '@/types/database'
@@ -78,8 +79,12 @@ export function useCreateGastoVariavel() {
       return data as GastoVariavel
     },
     onSuccess: () => {
+      toast.success('Gasto criado com sucesso!')
       queryClient.invalidateQueries({ queryKey: ['gastos-variaveis'] })
       queryClient.invalidateQueries({ queryKey: ['gastos-variaveis-prev'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao criar gasto: ${error.message}`)
     },
   })
 }
@@ -101,8 +106,12 @@ export function useUpdateGastoVariavel() {
       return data as GastoVariavel
     },
     onSuccess: () => {
+      toast.success('Gasto atualizado!')
       queryClient.invalidateQueries({ queryKey: ['gastos-variaveis'] })
       queryClient.invalidateQueries({ queryKey: ['gastos-variaveis-prev'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar gasto: ${error.message}`)
     },
   })
 }
@@ -121,8 +130,12 @@ export function useDeleteGastoVariavel() {
       if (error) throw error
     },
     onSuccess: () => {
+      toast.success('Gasto removido.')
       queryClient.invalidateQueries({ queryKey: ['gastos-variaveis'] })
       queryClient.invalidateQueries({ queryKey: ['gastos-variaveis-prev'] })
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao excluir gasto: ${error.message}`)
     },
   })
 }

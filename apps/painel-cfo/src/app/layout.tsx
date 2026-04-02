@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { QueryProvider } from '@/providers/query-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -16,6 +17,8 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+
   return (
     <html lang="pt-BR">
       <head>
@@ -25,8 +28,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
-        <link rel="preconnect" href="https://urpuiznydrlwmaqhdids.supabase.co" />
-        <link rel="dns-prefetch" href="https://urpuiznydrlwmaqhdids.supabase.co" />
+        {supabaseUrl && (
+          <>
+            <link rel="preconnect" href={supabaseUrl} />
+            <link rel="dns-prefetch" href={supabaseUrl} />
+          </>
+        )}
       </head>
       <body>
         <QueryProvider>
@@ -34,6 +41,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
           </TooltipProvider>
         </QueryProvider>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: { background: '#131F35', border: '1px solid #1A3A5C', color: '#F0F4F8' },
+          }}
+        />
       </body>
     </html>
   )
