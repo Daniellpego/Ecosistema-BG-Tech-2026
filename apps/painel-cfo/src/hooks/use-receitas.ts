@@ -110,9 +110,10 @@ export function useCreateReceita() {
 
   return useMutation({
     mutationFn: async (receita: ReceitaInsert) => {
+      const payload = { ...receita, taxas: receita.taxas != null ? receita.taxas : 0 }
       const { data, error } = await supabase
         .from('receitas')
-        .insert({ ...receita, taxas: receita.taxas ?? 0 } as unknown as Record<string, unknown>)
+        .insert(payload as unknown as Record<string, unknown>)
         .select()
         .single()
 

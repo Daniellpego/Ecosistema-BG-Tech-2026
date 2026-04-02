@@ -45,18 +45,19 @@ export function useUpdateConfigCFO() {
 
   return useMutation({
     mutationFn: async (updates: ConfigCFOUpdate) => {
-      const { data: existing } = await supabase
+      const { data: existingRaw } = await supabase
         .from('configuracoes_cfo')
         .select('id')
         .limit(1)
         .single()
 
+      const existing = existingRaw as { id: string } | null
       if (!existing) throw new Error('Configuração não encontrada')
 
       const { data, error } = await supabase
         .from('configuracoes_cfo')
         .update({ ...updates, updated_at: new Date().toISOString() } as unknown as Record<string, unknown>)
-        .eq('id', (existing as unknown as { id: string }).id)
+        .eq('id', existing.id)
         .select()
         .single()
 
