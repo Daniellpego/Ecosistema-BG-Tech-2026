@@ -86,21 +86,21 @@ export default function AgentsPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-6 py-4">
+      <header className="sticky top-0 z-20 border-b border-border-subtle bg-bg/80 backdrop-blur-md px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center">
-              <Bot className="w-5 h-5 text-indigo-400" />
+            <div className="w-9 h-9 rounded-lg bg-brand-cyan/10 flex items-center justify-center">
+              <Bot className="w-5 h-5 text-brand-cyan" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">Agents</h1>
-              <p className="text-xs text-zinc-500 mt-0.5">{AGENTS.length} agents especializados</p>
+              <p className="text-xs text-text-muted mt-0.5">{AGENTS.length} agents especializados</p>
             </div>
           </div>
           <button
             onClick={loadData}
             disabled={loading}
-            className="p-2 rounded-lg hover:bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 transition-colors disabled:opacity-40"
+            className="p-2 rounded-lg hover:bg-bg-overlay text-text-secondary hover:text-text transition-colors disabled:opacity-40"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -109,9 +109,9 @@ export default function AgentsPage() {
 
       <div className="p-6">
         {/* Summary */}
-        <div className="flex items-center gap-6 mb-6 text-sm text-zinc-500">
+        <div className="flex items-center gap-6 mb-6 text-sm text-text-muted">
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${ollamaOnline ? "bg-emerald-400" : "bg-zinc-600"}`} />
+            <div className={`w-2 h-2 rounded-full ${ollamaOnline ? "bg-emerald-400" : "bg-text-muted"}`} />
             <span>Ollama {ollamaOnline ? "online" : "offline"}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export default function AgentsPage() {
             return (
               <div
                 key={agent.slug}
-                className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-5 flex flex-col"
+                className="bg-bg-raised border border-border-subtle rounded-card p-5 flex flex-col card-hover"
               >
                 {/* Top: emoji + name + status */}
                 <div className="flex items-start justify-between mb-4">
@@ -136,8 +136,8 @@ export default function AgentsPage() {
                       {agent.emoji}
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-white">{agent.label}</h3>
-                      <p className="text-[11px] text-zinc-500">{agent.desc}</p>
+                      <h3 className="text-sm font-semibold text-text">{agent.label}</h3>
+                      <p className="text-[11px] text-text-muted">{agent.desc}</p>
                     </div>
                   </div>
                   <StatusBadge online={ollamaOnline} />
@@ -145,16 +145,16 @@ export default function AgentsPage() {
 
                 {/* Stats */}
                 <div className="space-y-2.5 flex-1">
-                  <div className="flex items-center gap-2 text-xs text-zinc-400">
-                    <FileText className="w-3.5 h-3.5 text-zinc-600" />
+                  <div className="flex items-center gap-2 text-xs text-text-secondary">
+                    <FileText className="w-3.5 h-3.5 text-text-muted" />
                     <span>{s?.totalEstudos ?? 0} estudos gerados</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-zinc-400">
-                    <Clock className="w-3.5 h-3.5 text-zinc-600" />
+                  <div className="flex items-center gap-2 text-xs text-text-secondary">
+                    <Clock className="w-3.5 h-3.5 text-text-muted" />
                     <span>Ultima acao: {formatRelative(s?.ultimaAcao ?? null)}</span>
                   </div>
                   {s?.ultimaAcaoTitulo && (
-                    <p className="text-[11px] text-zinc-600 truncate pl-5.5" title={s.ultimaAcaoTitulo}>
+                    <p className="text-[11px] text-text-muted truncate pl-5.5" title={s.ultimaAcaoTitulo}>
                       {s.ultimaAcaoTitulo}
                     </p>
                   )}
@@ -163,7 +163,7 @@ export default function AgentsPage() {
                 {/* Action button */}
                 <button
                   onClick={() => setChatAgent(agent)}
-                  className="mt-4 w-full py-2 px-3 rounded-lg bg-zinc-800/60 hover:bg-indigo-600/80 border border-zinc-700/40 hover:border-indigo-500/40 text-xs font-medium text-zinc-300 hover:text-white transition-all"
+                  className="mt-4 w-full py-2 px-3 rounded-lg bg-brand-cyan/10 hover:bg-brand-cyan/20 border border-brand-cyan/20 hover:border-brand-cyan/30 text-xs font-medium text-brand-cyan transition-all"
                 >
                   Acionar agent
                 </button>

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import type { Agent } from "@/lib/constants";
 import { useChat } from "@/lib/hooks/useChat";
 import { ChatMessage as ChatMsg } from "@/components/ChatMessage";
-import { X, Send, Minimize2 } from "lucide-react";
+import { X, Send } from "lucide-react";
 
 interface ChatModalProps {
   agent: Agent;
@@ -19,8 +19,6 @@ export function ChatModal({ agent, initialPrompt, onClose }: ChatModalProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const sentInitial = useRef(false);
 
-  // Envia prompt inicial uma unica vez na montagem
-  // Usa microtask em vez de setTimeout para sobreviver ao StrictMode
   useEffect(() => {
     if (initialPrompt && !sentInitial.current) {
       sentInitial.current = true;
@@ -66,19 +64,26 @@ export function ChatModal({ agent, initialPrompt, onClose }: ChatModalProps) {
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl h-[80vh] bg-zinc-900 border border-zinc-800/80 rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+      <div className="relative w-full max-w-2xl h-[80vh] bg-bg-raised border border-border-subtle rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+        {/* Accent line */}
+        <div className="h-0.5 bg-gradient-brand-h" />
+
         {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-3.5 border-b border-zinc-800/80 bg-zinc-900/95">
+        <div className="flex items-center gap-3 px-5 py-3.5 border-b border-border-subtle">
           <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg ${agent.bgColor}`}>
             {agent.emoji}
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-semibold text-white">{agent.label}</h3>
-            <p className="text-[10px] text-zinc-500">{agent.desc}</p>
+            <h3 className="text-sm font-semibold text-text">{agent.label}</h3>
+            <p className="text-[10px] text-text-dim">{agent.desc}</p>
+          </div>
+          <div className="flex items-center gap-1.5 mr-2">
+            <div className="status-dot status-dot-ok animate-pulse" />
+            <span className="text-[10px] text-text-dim">Online</span>
           </div>
           <button
             onClick={handleClose}
-            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-bg-overlay text-text-muted hover:text-text-secondary transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -89,8 +94,11 @@ export function ChatModal({ agent, initialPrompt, onClose }: ChatModalProps) {
           {messages.length === 0 && !loading && (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <span className="text-4xl mb-3">{agent.emoji}</span>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-text-muted">
                 Pergunte algo ao {agent.label}
+              </p>
+              <p className="text-xs text-text-dim mt-1">
+                Pressione Enter para enviar
               </p>
             </div>
           )}
@@ -105,7 +113,7 @@ export function ChatModal({ agent, initialPrompt, onClose }: ChatModalProps) {
         </div>
 
         {/* Input */}
-        <div className="px-5 py-3 border-t border-zinc-800/80 bg-zinc-900/95">
+        <div className="px-5 py-3 border-t border-border-subtle">
           <div className="flex gap-2 items-end">
             <textarea
               ref={textareaRef}
@@ -115,12 +123,12 @@ export function ChatModal({ agent, initialPrompt, onClose }: ChatModalProps) {
               placeholder={`Mensagem para ${agent.label}...`}
               rows={2}
               disabled={loading}
-              className="flex-1 bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:opacity-50 transition-all"
+              className="flex-1 input resize-none"
             />
             <button
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white p-2.5 rounded-xl transition-colors"
+              className="bg-gradient-brand hover:opacity-90 disabled:opacity-40 text-white p-2.5 rounded-xl transition-opacity"
             >
               <Send className="w-4 h-4" />
             </button>

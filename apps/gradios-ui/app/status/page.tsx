@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { JARVIS_URL } from "@/lib/constants";
-import { UserMenu } from "@/components/UserMenu";
 import {
   Activity,
   RefreshCw,
@@ -16,6 +15,7 @@ import {
   Bot,
   Cpu,
   Zap,
+  BrainCircuit,
 } from "lucide-react";
 
 interface ServiceStatus {
@@ -38,10 +38,11 @@ const SERVICE_META: Record<string, { label: string; icon: React.ElementType; des
   n8n:        { label: "N8N",            icon: Zap,            desc: "Automacoes e workflows" },
   cloudflare: { label: "Cloudflare",     icon: Cloud,          desc: "Tunnel (acesso externo)" },
   claude:     { label: "Claude API",     icon: Bot,            desc: "IA Anthropic (fallback)" },
+  brain:      { label: "Cerebro",       icon: BrainCircuit,   desc: "Knowledge Graph (memoria)" },
 };
 
 function statusColor(ok: boolean): string {
-  return ok ? "bg-emerald-400" : "bg-red-400";
+  return ok ? "bg-status-ok" : "bg-status-error";
 }
 
 function statusLabel(ok: boolean): string {
@@ -49,7 +50,7 @@ function statusLabel(ok: boolean): string {
 }
 
 function statusTextColor(ok: boolean): string {
-  return ok ? "text-emerald-400" : "text-red-400";
+  return ok ? "text-status-ok" : "text-status-error";
 }
 
 export default function StatusPage() {
@@ -87,13 +88,13 @@ export default function StatusPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-6 py-4">
+      <header className="sticky top-0 z-20 border-b border-border-subtle bg-bg/80 backdrop-blur-md px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Activity className="w-5 h-5 text-indigo-400" />
+            <Activity className="w-5 h-5 text-brand-cyan" />
             <div>
               <h1 className="text-xl font-bold tracking-tight">Status do Sistema</h1>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-text-muted mt-0.5">
                 {health ? `v${health.version} · ${health.agents_count} agents` : "Verificando..."}
               </p>
             </div>
@@ -102,33 +103,32 @@ export default function StatusPage() {
             <button
               onClick={checkHealth}
               disabled={loading}
-              className="p-2 rounded-lg hover:bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 transition-colors disabled:opacity-40"
+              className="p-2 rounded-lg hover:bg-bg-overlay text-text-secondary hover:text-text-secondary transition-colors disabled:opacity-40"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </button>
-            <span className="text-[10px] text-zinc-600">
+            <span className="text-[10px] text-text-dim">
               {lastCheck.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
             </span>
-            <UserMenu />
           </div>
         </div>
       </header>
 
       <div className="p-6 space-y-6">
         {/* Overall status */}
-        <div className={`rounded-xl border p-6 text-center ${
+        <div className={`rounded-card border p-6 text-center ${
           !health
-            ? "border-red-500/30 bg-red-500/5"
+            ? "border-status-error/30 bg-status-error/5"
             : health.status === "ok"
-              ? "border-emerald-500/30 bg-emerald-500/5"
-              : "border-yellow-500/30 bg-yellow-500/5"
+              ? "border-status-ok/30 bg-status-ok/5"
+              : "border-status-warn/30 bg-status-warn/5"
         }`}>
           <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
             !health
-              ? "bg-red-500/10 text-red-400"
+              ? "bg-status-error/10 text-status-error"
               : health.status === "ok"
-                ? "bg-emerald-500/10 text-emerald-400"
-                : "bg-yellow-500/10 text-yellow-400"
+                ? "bg-status-ok/10 text-status-ok"
+                : "bg-status-warn/10 text-status-warn"
           }`}>
             {!health ? (
               <><WifiOff className="w-4 h-4" /> API Offline</>
@@ -138,7 +138,7 @@ export default function StatusPage() {
               <><Server className="w-4 h-4" /> Sistema degradado ({onlineCount}/{totalServices} online)</>
             )}
           </div>
-          <p className="text-xs text-zinc-500 mt-2">
+          <p className="text-xs text-text-muted mt-2">
             Atualiza automaticamente a cada 30 segundos
           </p>
         </div>
@@ -154,18 +154,18 @@ export default function StatusPage() {
             return (
               <div
                 key={key}
-                className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4 hover:border-zinc-700/60 transition-colors"
+                className="bg-bg-raised border border-border-subtle rounded-card p-4 hover:border-border-hover transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      ok ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
+                      ok ? "bg-status-ok/10 text-status-ok" : "bg-status-error/10 text-status-error"
                     }`}>
                       <Icon className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-zinc-200">{meta.label}</p>
-                      <p className="text-[10px] text-zinc-600">{meta.desc}</p>
+                      <p className="text-sm font-medium text-text-secondary">{meta.label}</p>
+                      <p className="text-[10px] text-text-dim">{meta.desc}</p>
                     </div>
                   </div>
                   <div className={`w-2.5 h-2.5 rounded-full ${statusColor(ok)} ${ok ? "animate-pulse" : ""}`} />
@@ -176,7 +176,7 @@ export default function StatusPage() {
                     {statusLabel(ok)}
                   </span>
                   {latency !== undefined && latency > 0 && (
-                    <span className="text-[10px] text-zinc-500">
+                    <span className="text-[10px] text-text-muted">
                       {latency}ms
                     </span>
                   )}
@@ -186,7 +186,7 @@ export default function StatusPage() {
                 {key === "ollama" && svc?.models && svc.models.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {svc.models.map((m) => (
-                      <span key={m} className="text-[9px] text-zinc-500 bg-zinc-800/60 px-1.5 py-0.5 rounded">
+                      <span key={m} className="text-[9px] text-text-muted bg-bg-overlay px-1.5 py-0.5 rounded">
                         {m}
                       </span>
                     ))}
@@ -198,8 +198,8 @@ export default function StatusPage() {
         </div>
 
         {/* URLs */}
-        <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4">
-          <h3 className="text-sm font-medium text-zinc-400 mb-3 flex items-center gap-2">
+        <div className="bg-bg-raised border border-border-subtle rounded-card p-4">
+          <h3 className="text-sm font-medium text-text-secondary mb-3 flex items-center gap-2">
             <Globe className="w-4 h-4" />
             URLs de acesso
           </h3>
@@ -213,12 +213,12 @@ export default function StatusPage() {
               { label: "N8N (externo)", url: "https://n8n.gradios.co" },
             ].map((item) => (
               <div key={item.url} className="flex items-center justify-between py-1.5">
-                <span className="text-xs text-zinc-500">{item.label}</span>
+                <span className="text-xs text-text-muted">{item.label}</span>
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-indigo-400 hover:text-indigo-300 font-mono"
+                  className="text-xs text-brand-cyan hover:text-brand-cyan/80 font-mono"
                 >
                   {item.url}
                 </a>

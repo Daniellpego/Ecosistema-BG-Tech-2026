@@ -5,43 +5,111 @@
 @layer base {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #3f3f46 transparent;
+    scrollbar-color: #27272A transparent;
   }
-
   *::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-
   *::-webkit-scrollbar-track {
     background: transparent;
   }
-
   *::-webkit-scrollbar-thumb {
-    background: #3f3f46;
+    background: #27272A;
     border-radius: 3px;
   }
-
   *::-webkit-scrollbar-thumb:hover {
-    background: #52525b;
+    background: #3F3F46;
   }
 
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-bg text-text antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3 {
+    letter-spacing: -0.025em;
+  }
+
+  /* Selection */
   ::selection {
-    background: rgba(99, 102, 241, 0.3);
-    color: #e4e4e7;
+    background: rgba(0, 191, 255, 0.2);
+    color: #FAFAFA;
   }
 }
 
 @layer components {
+  /* Card base */
+  .card {
+    @apply bg-bg-raised border border-border-subtle rounded-card;
+  }
+  .card-hover {
+    @apply card hover:border-border-hover transition-colors duration-150;
+  }
+
+  /* Brand accent line on top of cards */
+  .card-accent {
+    @apply card relative overflow-hidden;
+  }
+  .card-accent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #0A1B5C, #00BFFF);
+  }
+
+  /* Input base */
+  .input {
+    @apply w-full bg-bg-raised border border-border-subtle rounded-lg px-3 py-2 text-sm text-text
+      placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-brand-cyan/30 focus:border-brand-cyan/40
+      transition-colors;
+  }
+
+  /* Button brand */
+  .btn-brand {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-brand text-white text-sm font-medium
+      hover:opacity-90 transition-opacity;
+  }
+
+  /* Status dot */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  .status-dot-ok {
+    @apply status-dot bg-status-ok;
+  }
+  .status-dot-warn {
+    @apply status-dot bg-status-warn;
+  }
+  .status-dot-error {
+    @apply status-dot bg-status-error;
+  }
+
+  /* Prose for markdown content */
   .prose-jarvis {
-    @apply text-sm leading-relaxed text-zinc-100;
+    @apply text-sm text-zinc-300 leading-relaxed;
   }
-
-  .prose-jarvis pre {
-    @apply my-2;
-  }
-
-  .prose-jarvis hr {
-    @apply border-zinc-700 my-3;
-  }
+  .prose-jarvis h1 { @apply text-lg font-bold text-white mt-4 mb-2; }
+  .prose-jarvis h2 { @apply text-base font-semibold text-white mt-3 mb-2; }
+  .prose-jarvis h3 { @apply text-sm font-semibold text-zinc-200 mt-2 mb-1; }
+  .prose-jarvis p { @apply mb-2; }
+  .prose-jarvis ul { @apply list-disc pl-5 mb-2 space-y-0.5; }
+  .prose-jarvis ol { @apply list-decimal pl-5 mb-2 space-y-0.5; }
+  .prose-jarvis code { @apply bg-zinc-800 px-1.5 py-0.5 rounded text-xs font-mono text-brand-cyan; }
+  .prose-jarvis pre { @apply bg-zinc-900 rounded-lg p-3 mb-3 overflow-x-auto; }
+  .prose-jarvis pre code { @apply bg-transparent p-0; }
+  .prose-jarvis blockquote { @apply border-l-2 border-brand-cyan/40 pl-3 italic text-zinc-400; }
+  .prose-jarvis a { @apply text-brand-cyan hover:underline; }
+  .prose-jarvis table { @apply w-full text-xs mb-3; }
+  .prose-jarvis th { @apply text-left text-zinc-400 font-medium pb-1 border-b border-border-subtle; }
+  .prose-jarvis td { @apply py-1 border-b border-border-subtle; }
+  .prose-jarvis strong { @apply text-white font-semibold; }
 }

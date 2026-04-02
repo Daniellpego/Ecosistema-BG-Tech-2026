@@ -1,238 +1,97 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { AGENTS, AGENT_MAP } from "@/lib/constants";
-import type { Agent } from "@/lib/constants";
-import { fetchHealth, supabaseSelect, supabaseCount } from "@/lib/api";
-import { StatusBadge } from "@/components/StatusBadge";
+import { AGENTS } from "@/lib/constants";
+import { fetchHealth, fetchBrainStats, supabaseSelect, supabaseCount, type BrainStats } from "@/lib/api";
 import { ChatModal } from "@/components/ChatModal";
-import { UserMenu } from "@/components/UserMenu";
+import type { Agent } from "@/lib/constants";
 import {
   Users,
   DollarSign,
-  Bot,
-  AlertTriangle,
-  Activity,
-  ArrowRight,
-  RefreshCw,
-  Clock,
   FolderKanban,
+  Bell,
+  Bot,
+  FileText,
   TrendingUp,
-  BarChart3,
+  Clock,
+  RefreshCw,
+  ArrowRight,
+  Zap,
+  BrainCircuit,
+  GitBranch,
+  Lightbulb,
 } from "lucide-react";
+import Link from "next/link";
 
-// ─── Types ──────────────────────────────────────────────────────────
+// ─── Types ──────────────────────────────────────────────────────
 
-interface KpiData {
-  leadsHoje: number;
-  totalLeads: number;
-  leadsQuentes: number;
-  agentsAtivos: number;
-  alertasPendentes: number;
-  estudosTotal: number;
-  projetosAtivos: number;
-  mrr: number;
-}
-
-interface FeedItem {
-  id: string;
-  tipo: "estudo" | "alerta" | "interacao";
-  titulo: string;
-  agent: string;
-  timestamp: string;
-  tags: string[];
-}
-
-interface SystemStatus {
+interface HealthData {
   ollama: boolean;
+  models: string[];
   supabase: boolean;
   claude: boolean;
-  evolution: boolean;
+  status: string;
 }
 
-interface WeekLeads {
-  label: string;
-  count: number;
+interface KPIs {
+  totalLeads: number;
+  totalEstudos: number;
+  totalProjetos: number;
+  totalAlertas: number;
 }
 
-interface MonthRevenue {
-  label: string;
-  value: number;
+interface RecentStudy {
+  id: string;
+  title: string;
+  agent: string;
+  created_at: string;
 }
 
-// ─── Quick Actions ──────────────────────────────────────────────────
+// ─── Component ──────────────────────────────────────────────────
 
-const QUICK_ACTIONS = [
-  { label: "Analisar pipeline", agent: "crm", prompt: "Analise o pipeline atual de vendas e sugira acoes para acelerar conversoes" },
-  { label: "Gerar proposta",    agent: "copy", prompt: "Gere uma proposta comercial para um lead de automacao industrial" },
-  { label: "Ver DRE",           agent: "cfo", prompt: "Gere um DRE resumido do mes atual com analise de margem" },
-  { label: "Status projetos",   agent: "pm", prompt: "Faca um status report de todos os projetos ativos com riscos e proximos passos" },
-];
-
-// ─── Bar Chart (pure CSS) ──────────────────────────────────────────
-
-function BarChart({ data, maxValue }: { data: WeekLeads[]; maxValue: number }) {
-  const max = maxValue || 1;
-  return (
-    <div className="flex items-end gap-2 h-32">
-      {data.map((w, i) => (
-        <div key={i} className="flex-1 flex flex-col items-center gap-1">
-          <span className="text-[10px] text-zinc-400">{w.count}</span>
-          <div
-            className="w-full bg-indigo-500/80 rounded-t transition-all"
-            style={{ height: `${(w.count / max) * 100}%`, minHeight: w.count > 0 ? "4px" : "0" }}
-          />
-          <span className="text-[9px] text-zinc-600">{w.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function LineChart({ data, maxValue }: { data: MonthRevenue[]; maxValue: number }) {
-  const max = maxValue || 1;
-  const points = data.map((d, i) => ({
-    x: (i / Math.max(data.length - 1, 1)) * 100,
-    y: 100 - (d.value / max) * 100,
-  }));
-  const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
-
-  return (
-    <div className="h-32 relative">
-      <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="none">
-        <path d={pathD} fill="none" stroke="#6366f1" strokeWidth="2" vectorEffect="non-scaling-stroke" />
-        {points.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r="2" fill="#6366f1" vectorEffect="non-scaling-stroke" />
-        ))}
-      </svg>
-      <div className="flex justify-between mt-1">
-        {data.map((d, i) => (
-          <span key={i} className="text-[9px] text-zinc-600">{d.label}</span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Component ─────────────────────────────────────────────────
-
-export default function PainelPrincipal() {
-  const [kpis, setKpis] = useState<KpiData>({
-    leadsHoje: 0, totalLeads: 0, leadsQuentes: 0, agentsAtivos: 12,
-    alertasPendentes: 0, estudosTotal: 0, projetosAtivos: 0, mrr: 0,
-  });
-  const [feed, setFeed] = useState<FeedItem[]>([]);
-  const [status, setStatus] = useState<SystemStatus>({
-    ollama: false, supabase: false, claude: false, evolution: false,
-  });
-  const [weekLeads, setWeekLeads] = useState<WeekLeads[]>([]);
-  const [monthRevenue, setMonthRevenue] = useState<MonthRevenue[]>([]);
+export default function DashboardPage() {
+  const [health, setHealth] = useState<HealthData | null>(null);
+  const [kpis, setKpis] = useState<KPIs>({ totalLeads: 0, totalEstudos: 0, totalProjetos: 0, totalAlertas: 0 });
+  const [recentStudies, setRecentStudies] = useState<RecentStudy[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [chatAgent, setChatAgent] = useState<Agent | null>(null);
-  const [chatPrompt, setChatPrompt] = useState("");
+  const [brainStats, setBrainStats] = useState<BrainStats | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const health = await fetchHealth().catch(() => ({
-        ollama: false, supabase: false, claude: false, models: [], status: "error",
-      }));
-
-      let evoOk = false;
-      try {
-        const r = await fetch("http://localhost:8080", { signal: AbortSignal.timeout(3000) });
-        evoOk = r.ok;
-      } catch { /* offline */ }
-
-      setStatus({ ollama: health.ollama, supabase: health.supabase, claude: health.claude, evolution: evoOk });
-
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-      const hojeISO = hoje.toISOString();
-
-      const [leadsHoje, totalLeads, leadsQuentes, alertas, estudos] = await Promise.all([
-        supabaseCount("leads", { created_at: `gte.${hojeISO}` }),
+      const [healthData, leads, estudos, projetos, studies, brainData] = await Promise.allSettled([
+        fetchHealth().catch(() => null),
         supabaseCount("leads"),
-        supabaseCount("leads", { lead_temperature: "eq.quente" }),
-        supabaseCount("jarvis_studies", { "tags": "cs.{alerta-crm}" }),
         supabaseCount("jarvis_studies"),
+        supabaseCount("projetos"),
+        supabaseSelect<RecentStudy>("jarvis_studies", {
+          select: "id,title,agent,created_at",
+          order: "created_at.desc",
+          limit: "6",
+        }),
+        fetchBrainStats().catch(() => null),
       ]);
 
-      // Projetos ativos
-      const projetosAtivos = await supabaseCount("projetos", { status: "neq.entregue" });
-
-      // MRR
-      interface ReceitaRow { valor_bruto: number; recorrente: boolean; status: string }
-      const now = new Date();
-      const mesInicio = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
-      const receitas = await supabaseSelect<ReceitaRow>("receitas", {
-        select: "valor_bruto,recorrente,status",
-        "and": `(data.gte.${mesInicio},status.eq.confirmado,recorrente.eq.true)`,
-      });
-      const mrr = receitas.reduce((sum, r) => sum + (r.valor_bruto ?? 0), 0);
+      if (healthData.status === "fulfilled" && healthData.value) {
+        setHealth(healthData.value);
+      }
 
       setKpis({
-        leadsHoje, totalLeads, leadsQuentes,
-        agentsAtivos: health.ollama ? 12 : 0,
-        alertasPendentes: alertas, estudosTotal: estudos,
-        projetosAtivos, mrr,
+        totalLeads: leads.status === "fulfilled" ? leads.value : 0,
+        totalEstudos: estudos.status === "fulfilled" ? estudos.value : 0,
+        totalProjetos: projetos.status === "fulfilled" ? projetos.value : 0,
+        totalAlertas: 0,
       });
 
-      // Leads por semana (ultimas 4 semanas)
-      const weeks: WeekLeads[] = [];
-      for (let i = 3; i >= 0; i--) {
-        const start = new Date();
-        start.setDate(start.getDate() - (i + 1) * 7);
-        start.setHours(0, 0, 0, 0);
-        const end = new Date();
-        end.setDate(end.getDate() - i * 7);
-        end.setHours(23, 59, 59, 999);
-        const count = await supabaseCount("leads", {
-          "and": `(created_at.gte.${start.toISOString()},created_at.lte.${end.toISOString()})`,
-        });
-        weeks.push({ label: `Sem ${4 - i}`, count });
+      if (studies.status === "fulfilled") {
+        setRecentStudies(studies.value);
       }
-      setWeekLeads(weeks);
-
-      // Receita por mes (ultimos 6 meses)
-      const months: MonthRevenue[] = [];
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date();
-        d.setMonth(d.getMonth() - i);
-        const mStart = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
-        const mEnd = new Date(d.getFullYear(), d.getMonth() + 2, 0).toISOString().split("T")[0];
-        const recMes = await supabaseSelect<ReceitaRow>("receitas", {
-          select: "valor_bruto",
-          "and": `(data.gte.${mStart},data.lte.${mEnd},status.eq.confirmado)`,
-        });
-        const total = recMes.reduce((s, r) => s + (r.valor_bruto ?? 0), 0);
-        months.push({
-          label: d.toLocaleDateString("pt-BR", { month: "short" }),
-          value: total,
-        });
+      if (brainData.status === "fulfilled" && brainData.value) {
+        setBrainStats(brainData.value);
       }
-      setMonthRevenue(months);
-
-      // Feed
-      interface StudyRow {
-        id: string; title: string; agent: string; tags: string[]; status: string; created_at: string;
-      }
-      const recentStudies = await supabaseSelect<StudyRow>("jarvis_studies", {
-        select: "id,title,agent,tags,status,created_at", order: "created_at.desc", limit: "15",
-      });
-      const feedItems: FeedItem[] = recentStudies.map((s) => ({
-        id: s.id,
-        tipo: (s.tags ?? []).includes("alerta-crm") ? "alerta" as const : "estudo" as const,
-        titulo: s.title ?? "Sem titulo",
-        agent: s.agent ?? "sistema",
-        timestamp: s.created_at,
-        tags: s.tags ?? [],
-      }));
-      setFeed(feedItems);
-      setLastUpdate(new Date());
     } catch (err) {
-      console.error("Erro ao carregar dados:", err);
+      console.error("Dashboard load error:", err);
     } finally {
       setLoading(false);
     }
@@ -244,193 +103,300 @@ export default function PainelPrincipal() {
     return () => clearInterval(interval);
   }, [loadData]);
 
-  function openChat(agentSlug: string, prompt?: string) {
-    const agent = AGENT_MAP[agentSlug];
-    if (agent) { setChatAgent(agent); setChatPrompt(prompt ?? ""); }
-  }
+  const servicesOnline = [
+    health?.ollama && "Ollama",
+    health?.supabase && "Supabase",
+    health?.claude && "Claude",
+  ].filter(Boolean);
 
-  function formatTime(iso: string): string {
+  function formatRelative(iso: string): string {
     const d = new Date(iso);
-    const diff = Date.now() - d.getTime();
+    const now = new Date();
+    const diff = now.getTime() - d.getTime();
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return "agora";
     if (mins < 60) return `${mins}min`;
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs}h`;
-    return `${Math.floor(hrs / 24)}d`;
+    const days = Math.floor(hrs / 24);
+    return `${days}d`;
   }
+
+  const agentMap = Object.fromEntries(AGENTS.map((a) => [a.slug, a]));
 
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-6 py-4">
+      <header className="sticky top-0 z-20 border-b border-border-subtle bg-bg/80 backdrop-blur-md px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold tracking-tight">GRADIOS AIOX</h1>
-            <p className="text-xs text-zinc-500 mt-0.5">Orquestrador Autonomo de Operacoes</p>
+            <h1 className="text-xl font-bold tracking-tight">Painel</h1>
+            <p className="text-xs text-text-muted mt-0.5">
+              {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+            </p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-3">
-              <StatusDot label="Ollama" ok={status.ollama} />
-              <StatusDot label="Supabase" ok={status.supabase} />
-              <StatusDot label="WhatsApp" ok={status.evolution} />
+          <div className="flex items-center gap-3">
+            {/* Service status pills */}
+            <div className="flex items-center gap-1.5">
+              <div className={`status-dot ${health?.ollama ? "status-dot-ok animate-pulse" : "status-dot-error"}`} />
+              <span className="text-[11px] text-text-muted">
+                {servicesOnline.length > 0 ? `${servicesOnline.length} servicos online` : "Verificando..."}
+              </span>
             </div>
-            <button onClick={loadData} disabled={loading}
-              className="p-2 rounded-lg hover:bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 transition-colors disabled:opacity-40"
-              title="Atualizar dados">
+            <button
+              onClick={loadData}
+              disabled={loading}
+              className="p-2 rounded-lg hover:bg-bg-overlay text-text-muted hover:text-text-secondary transition-colors disabled:opacity-40"
+            >
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </button>
-            <span className="text-[10px] text-zinc-600">
-              {lastUpdate.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-            </span>
-            <UserMenu />
           </div>
         </div>
       </header>
 
       <div className="p-6 space-y-6">
         {/* KPI Cards */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KpiCard icon={<Users className="w-5 h-5" />} label="Leads hoje" value={kpis.leadsHoje}
-            sub={`${kpis.totalLeads} total · ${kpis.leadsQuentes} quentes`} color="text-blue-400" bgColor="bg-blue-500/10" />
-          <KpiCard icon={<FolderKanban className="w-5 h-5" />} label="Projetos ativos" value={kpis.projetosAtivos}
-            sub="em andamento" color="text-indigo-400" bgColor="bg-indigo-500/10" />
-          <KpiCard icon={<DollarSign className="w-5 h-5" />} label="MRR" value={kpis.mrr}
-            sub="receita recorrente mensal" color="text-green-400" bgColor="bg-green-500/10" isCurrency />
-          <KpiCard icon={<AlertTriangle className="w-5 h-5" />} label="Alertas CRM" value={kpis.alertasPendentes}
-            sub="gerados automaticamente" color="text-amber-400" bgColor="bg-amber-500/10" />
-        </section>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KPICard
+            icon={Users}
+            label="Leads no Pipeline"
+            value={kpis.totalLeads}
+            href="/agents"
+            color="text-brand-cyan"
+            bgColor="bg-brand-cyan/10"
+            loading={loading}
+          />
+          <KPICard
+            icon={FolderKanban}
+            label="Projetos Ativos"
+            value={kpis.totalProjetos}
+            href="/projetos"
+            color="text-status-info"
+            bgColor="bg-status-info/10"
+            loading={loading}
+          />
+          <KPICard
+            icon={FileText}
+            label="Estudos Gerados"
+            value={kpis.totalEstudos}
+            href="/estudos"
+            color="text-purple-400"
+            bgColor="bg-purple-500/10"
+            loading={loading}
+          />
+          <KPICard
+            icon={Bot}
+            label="Agents Online"
+            value={health?.ollama ? AGENTS.length : 0}
+            href="/agents"
+            color="text-status-ok"
+            bgColor="bg-status-ok/10"
+            loading={loading}
+          />
+        </div>
 
-        {/* Charts */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className="w-4 h-4 text-indigo-400" />
-              <h3 className="text-sm font-medium text-zinc-300">Leads por semana</h3>
+        {/* Brain Health Bar */}
+        {brainStats && (
+          <Link href="/cerebro" className="card-hover p-4 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0">
+              <BrainCircuit className="w-5 h-5 text-cyan-400" />
             </div>
-            <BarChart data={weekLeads} maxValue={Math.max(...weekLeads.map((w) => w.count), 1)} />
-          </div>
-          <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="w-4 h-4 text-green-400" />
-              <h3 className="text-sm font-medium text-zinc-300">Receita por mes (6m)</h3>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <p className="text-sm font-semibold text-text">Cerebro Externo</p>
+                {brainStats.last_checkpoint && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                    brainStats.last_checkpoint.health_score >= 80 ? "text-emerald-400 bg-emerald-500/10" : "text-amber-400 bg-amber-500/10"
+                  }`}>
+                    {brainStats.last_checkpoint.health_score}% health
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-4 text-[11px] text-text-dim">
+                <span className="flex items-center gap-1"><BrainCircuit className="w-3 h-3" />{brainStats.total_nodes} nodes</span>
+                <span className="flex items-center gap-1"><GitBranch className="w-3 h-3" />{brainStats.total_edges} conexoes</span>
+                <span className="flex items-center gap-1"><Lightbulb className="w-3 h-3" />{brainStats.total_learnings} aprendizados</span>
+              </div>
             </div>
-            <LineChart data={monthRevenue} maxValue={Math.max(...monthRevenue.map((m) => m.value), 1)} />
-          </div>
-        </section>
+            <ArrowRight className="w-4 h-4 text-text-dim shrink-0" />
+          </Link>
+        )}
 
-        {/* Quick Actions */}
-        <section>
-          <h2 className="text-sm font-medium text-zinc-400 mb-3">Acoes rapidas</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {QUICK_ACTIONS.map((action) => {
-              const agent = AGENT_MAP[action.agent];
-              return (
-                <button key={action.label} onClick={() => openChat(action.agent, action.prompt)}
-                  className="group flex items-center gap-3 bg-zinc-900/60 border border-zinc-800/60 rounded-xl px-4 py-3 hover:border-indigo-500/30 hover:bg-zinc-800/40 transition-all text-left">
-                  <span className="text-lg">{agent?.emoji ?? "\u{1F916}"}</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">{action.label}</p>
-                    <p className="text-[10px] text-zinc-600">{agent?.label}</p>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-indigo-400 transition-colors" />
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Feed + Agents */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <section className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-medium text-zinc-400">Atividade recente</h2>
-              <Activity className="w-4 h-4 text-zinc-600" />
-            </div>
-            <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl divide-y divide-zinc-800/40">
-              {feed.length === 0 && !loading && (
-                <div className="px-4 py-8 text-center text-sm text-zinc-600">Nenhuma atividade registrada ainda</div>
-              )}
-              {loading && feed.length === 0 && (
-                <div className="px-4 py-8 text-center text-sm text-zinc-600">Carregando...</div>
-              )}
-              {feed.map((item) => {
-                const agent = AGENT_MAP[item.agent];
-                return (
-                  <div key={item.id} className="flex items-start gap-3 px-4 py-3 hover:bg-zinc-800/20 transition-colors">
-                    <div className={`mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center text-sm ${
-                      item.tipo === "alerta" ? "bg-amber-500/10" : (agent?.bgColor ?? "bg-zinc-800")}`}>
-                      {item.tipo === "alerta" ? "\u{1F6A8}" : (agent?.emoji ?? "\u{1F4C4}")}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm text-zinc-200 truncate">{item.titulo}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className={`text-[10px] font-medium ${agent?.color ?? "text-zinc-500"}`}>{agent?.label ?? item.agent}</span>
-                        {item.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className="text-[10px] text-zinc-600 bg-zinc-800/60 px-1.5 rounded">{tag}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-[10px] text-zinc-600 whitespace-nowrap">
-                      <Clock className="w-3 h-3" />
-                      {formatTime(item.timestamp)}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-sm font-medium text-zinc-400 mb-3">Agents ({AGENTS.length})</h2>
+          {/* Quick Actions */}
+          <div className="lg:col-span-1 space-y-4">
+            <h2 className="text-sm font-semibold text-text-secondary">Acoes rapidas</h2>
             <div className="space-y-2">
-              {AGENTS.map((agent) => (
-                <button key={agent.slug} onClick={() => openChat(agent.slug)}
-                  className="w-full group flex items-center gap-3 bg-zinc-900/40 border border-zinc-800/60 rounded-xl px-4 py-3 hover:border-zinc-700/60 hover:bg-zinc-800/30 transition-all text-left">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${agent.bgColor}`}>{agent.emoji}</div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-zinc-300 group-hover:text-white transition-colors">{agent.label}</p>
-                    <p className="text-[10px] text-zinc-600">{agent.desc}</p>
-                  </div>
-                  <StatusBadge online={kpis.agentsAtivos > 0} />
-                </button>
-              ))}
+              <QuickAction
+                emoji="🤝"
+                label="Analisar Pipeline CRM"
+                desc="Verificar leads quentes e followups"
+                onClick={() => setChatAgent(agentMap["crm"])}
+              />
+              <QuickAction
+                emoji="💰"
+                label="Resumo Financeiro"
+                desc="DRE, MRR e projecao do mes"
+                onClick={() => setChatAgent(agentMap["cfo"])}
+              />
+              <QuickAction
+                emoji="📋"
+                label="Status dos Projetos"
+                desc="Prazos, entregas e riscos"
+                onClick={() => setChatAgent(agentMap["pm"])}
+              />
+              <QuickAction
+                emoji="📢"
+                label="Performance de Ads"
+                desc="ROAS, CTR e otimizacoes"
+                onClick={() => setChatAgent(agentMap["ads"])}
+              />
             </div>
-          </section>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-text-secondary">Atividade recente</h2>
+              <Link href="/estudos" className="text-xs text-brand-cyan hover:underline flex items-center gap-1">
+                Ver todos <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+
+            <div className="card">
+              {loading && recentStudies.length === 0 ? (
+                <div className="p-8 text-center">
+                  <div className="w-5 h-5 border-2 border-border-default border-t-brand-cyan rounded-full animate-spin mx-auto mb-2" />
+                  <p className="text-xs text-text-dim">Carregando atividade...</p>
+                </div>
+              ) : recentStudies.length === 0 ? (
+                <div className="p-8 text-center">
+                  <Zap className="w-8 h-8 text-text-dim mx-auto mb-2" />
+                  <p className="text-sm text-text-muted">Nenhuma atividade ainda</p>
+                  <p className="text-xs text-text-dim mt-1">Converse com um agent para gerar estudos</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-border-subtle">
+                  {recentStudies.map((study) => {
+                    const agent = agentMap[study.agent];
+                    return (
+                      <div key={study.id} className="flex items-center gap-3 px-4 py-3 hover:bg-bg-overlay/50 transition-colors">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0 ${agent?.bgColor ?? "bg-zinc-800"}`}>
+                          {agent?.emoji ?? "📄"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-text-secondary truncate">{study.title}</p>
+                          <p className="text-[11px] text-text-dim">
+                            {agent?.label ?? study.agent}
+                          </p>
+                        </div>
+                        <span className="text-[10px] text-text-dim flex items-center gap-1 flex-shrink-0">
+                          <Clock className="w-3 h-3" />
+                          {formatRelative(study.created_at)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Agents Grid */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-text-secondary">Agents disponiveis</h2>
+            <Link href="/agents" className="text-xs text-brand-cyan hover:underline flex items-center gap-1">
+              Ver todos <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {AGENTS.slice(0, 6).map((agent) => (
+              <button
+                key={agent.slug}
+                onClick={() => setChatAgent(agent)}
+                className="card-hover p-3 text-center group"
+              >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg mx-auto mb-2 ${agent.bgColor} group-hover:scale-110 transition-transform`}>
+                  {agent.emoji}
+                </div>
+                <p className="text-xs font-medium text-text-secondary group-hover:text-text">{agent.label}</p>
+                <p className="text-[10px] text-text-dim mt-0.5">{agent.desc}</p>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
+      {/* Chat Modal */}
       {chatAgent && (
-        <ChatModal agent={chatAgent} initialPrompt={chatPrompt} onClose={() => { setChatAgent(null); setChatPrompt(""); }} />
+        <ChatModal agent={chatAgent} onClose={() => setChatAgent(null)} />
       )}
     </div>
   );
 }
 
-// ─── Sub-components ─────────────────────────────────────────────────
+// ─── Sub-components ─────────────────────────────────────────────
 
-function KpiCard({ icon, label, value, sub, color, bgColor, isCurrency }: {
-  icon: React.ReactNode; label: string; value: number; sub: string; color: string; bgColor: string; isCurrency?: boolean;
+function KPICard({
+  icon: Icon,
+  label,
+  value,
+  href,
+  color,
+  bgColor,
+  loading,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: number;
+  href: string;
+  color: string;
+  bgColor: string;
+  loading: boolean;
 }) {
   return (
-    <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4">
-      <div className="flex items-center gap-3 mb-3">
-        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${bgColor} ${color}`}>{icon}</div>
-        <span className="text-xs text-zinc-500 font-medium">{label}</span>
+    <Link href={href} className="card-accent p-4 hover:border-border-hover transition-colors group">
+      <div className="flex items-center justify-between mb-3">
+        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${bgColor}`}>
+          <Icon className={`w-4.5 h-4.5 ${color}`} />
+        </div>
+        <ArrowRight className="w-3.5 h-3.5 text-text-dim group-hover:text-text-muted transition-colors" />
       </div>
-      <p className="text-2xl font-bold text-white">
-        {isCurrency ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}` : value}
-      </p>
-      <p className="text-[11px] text-zinc-500 mt-1">{sub}</p>
-    </div>
+      {loading ? (
+        <div className="h-8 w-16 bg-bg-overlay rounded animate-pulse" />
+      ) : (
+        <p className="text-2xl font-bold text-text">{value}</p>
+      )}
+      <p className="text-xs text-text-muted mt-0.5">{label}</p>
+    </Link>
   );
 }
 
-function StatusDot({ label, ok }: { label: string; ok: boolean }) {
+function QuickAction({
+  emoji,
+  label,
+  desc,
+  onClick,
+}: {
+  emoji: string;
+  label: string;
+  desc: string;
+  onClick: () => void;
+}) {
   return (
-    <div className="flex items-center gap-1.5" title={`${label}: ${ok ? "online" : "offline"}`}>
-      <div className={`w-1.5 h-1.5 rounded-full ${ok ? "bg-emerald-400" : "bg-zinc-600"}`} />
-      <span className="text-[10px] text-zinc-500">{label}</span>
-    </div>
+    <button
+      onClick={onClick}
+      className="w-full card-hover p-3 flex items-center gap-3 text-left group"
+    >
+      <span className="text-xl flex-shrink-0">{emoji}</span>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-text-secondary group-hover:text-text transition-colors">{label}</p>
+        <p className="text-[11px] text-text-dim">{desc}</p>
+      </div>
+      <ArrowRight className="w-3.5 h-3.5 text-text-dim group-hover:text-text-muted transition-colors flex-shrink-0" />
+    </button>
   );
 }

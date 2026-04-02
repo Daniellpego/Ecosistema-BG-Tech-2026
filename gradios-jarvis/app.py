@@ -3,7 +3,7 @@
 Supabase conectado via REST API (httpx) — zero dependencia de supabase-py.
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -15,6 +15,11 @@ import uuid
 import logging
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+from brain.engine import BrainEngine
+from brain.orchestrator import smart_orchestrate
+from brain.learner import process_auto_learning
+from brain.tools import AgentTools
+from brain.context import enrich_agent_context
 
 load_dotenv()
 
@@ -25,9 +30,12 @@ ANTHROPIC_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "")
 
+HEALTH_TOKEN: str = os.getenv("HEALTH_TOKEN", "")
+CLOUDFLARE_TUNNEL_URL: str = os.getenv("CLOUDFLARE_TUNNEL_URL", "https://jarvis.gradios.co")
+
 MAX_RETRIES: int = 3
 OLLAMA_TIMEOUT: float = 120.0
-AGENT_TIMEOUT: float = 30.0
+AGENT_TIMEOUT: float = 90.0
 
 # ─── Logging ────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -127,6 +135,16 @@ class SupabaseREST:
 
 sb = SupabaseREST(SUPABASE_URL, SUPABASE_KEY)
 
+# ─── Cérebro Externo (Knowledge Graph) ──────────────────────────
+brain: BrainEngine | None = None
+tools: AgentTools | None = None
+if SUPABASE_URL and SUPABASE_KEY:
+    brain = BrainEngine(SUPABASE_URL, SUPABASE_KEY)
+    tools = AgentTools(SUPABASE_URL, SUPABASE_KEY)
+    logger.info("Cérebro Externo + Agent Tools inicializados")
+else:
+    logger.warning("Cérebro Externo desabilitado — sem Supabase")
+
 
 # ─── Agents (importados dos modulos) ─────────────────────────────────
 from agents.copy import AGENT_CONFIG as _copy
@@ -199,11 +217,52 @@ class GerarPropostaPayload(BaseModel):
     servicos: list[str] = []
 
 
-# ─── App ────────────────────────────────────────────────────────────
+# ─── App (com lifespan para manutenção noturna) ───────────────────
+import asyncio
+from contextlib import asynccontextmanager
+
+
+async def _nightly_brain_maintenance() -> None:
+    """Loop que roda checkpoint do cérebro toda noite às 23:00."""
+    while True:
+        now = datetime.now()
+        # Calcular próxima execução às 23:00
+        target = now.replace(hour=23, minute=0, second=0, microsecond=0)
+        if now >= target:
+            target = target.replace(day=target.day + 1)
+        wait_seconds = (target - now).total_seconds()
+        logger.info("Próximo checkpoint do cérebro em %.0f minutos", wait_seconds / 60)
+        await asyncio.sleep(wait_seconds)
+
+        if brain:
+            try:
+                result = await brain.run_daily_checkpoint()
+                logger.info("Checkpoint noturno concluído: %s", result.get("summary", ""))
+            except Exception as e:
+                logger.error("Checkpoint noturno falhou: %s", e)
+
+
+@asynccontextmanager
+async def lifespan(app_instance: FastAPI):  # type: ignore[no-untyped-def]
+    """Startup/shutdown do app."""
+    # Startup: iniciar manutenção noturna
+    maintenance_task = None
+    if brain:
+        maintenance_task = asyncio.create_task(_nightly_brain_maintenance())
+        logger.info("Manutenção noturna do cérebro agendada")
+    yield
+    # Shutdown: cancelar task e fechar conexões
+    if maintenance_task:
+        maintenance_task.cancel()
+    if brain:
+        await brain.close()
+
+
 app = FastAPI(
     title="GRADIOS JARVIS API",
-    version="2.1.0",
-    description="Orquestrador Multi-Agent C-Level",
+    version="3.1.0",
+    description="Orquestrador Multi-Agent C-Level com Cérebro Externo",
+    lifespan=lifespan,
 )
 app.add_middleware(
     CORSMiddleware,
@@ -264,17 +323,34 @@ async def call_ollama(
 
 
 async def call_claude(system: str, messages: list[dict[str, str]]) -> str:
-    """Chama a API Claude da Anthropic."""
+    """Chama a API Claude da Anthropic (modo sincrono)."""
     import anthropic
 
     client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_KEY)
     r = await client.messages.create(
-        model="claude-opus-4-5",
+        model="claude-sonnet-4-20250514",
         max_tokens=4096,
         system=system,
         messages=messages,
     )
     return r.content[0].text
+
+
+async def call_claude_stream(
+    system: str, messages: list[dict[str, str]]
+) -> AsyncIterator[str]:
+    """Chama a API Claude com streaming — yield de tokens individuais."""
+    import anthropic
+
+    client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_KEY)
+    async with client.messages.stream(
+        model="claude-sonnet-4-20250514",
+        max_tokens=4096,
+        system=system,
+        messages=messages,
+    ) as stream:
+        async for text in stream.text_stream:
+            yield text
 
 
 # ─── Memoria (Supabase REST) ─────────────────────────────────────
@@ -610,39 +686,91 @@ async def list_agents() -> dict:
 
 @app.post("/jarvis/{agent}/stream")
 async def stream_agent(agent: str, req: JarvisRequest) -> StreamingResponse:
-    """Chama um agent com streaming via SSE."""
+    """Chama um agent com streaming via SSE — com contexto do Cérebro Externo."""
     if agent not in AGENTS:
         raise HTTPException(404, "Agent nao existe")
 
     cfg = AGENTS[agent]
     system = cfg["system"]
+
     if req.context:
         system += f"\n\nCONTEXTO:\n{json.dumps(req.context, ensure_ascii=False, indent=2)}"
 
+    # Cérebro Externo no system prompt (knowledge persistente)
+    if brain:
+        try:
+            brain_context = await brain.get_agent_context(agent, req.message)
+            if brain_context:
+                system += brain_context
+        except Exception as e:
+            logger.warning("Erro ao buscar contexto do cérebro para %s: %s", agent, e)
+
+    # Dados em tempo real injetados NA MENSAGEM DO USUÁRIO (Qwen presta mais atenção)
+    enriched_message = req.message
+    if tools:
+        try:
+            live_data = await enrich_agent_context(tools, agent)
+            if live_data:
+                enriched_message = live_data + "\n\n---\n\nPERGUNTA DO USUARIO: " + req.message
+                logger.info("Contexto enriquecido para %s: %d chars de dados", agent, len(live_data))
+        except Exception as e:
+            logger.warning("Erro ao enriquecer contexto para %s: %s", agent, e)
+
     session_id = req.session_id or str(uuid.uuid4())
     history = await load_history(session_id)
-    messages = history + [{"role": "user", "content": req.message}]
+    messages = history + [{"role": "user", "content": enriched_message}]
+
+    use_claude = (req.use_claude and ANTHROPIC_KEY) or False
 
     async def gen() -> AsyncIterator[str]:
         yield f'data: {json.dumps({"type": "start", "session_id": session_id})}\n\n'
         full_response = ""
         try:
-            async for line in call_ollama(system, messages, stream=True):
-                try:
-                    d = json.loads(line)
-                    token = d.get("message", {}).get("content", "")
+            if use_claude:
+                # Claude streaming
+                async for token in call_claude_stream(system, messages):
                     if token:
                         full_response += token
                         yield f'data: {json.dumps({"token": token, "type": "token"})}\n\n'
-                    if d.get("done"):
+                yield f'data: {json.dumps({"type": "done"})}\n\n'
+            else:
+                # Ollama streaming (com fallback para Claude se falhar)
+                try:
+                    async for line in call_ollama(system, messages, stream=True):
+                        try:
+                            d = json.loads(line)
+                            token = d.get("message", {}).get("content", "")
+                            if token:
+                                full_response += token
+                                yield f'data: {json.dumps({"token": token, "type": "token"})}\n\n'
+                            if d.get("done"):
+                                yield f'data: {json.dumps({"type": "done"})}\n\n'
+                        except json.JSONDecodeError:
+                            continue
+                except ConnectionError:
+                    if ANTHROPIC_KEY:
+                        logger.info("Ollama falhou, usando Claude como fallback para %s", agent)
+                        async for token in call_claude_stream(system, messages):
+                            if token:
+                                full_response += token
+                                yield f'data: {json.dumps({"token": token, "type": "token"})}\n\n'
                         yield f'data: {json.dumps({"type": "done"})}\n\n'
-                except json.JSONDecodeError:
-                    continue
+                    else:
+                        raise
         except Exception as e:
             logger.error("Erro no streaming %s: %s", agent, e)
             yield f'data: {json.dumps({"type": "error", "message": str(e)})}\n\n'
 
         await save_message(session_id, agent, req.message, full_response)
+
+        # Auto-aprendizado: extrair insights da conversa
+        if brain and full_response:
+            try:
+                await process_auto_learning(
+                    brain, agent, req.message, full_response, session_id
+                )
+            except Exception as e:
+                logger.warning("Auto-learning falhou para %s: %s", agent, e)
 
     return StreamingResponse(gen(), media_type="text/event-stream")
 
@@ -651,41 +779,38 @@ async def stream_agent(agent: str, req: JarvisRequest) -> StreamingResponse:
 
 @app.post("/jarvis/orchestrate")
 async def orchestrate(req: JarvisRequest) -> dict:
-    """Endpoint de orquestracao inteligente — detecta e consulta agents relevantes."""
-    import asyncio
-
-    message_lower = req.message.lower()
-
-    keyword_map: dict[str, list[str]] = {
-        "manufatura": ["fabrica", "producao", "maquina", "automacao", "industria", "roi industrial", "oee", "setup"],
-        "fiscal": ["imposto", "icms", "cfop", "ncm", "tributar", "fiscal", "cbs", "ibs", "pis", "cofins", "nota fiscal"],
-        "copy": ["copy", "texto", "headline", "cta", "persuasao", "landing page", "email marketing", "conversao"],
-        "dev": ["codigo", "next.js", "react", "api", "supabase", "typescript", "deploy", "bug", "frontend", "backend"],
-        "ads": ["campanha", "meta ads", "google ads", "roas", "cpc", "ctr", "anuncio", "trafego", "midia paga"],
-        "brand": ["marca", "branding", "logo", "identidade", "tipografia", "paleta", "design", "visual"],
-        "cfo": ["financeiro", "dre", "ebitda", "valuation", "kpi", "orcamento", "fluxo de caixa", "dashboard"],
-        "crm": ["cliente", "pipeline", "vendas", "lead", "proposta", "forecast", "crm", "comercial"],
-        "pm": ["projeto", "cronograma", "prazo", "entrega", "sprint", "milestone", "atraso", "wbs", "gantt", "backlog"],
-        "cs": ["satisfacao", "nps", "churn", "retencao", "onboarding", "health score", "customer success", "feedback", "reclamacao"],
-    }
-
-    relevant_agents: list[str] = []
-    for agent_slug, keywords in keyword_map.items():
-        if any(kw in message_lower for kw in keywords):
-            relevant_agents.append(agent_slug)
-
-    if not relevant_agents:
-        relevant_agents = ["dev"]
+    """Orquestração inteligente — usa keywords + cérebro para decidir agents."""
+    # Smart orchestration: keywords com pesos + busca no cérebro
+    relevant_agents = await smart_orchestrate(req.message, brain=brain, max_agents=3)
 
     session_id = req.session_id or str(uuid.uuid4())
-    messages = [{"role": "user", "content": req.message}]
+    history = await load_history(session_id)
+    messages = history + [{"role": "user", "content": req.message}]
+
+    # Buscar contexto do cérebro uma vez para todos os agents
+    brain_ctx = ""
+    if brain:
+        try:
+            brain_ctx = await brain.get_agent_context("orchestrator", req.message)
+        except Exception:
+            pass
 
     async def query_agent(slug: str) -> dict:
         cfg = AGENTS[slug]
+        # Dados em tempo real PRIMEIRO, depois system prompt
+        live_prefix = ""
+        if tools:
+            try:
+                live_prefix = await enrich_agent_context(tools, slug)
+            except Exception:
+                pass
+        agent_system = (live_prefix + "\n\n" + cfg["system"]) if live_prefix else cfg["system"]
+        if brain_ctx:
+            agent_system += brain_ctx
         try:
             response_text = ""
             async with asyncio.timeout(AGENT_TIMEOUT):
-                async for chunk in call_ollama(cfg["system"], messages):
+                async for chunk in call_ollama(agent_system, messages):
                     response_text += chunk
             return {"agent": slug, "name": cfg["name"], "title": cfg["title"], "response": response_text}
         except TimeoutError:
@@ -1088,12 +1213,33 @@ async def call_agent(agent: str, req: JarvisRequest) -> JarvisResponse:
 
     cfg = AGENTS[agent]
     system = cfg["system"]
+
     if req.context:
         system += f"\n\nCONTEXTO:\n{json.dumps(req.context, ensure_ascii=False, indent=2)}"
 
+    # Cérebro Externo no system prompt (knowledge persistente)
+    if brain:
+        try:
+            brain_context = await brain.get_agent_context(agent, req.message)
+            if brain_context:
+                system += brain_context
+        except Exception as e:
+            logger.warning("Erro ao buscar contexto do cérebro para %s: %s", agent, e)
+
+    # Dados em tempo real injetados NA MENSAGEM DO USUÁRIO (Qwen presta mais atenção)
+    enriched_message = req.message
+    if tools:
+        try:
+            live_data = await enrich_agent_context(tools, agent)
+            if live_data:
+                enriched_message = live_data + "\n\n---\n\nPERGUNTA DO USUARIO: " + req.message
+                logger.info("Contexto enriquecido para %s: %d chars de dados", agent, len(live_data))
+        except Exception as e:
+            logger.warning("Erro ao enriquecer contexto para %s: %s", agent, e)
+
     session_id = req.session_id or str(uuid.uuid4())
     history = await load_history(session_id)
-    messages = history + [{"role": "user", "content": req.message}]
+    messages = history + [{"role": "user", "content": enriched_message}]
 
     try:
         if req.use_claude and ANTHROPIC_KEY:
@@ -1109,6 +1255,13 @@ async def call_agent(agent: str, req: JarvisRequest) -> JarvisResponse:
         raise HTTPException(502, f"Erro interno: {type(e).__name__}")
 
     await save_message(session_id, agent, req.message, response_text)
+
+    # Auto-aprendizado
+    if brain and response_text:
+        try:
+            await process_auto_learning(brain, agent, req.message, response_text, session_id)
+        except Exception:
+            pass
 
     return JarvisResponse(
         agent=agent,
@@ -1794,12 +1947,373 @@ async def crm_onboarding(payload: OnboardingPayload) -> dict:
     }
 
 
+# ─── Config (persistencia de configuracao de agents) ──────────────
+
+
+class AgentConfigUpdate(BaseModel):
+    """Atualizacao de configuracao de um agent."""
+    slug: str
+    is_active: bool = True
+    model: str = "qwen2.5:14b"
+
+
+class ConfigPayload(BaseModel):
+    """Payload para salvar configuracoes."""
+    agents: list[AgentConfigUpdate]
+
+
+@app.get("/config/agents")
+async def get_agent_configs() -> list[dict]:
+    """Retorna configuracao persistida dos agents (model, is_active)."""
+    rows = await sb.select(
+        "jarvis_agents",
+        columns="slug,model,is_active",
+        order="slug.asc",
+    )
+    if not rows:
+        # Fallback: retorna config padrao baseada nos agents locais
+        return [
+            {"slug": slug, "model": OLLAMA_MODEL, "is_active": True}
+            for slug in AGENTS.keys()
+        ]
+    return rows
+
+
+@app.patch("/config/agents")
+async def update_agent_configs(payload: ConfigPayload) -> dict:
+    """Atualiza model e is_active dos agents no Supabase."""
+    updated = 0
+    for cfg in payload.agents:
+        if cfg.slug not in AGENTS:
+            continue
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                r = await client.patch(
+                    f"{sb.base_url}/jarvis_agents",
+                    headers=sb.headers,
+                    params={"slug": f"eq.{cfg.slug}"},
+                    json={"model": cfg.model, "is_active": cfg.is_active},
+                )
+                r.raise_for_status()
+                updated += 1
+        except Exception as e:
+            logger.warning("Falha ao atualizar config do agent %s: %s", cfg.slug, e)
+    return {"updated": updated, "total": len(payload.agents)}
+
+
 # ─── Health check ──────────────────────────────────────────────────
 
+# ─── Agent Tools — Endpoints de ação real ─────────────────────────
+
+@app.get("/tools/crm/pipeline")
+async def tools_crm_pipeline() -> dict:
+    """Resumo do pipeline de vendas."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    return await tools.crm_pipeline_summary()
+
+
+@app.get("/tools/crm/leads")
+async def tools_crm_leads(
+    limit: int = Query(default=20, ge=1, le=100),
+    temperature: Optional[str] = Query(default=None),
+) -> list:
+    """Lista leads com filtro opcional por temperatura."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    return await tools.crm_list_leads(limit, temperature)
+
+
+@app.get("/tools/cfo/dre")
+async def tools_cfo_dre() -> dict:
+    """DRE simplificado do mês atual."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    return await tools.cfo_dre_simplificado()
+
+
+@app.get("/tools/cfo/caixa")
+async def tools_cfo_caixa() -> dict:
+    """Saldo atual do caixa."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    return await tools.cfo_saldo_caixa()
+
+
+@app.get("/tools/cfo/custos")
+async def tools_cfo_custos() -> dict:
+    """Custos fixos ativos."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    return await tools.cfo_custos_fixos()
+
+
+@app.get("/tools/pm/projects")
+async def tools_pm_projects(status: Optional[str] = Query(default=None)) -> list:
+    """Lista projetos com filtro opcional por status."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    return await tools.pm_list_projects(status)
+
+
+@app.get("/tools/pm/summary")
+async def tools_pm_summary() -> dict:
+    """Resumo de projetos por status."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    return await tools.pm_project_summary()
+
+
+class CreateProjectPayload(BaseModel):
+    """Payload para criar projeto via tools."""
+    nome: str
+    cliente: str
+    valor: float = 0
+    prazo: Optional[str] = None
+    descricao: str = ""
+
+
+@app.post("/tools/pm/project")
+async def tools_pm_create(payload: CreateProjectPayload) -> dict:
+    """Cria novo projeto."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    result = await tools.pm_create_project(
+        nome=payload.nome,
+        cliente=payload.cliente,
+        valor=payload.valor,
+        prazo=payload.prazo,
+        descricao=payload.descricao,
+    )
+    if not result:
+        raise HTTPException(500, "Falha ao criar projeto")
+    return result
+
+
+class SaveStudyPayload(BaseModel):
+    """Payload para salvar estudo."""
+    title: str
+    agent: str
+    content: str
+    summary: str = ""
+    tags: list[str] = []
+    session_id: Optional[str] = None
+
+
+@app.post("/tools/studies/save")
+async def tools_save_study(payload: SaveStudyPayload) -> dict:
+    """Salva estudo gerado por agent."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    result = await tools.save_study(
+        title=payload.title,
+        agent=payload.agent,
+        content=payload.content,
+        summary=payload.summary,
+        tags=payload.tags,
+        session_id=payload.session_id,
+    )
+    if not result:
+        raise HTTPException(500, "Falha ao salvar estudo")
+    return result
+
+
+@app.get("/tools/studies")
+async def tools_list_studies(
+    agent: Optional[str] = Query(default=None),
+    limit: int = Query(default=20, ge=1, le=100),
+) -> list:
+    """Lista estudos com filtro opcional por agent."""
+    if not tools:
+        raise HTTPException(503, "Tools não configuradas")
+    return await tools.list_studies(agent, limit)
+
+
+# ─── Cérebro Externo — API Endpoints ─────────────────────────────
+
+@app.get("/brain/stats")
+async def brain_stats() -> dict:
+    """Estatísticas do Cérebro Externo."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    return await brain.get_stats()
+
+
+@app.get("/brain/node/{slug}")
+async def brain_get_node(slug: str) -> dict:
+    """Busca um node específico por slug."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    node = await brain.get_node(slug)
+    if not node:
+        raise HTTPException(404, f"Node '{slug}' não encontrado")
+    return node
+
+
+@app.get("/brain/navigate/{slug}")
+async def brain_navigate(slug: str, depth: int = Query(default=1, ge=1, le=3)) -> list:
+    """Navega o grafo a partir de um node."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    return await brain.navigate(slug, depth)
+
+
+@app.get("/brain/children/{slug}")
+async def brain_children(slug: str) -> list:
+    """Retorna filhos diretos de um MOC."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    return await brain.get_children(slug)
+
+
+@app.get("/brain/search")
+async def brain_search_endpoint(q: str = Query(..., min_length=2), limit: int = Query(default=5, ge=1, le=20)) -> list:
+    """Busca full-text no cérebro."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    return await brain.search(q, limit)
+
+
+class BrainNodeCreate(BaseModel):
+    """Payload para criar node no cérebro."""
+    slug: str
+    title: str
+    node_type: str = "method"
+    content: str
+    summary: Optional[str] = None
+    tags: list[str] = []
+    parent_moc: Optional[str] = None
+    created_by: str = "user"
+
+
+@app.post("/brain/node")
+async def brain_create_node(payload: BrainNodeCreate) -> dict:
+    """Cria um novo node no cérebro."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    node = await brain.create_node(
+        slug=payload.slug,
+        title=payload.title,
+        node_type=payload.node_type,
+        content=payload.content,
+        summary=payload.summary,
+        tags=payload.tags,
+        parent_moc=payload.parent_moc,
+        created_by=payload.created_by,
+    )
+    if not node:
+        raise HTTPException(500, "Falha ao criar node")
+    return node
+
+
+class BrainNodeUpdate(BaseModel):
+    """Payload para atualizar node."""
+    title: Optional[str] = None
+    content: Optional[str] = None
+    summary: Optional[str] = None
+    tags: Optional[list[str]] = None
+    is_active: Optional[bool] = None
+
+
+@app.patch("/brain/node/{slug}")
+async def brain_update_node(slug: str, payload: BrainNodeUpdate) -> dict:
+    """Atualiza um node existente."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    updates = {k: v for k, v in payload.model_dump().items() if v is not None}
+    if not updates:
+        raise HTTPException(400, "Nenhum campo para atualizar")
+    node = await brain.update_node(slug, updates)
+    if not node:
+        raise HTTPException(500, "Falha ao atualizar node")
+    return node
+
+
+class BrainEdgeCreate(BaseModel):
+    """Payload para criar edge."""
+    source: str
+    target: str
+    edge_type: str = "wikilink"
+    context: Optional[str] = None
+    strength: int = 5
+
+
+@app.post("/brain/edge")
+async def brain_create_edge(payload: BrainEdgeCreate) -> dict:
+    """Cria uma conexão entre dois nodes."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    edge = await brain.create_edge(
+        source=payload.source,
+        target=payload.target,
+        edge_type=payload.edge_type,
+        context=payload.context,
+        strength=payload.strength,
+    )
+    if not edge:
+        raise HTTPException(500, "Falha ao criar edge")
+    return edge
+
+
+class BrainLearningCreate(BaseModel):
+    """Payload para registrar aprendizado."""
+    agent_slug: str
+    content: str
+    learning_type: str = "insight"
+    confidence: float = 0.7
+    session_id: Optional[str] = None
+    related_node: Optional[str] = None
+
+
+@app.post("/brain/learning")
+async def brain_record_learning(payload: BrainLearningCreate) -> dict:
+    """Registra um aprendizado de agent."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    learning = await brain.record_learning(
+        agent_slug=payload.agent_slug,
+        content=payload.content,
+        learning_type=payload.learning_type,
+        confidence=payload.confidence,
+        session_id=payload.session_id,
+        related_node=payload.related_node,
+    )
+    if not learning:
+        raise HTTPException(500, "Falha ao registrar aprendizado")
+    return learning
+
+
+@app.get("/brain/learnings/{agent_slug}")
+async def brain_get_learnings(agent_slug: str, limit: int = Query(default=10, ge=1, le=50)) -> list:
+    """Retorna aprendizados de um agent."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    return await brain.get_agent_learnings(agent_slug, limit)
+
+
+@app.post("/brain/checkpoint")
+async def brain_run_checkpoint() -> dict:
+    """Executa checkpoint diário do cérebro."""
+    if not brain:
+        raise HTTPException(503, "Cérebro Externo não configurado")
+    result = await brain.run_daily_checkpoint()
+    if not result:
+        raise HTTPException(500, "Falha ao executar checkpoint")
+    return result
+
+
 @app.get("/health")
-async def health() -> dict:
-    """Health check completo do sistema — todos os servicos."""
+async def health(token: str = Query(default="", alias="token")) -> dict:
+    """Health check do sistema.
+
+    Sem token: retorna status basico (ok/degraded) sem dados sensiveis.
+    Com token (HEALTH_TOKEN): retorna detalhes completos (modelos, agents, latencias).
+    Requisicoes locais (via frontend) passam sem token pois HEALTH_TOKEN vazio = sem restricao.
+    """
     import time as _time
+    import asyncio
+
+    is_authorized = (not HEALTH_TOKEN) or (token == HEALTH_TOKEN)
 
     results: dict[str, dict] = {}
 
@@ -1856,33 +2370,56 @@ async def health() -> dict:
         pass
     results["n8n"] = {"ok": n8n_ok, "latency_ms": n8n_ms}
 
-    # Cloudflare Tunnel
+    # Cloudflare Tunnel — verifica via HTTP ao inves de subprocess
     tunnel_ok = False
+    tunnel_ms = 0
     try:
-        import subprocess
-        proc = subprocess.run(
-            ["cloudflared", "tunnel", "info", "gradios-jarvis"],
-            capture_output=True, text=True, timeout=5,
-        )
-        tunnel_ok = proc.returncode == 0
+        t0 = _time.perf_counter()
+        async with httpx.AsyncClient(timeout=5.0, follow_redirects=True) as client:
+            r = await client.get(f"{CLOUDFLARE_TUNNEL_URL}/agents")
+            tunnel_ok = r.status_code < 500
+        tunnel_ms = int((_time.perf_counter() - t0) * 1000)
     except Exception:
         pass
-    results["cloudflare"] = {"ok": tunnel_ok}
+    results["cloudflare"] = {"ok": tunnel_ok, "latency_ms": tunnel_ms}
 
-    # Claude API
+    # Claude API — verifica se a chave esta configurada
     claude_ok = bool(ANTHROPIC_KEY)
     results["claude"] = {"ok": claude_ok}
 
-    all_ok = all(r["ok"] for r in results.values())
+    # Cérebro Externo
+    brain_ok = False
+    brain_stats_data: dict = {}
+    if brain:
+        try:
+            brain_stats_data = await brain.get_stats()
+            brain_ok = brain_stats_data.get("total_nodes", 0) > 0
+        except Exception:
+            pass
+    results["brain"] = {"ok": brain_ok, "nodes": brain_stats_data.get("total_nodes", 0)}
 
+    # Status geral: ignora claude e cloudflare para determinar "ok" (sao opcionais)
+    core_services = ["ollama", "supabase"]
+    core_ok = all(results[s]["ok"] for s in core_services)
+
+    # Resposta publica (sem token): so status basico
+    if not is_authorized:
+        return {
+            "status": "ok" if core_ok else "degraded",
+            "version": "3.0.0",
+        }
+
+    # Resposta completa (com token ou sem restricao)
     return {
-        "status": "ok" if all_ok else "degraded",
+        "status": "ok" if core_ok else "degraded",
         "ollama": ollama_ok,
         "models": models,
         "supabase": sb_ok,
         "claude": claude_ok,
         "agents": list(AGENTS.keys()),
         "agents_count": len(AGENTS),
-        "version": "3.0.0",
+        "brain": brain_ok,
+        "brain_nodes": brain_stats_data.get("total_nodes", 0),
+        "version": "3.1.0",
         "services": results,
     }

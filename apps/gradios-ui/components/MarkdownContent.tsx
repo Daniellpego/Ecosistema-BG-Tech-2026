@@ -22,8 +22,8 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
           if (match) {
             return (
               <div className="my-2 rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between bg-zinc-800 px-4 py-1.5">
-                  <span className="text-xs text-zinc-400">{match[1]}</span>
+                <div className="flex items-center justify-between bg-bg-overlay px-4 py-1.5">
+                  <span className="text-xs text-text-muted">{match[1]}</span>
                 </div>
                 <SyntaxHighlighter
                   style={oneDark}
@@ -32,7 +32,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
                   customStyle={{
                     margin: 0,
                     borderRadius: 0,
-                    background: "#1e1e2e",
+                    background: "#0D0D0F",
                     fontSize: "0.8125rem",
                   }}
                 >
@@ -44,7 +44,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
 
           return (
             <code
-              className="bg-zinc-700/50 text-zinc-200 px-1.5 py-0.5 rounded text-[0.8125rem]"
+              className="bg-bg-overlay text-brand-cyan px-1.5 py-0.5 rounded text-[0.8125rem]"
               {...props}
             >
               {children}
@@ -61,18 +61,18 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
           return <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>;
         },
         h1({ children }) {
-          return <h1 className="text-lg font-bold mb-2">{children}</h1>;
+          return <h1 className="text-lg font-bold text-text mb-2">{children}</h1>;
         },
         h2({ children }) {
-          return <h2 className="text-base font-bold mb-2">{children}</h2>;
+          return <h2 className="text-base font-bold text-text mb-2">{children}</h2>;
         },
         h3({ children }) {
-          return <h3 className="text-sm font-bold mb-1">{children}</h3>;
+          return <h3 className="text-sm font-bold text-text-secondary mb-1">{children}</h3>;
         },
         table({ children }) {
           return (
             <div className="overflow-x-auto my-2">
-              <table className="min-w-full text-sm border-collapse border border-zinc-700">
+              <table className="min-w-full text-sm border-collapse border border-border-default">
                 {children}
               </table>
             </div>
@@ -80,30 +80,30 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
         },
         th({ children }) {
           return (
-            <th className="border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-left font-medium">
+            <th className="border border-border-default bg-bg-overlay px-3 py-1.5 text-left font-medium text-text-secondary">
               {children}
             </th>
           );
         },
         td({ children }) {
-          return <td className="border border-zinc-700 px-3 py-1.5">{children}</td>;
+          return <td className="border border-border-default px-3 py-1.5">{children}</td>;
         },
         blockquote({ children }) {
           return (
-            <blockquote className="border-l-2 border-indigo-500 pl-3 my-2 text-zinc-400 italic">
+            <blockquote className="border-l-2 border-brand-cyan/40 pl-3 my-2 text-text-muted italic">
               {children}
             </blockquote>
           );
         },
         a({ href, children }) {
           return (
-            <a href={href} className="text-indigo-400 hover:underline" target="_blank" rel="noopener noreferrer">
+            <a href={href} className="text-brand-cyan hover:underline" target="_blank" rel="noopener noreferrer">
               {children}
             </a>
           );
         },
         strong({ children }) {
-          return <strong className="font-semibold text-zinc-100">{children}</strong>;
+          return <strong className="font-semibold text-text">{children}</strong>;
         },
       }}
     >

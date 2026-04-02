@@ -95,6 +95,34 @@ export async function fetchHealth(): Promise<{
   return res.json();
 }
 
+// ─── Config helpers ──────────────────────────────────────────────
+
+export interface AgentConfigRow {
+  slug: string;
+  model: string;
+  is_active: boolean;
+}
+
+export async function fetchAgentConfigs(): Promise<AgentConfigRow[]> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/config/agents`, {
+    method: "GET",
+  });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function saveAgentConfigs(
+  agents: AgentConfigRow[]
+): Promise<{ updated: number; total: number }> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/config/agents`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ agents }),
+  });
+  if (!res.ok) throw new Error("Falha ao salvar configuracoes");
+  return res.json();
+}
+
 export function streamAgent(
   agentSlug: string,
   message: string,
@@ -159,4 +187,147 @@ export function streamAgent(
   })();
 
   return controller;
+}
+
+// ─── Orchestrator helpers ─────────────────────────────────────
+
+export interface OrchestrateResponse {
+  session_id: string;
+  agents_consulted: string[];
+  responses: {
+    agent: string;
+    name: string;
+    title: string;
+    response: string;
+  }[];
+  timestamp: string;
+}
+
+export async function orchestrate(message: string, sessionId?: string): Promise<OrchestrateResponse> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/jarvis/orchestrate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, session_id: sessionId }),
+  });
+  if (!res.ok) throw new Error("Orquestração falhou");
+  return res.json();
+}
+
+// ─── Brain (Cérebro Externo) helpers ──────────────────────────
+
+export interface BrainNode {
+  id: string;
+  slug: string;
+  title: string;
+  node_type: string;
+  content: string;
+  summary: string | null;
+  tags: string[];
+  parent_moc: string | null;
+  metadata: Record<string, unknown>;
+  created_by: string;
+  is_active: boolean;
+  version: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BrainEdge {
+  slug: string;
+  title: string;
+  node_type: string;
+  summary: string | null;
+  edge_type: string;
+  distance: number;
+}
+
+export interface BrainStats {
+  total_nodes: number;
+  nodes_by_type: Record<string, number>;
+  total_edges: number;
+  total_learnings: number;
+  last_checkpoint: {
+    checkpoint_date: string;
+    health_score: number;
+    summary: string;
+  } | null;
+}
+
+export interface BrainLearning {
+  content: string;
+  learning_type: string;
+  confidence: number;
+  created_at: string;
+}
+
+export async function fetchBrainStats(): Promise<BrainStats> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/stats`, { method: "GET" });
+  if (!res.ok) throw new Error("Falha ao carregar stats do cérebro");
+  return res.json();
+}
+
+export async function fetchBrainNode(slug: string): Promise<BrainNode> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/node/${slug}`, { method: "GET" });
+  if (!res.ok) throw new Error(`Node '${slug}' não encontrado`);
+  return res.json();
+}
+
+export async function fetchBrainNavigate(slug: string, depth: number = 1): Promise<BrainEdge[]> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/navigate/${slug}?depth=${depth}`, { method: "GET" });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function fetchBrainChildren(slug: string): Promise<BrainNode[]> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/children/${slug}`, { method: "GET" });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function fetchBrainSearch(query: string, limit: number = 5): Promise<BrainEdge[]> {
+  const qs = new URLSearchParams({ q: query, limit: String(limit) });
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/search?${qs}`, { method: "GET" });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function fetchBrainLearnings(agentSlug: string, limit: number = 10): Promise<BrainLearning[]> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/learnings/${agentSlug}?limit=${limit}`, { method: "GET" });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function createBrainNode(data: {
+  slug: string;
+  title: string;
+  node_type: string;
+  content: string;
+  summary?: string;
+  tags?: string[];
+  parent_moc?: string;
+  created_by?: string;
+}): Promise<BrainNode> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/node`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Falha ao criar node");
+  return res.json();
+}
+
+export async function updateBrainNode(slug: string, data: Partial<Pick<BrainNode, "title" | "content" | "summary" | "tags" | "is_active">>): Promise<BrainNode> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/node/${slug}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Falha ao atualizar node");
+  return res.json();
+}
+
+export async function runBrainCheckpoint(): Promise<Record<string, unknown>> {
+  const res = await fetchWithTimeout(`${JARVIS_URL}/brain/checkpoint`, { method: "POST" });
+  if (!res.ok) throw new Error("Falha ao executar checkpoint");
+  return res.json();
 }

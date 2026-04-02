@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 interface UserData {
   email: string;
@@ -67,25 +67,25 @@ export function UserMenu() {
     <div ref={menuRef} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-zinc-800/60 transition-colors"
+        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-bg-overlay transition-colors"
       >
-        <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-[11px] font-bold text-white">
+        <div className="w-7 h-7 rounded-full bg-gradient-brand flex items-center justify-center text-[11px] font-bold text-white">
           {user.initials}
         </div>
-        <span className="hidden sm:block text-xs text-zinc-300 font-medium">
+        <span className="hidden sm:block text-xs text-text-secondary font-medium">
           {user.name}
         </span>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-48 bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl py-1 z-50">
-          <div className="px-3 py-2 border-b border-zinc-800">
-            <p className="text-xs font-medium text-zinc-200">{user.name}</p>
-            <p className="text-[10px] text-zinc-500 truncate">{user.email}</p>
+        <div className="absolute right-0 top-full mt-1 w-48 bg-bg-raised border border-border-subtle rounded-card shadow-xl py-1 z-50">
+          <div className="px-3 py-2 border-b border-border-subtle">
+            <p className="text-xs font-medium text-text-secondary">{user.name}</p>
+            <p className="text-[10px] text-text-muted truncate">{user.email}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-zinc-800/60 transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-status-error hover:bg-bg-overlay transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
             Sair

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { JARVIS_URL } from "@/lib/constants";
-import { UserMenu } from "@/components/UserMenu";
+
 import {
   Calendar,
   Plus,
@@ -102,13 +102,13 @@ export default function AgendaPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-6 py-4">
+      <header className="sticky top-0 z-20 border-b border-border-subtle bg-bg/80 backdrop-blur-md px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <CalendarDays className="w-5 h-5 text-indigo-400" />
+            <CalendarDays className="w-5 h-5 text-brand-cyan" />
             <div>
               <h1 className="text-xl font-bold tracking-tight">Agenda</h1>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-text-muted mt-0.5">
                 {data?.total ?? 0} eventos nos proximos 7 dias
                 {data?.status === "fallback" && " (modo offline)"}
               </p>
@@ -118,18 +118,18 @@ export default function AgendaPage() {
             <button
               onClick={loadAgenda}
               disabled={loading}
-              className="p-2 rounded-lg hover:bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 transition-colors disabled:opacity-40"
+              className="p-2 rounded-lg hover:bg-bg-overlay text-text-secondary hover:text-text-secondary transition-colors disabled:opacity-40"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-brand hover:opacity-90 text-sm font-medium text-text transition-colors"
             >
               <Plus className="w-4 h-4" />
               Agendar reuniao
             </button>
-            <UserMenu />
+
           </div>
         </div>
       </header>
@@ -150,18 +150,18 @@ export default function AgendaPage() {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
+            <Loader2 className="w-6 h-6 animate-spin text-text-muted" />
           </div>
         )}
 
         {/* Empty state */}
         {!loading && eventos.length === 0 && (
           <div className="text-center py-20">
-            <Calendar className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-            <p className="text-sm text-zinc-500">Nenhum evento nos proximos 7 dias</p>
+            <Calendar className="w-10 h-10 text-text-dim mx-auto mb-3" />
+            <p className="text-sm text-text-muted">Nenhum evento nos proximos 7 dias</p>
             <button
               onClick={() => setShowModal(true)}
-              className="mt-3 text-sm text-indigo-400 hover:text-indigo-300"
+              className="mt-3 text-sm text-brand-cyan hover:text-brand-cyan/80"
             >
               Agendar primeira reuniao
             </button>
@@ -172,11 +172,11 @@ export default function AgendaPage() {
         {!loading && Array.from(grouped.entries()).map(([dateStr, events]) => (
           <div key={dateStr} className="space-y-2">
             <div className="flex items-center gap-2 mb-2">
-              <div className={`w-2 h-2 rounded-full ${isToday(events[0].start) ? "bg-indigo-400" : "bg-zinc-600"}`} />
-              <h3 className={`text-sm font-medium ${isToday(events[0].start) ? "text-indigo-400" : "text-zinc-400"}`}>
+              <div className={`w-2 h-2 rounded-full ${isToday(events[0].start) ? "bg-brand-cyan" : "bg-bg-overlay"}`} />
+              <h3 className={`text-sm font-medium ${isToday(events[0].start) ? "text-brand-cyan" : "text-text-secondary"}`}>
                 {isToday(events[0].start) ? "Hoje" : formatDate(events[0].start)}
               </h3>
-              <span className="text-[10px] text-zinc-600 bg-zinc-800/60 px-1.5 rounded-full">
+              <span className="text-[10px] text-text-dim bg-bg-overlay px-1.5 rounded-full">
                 {events.length}
               </span>
             </div>
@@ -185,15 +185,15 @@ export default function AgendaPage() {
               {events.map((evento) => (
                 <div
                   key={evento.id}
-                  className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-4 hover:border-zinc-700/60 transition-colors"
+                  className="bg-bg-raised border border-border-subtle rounded-xl p-4 hover:border-border-default/60 transition-colors"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-zinc-200 truncate">
+                      <p className="text-sm font-medium text-text-secondary truncate">
                         {evento.summary}
                       </p>
                       {evento.description && (
-                        <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
+                        <p className="text-xs text-text-muted mt-1 line-clamp-2">
                           {evento.description}
                         </p>
                       )}
@@ -203,7 +203,7 @@ export default function AgendaPage() {
                         href={evento.htmlLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-1.5 rounded-lg hover:bg-zinc-800/60 text-zinc-500 hover:text-zinc-300 transition-colors flex-shrink-0"
+                        className="p-1.5 rounded-lg hover:bg-bg-overlay text-text-muted hover:text-text-secondary transition-colors flex-shrink-0"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                       </a>
@@ -211,12 +211,12 @@ export default function AgendaPage() {
                   </div>
 
                   <div className="flex items-center gap-4 mt-2">
-                    <span className="flex items-center gap-1 text-xs text-zinc-500">
+                    <span className="flex items-center gap-1 text-xs text-text-muted">
                       <Clock className="w-3 h-3" />
                       {formatTime(evento.start)} — {formatTime(evento.end)}
                     </span>
                     {evento.attendees && evento.attendees.length > 0 && (
-                      <span className="flex items-center gap-1 text-xs text-zinc-500">
+                      <span className="flex items-center gap-1 text-xs text-text-muted">
                         <Users className="w-3 h-3" />
                         {evento.attendees.length} convidado{evento.attendees.length > 1 ? "s" : ""}
                       </span>
@@ -288,82 +288,82 @@ function AgendarReuniaoModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
-          <h2 className="text-sm font-semibold text-zinc-200">Agendar reuniao com lead</h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300">
+      <div className="w-full max-w-lg bg-bg-raised border border-border-subtle rounded-2xl shadow-2xl">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border-subtle">
+          <h2 className="text-sm font-semibold text-text-secondary">Agendar reuniao com lead</h2>
+          <button onClick={onClose} className="text-text-muted hover:text-text-secondary">
             <X className="w-4 h-4" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Nome do lead</label>
+              <label className="block text-xs text-text-secondary mb-1">Nome do lead</label>
               <input
                 value={form.lead_nome}
                 onChange={(e) => setForm({ ...form, lead_nome: e.target.value })}
                 required
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
                 placeholder="Joao Silva"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Empresa</label>
+              <label className="block text-xs text-text-secondary mb-1">Empresa</label>
               <input
                 value={form.empresa}
                 onChange={(e) => setForm({ ...form, empresa: e.target.value })}
                 required
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
                 placeholder="TechFlow SP"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Data</label>
+              <label className="block text-xs text-text-secondary mb-1">Data</label>
               <input
                 type="date"
                 value={form.data}
                 onChange={(e) => setForm({ ...form, data: e.target.value })}
                 required
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Hora</label>
+              <label className="block text-xs text-text-secondary mb-1">Hora</label>
               <input
                 type="time"
                 value={form.hora}
                 onChange={(e) => setForm({ ...form, hora: e.target.value })}
                 required
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Email do lead</label>
+              <label className="block text-xs text-text-secondary mb-1">Email do lead</label>
               <input
                 type="email"
                 value={form.email_lead}
                 onChange={(e) => setForm({ ...form, email_lead: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
                 placeholder="joao@techflow.com"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">WhatsApp do lead</label>
+              <label className="block text-xs text-text-secondary mb-1">WhatsApp do lead</label>
               <input
                 value={form.whatsapp_lead}
                 onChange={(e) => setForm({ ...form, whatsapp_lead: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
                 placeholder="5511999999999"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Descricao / pauta</label>
+            <label className="block text-xs text-text-secondary mb-1">Descricao / pauta</label>
             <textarea
               value={form.descricao}
               onChange={(e) => setForm({ ...form, descricao: e.target.value })}
               rows={2}
-              className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary resize-none focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
               placeholder="Apresentar proposta de automacao..."
             />
           </div>
@@ -381,7 +381,7 @@ function AgendarReuniaoModal({
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-lg bg-gradient-brand hover:opacity-90 text-sm font-medium text-text transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
             Agendar reuniao

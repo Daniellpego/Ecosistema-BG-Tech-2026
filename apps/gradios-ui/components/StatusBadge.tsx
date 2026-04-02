@@ -6,15 +6,15 @@ interface StatusBadgeProps {
 export function StatusBadge({ online, label }: StatusBadgeProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full ${
+      className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full ${
         online
-          ? "bg-emerald-500/15 text-emerald-400"
-          : "bg-red-500/15 text-red-400"
+          ? "bg-status-ok/10 text-status-ok"
+          : "bg-zinc-800 text-text-dim"
       }`}
     >
       <span
         className={`w-1.5 h-1.5 rounded-full ${
-          online ? "bg-emerald-400 animate-pulse-slow" : "bg-red-400"
+          online ? "bg-status-ok animate-pulse" : "bg-text-dim"
         }`}
       />
       {label ?? (online ? "Online" : "Offline")}

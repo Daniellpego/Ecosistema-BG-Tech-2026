@@ -1,5 +1,7 @@
+// Em dev, usa proxy via Next.js rewrites (/api/jarvis -> localhost:8001)
+// Em prod ou com tunnel, usa URL direta
 export const JARVIS_URL =
-  process.env.NEXT_PUBLIC_JARVIS_URL ?? "http://localhost:8001";
+  process.env.NEXT_PUBLIC_JARVIS_URL ?? "/api/jarvis";
 
 export const SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://urpuiznydrlwmaqhdids.supabase.co";
@@ -46,5 +48,6 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/agenda",    label: "Agenda",    icon: "CalendarDays" },
   { href: "/estudos",   label: "Estudos",   icon: "FileText" },
   { href: "/alertas",   label: "Alertas",   icon: "Bell" },
+  { href: "/cerebro",   label: "Cérebro",   icon: "Brain" },
   { href: "/status",    label: "Status",    icon: "Activity" },
 ];

@@ -11,7 +11,7 @@ const SIZES = {
 export function LoadingSpinner({ size = "md" }: LoadingSpinnerProps) {
   return (
     <svg
-      className={`${SIZES[size]} animate-spin text-indigo-400`}
+      className={`${SIZES[size]} animate-spin text-brand-cyan`}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

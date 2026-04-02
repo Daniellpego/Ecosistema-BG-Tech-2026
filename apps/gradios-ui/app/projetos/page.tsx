@@ -111,30 +111,30 @@ export default function ProjetosPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-6 py-4">
+      <header className="sticky top-0 z-20 border-b border-border-subtle bg-bg/80 backdrop-blur-md px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <FolderKanban className="w-5 h-5 text-indigo-400" />
+            <FolderKanban className="w-5 h-5 text-brand-cyan" />
             <div>
               <h1 className="text-xl font-bold tracking-tight">Projetos</h1>
-              <p className="text-xs text-zinc-500 mt-0.5">{projetos.length} projetos</p>
+              <p className="text-xs text-text-muted mt-0.5">{projetos.length} projetos</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-muted" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar projeto ou cliente..."
-                className="pl-9 pr-3 py-2 w-64 rounded-lg bg-zinc-900 border border-zinc-800 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="pl-9 pr-3 py-2 w-64 rounded-lg bg-bg-raised border border-border-subtle text-sm text-text-secondary placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
               />
             </div>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-sm text-zinc-300 focus:outline-none"
+              className="px-3 py-2 rounded-lg bg-bg-raised border border-border-subtle text-sm text-text-secondary focus:outline-none"
             >
               <option value="">Todos</option>
               {COLUNAS.map((c) => (
@@ -143,7 +143,7 @@ export default function ProjetosPage() {
             </select>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-brand hover:opacity-90 text-sm font-medium text-text transition-colors"
             >
               <Plus className="w-4 h-4" />
               Novo projeto
@@ -157,7 +157,7 @@ export default function ProjetosPage() {
       <div className="p-6">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
+            <Loader2 className="w-6 h-6 animate-spin text-text-muted" />
           </div>
         ) : (
           <div className="grid grid-cols-5 gap-4 min-h-[70vh]">
@@ -172,8 +172,8 @@ export default function ProjetosPage() {
                 >
                   {/* Column header */}
                   <div className={`flex items-center gap-2 pb-2 border-b-2 ${col.color}`}>
-                    <span className="text-sm font-medium text-zinc-300">{col.label}</span>
-                    <span className="text-[10px] text-zinc-600 bg-zinc-800/60 px-1.5 rounded-full">
+                    <span className="text-sm font-medium text-text-secondary">{col.label}</span>
+                    <span className="text-[10px] text-text-dim bg-bg-overlay px-1.5 rounded-full">
                       {items.length}
                     </span>
                   </div>
@@ -185,27 +185,27 @@ export default function ProjetosPage() {
                       draggable
                       onDragStart={() => setDragItem(projeto.id)}
                       onDragEnd={() => setDragItem(null)}
-                      className={`bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-3 space-y-2 cursor-grab active:cursor-grabbing hover:border-zinc-700/60 transition-all ${
+                      className={`bg-bg-raised border border-border-subtle rounded-xl p-3 space-y-2 cursor-grab active:cursor-grabbing hover:border-border-hover transition-all ${
                         dragItem === projeto.id ? "opacity-50" : ""
                       }`}
                     >
                       <div className="flex items-start justify-between">
-                        <p className="text-sm font-medium text-zinc-200 leading-tight">
+                        <p className="text-sm font-medium text-text-secondary leading-tight">
                           {projeto.nome}
                         </p>
-                        <GripVertical className="w-3.5 h-3.5 text-zinc-600 flex-shrink-0 mt-0.5" />
+                        <GripVertical className="w-3.5 h-3.5 text-text-dim flex-shrink-0 mt-0.5" />
                       </div>
-                      <p className="text-[11px] text-zinc-500">{projeto.cliente}</p>
+                      <p className="text-[11px] text-text-muted">{projeto.cliente}</p>
 
                       {/* Progresso */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] text-zinc-600">Progresso</span>
-                          <span className="text-[10px] text-zinc-400">{projeto.progresso ?? 0}%</span>
+                          <span className="text-[10px] text-text-dim">Progresso</span>
+                          <span className="text-[10px] text-text-secondary">{projeto.progresso ?? 0}%</span>
                         </div>
-                        <div className="h-1 bg-zinc-800 rounded-full overflow-hidden">
+                        <div className="h-1 bg-bg-overlay rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-indigo-500 rounded-full transition-all"
+                            className="h-full bg-brand-cyan rounded-full transition-all"
                             style={{ width: `${projeto.progresso ?? 0}%` }}
                           />
                         </div>
@@ -213,7 +213,7 @@ export default function ProjetosPage() {
 
                       {/* Meta */}
                       <div className="flex items-center gap-3 text-[10px]">
-                        <span className="flex items-center gap-1 text-zinc-500">
+                        <span className="flex items-center gap-1 text-text-muted">
                           <DollarSign className="w-3 h-3" />
                           R$ {(projeto.valor ?? 0).toLocaleString("pt-BR")}
                         </span>
@@ -224,7 +224,7 @@ export default function ProjetosPage() {
                       </div>
 
                       {projeto.responsavel && (
-                        <div className="flex items-center gap-1 text-[10px] text-zinc-500">
+                        <div className="flex items-center gap-1 text-[10px] text-text-muted">
                           <User className="w-3 h-3" />
                           {projeto.responsavel}
                         </div>
@@ -233,7 +233,7 @@ export default function ProjetosPage() {
                   ))}
 
                   {items.length === 0 && (
-                    <div className="text-center py-8 text-[11px] text-zinc-700">
+                    <div className="text-center py-8 text-[11px] text-text-dim">
                       Nenhum projeto
                     </div>
                   )}
@@ -310,59 +310,59 @@ function NovoProjetoModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
-          <h2 className="text-sm font-semibold text-zinc-200">Novo projeto</h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300">
+      <div className="w-full max-w-lg bg-bg-raised border border-border-subtle rounded-2xl shadow-2xl">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border-subtle">
+          <h2 className="text-sm font-semibold text-text-secondary">Novo projeto</h2>
+          <button onClick={onClose} className="text-text-muted hover:text-text-secondary">
             <X className="w-4 h-4" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Nome do projeto</label>
+              <label className="block text-xs text-text-secondary mb-1">Nome do projeto</label>
               <input
                 value={form.nome}
                 onChange={(e) => setForm({ ...form, nome: e.target.value })}
                 required
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Cliente</label>
+              <label className="block text-xs text-text-secondary mb-1">Cliente</label>
               <input
                 value={form.cliente}
                 onChange={(e) => setForm({ ...form, cliente: e.target.value })}
                 required
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Valor (R$)</label>
+              <label className="block text-xs text-text-secondary mb-1">Valor (R$)</label>
               <input
                 type="number"
                 value={form.valor}
                 onChange={(e) => setForm({ ...form, valor: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Prazo</label>
+              <label className="block text-xs text-text-secondary mb-1">Prazo</label>
               <input
                 type="date"
                 value={form.prazo}
                 onChange={(e) => setForm({ ...form, prazo: e.target.value })}
                 required
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Responsavel</label>
+            <label className="block text-xs text-text-secondary mb-1">Responsavel</label>
             <select
               value={form.responsavel}
               onChange={(e) => setForm({ ...form, responsavel: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary focus:outline-none"
             >
               <option value="Daniel">Daniel</option>
               <option value="Gustavo">Gustavo</option>
@@ -370,18 +370,18 @@ function NovoProjetoModal({
             </select>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Descricao</label>
+            <label className="block text-xs text-text-secondary mb-1">Descricao</label>
             <textarea
               value={form.descricao}
               onChange={(e) => setForm({ ...form, descricao: e.target.value })}
               rows={3}
-              className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-200 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="w-full px-3 py-2 rounded-lg bg-bg-overlay border border-border-default text-sm text-text-secondary resize-none focus:outline-none focus:ring-2 focus:ring-brand-cyan/30"
             />
           </div>
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-lg bg-gradient-brand hover:opacity-90 text-sm font-medium text-text transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
             Criar projeto

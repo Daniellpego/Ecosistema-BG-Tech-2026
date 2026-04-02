@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Zap, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -24,9 +24,11 @@ export default function LoginPage() {
     });
 
     if (authError) {
-      setError(authError.message === "Invalid login credentials"
-        ? "Email ou senha incorretos"
-        : authError.message);
+      setError(
+        authError.message === "Invalid login credentials"
+          ? "Email ou senha incorretos"
+          : authError.message,
+      );
       setLoading(false);
       return;
     }
@@ -36,17 +38,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-4">
-      <div className="w-full max-w-sm space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-bg px-4 relative overflow-hidden">
+      {/* Gradient glow */}
+      <div className="absolute inset-0 bg-gradient-glow pointer-events-none" />
+
+      <div className="w-full max-w-sm space-y-8 relative z-10">
         {/* Logo */}
         <div className="text-center">
-          <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-4">
-            <Zap className="w-7 h-7 text-white" />
+          <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-brand flex items-center justify-center mb-4 shadow-glow">
+            <span className="text-2xl font-bold text-white">G</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-text">
             GRADIOS AIOX
           </h1>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-sm text-text-muted mt-1">
             Orquestrador Autonomo de Operacoes
           </p>
         </div>
@@ -54,7 +59,7 @@ export default function LoginPage() {
         {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-xs font-medium text-zinc-400 mb-1.5">
+            <label htmlFor="email" className="block text-xs font-medium text-text-muted mb-1.5">
               Email
             </label>
             <input
@@ -64,12 +69,12 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoFocus
-              className="w-full px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-colors"
+              className="input"
               placeholder="voce@gradios.co"
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-xs font-medium text-zinc-400 mb-1.5">
+            <label htmlFor="password" className="block text-xs font-medium text-text-muted mb-1.5">
               Senha
             </label>
             <input
@@ -78,13 +83,13 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-colors"
+              className="input"
               placeholder="********"
             />
           </div>
 
           {error && (
-            <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+            <div className="text-sm text-status-error bg-status-error/10 border border-status-error/20 rounded-lg px-3 py-2">
               {error}
             </div>
           )}
@@ -92,7 +97,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-lg bg-gradient-brand text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-glow-sm"
           >
             {loading ? (
               <>
@@ -105,7 +110,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-[11px] text-zinc-700">
+        <p className="text-center text-[11px] text-text-dim">
           Acesso restrito aos socios GRADIOS
         </p>
       </div>

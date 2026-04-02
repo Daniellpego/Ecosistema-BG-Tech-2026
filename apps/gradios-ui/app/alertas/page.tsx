@@ -152,7 +152,7 @@ export default function AlertasPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-6 py-4">
+      <header className="sticky top-0 z-20 border-b border-border-subtle bg-bg/80 backdrop-blur-md px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
@@ -160,7 +160,7 @@ export default function AlertasPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">Alertas</h1>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-text-muted mt-0.5">
                 {alertas.length} alertas autonomos {counts.novo > 0 ? `\u00B7 ${counts.novo} novos` : ""}
               </p>
             </div>
@@ -168,7 +168,7 @@ export default function AlertasPage() {
           <button
             onClick={loadData}
             disabled={loading}
-            className="p-2 rounded-lg hover:bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 transition-colors disabled:opacity-40"
+            className="p-2 rounded-lg hover:bg-bg-overlay text-text-secondary hover:text-text-secondary transition-colors disabled:opacity-40"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -204,11 +204,22 @@ export default function AlertasPage() {
           {/* List */}
           <div className="lg:col-span-1 space-y-2 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">
             {loading && alertas.length === 0 && (
-              <div className="py-12 text-center text-sm text-zinc-600">Carregando...</div>
+              <div className="py-12 text-center">
+                <div className="w-5 h-5 border-2 border-zinc-700 border-t-amber-400 rounded-full animate-spin mx-auto mb-2" />
+                <p className="text-xs text-text-dim">Carregando alertas...</p>
+              </div>
             )}
             {!loading && filtered.length === 0 && (
-              <div className="py-12 text-center text-sm text-zinc-600">
-                Nenhum alerta {filterStatus !== "all" ? `com status "${filterStatus}"` : "encontrado"}
+              <div className="py-12 text-center">
+                <div className="text-2xl mb-2">{"🔔"}</div>
+                <p className="text-sm text-text-secondary font-medium">
+                  {filterStatus !== "all" ? `Nenhum alerta "${filterStatus}"` : "Nenhum alerta gerado"}
+                </p>
+                <p className="text-xs text-text-dim mt-1">
+                  {filterStatus === "all"
+                    ? "Alertas sao gerados automaticamente quando leads entram no pipeline"
+                    : "Tente mudar o filtro para ver outros alertas"}
+                </p>
               </div>
             )}
             {filtered.map((alerta) => {
@@ -223,8 +234,8 @@ export default function AlertasPage() {
                   onClick={() => handleSelect(alerta)}
                   className={`w-full text-left p-4 rounded-xl border transition-all ${
                     selected
-                      ? "bg-zinc-800/60 border-indigo-500/40"
-                      : "bg-zinc-900/40 border-zinc-800/60 hover:border-zinc-700/60"
+                      ? "bg-bg-overlay border-brand-cyan/40"
+                      : "bg-bg-raised border-border-subtle hover:border-border-hover"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -232,14 +243,14 @@ export default function AlertasPage() {
                       <StatusIcon className={`w-4 h-4 ${cfg.color}`} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-medium text-zinc-200 line-clamp-2">
+                      <h3 className="text-sm font-medium text-text-secondary line-clamp-2">
                         {alerta.title}
                       </h3>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <span className={`text-[10px] font-medium ${agent?.color ?? "text-zinc-500"}`}>
+                        <span className={`text-[10px] font-medium ${agent?.color ?? "text-text-muted"}`}>
                           {agent?.label ?? alerta.agent}
                         </span>
-                        <span className="text-[10px] text-zinc-600 flex items-center gap-0.5">
+                        <span className="text-[10px] text-text-dim flex items-center gap-0.5">
                           <Clock className="w-2.5 h-2.5" />
                           {formatRelative(alerta.created_at)}
                         </span>
@@ -257,9 +268,9 @@ export default function AlertasPage() {
           {/* Viewer */}
           <div className="lg:col-span-2">
             {selectedAlerta ? (
-              <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl overflow-hidden sticky top-24">
+              <div className="bg-bg-raised border border-border-subtle rounded-xl overflow-hidden sticky top-24">
                 {/* Viewer header */}
-                <div className="flex items-center gap-3 px-6 py-4 border-b border-zinc-800/40">
+                <div className="flex items-center gap-3 px-6 py-4 border-b border-border-subtle">
                   <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${STATUS_CONFIG[selectedAlerta.alertaStatus].bg}`}>
                     {(() => {
                       const Icon = STATUS_CONFIG[selectedAlerta.alertaStatus].icon;
@@ -267,22 +278,22 @@ export default function AlertasPage() {
                     })()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h2 className="text-sm font-semibold text-white">{selectedAlerta.title}</h2>
-                    <p className="text-[11px] text-zinc-500 mt-0.5">
+                    <h2 className="text-sm font-semibold text-text">{selectedAlerta.title}</h2>
+                    <p className="text-[11px] text-text-muted mt-0.5">
                       {AGENT_MAP[selectedAlerta.agent]?.label ?? selectedAlerta.agent} \u00B7{" "}
                       {new Date(selectedAlerta.created_at).toLocaleString("pt-BR")}
                     </p>
                   </div>
                   <button
                     onClick={() => setSelectedAlerta(null)}
-                    className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors"
+                    className="p-1.5 rounded-lg hover:bg-bg-overlay text-text-muted hover:text-text-secondary transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
 
                 {/* Status actions */}
-                <div className="px-6 py-3 border-b border-zinc-800/40 flex gap-2">
+                <div className="px-6 py-3 border-b border-border-subtle flex gap-2">
                   {(["novo", "visto", "resolvido"] as AlertaStatus[]).map((s) => {
                     const cfg = STATUS_CONFIG[s];
                     const active = selectedAlerta.alertaStatus === s;
@@ -293,7 +304,7 @@ export default function AlertasPage() {
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                           active
                             ? `${cfg.bg} ${cfg.color} border border-current/20`
-                            : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40"
+                            : "text-text-muted hover:text-text-secondary hover:bg-bg-overlay/40"
                         }`}
                       >
                         {(() => {
@@ -309,18 +320,18 @@ export default function AlertasPage() {
                 {/* Content */}
                 <div className="px-6 py-5 max-h-[calc(100vh-350px)] overflow-y-auto prose-jarvis">
                   {selectedAlerta.summary && (
-                    <div className="mb-4 p-3 bg-zinc-800/30 rounded-lg border border-zinc-800/40">
-                      <p className="text-[11px] text-zinc-500 uppercase tracking-wider mb-1">Resumo</p>
-                      <p className="text-sm text-zinc-300">{selectedAlerta.summary}</p>
+                    <div className="mb-4 p-3 bg-bg-overlay/50 rounded-lg border border-border-subtle">
+                      <p className="text-[11px] text-text-muted uppercase tracking-wider mb-1">Resumo</p>
+                      <p className="text-sm text-text-secondary">{selectedAlerta.summary}</p>
                     </div>
                   )}
                   <MarkdownContent content={selectedAlerta.content ?? ""} />
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-64 bg-zinc-900/30 border border-zinc-800/40 rounded-xl">
+              <div className="flex flex-col items-center justify-center h-64 bg-bg-raised/50 border border-border-subtle rounded-xl">
                 <Bell className="w-8 h-8 text-zinc-700 mb-3" />
-                <p className="text-sm text-zinc-600">Selecione um alerta para visualizar</p>
+                <p className="text-sm text-text-dim">Selecione um alerta para visualizar</p>
               </div>
             )}
           </div>
@@ -350,13 +361,13 @@ function FilterTab({
       onClick={onClick}
       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
         active
-          ? "bg-zinc-800/80 text-white border border-zinc-700/60"
-          : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/30"
+          ? "bg-zinc-800/80 text-text border border-border-default"
+          : "text-text-muted hover:text-text-secondary hover:bg-bg-overlay/50"
       }`}
     >
       <span>{label}</span>
       {count > 0 && (
-        <span className={`text-[10px] ${active ? (color ?? "text-zinc-400") : "text-zinc-600"}`}>
+        <span className={`text-[10px] ${active ? (color ?? "text-text-secondary") : "text-text-dim"}`}>
           {count}
         </span>
       )}
