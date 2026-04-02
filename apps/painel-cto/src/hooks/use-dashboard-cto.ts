@@ -2,7 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import { getProjetoEntrega, type Projeto } from '@/types/database'
+import {
+  normalizeProjetoStatus,
+  getProjetoEntrega,
+  type Projeto,
+  type ProjetoEntregaRow,
+  type MilestoneDashboardRow,
+} from '@/types/database'
 
 export function useDashboardCTO() {
   const supabase = createClient()
@@ -15,7 +21,7 @@ export function useDashboardCTO() {
         .select('*')
         .neq('status', 'cancelado')
       if (error) throw error
-      return data as Projeto[]
+      return (data as Projeto[]).map((p) => ({ ...p, status: normalizeProjetoStatus(p.status) }))
     },
   })
 
@@ -32,7 +38,7 @@ export function useDashboardCTO() {
         .not('status', 'in', '("entregue","cancelado")')
         .order('data_entrega', { ascending: true })
       if (error) throw error
-      return data
+      return data as ProjetoEntregaRow[]
     },
   })
 
@@ -50,7 +56,7 @@ export function useDashboardCTO() {
         .order('data_prevista', { ascending: true })
         .limit(10)
       if (error) throw error
-      return data
+      return data as MilestoneDashboardRow[]
     },
   })
 
@@ -80,6 +86,7 @@ export function useDashboardCTO() {
 
   return {
     isLoading: projetos.isLoading,
+    error: projetos.error || proximasEntregas.error || proximosMilestones.error,
     kpis: {
       projetosAtivos: ativos.length,
       entreguesMes: entreguesMes.length,

@@ -1,5 +1,11 @@
 // ── Enums ──
-export type ProjetoStatus = 'backlog' | 'em_andamento' | 'revisao' | 'em_revisao' | 'entregue' | 'cancelado'
+export type ProjetoStatus = 'backlog' | 'em_andamento' | 'revisao' | 'entregue' | 'cancelado'
+
+/** Normalizes legacy 'em_revisao' status to 'revisao' */
+export function normalizeProjetoStatus(status: string): ProjetoStatus {
+  if (status === 'em_revisao') return 'revisao'
+  return status as ProjetoStatus
+}
 export type Prioridade = 'baixa' | 'media' | 'alta' | 'urgente'
 export type Categoria = 'projeto_avulso' | 'mensalidade' | 'consultoria' | 'mvp' | 'interno'
 export type TarefaStatus = 'todo' | 'doing' | 'done'
@@ -125,6 +131,33 @@ export interface CalendarSync {
   last_synced_at: string
   sync_status: SyncStatus
   created_at: string
+}
+
+// ── Join types ──
+export interface MilestoneWithProjeto extends ProjectMilestone {
+  projetos: { titulo: string | null; cor: string | null }
+}
+
+export interface UpdateWithProjeto extends ProjectUpdate {
+  projetos: { titulo: string | null }
+}
+
+// ── Dashboard partial types ──
+export interface ProjetoEntregaRow {
+  id: string
+  titulo: string | null
+  cliente: string | null
+  data_entrega: string | null
+  progresso: number
+  prioridade: Prioridade
+}
+
+export interface MilestoneDashboardRow {
+  id: string
+  titulo: string
+  data_prevista: string
+  status: MilestoneStatus
+  projetos: { titulo: string | null }
 }
 
 // ── Insert types ──

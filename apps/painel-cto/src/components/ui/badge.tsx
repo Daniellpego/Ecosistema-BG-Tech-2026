@@ -26,9 +26,7 @@ export function PrioridadeBadge({ prioridade }: { prioridade: Prioridade }) {
 }
 
 export function StatusBadge({ status }: { status: ProjetoStatus }) {
-  // em_revisao is a legacy alias for revisao
-  const normalizedStatus = status === 'em_revisao' ? 'revisao' : status
-  const col = KANBAN_COLUMNS.find((c) => c.id === normalizedStatus)
+  const col = KANBAN_COLUMNS.find((c) => c.id === status)
   if (col) {
     return (
       <span

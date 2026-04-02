@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, GripVertical } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,13 +10,14 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ListTodo } from 'lucide-react'
 import { TASK_COLUMNS } from '@/lib/kanban-config'
-import { useTarefas, useCreateTarefa, useUpdateTarefa } from '@/hooks/use-tarefas'
+import { useTarefas, useCreateTarefa, useUpdateTarefa, useDeleteTarefa } from '@/hooks/use-tarefas'
 import type { TarefaStatus } from '@/types/database'
 
 export function TaskBoard({ projetoId }: { projetoId: string }) {
   const { data: tarefas, isLoading } = useTarefas(projetoId)
   const createTarefa = useCreateTarefa()
   const updateTarefa = useUpdateTarefa()
+  const deleteTarefa = useDeleteTarefa()
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [addingTo, setAddingTo] = useState<TarefaStatus | null>(null)
 
@@ -75,7 +76,16 @@ export function TaskBoard({ projetoId }: { projetoId: string }) {
             <div className="space-y-2 min-h-[60px]">
               {columnTasks.map((task) => (
                 <div key={task.id} className="card-glass !p-3 group">
-                  <p className="text-sm text-text-primary mb-1">{task.titulo}</p>
+                  <div className="flex items-start justify-between gap-1 mb-1">
+                    <p className="text-sm text-text-primary">{task.titulo}</p>
+                    <button
+                      onClick={() => deleteTarefa.mutate({ id: task.id, projeto_id: projetoId })}
+                      className="opacity-0 group-hover:opacity-100 text-text-muted hover:text-status-negative transition-all shrink-0 mt-0.5"
+                      title="Excluir tarefa"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
                   <div className="flex items-center justify-between">
                     <PrioridadeBadge prioridade={task.prioridade} />
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

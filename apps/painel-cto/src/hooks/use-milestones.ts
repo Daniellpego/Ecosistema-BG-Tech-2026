@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import type { ProjectMilestone, MilestoneInsert } from '@/types/database'
+import type { ProjectMilestone, MilestoneInsert, MilestoneWithProjeto } from '@/types/database'
 
 export function useMilestones(projetoId: string) {
   const supabase = createClient()
@@ -38,7 +38,7 @@ export function useAllMilestones(dateRange?: { start: string; end: string }) {
 
       const { data, error } = await query
       if (error) throw error
-      return data as (ProjectMilestone & { projetos: { titulo: string; cor: string | null } })[]
+      return data as MilestoneWithProjeto[]
     },
   })
 }

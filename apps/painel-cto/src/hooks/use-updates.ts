@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import type { ProjectUpdate, UpdateInsert } from '@/types/database'
+import type { ProjectUpdate, UpdateInsert, UpdateWithProjeto } from '@/types/database'
 
 export function useUpdates(projetoId: string) {
   const supabase = createClient()
@@ -33,9 +33,9 @@ export function useGlobalUpdates(limit = 10) {
         .order('created_at', { ascending: false })
         .limit(limit)
       if (error) throw error
-      return (data as (ProjectUpdate & { projetos: { titulo: string } })[]).map((u) => ({
+      return (data as UpdateWithProjeto[]).map((u) => ({
         ...u,
-        projeto_titulo: u.projetos.titulo,
+        projeto_titulo: u.projetos.titulo ?? 'Sem titulo',
       }))
     },
   })
@@ -53,9 +53,9 @@ export function usePortalUpdates(limit = 20) {
         .order('created_at', { ascending: false })
         .limit(limit)
       if (error) throw error
-      return (data as (ProjectUpdate & { projetos: { titulo: string } })[]).map((u) => ({
+      return (data as UpdateWithProjeto[]).map((u) => ({
         ...u,
-        projeto_titulo: u.projetos.titulo,
+        projeto_titulo: u.projetos.titulo ?? 'Sem titulo',
       }))
     },
   })

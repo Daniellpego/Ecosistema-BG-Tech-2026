@@ -9,10 +9,11 @@ export function createClient() {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseKey) {
-    client = createBrowserClient('https://placeholder.supabase.co', 'placeholder-key')
-  } else {
-    client = createBrowserClient(supabaseUrl, supabaseKey)
+    throw new Error(
+      'Supabase nao configurado. Crie o arquivo .env.local com NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY'
+    )
   }
 
+  client = createBrowserClient(supabaseUrl, supabaseKey)
   return client
 }
