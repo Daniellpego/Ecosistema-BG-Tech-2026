@@ -1,17 +1,17 @@
 <p align="center">
-  <img src="logo oficial bg.png" alt="Gradios" width="200" />
+  <img src="public/logo-gradios.png" alt="Gradios" width="200" />
 </p>
 
 <h1 align="center">GRADIOS Ecosystem 2026</h1>
 
 <p align="center">
   <strong>Plataforma de automacao empresarial com IA C-Level integrada</strong><br/>
-  6 sistemas interligados em tempo real &mdash; CRM, CFO, Projetos, Site, Quiz e JARVIS AI
+  7 sistemas interligados em tempo real &mdash; CRM, CFO, CTO, Projetos, Site, Quiz e JARVIS AI
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Producao-10B981?style=flat-square&logo=vercel" />
-  <img src="https://img.shields.io/badge/Sistemas-6-6366F1?style=flat-square" />
+  <img src="https://img.shields.io/badge/Sistemas-7-6366F1?style=flat-square" />
   <img src="https://img.shields.io/badge/AI_Agents-8-F59E0B?style=flat-square" />
   <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase" />
   <img src="https://img.shields.io/badge/Next.js-15-000?style=flat-square&logo=nextdotjs" />

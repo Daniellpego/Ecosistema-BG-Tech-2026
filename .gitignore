@@ -1,5 +1,14 @@
 # Dependencies
 node_modules/
+package-lock.json
+
+# Build
+.next/
+out/
+dist/
+tsconfig.tsbuildinfo
+estrutura.txt
+*.log
 
 # Playwright
 test-results/
@@ -14,16 +23,12 @@ desktop.ini
 # IDE
 .vscode/
 *.swp
+*.swo
 
 # Environment
 .env
 .env.local
 .env.*.local
-
-# Build artifacts
-estrutura.txt
-.next/
-tsconfig.tsbuildinfo
 
 # Auto-generated config (contains Supabase credentials)
 painel-cfo/js/config.js
@@ -38,3 +43,8 @@ apps/painel-projetos/js/config.js
 
 # Supabase temp
 supabase/.temp/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
