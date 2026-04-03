@@ -8,7 +8,7 @@ import { TaxProvider, useTax } from '@/providers/tax-provider'
 import { Switch } from '@/components/ui/switch'
 
 function SimplesToggle() {
-  const { simplesEnabled, setSimplesEnabled } = useTax()
+  const { simplesEnabled, setSimplesEnabled, aliquota, anexo, setAnexo } = useTax()
 
   return (
     <div className="flex items-center gap-2">
@@ -18,8 +18,18 @@ function SimplesToggle() {
         aria-label="Toggle Simples Nacional"
       />
       <span className={simplesEnabled ? 'text-xs font-medium text-status-warning' : 'text-xs text-text-dark'}>
-        Simples 6%
+        Simples {aliquota.toFixed(1)}%
       </span>
+      {simplesEnabled && (
+        <select
+          value={anexo}
+          onChange={(e) => setAnexo(e.target.value as 'III' | 'V')}
+          className="text-[10px] bg-transparent border border-brand-blue-deep/30 rounded px-1.5 py-0.5 text-text-secondary"
+        >
+          <option value="III">Anexo III</option>
+          <option value="V">Anexo V</option>
+        </select>
+      )}
     </div>
   )
 }

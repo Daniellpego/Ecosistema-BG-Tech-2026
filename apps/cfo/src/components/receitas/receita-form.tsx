@@ -23,6 +23,11 @@ const receitaSchema = z.object({
   status: z.enum(['previsto', 'confirmado', 'cancelado'] as const),
   categoria: z.string().nullable().optional(),
   observacoes: z.string().nullable().optional(),
+  nf_numero: z.string().nullable().optional(),
+  nf_chave_acesso: z.string().nullable().optional().refine(
+    (val) => !val || val.length === 44,
+    { message: 'Chave de acesso deve ter 44 dígitos' }
+  ),
 })
 
 const TIPO_LABELS: Record<ReceitaTipo, string> = {
@@ -63,6 +68,8 @@ export function ReceitaForm({ open, onOpenChange, receita }: ReceitaFormProps) {
     status: 'previsto' as ReceitaStatus,
     categoria: '',
     observacoes: '',
+    nf_numero: '',
+    nf_chave_acesso: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -80,6 +87,8 @@ export function ReceitaForm({ open, onOpenChange, receita }: ReceitaFormProps) {
         status: receita.status,
         categoria: receita.categoria ?? '',
         observacoes: receita.observacoes ?? '',
+        nf_numero: (receita as unknown as Record<string, unknown>).nf_numero as string ?? '',
+        nf_chave_acesso: (receita as unknown as Record<string, unknown>).nf_chave_acesso as string ?? '',
       })
     } else {
       setForm({
@@ -93,6 +102,8 @@ export function ReceitaForm({ open, onOpenChange, receita }: ReceitaFormProps) {
         status: 'previsto',
         categoria: '',
         observacoes: '',
+        nf_numero: '',
+        nf_chave_acesso: '',
       })
     }
     setErrors({})
@@ -112,6 +123,8 @@ export function ReceitaForm({ open, onOpenChange, receita }: ReceitaFormProps) {
       descricao: form.descricao || null,
       categoria: form.categoria || null,
       observacoes: form.observacoes || null,
+      nf_numero: form.nf_numero || null,
+      nf_chave_acesso: form.nf_chave_acesso || null,
     })
 
     if (!parsed.success) {
@@ -298,6 +311,30 @@ export function ReceitaForm({ open, onOpenChange, receita }: ReceitaFormProps) {
               value={form.categoria}
               onChange={(e) => setForm({ ...form, categoria: e.target.value })}
             />
+          </div>
+
+          {/* NF-e */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="nf_numero">Nº NF-e (opcional)</Label>
+              <Input
+                id="nf_numero"
+                placeholder="Nº da NF-e"
+                value={form.nf_numero}
+                onChange={(e) => setForm({ ...form, nf_numero: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="nf_chave">Chave de Acesso (opcional)</Label>
+              <Input
+                id="nf_chave"
+                placeholder="44 dígitos"
+                maxLength={44}
+                value={form.nf_chave_acesso}
+                onChange={(e) => setForm({ ...form, nf_chave_acesso: e.target.value })}
+              />
+              {errors.nf_chave_acesso && <p className="text-xs text-status-negative">{errors.nf_chave_acesso}</p>}
+            </div>
           </div>
 
           {/* Observações */}
