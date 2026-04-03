@@ -36,6 +36,11 @@ const NAV_ITEMS = [
   { href: '/academy', label: 'Academy', icon: GraduationCap },
 ] as const
 
+function preloadCharts() {
+  import('@/components/charts/revenue-expenses-chart')
+  import('@/components/charts/cost-distribution-chart')
+}
+
 export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
@@ -77,7 +82,9 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               onClick={() => setMobileOpen(false)}
+              onMouseEnter={item.href === '/dashboard' ? preloadCharts : undefined}
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 relative group',
                 isActive
