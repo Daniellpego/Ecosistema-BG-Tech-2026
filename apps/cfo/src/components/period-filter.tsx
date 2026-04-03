@@ -42,12 +42,15 @@ export function PeriodFilter() {
       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={goBack}>
         <ChevronLeft className="h-4 w-4" />
       </Button>
-      <button
-        onClick={goToday}
-        className="text-sm font-medium text-text-primary hover:text-brand-cyan transition-colors min-w-[160px] text-center"
-      >
-        {MONTHS[month - 1]} {year}
-      </button>
+      <div className="flex flex-col items-center">
+        <button
+          onClick={goToday}
+          className="text-sm font-medium text-text-primary hover:text-brand-cyan transition-colors min-w-[160px] text-center"
+        >
+          {MONTHS[month - 1]} {year}
+        </button>
+        <span className="text-[10px] text-text-muted">Filtra todas as seções</span>
+      </div>
       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={goForward}>
         <ChevronRight className="h-4 w-4" />
       </Button>

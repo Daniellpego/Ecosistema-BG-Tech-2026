@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, Wrench, BarChart3, Megaphone, Building2, ClipboardList, Banknote, Receipt, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/format'
 import { Button } from '@/components/ui/button'
@@ -16,15 +16,26 @@ const STATUS_CONFIG: Record<CustoFixoStatus, { label: string; color: string }> =
   cancelado: { label: 'Cancelado', color: 'bg-status-negative/20 text-status-negative' },
 }
 
-const CATEGORIA_CONFIG: Record<string, { label: string; emoji: string }> = {
-  ferramentas: { label: 'Ferramentas', emoji: '\uD83D\uDD27' },
-  contabilidade: { label: 'Contabilidade', emoji: '\uD83D\uDCCA' },
-  marketing: { label: 'Marketing', emoji: '\uD83D\uDCE2' },
-  infraestrutura: { label: 'Infraestrutura', emoji: '\uD83C\uDFD7\uFE0F' },
-  administrativo: { label: 'Administrativo', emoji: '\uD83D\uDCCB' },
-  pro_labore: { label: 'Pró-labore', emoji: '\uD83D\uDCB0' },
-  impostos_fixos: { label: 'Impostos', emoji: '\uD83E\uDDFE' },
-  outro: { label: 'Outro', emoji: '\uD83D\uDCE6' },
+const CATEGORIA_CONFIG: Record<string, { label: string }> = {
+  ferramentas: { label: 'Ferramentas' },
+  contabilidade: { label: 'Contabilidade' },
+  marketing: { label: 'Marketing' },
+  infraestrutura: { label: 'Infraestrutura' },
+  administrativo: { label: 'Administrativo' },
+  pro_labore: { label: 'Pró-labore' },
+  impostos_fixos: { label: 'Impostos' },
+  outro: { label: 'Outro' },
+}
+
+const CATEGORIA_ICONS: Record<string, React.ElementType> = {
+  ferramentas: Wrench,
+  contabilidade: BarChart3,
+  marketing: Megaphone,
+  infraestrutura: Building2,
+  administrativo: ClipboardList,
+  pro_labore: Banknote,
+  impostos_fixos: Receipt,
+  outro: Package,
 }
 
 const RECORRENCIA_LABELS: Record<string, string> = {
@@ -115,7 +126,8 @@ export function CustosFixosTable({ custosFixos, isLoading, onEdit }: CustosFixos
               </tr>
             ) : (
               filtered.map((c) => {
-                const catConfig = CATEGORIA_CONFIG[c.categoria] ?? { label: c.categoria, emoji: '' }
+                const catConfig = CATEGORIA_CONFIG[c.categoria] ?? { label: c.categoria }
+                const CatIcon = CATEGORIA_ICONS[c.categoria] ?? Package
                 return (
                   <tr
                     key={c.id}
@@ -125,7 +137,7 @@ export function CustosFixosTable({ custosFixos, isLoading, onEdit }: CustosFixos
                     <td className="py-3 px-4 text-text-primary font-medium">{c.nome}</td>
                     <td className="py-3 px-4">
                       <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full bg-brand-blue/20 text-brand-cyan">
-                        <span>{catConfig.emoji}</span> {catConfig.label}
+                        <CatIcon className="h-3 w-3" /> {catConfig.label}
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right text-status-negative font-medium">

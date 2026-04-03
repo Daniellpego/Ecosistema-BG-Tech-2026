@@ -205,6 +205,11 @@ export default function BalancoAnualPage() {
                       ATUAL
                     </span>
                   )}
+                  {isFuture && !isCurrentMonth && (
+                    <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-status-warning/15 text-status-warning">
+                      PROJEÇÃO
+                    </span>
+                  )}
                 </div>
                 {!noData && (
                   isExpanded

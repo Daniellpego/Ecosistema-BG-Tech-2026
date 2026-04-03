@@ -30,7 +30,7 @@ const config: Config = {
         text: {
           primary: '#0F172A',
           secondary: '#64748B',
-          muted: '#94A3B8',
+          muted: '#B0BEC5',
           dark: '#0F172A',
         },
       },

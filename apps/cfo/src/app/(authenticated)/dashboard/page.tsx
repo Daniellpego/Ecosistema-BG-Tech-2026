@@ -16,6 +16,7 @@ import {
   X,
   Sparkles,
 } from 'lucide-react'
+import Link from 'next/link'
 import { PageTransition } from '@/components/motion'
 import { cn } from '@/lib/utils'
 import { formatCurrency, formatPercent } from '@/lib/format'
@@ -105,14 +106,18 @@ interface KPICardProps {
   icon: React.ReactNode
   tooltip: string
   invertVariation?: boolean
+  href?: string
 }
 
-function KPICard({ label, value, variation, icon, tooltip, invertVariation }: KPICardProps) {
+function KPICard({ label, value, variation, icon, tooltip, invertVariation, href }: KPICardProps) {
   const isPositive = variation !== null && (invertVariation ? variation < 0 : variation > 0)
   const isNegative = variation !== null && (invertVariation ? variation > 0 : variation < 0)
 
-  return (
-    <div className="card-glass p-4 space-y-3">
+  const content = (
+    <div className={cn(
+      'card-glass p-4 space-y-3 transition-all',
+      href && 'hover:ring-1 hover:ring-brand-cyan/30 cursor-pointer'
+    )}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="text-brand-cyan/80">{icon}</div>
@@ -133,12 +138,12 @@ function KPICard({ label, value, variation, icon, tooltip, invertVariation }: KP
           </Tooltip>
         </TooltipProvider>
       </div>
-      
+
       <div className="flex flex-col items-end">
         <p className="text-2xl font-black text-text-primary tracking-tight font-inter">
           {value || '--'}
         </p>
-        
+
         {variation !== null ? (
           <div className="flex items-center gap-1 mt-1">
             <span
@@ -160,6 +165,9 @@ function KPICard({ label, value, variation, icon, tooltip, invertVariation }: KP
       </div>
     </div>
   )
+
+  if (href) return <Link href={href}>{content}</Link>
+  return content
 }
 
 function KPICardSkeleton() {
@@ -278,6 +286,10 @@ export default function DashboardPage() {
   }
 
   // ── KPI definitions ───────────────────────────────────────────────
+  const margemBruta = kpis.receitaTotal > 0
+    ? ((kpis.receitaTotal - kpis.custosVariaveis) / kpis.receitaTotal) * 100
+    : 0
+
   const kpiCards = [
     {
       label: 'Receita Total',
@@ -285,6 +297,7 @@ export default function DashboardPage() {
       variation: variations.receitaTotal,
       icon: <TrendingUp className="h-4 w-4" />,
       tooltip: 'Soma de todas as receitas confirmadas no período selecionado',
+      href: '/receitas',
     },
     {
       label: 'MRR',
@@ -292,6 +305,7 @@ export default function DashboardPage() {
       variation: variations.mrr,
       icon: <Repeat className="h-4 w-4" />,
       tooltip: 'Monthly Recurring Revenue — apenas receitas recorrentes confirmadas',
+      href: '/receitas',
     },
     {
       label: 'Burn Rate',
@@ -300,6 +314,7 @@ export default function DashboardPage() {
       icon: <Flame className="h-4 w-4" />,
       tooltip: 'Gasto total mensal — custos fixos + variáveis + impostos. Menor é melhor.',
       invertVariation: true,
+      href: '/custos-fixos',
     },
     {
       label: 'Custos Fixos',
@@ -307,6 +322,7 @@ export default function DashboardPage() {
       variation: variations.custosFixos,
       icon: <Lock className="h-4 w-4" />,
       tooltip: 'Despesas fixas mensais ativas — ferramentas, contabilidade, etc.',
+      href: '/custos-fixos',
     },
     {
       label: 'Custos Variáveis',
@@ -315,6 +331,7 @@ export default function DashboardPage() {
       icon: <ShoppingCart className="h-4 w-4" />,
       tooltip: 'Gastos que variam com vendas — marketing, freelancers, taxas',
       invertVariation: true,
+      href: '/gastos-variaveis',
     },
     {
       label: 'Resultado Líquido',
@@ -322,6 +339,7 @@ export default function DashboardPage() {
       variation: variations.resultadoLiquido,
       icon: <Calculator className="h-4 w-4" />,
       tooltip: 'Receita Bruta - Custos Variáveis - Custos Fixos - Impostos',
+      href: '/dre',
     },
     {
       label: 'Caixa Disponível',
@@ -329,6 +347,7 @@ export default function DashboardPage() {
       variation: variations.caixaDisponivel,
       icon: <Wallet className="h-4 w-4" />,
       tooltip: 'Saldo atual em conta bancária — atualizado manualmente',
+      href: '/balanco-anual',
     },
     {
       label: 'Runway',
@@ -336,6 +355,7 @@ export default function DashboardPage() {
       variation: variations.runway,
       icon: <Clock className="h-4 w-4" />,
       tooltip: 'Quanto tempo a empresa sobrevive sem novas receitas — Caixa ÷ Burn Rate',
+      href: '/projecoes',
     },
   ]
 
@@ -385,6 +405,11 @@ export default function DashboardPage() {
           ? Array.from({ length: 8 }).map((_, i) => <KPICardSkeleton key={i} />)
           : kpiCards.map((card) => <KPICard key={card.label} {...card} />)}
       </div>
+
+      {/* Margem Bruta note */}
+      {!isLoading && margemBruta === 100 && kpis.custosVariaveis === 0 && kpis.receitaTotal > 0 && (
+        <p className="text-[10px] text-status-warning px-1">Margem Bruta 100% — nenhum custo variável registrado neste período</p>
+      )}
 
       {/* Section 3 — Smart Alerts */}
       {visibleAlerts.length > 0 && (
