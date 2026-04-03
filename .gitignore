@@ -1,16 +1,14 @@
 # Dependencies
 node_modules/
-package-lock.json
 
 # Build
 .next/
 out/
 dist/
 tsconfig.tsbuildinfo
-estrutura.txt
 *.log
 
-# Playwright
+# Test
 test-results/
 playwright-report/
 blob-report/
@@ -30,21 +28,11 @@ desktop.ini
 .env.local
 .env.*.local
 
-# Auto-generated config (contains Supabase credentials)
-painel-cfo/js/config.js
-apps/painel-crm/js/config.js
-apps/painel-projetos/js/config.js
-
 # Turbo
 .turbo/
 
 # Claude Code
 .claude/
 
-# Supabase temp
+# Supabase
 supabase/.temp/
-
-# Python
-__pycache__/
-*.pyc
-.venv/

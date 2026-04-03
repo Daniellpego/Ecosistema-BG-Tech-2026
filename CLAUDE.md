@@ -1,75 +1,93 @@
-# Gradios 2026 - Guia do Ecossistema
+# AIOX — Ecossistema Gradios 2026
 
-## Projeto Principal: Painel CFO
+## Estrutura
 
-Painel financeiro completo da Gradios, usado diariamente pelo CFO (Gustavo Batista).
-Localizado em `apps/painel-cfo/`.
+```
+apps/
+  cfo/       — Painel financeiro (CFO Gustavo Batista)
+  crm/       — Pipeline de vendas B2B
+  cto/       — Gestao de projetos e entregas
+  site/      — Landing page + quiz diagnostico (gradios.co)
+supabase/
+  migrations/  — 10 migrations versionadas (001-010)
+  functions/   — Edge Function groq-analysis
+  rls-hardening.sql
+n8n-workflows/ — Automacoes (email nurturing)
+.github/       — CI/CD (Playwright)
+```
 
-### Stack
+## Stack Compartilhada
 
-- **Framework:** Next.js 15 + App Router + Turbopack
-- **Linguagem:** TypeScript (strict mode, zero `any`)
+- **Framework:** Next.js 15 + App Router + TypeScript strict
 - **Auth:** Supabase Auth (email/password) com SSR middleware
 - **Database:** Supabase Postgres com RLS em todas as tabelas
 - **Data fetching:** TanStack React Query v5 (cache + invalidation)
 - **UI:** Tailwind CSS + Radix UI primitives + Lucide icons
-- **Charts:** Recharts (ComposedChart, PieChart, LineChart, AreaChart)
 - **Animations:** Framer Motion (PageTransition em todas as rotas)
-- **Forms:** Zod validation + controlled components
-- **IA:** Groq API (llama-3.3-70b-versatile) via Supabase Edge Function
 
-### Supabase
+## Supabase
 
 - **Project ID:** `urpuiznydrlwmaqhdids`
 - **URL:** `https://urpuiznydrlwmaqhdids.supabase.co`
 - **Edge Function:** `groq-analysis` (usa secret `GROQ_API_KEY`)
-- **RLS:** Ativo em todas as 8 tabelas (policy: `auth.role() = 'authenticated'`)
+- **RLS:** Ativo em todas as tabelas (policy: `auth.role() = 'authenticated'`)
 
-### Schema do Banco (tabelas principais)
+## Painel CFO (`apps/cfo/`)
 
-| Tabela | Descrição |
+Usado diariamente pelo CFO para acompanhar receitas, custos, DRE, projecoes e saude financeira.
+
+### Schema (tabelas principais)
+
+| Tabela | Descricao |
 |--------|-----------|
-| `receitas` | Faturamento. Campos-chave: `valor_bruto`, `valor_liquido` (generated: bruto - taxas), `tipo`, `recorrente`, `status` |
-| `custos_fixos` | Custos mensais fixos. Campos-chave: `valor_mensal`, `categoria`, `status` (ativo/suspenso/cancelado) |
-| `gastos_variaveis` | Custos que variam mês a mês. Campos-chave: `valor`, `tipo` (operacional/marketing/comercial/impostos), `categoria` |
-| `caixa` | Saldo em conta. Campos-chave: `saldo`, `data`, `banco` |
-| `projecoes` | Cenários financeiros (conservador/realista/agressivo). Campos-chave: `taxa_crescimento_mensal`, `ticket_medio`, `custo_variavel_percentual` |
-| `metas_financeiras` | Metas por período e métrica |
-| `emprestimo_socio` | Empréstimos entre sócios |
-| `historico_decisoes` | Log de decisões estratégicas |
+| `receitas` | Faturamento. Campos-chave: `valor_bruto`, `valor_liquido` (generated), `tipo`, `recorrente`, `status` |
+| `custos_fixos` | Custos mensais fixos. `valor_mensal`, `categoria`, `status` (ativo/suspenso/cancelado) |
+| `gastos_variaveis` | Custos variaveis. `valor`, `tipo` (operacional/marketing/comercial/impostos), `categoria` |
+| `caixa` | Saldo em conta. `saldo`, `data`, `banco` |
+| `projecoes` | Cenarios financeiros (conservador/realista/agressivo) |
+| `metas_financeiras` | Metas por periodo e metrica |
+| `emprestimo_socio` | Emprestimos entre socios |
+| `historico_decisoes` | Log de decisoes estrategicas |
 
 ### Regras de Negocio (CRITICAS)
 
 1. **Simples Nacional:** Impostos incidem sobre FATURAMENTO (receita bruta), NAO sobre lucro
-2. **DRE Cascade:** Receita Bruta → (-) Custos Variáveis (sem impostos) → (=) Margem Bruta → (-) Custos Fixos → (=) Resultado Operacional → (-) Impostos → (=) Resultado Liquido
+2. **DRE Cascade:** Receita Bruta → (-) Custos Variaveis (sem impostos) → (=) Margem Bruta → (-) Custos Fixos → (=) Resultado Operacional → (-) Impostos → (=) Resultado Liquido
 3. **Dashboard usa valor_bruto** (mesma base da DRE), NAO valor_liquido
-4. **Gastos variáveis com tipo='impostos'** sao separados dos demais custos variáveis na DRE
+4. **Gastos variaveis com tipo='impostos'** sao separados dos demais custos variaveis na DRE
 5. **Custos fixos** consideram apenas `status='ativo'`
 6. **Receitas** consideram apenas `status='confirmado'` para calculos
 7. **MRR** = soma de receitas onde `recorrente=true` AND `status='confirmado'`
-8. **Burn Rate** = Custos Fixos + Gastos Variáveis + Impostos
-9. **Runway** = Caixa Disponível / Burn Rate (em meses)
+8. **Burn Rate** = Custos Fixos + Gastos Variaveis + Impostos
+9. **Runway** = Caixa Disponivel / Burn Rate (em meses)
 
-### Abas do Painel
+### Abas
 
-1. **Login** (`/login`) — Email/senha com Supabase Auth
-2. **Painel Geral** (`/dashboard`) — KPIs, alertas inteligentes, gráficos, análise IA
-3. **DRE** (`/dre`) — Demonstração de Resultado simplificada com cascata completa
-4. **Receitas** (`/receitas`) — CRUD completo de faturamento com filtros e KPIs
-5. **Custos Fixos** (`/custos-fixos`) — CRUD de custos fixos com pie chart de distribuição
-6. **Gastos Variáveis** (`/gastos-variaveis`) — CRUD com tabs por tipo + CAC
-7. **Projeções** (`/projecoes`) — 3 cenários (conservador/realista/agressivo) com 12 meses
-8. **Balanço Anual** (`/balanco-anual`) — Grid de 12 meses com drill-down
-9. **Academy** (`/academy`) — Glossário financeiro + guias + chat IA (Groq)
+| Rota | Funcionalidade |
+|------|---------------|
+| `/login` | Email/senha com Supabase Auth |
+| `/dashboard` | KPIs, alertas inteligentes, graficos, analise IA |
+| `/dre` | DRE gerencial com cascata completa |
+| `/receitas` | CRUD faturamento com filtros e KPIs |
+| `/custos-fixos` | CRUD custos fixos com pie chart |
+| `/gastos-variaveis` | CRUD com tabs por tipo + CAC |
+| `/projecoes` | 3 cenarios x 12 meses |
+| `/balanco-anual` | Grid 12 meses com drill-down |
+| `/academy` | Glossario financeiro + chat IA (Groq) |
 
-### Brand Book
+### IA
+
+- Groq API (llama-3.3-70b-versatile) via Supabase Edge Function
+- Charts: Recharts (ComposedChart, PieChart, LineChart, AreaChart)
+
+## Brand Book (compartilhado entre paineis)
 
 | Token | Valor | Uso |
 |-------|-------|-----|
 | `bg-navy` | `#0A1628` | Background principal |
-| `bg-card` | `#131F35` | Cards (classe `card-glass`) |
+| `bg-card` | `#131F35` | Cards (`card-glass`) |
 | `brand-cyan` | `#00C8F0` | CTAs, destaques, links ativos |
-| `brand-blue` | `#1A6AAA` | Elementos secundários |
+| `brand-blue` | `#1A6AAA` | Elementos secundarios |
 | `brand-blue-deep` | `#153B5F` | Borders, grid lines |
 | `text-primary` | `#F0F4F8` | Texto principal |
 | `text-secondary` | `#94A3B8` | Labels, subtextos |
@@ -78,59 +96,13 @@ Localizado em `apps/painel-cfo/`.
 | `status-warning` | `#F59E0B` | Alertas (amarelo) |
 | **Font** | Poppins | 300-700 weights |
 
-### Estrutura de Pastas (painel-cfo)
-
-```
-src/
-  app/
-    login/page.tsx
-    (authenticated)/
-      dashboard/page.tsx
-      dre/page.tsx
-      receitas/page.tsx
-      custos-fixos/page.tsx
-      gastos-variaveis/page.tsx
-      projecoes/page.tsx
-      balanco-anual/page.tsx
-      academy/page.tsx
-      layout.tsx          # Sidebar + PeriodProvider + QueryProvider
-  components/
-    layout/sidebar.tsx
-    ui/                   # Button, Input, Skeleton, Tabs, Dialog, etc.
-    receitas/             # ReceitaForm, ReceitasTable
-    custos-fixos/         # CustoFixoForm, CustosFixosTable
-    gastos-variaveis/     # GastoVariavelForm, GastosVariaveisTable
-    motion.tsx            # PageTransition, StaggerContainer, AnimatedNumber
-  hooks/
-    use-dashboard.ts      # 9 queries paralelas, KPIs, alertas, health status
-    use-dre.ts            # DRE cascade completa
-    use-receitas.ts       # CRUD receitas
-    use-custos-fixos.ts   # CRUD custos fixos
-    use-gastos-variaveis.ts # CRUD gastos variáveis
-    use-balanco.ts        # Balanço anual 12 meses
-    use-projecoes.ts      # 3 cenários de projeção
-    use-groq.ts           # Chamada à Edge Function Groq
-  lib/
-    supabase/client.ts    # Browser client
-    supabase/server.ts    # Server client (SSR)
-    supabase/middleware.ts # Auth redirect middleware
-    format.ts             # formatCurrency, formatPercent
-    utils.ts              # cn() (clsx + tailwind-merge)
-  providers/
-    period-provider.tsx   # Contexto de período (mês/ano) global
-    query-provider.tsx    # TanStack Query provider
-  types/
-    database.ts           # Tipos TypeScript do schema Supabase
-```
-
-### Convenções
+## Convencoes
 
 - Dark mode only (sem toggle)
 - Mobile-first responsive
-- Skeleton loaders (nunca spinners genéricos)
+- Skeleton loaders (nunca spinners genericos)
 - `card-glass` para todos os cards
-- Framer Motion `PageTransition` em todas as páginas
-- Formulários em Dialog/Sheet modal (não página separada)
-- TanStack Query com invalidação após mutações
-- Insert pattern: `.insert(data as unknown as Record<string, unknown>)` (workaround para tipos do Supabase sem generics)
-
+- Framer Motion `PageTransition` em todas as paginas
+- Formularios em Dialog/Sheet modal (nao pagina separada)
+- TanStack Query com invalidacao apos mutacoes
+- Insert pattern: `.insert(data as unknown as Record<string, unknown>)`
