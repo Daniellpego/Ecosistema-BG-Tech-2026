@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { logAction } from '@/lib/audit-log'
 import { usePeriod } from '@/providers/period-provider'
 import type { Receita, ReceitaTipo, ReceitaStatus } from '@/types/database'
 
@@ -120,7 +121,8 @@ export function useCreateReceita() {
       if (error) throw error
       return data as Receita
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      logAction('create', 'receitas', data.id)
       toast.success('Receita criada com sucesso!')
       queryClient.invalidateQueries({ queryKey: ['receitas'] })
       queryClient.invalidateQueries({ queryKey: ['receitas-ano'] })

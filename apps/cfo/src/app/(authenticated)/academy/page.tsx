@@ -7,6 +7,8 @@ import { GraduationCap, HelpCircle, TrendingUp, DollarSign, BarChart3, Target, A
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useGroqAnalysis } from '@/hooks/use-groq'
+import { useDashboard } from '@/hooks/use-dashboard'
+import { formatCurrency, formatPercent } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { PageTransition } from '@/components/motion'
 
@@ -117,6 +119,7 @@ export default function AcademyPage() {
   useEffect(() => { document.title = 'Academy | Gradios CFO' }, [])
 
   const { analyze, isLoading } = useGroqAnalysis()
+  const dashboard = useDashboard()
   const [question, setQuestion] = useState('')
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
   const [expandedGuide, setExpandedGuide] = useState<number | null>(null)
@@ -139,7 +142,20 @@ export default function AcademyPage() {
     const userMsg = question.trim()
     setChatHistory((prev) => [...prev, { role: 'user', content: userMsg }])
     setQuestion('')
-    const response = await analyze({ prompt: userMsg })
+    const k = dashboard.kpis
+    const contextPrompt = `Contexto financeiro atual da Gradios:
+- Receita do mês: ${formatCurrency(k.receitaTotal)}
+- Resultado líquido: ${formatCurrency(k.resultadoLiquido)}
+- Burn rate: ${formatCurrency(k.burnRate)}
+- Runway: ${k.runway.toFixed(1)} meses
+- MRR: ${formatCurrency(k.mrr)}
+- Margem bruta: ${formatPercent(k.margemBruta)}
+
+Responda com base nesses dados reais. Pergunta do usuário: ${userMsg}`
+    const response = await analyze({
+      prompt: contextPrompt,
+      systemPrompt: 'Você é o consultor financeiro da Gradios. Use os dados reais fornecidos para responder com precisão. Responda em português, de forma clara e prática.',
+    })
     setChatHistory((prev) => [...prev, { role: 'assistant', content: response ?? 'Erro ao conectar com a IA. Tente novamente.' }])
   }
 

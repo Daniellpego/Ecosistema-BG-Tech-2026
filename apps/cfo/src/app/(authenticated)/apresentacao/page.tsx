@@ -2,9 +2,9 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { X, TrendingUp, DollarSign, BarChart3, Timer, Flame, PiggyBank, ArrowRight } from 'lucide-react'
+import { X, TrendingUp, DollarSign, BarChart3, Timer, Flame, PiggyBank, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { usePeriod } from '@/providers/period-provider'
 import { useDashboard } from '@/hooks/use-dashboard'
 import { useDRE } from '@/hooks/use-dre'
@@ -71,6 +71,7 @@ export default function ApresentacaoPage() {
     } catch {}
   }, [])
 
+  const [investorMode, setInvestorMode] = useState(false)
   const isLoading = dashboard.isLoading || dre.isLoading
 
   if (isLoading) {
@@ -86,16 +87,25 @@ export default function ApresentacaoPage() {
 
   return (
     <div className="fixed inset-0 z-[100] bg-bg-navy overflow-auto">
-      {/* Close button */}
-      <button
-        onClick={() => {
-          if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
-          router.push('/relatorios')
-        }}
-        className="fixed top-6 right-6 z-[101] h-10 w-10 flex items-center justify-center rounded-full bg-bg-card border border-brand-blue-deep/30 text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors"
-      >
-        <X className="h-5 w-5" />
-      </button>
+      {/* Controls */}
+      <div className="fixed top-6 right-6 z-[101] flex items-center gap-2">
+        <button
+          onClick={() => setInvestorMode(!investorMode)}
+          className="h-10 px-3 flex items-center gap-2 rounded-full bg-bg-card border border-brand-blue-deep/30 text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors text-xs font-medium"
+        >
+          {investorMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          {investorMode ? 'Modo Investidor' : 'Modo Completo'}
+        </button>
+        <button
+          onClick={() => {
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
+            router.push('/relatorios')
+          }}
+          className="h-10 w-10 flex items-center justify-center rounded-full bg-bg-card border border-brand-blue-deep/30 text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
 
       <div className="max-w-6xl mx-auto px-8 py-12 space-y-12">
         {/* Header */}
@@ -104,7 +114,7 @@ export default function ApresentacaoPage() {
             <Logo collapsed={false} />
             <div className="h-8 w-px bg-brand-blue-deep/30" />
             <div>
-              <h1 className="text-3xl font-bold text-text-primary">Painel CFO</h1>
+              <h1 className="text-3xl font-bold text-text-primary">{investorMode ? 'Financial Overview' : 'Painel CFO'}</h1>
               <p className="text-lg text-text-secondary">{MONTH_NAMES[month - 1]} {year}</p>
             </div>
           </div>
@@ -114,7 +124,7 @@ export default function ApresentacaoPage() {
           </div>
         </div>
 
-        {/* KPI Grid - 3 cols */}
+        {/* KPI Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <KPICard
             icon={TrendingUp}
@@ -129,33 +139,46 @@ export default function ApresentacaoPage() {
             sub="Receita recorrente mensal"
             color="text-brand-cyan"
           />
-          <KPICard
-            icon={BarChart3}
-            label="Resultado Líquido"
-            value={formatCurrency(kpis.resultadoLiquido)}
-            color={kpis.resultadoLiquido >= 0 ? 'text-status-positive' : 'text-status-negative'}
-            sub={`Margem: ${kpis.margem.toFixed(1)}%`}
-          />
-          <KPICard
-            icon={PiggyBank}
-            label="Caixa Disponível"
-            value={formatCurrency(kpis.caixaDisponivel)}
-            color="text-text-primary"
-          />
-          <KPICard
-            icon={Flame}
-            label="Burn Rate"
-            value={formatCurrency(kpis.burnRate)}
-            sub="Gasto mensal total"
-            color="text-status-negative"
-          />
-          <KPICard
-            icon={Timer}
-            label="Runway"
-            value={`${kpis.runway.toFixed(1)} meses`}
-            sub={kpis.runway >= 6 ? 'Saudável' : kpis.runway >= 3 ? 'Atenção' : 'Crítico'}
-            color={kpis.runway >= 6 ? 'text-status-positive' : kpis.runway >= 3 ? 'text-status-warning' : 'text-status-negative'}
-          />
+          {investorMode ? (
+            <KPICard
+              icon={BarChart3}
+              label="Margem Bruta"
+              value={`${kpis.margemBruta.toFixed(1)}%`}
+              color="text-status-positive"
+            />
+          ) : (
+            <KPICard
+              icon={BarChart3}
+              label="Resultado Líquido"
+              value={formatCurrency(kpis.resultadoLiquido)}
+              color={kpis.resultadoLiquido >= 0 ? 'text-status-positive' : 'text-status-negative'}
+              sub={`Margem: ${kpis.margem.toFixed(1)}%`}
+            />
+          )}
+          {!investorMode && (
+            <>
+              <KPICard
+                icon={PiggyBank}
+                label="Caixa Disponível"
+                value={formatCurrency(kpis.caixaDisponivel)}
+                color="text-text-primary"
+              />
+              <KPICard
+                icon={Flame}
+                label="Burn Rate"
+                value={formatCurrency(kpis.burnRate)}
+                sub="Gasto mensal total"
+                color="text-status-negative"
+              />
+              <KPICard
+                icon={Timer}
+                label="Runway"
+                value={`${kpis.runway.toFixed(1)} meses`}
+                sub={kpis.runway >= 6 ? 'Saudável' : kpis.runway >= 3 ? 'Atenção' : 'Crítico'}
+                color={kpis.runway >= 6 ? 'text-status-positive' : kpis.runway >= 3 ? 'text-status-warning' : 'text-status-negative'}
+              />
+            </>
+          )}
         </div>
 
         {/* DRE Cascade */}

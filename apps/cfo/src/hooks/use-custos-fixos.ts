@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { logAction } from '@/lib/audit-log'
 import type { CustoFixo, CustoFixoCategoria, CustoFixoRecorrencia, CustoFixoStatus } from '@/types/database'
 
 export interface CustoFixoInsert {
@@ -51,6 +52,7 @@ export function useCreateCustoFixo() {
       return data as CustoFixo
     },
     onSuccess: () => {
+      logAction('create', 'custos_fixos', 'new')
       toast.success('Custo fixo criado com sucesso!')
       queryClient.invalidateQueries({ queryKey: ['custos-fixos'] })
     },
@@ -77,6 +79,7 @@ export function useUpdateCustoFixo() {
       return data as CustoFixo
     },
     onSuccess: () => {
+      logAction('update', 'custos_fixos', 'updated')
       toast.success('Custo fixo atualizado!')
       queryClient.invalidateQueries({ queryKey: ['custos-fixos'] })
     },
@@ -100,6 +103,7 @@ export function useDeleteCustoFixo() {
       if (error) throw error
     },
     onSuccess: () => {
+      logAction('delete', 'custos_fixos', 'deleted')
       toast.success('Custo fixo removido.')
       queryClient.invalidateQueries({ queryKey: ['custos-fixos'] })
     },
