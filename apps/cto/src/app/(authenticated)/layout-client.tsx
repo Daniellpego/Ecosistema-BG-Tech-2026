@@ -21,7 +21,7 @@ export default function AuthenticatedLayoutClient({ children }: { children: Reac
           style={{ background: 'rgba(10,22,40,0.85)' }}
           role="banner"
         >
-          <div className="flex items-center justify-between pl-11 lg:pl-0 gap-2">
+          <div className="flex items-center justify-between pl-10 lg:pl-0 gap-2">
             <div className="flex items-center gap-2 min-w-0">
               <h2 className="text-[13px] sm:text-sm font-bold text-text-primary truncate">Painel do CTO</h2>
               <span className="text-xs text-text-muted hidden sm:inline">&middot; Gradios</span>

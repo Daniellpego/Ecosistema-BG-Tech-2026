@@ -124,8 +124,8 @@ export default function CalendarioPage() {
 
         <div className="flex gap-4">
           {/* Calendar grid */}
-          <StaggerItem>
-            <div className="card-glass !p-0 overflow-hidden flex-1">
+          <StaggerItem className="flex-1 min-w-0">
+            <div className="card-glass !p-0 overflow-hidden">
               <div className="grid grid-cols-7 border-b border-brand-blue-deep/20">
                 {WEEKDAYS.map((day) => (
                   <div key={day} className="text-center text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-muted py-2 sm:py-3">
@@ -144,7 +144,7 @@ export default function CalendarioPage() {
                       key={i}
                       onClick={() => day.isCurrentMonth && setSelectedDay(day.date === selectedDay ? null : day.date)}
                       className={cn(
-                        'min-h-[52px] sm:min-h-[90px] border-b border-r border-brand-blue-deep/12 p-1 sm:p-1.5 text-left transition-all',
+                        'min-h-[44px] sm:min-h-[90px] border-b border-r border-brand-blue-deep/12 p-0.5 sm:p-1.5 text-left transition-all',
                         day.isCurrentMonth ? 'hover:bg-brand-cyan/[0.04] cursor-pointer' : 'bg-bg-navy/40 cursor-default',
                         todayMatch && 'bg-brand-cyan/[0.04]',
                         isSelected && 'ring-2 ring-brand-cyan/40 bg-brand-cyan/[0.06]'

@@ -54,9 +54,8 @@ export default function RelatoriosPage() {
               <Sparkles className="h-4 w-4 text-brand-cyan" />
               <h3 className="text-sm font-semibold text-text-primary">Gerar Relatorio</h3>
             </div>
-            <p className="text-xs text-text-muted mb-4 leading-relaxed">
+            <p className="text-xs text-text-muted mb-3 sm:mb-4 leading-relaxed hidden sm:block">
               Selecione o tipo de relatório abaixo para gerar uma apresentação automaticamente.
-              Você pode criar relatórios de status, roadmap, financeiro ou personalizado.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
               {Object.entries(TIPO_CONFIG).map(([key, cfg]) => {
