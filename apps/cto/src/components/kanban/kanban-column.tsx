@@ -12,7 +12,7 @@ interface KanbanColumnProps { id: ProjetoStatus; label: string; color: string; b
 export function KanbanColumn({ id, label, color, bgColor, projetos }: KanbanColumnProps) {
   const { isOver, setNodeRef } = useDroppable({ id })
   return (
-    <div ref={setNodeRef} className={cn('kanban-column flex-1 transition-all', isOver && 'ring-2 ring-brand-cyan/40')} style={{ background: isOver ? 'rgba(0,200,240,0.05)' : undefined }}>
+    <div ref={setNodeRef} className={cn('kanban-column flex-1 transition-all', isOver && 'ring-2 ring-brand-cyan/40')} style={{ background: isOver ? 'rgba(0,191,255,0.05)' : undefined }}>
       <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2">
           <div className="h-2.5 w-2.5 rounded-full" style={{ background: color, boxShadow: `0 0 6px ${color}99` }} />
