@@ -4,6 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Perguntas sobre Automação B2B | Gradios",
   description: "Respostas diretas sobre automação de processos, integração de sistemas, desenvolvimento sob medida e IA para empresas B2B. Guia completo.",
+  alternates: { canonical: "/respostas" },
   openGraph: {
     title: "Perguntas sobre Automação B2B",
     description: "25+ respostas sobre automação, integrações e software sob medida para empresas B2B.",

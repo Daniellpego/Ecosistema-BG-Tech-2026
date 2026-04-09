@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Termos de Uso | Gradios",
   description: "Termos de uso da Gradios Soluções em Tecnologia.",
+  alternates: { canonical: "/termos" },
   openGraph: {
     title: "Termos de Uso | Gradios",
     description: "Termos e condições de uso dos serviços da Gradios.",

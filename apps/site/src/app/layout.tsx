@@ -127,6 +127,16 @@ const jsonLdFaq = {
   ],
 };
 
+/* ── JSON-LD: WebSite (Search Action) ── */
+const jsonLdWebSite = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Gradios",
+  url: "https://gradios.co",
+  publisher: { "@id": "https://gradios.co/#organization" },
+  inLanguage: "pt-BR",
+};
+
 /* ── JSON-LD: HowTo (Como Funciona) ── */
 const jsonLdHowTo = {
   "@context": "https://schema.org",
@@ -149,6 +159,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <head>
         <meta name="google-site-verification" content="7nYceyn4iiumWyr4hgV86mujYqaRa3Ni_qNShP5S67E" />
+        <link rel="alternate" type="application/rss+xml" title="Blog Gradios" href="/blog/feed.xml" />
         <meta name="theme-color" content="#2546BD" />
 
         {/* Preconnect to critical third-party origins */}
@@ -186,6 +197,10 @@ fbq('track', 'PageView');
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
         />
         <script
           type="application/ld+json"

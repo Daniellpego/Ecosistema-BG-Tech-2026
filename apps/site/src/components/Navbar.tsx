@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "#solucoes", label: "Soluções" },
   { href: "#como-funciona", label: "Como Funciona" },
   { href: "#cases", label: "Cases" },
+  { href: "/blog", label: "Blog" },
   { href: "#contato", label: "Contato" },
 ];
 

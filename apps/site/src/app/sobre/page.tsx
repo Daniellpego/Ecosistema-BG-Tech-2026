@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Sobre a Gradios | Quem Somos e Como Trabalhamos",
   description:
     "A Gradios é uma empresa de engenharia de software e automação B2B sediada em Londrina, PR. Conheça nosso time, valores e como eliminamos processos manuais.",
+  alternates: { canonical: "/sobre" },
   openGraph: {
     title: "Sobre a Gradios | Quem Somos",
     description:
