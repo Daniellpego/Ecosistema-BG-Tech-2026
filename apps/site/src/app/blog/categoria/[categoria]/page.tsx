@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allArticles, categories, getArticlesByCategory } from "../../_data";
+import { categories, getArticlesByCategory } from "../../_data";
 
 interface Props {
   params: Promise<{ categoria: string }>;

@@ -23,4 +23,4 @@ export function getArticlesByCategory(category: string): Article[] {
   return allArticles.filter((a) => a.category === category);
 }
 
-export const categories = [...new Set(allArticles.map((a) => a.category))];
+export const categories = Array.from(new Set(allArticles.map((a) => a.category)));

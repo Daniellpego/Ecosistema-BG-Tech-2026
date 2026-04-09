@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 // Non-critical UX enhancements — lazy load to reduce initial JS bundle
 const ScrollProgress = dynamic(() => import("@/components/ScrollProgress").then(m => m.ScrollProgress), { ssr: false });
 const SmoothScrollProvider = dynamic(() => import("@/providers/smooth-scroll").then(m => m.SmoothScrollProvider), { ssr: false });
+const WhatsAppFloat = dynamic(() => import("@/components/WhatsAppFloat").then(m => m.WhatsAppFloat), { ssr: false });
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +26,61 @@ export const viewport = {
 export const metadata: Metadata = {
   title: 'Gradios | Elimine processos manuais e escale sua operação B2B',
   description: 'Automatize processos e elimine 40h/mês de retrabalho manual. Engenharia de software B2B com resultado em 14 dias. Diagnóstico gratuito.',
-  keywords: ["automação b2b", "automação de processos", "desenvolvimento de software sob medida", "integração de sistemas", "dashboards empresariais", "ia para negócios", "software empresarial", "automação Londrina"],
+  keywords: [
+    "automação b2b", "automação de processos", "automação de processos Londrina", "desenvolvimento de software sob medida", "software sob medida Londrina",
+    "integração de sistemas", "dashboards empresariais", "ia para negócios", "software empresarial", "automação Londrina", "empresa de software Londrina",
+    "automação empresarial Paraná", "sistema personalizado para empresa",
+    // Serviços gerais + Londrina
+    "criação de site Londrina", "criação de sistema Londrina", "criação de software Londrina", "criação de painel Londrina",
+    "criação de dashboard Londrina", "desenvolvimento de aplicativo Londrina", "empresa de tecnologia Londrina", "empresa de IA Londrina",
+    "inteligência artificial para empresas Londrina", "dashboard empresarial Londrina", "painel de gestão Londrina",
+    "site institucional Londrina", "landing page Londrina", "sistema de gestão Londrina",
+    // Saúde
+    "automação clínica Londrina", "sistema para clínica Londrina", "site para clínica Londrina", "dashboard clínica Londrina",
+    "software clínica Londrina", "IA para clínica Londrina", "agendamento automático clínica Londrina",
+    // Contabilidade
+    "automação contabilidade Londrina", "sistema contábil Londrina", "site escritório contabilidade Londrina",
+    "dashboard contábil Londrina", "software contabilidade Londrina", "IA contabilidade Londrina",
+    // Imobiliárias
+    "automação imobiliária Londrina", "sistema imobiliária Londrina", "site imobiliária Londrina",
+    "dashboard imobiliário Londrina", "software imobiliária Londrina", "CRM imobiliário Londrina",
+    // Indústria
+    "automação indústria Londrina", "sistema industrial Londrina", "dashboard industrial Londrina",
+    "software indústria Londrina", "painel de produção Londrina", "IA para indústria Londrina",
+    // Varejo
+    "automação varejo Londrina", "sistema para loja Londrina", "site para loja Londrina",
+    "dashboard varejo Londrina", "software varejo Londrina",
+    // Atacado e Distribuidoras
+    "automação atacado Londrina", "sistema distribuidora Londrina", "dashboard distribuidora Londrina",
+    "software distribuidora Londrina", "catálogo digital Londrina",
+    // Logística
+    "automação logística Londrina", "sistema transportadora Londrina", "dashboard logística Londrina",
+    "software logística Londrina", "painel de frotas Londrina",
+    // Agronegócio
+    "automação agronegócio Londrina", "sistema agro Londrina", "dashboard agronegócio Londrina",
+    "software agro Londrina", "IA agronegócio Londrina",
+    // Restaurantes
+    "automação restaurante Londrina", "sistema restaurante Londrina", "site restaurante Londrina",
+    "cardápio digital Londrina", "software restaurante Londrina",
+    // Academias
+    "automação academia Londrina", "sistema academia Londrina", "site academia Londrina",
+    "dashboard academia Londrina", "software academia Londrina",
+    // Advocacia
+    "automação escritório advocacia Londrina", "sistema jurídico Londrina", "site escritório advocacia Londrina",
+    "dashboard jurídico Londrina", "software advocacia Londrina",
+    // Construtoras
+    "automação construtora Londrina", "sistema construtora Londrina", "dashboard obra Londrina",
+    "software construtora Londrina", "painel de obras Londrina",
+    // Oficinas
+    "automação oficina mecânica Londrina", "sistema oficina Londrina", "site oficina Londrina",
+    "software oficina Londrina",
+    // Educação
+    "automação escola Londrina", "sistema educação Londrina", "site escola Londrina",
+    "dashboard escolar Londrina", "software escola Londrina",
+    // Barbearias e Salões
+    "automação salão beleza Londrina", "automação barbearia Londrina", "sistema barbearia Londrina",
+    "site barbearia Londrina", "agendamento online barbearia Londrina",
+  ],
   authors: [{ name: "Gradios Soluções em Tecnologia" }],
   metadataBase: new URL("https://gradios.co"),
   alternates: { canonical: "/" },
@@ -109,6 +164,24 @@ const jsonLdOrg = {
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Integrações e APIs", description: "Conexão entre ERPs, CRMs, planilhas e ferramentas num fluxo único automatizado." } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Dashboards e Relatórios", description: "KPIs em tempo real para decisões baseadas em dados." } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "IA Aplicada ao Negócio", description: "Inteligência artificial integrada ao fluxo operacional para análise, atendimento e decisão." } },
+      // Serviços por nicho — automação, software, site, dashboard e IA pra cada setor em Londrina
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Clínicas e Consultórios em Londrina", description: "Automação de agendamento, atendimento 24/7 via WhatsApp com IA, software de gestão de pacientes, site profissional e dashboard de consultas para clínicas em Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Contabilidade em Londrina", description: "Software contábil sob medida, automação de processos fiscais, site profissional, dashboard financeiro e IA para análise de dados em escritórios de contabilidade em Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Imobiliárias em Londrina", description: "CRM imobiliário, software de gestão, site com busca de imóveis, dashboard de vendas, automação de leads e IA para atendimento em imobiliárias de Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Indústria em Londrina", description: "Software industrial sob medida, automação de produção, painel de controle operacional, dashboard de KPIs e IA preditiva para indústrias em Londrina e norte do Paraná." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Varejo e Comércio em Londrina", description: "Sistema de gestão de loja, site e e-commerce, automação de estoque, dashboard de vendas e IA para previsão de demanda em comércios de Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Distribuidoras e Atacado em Londrina", description: "Software de gestão, catálogo digital, automação de pedidos, dashboard logístico e integração com ERPs para distribuidoras em Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Logística e Transportadoras em Londrina", description: "Software de gestão de frotas, painel de rastreamento, automação de documentos, dashboard operacional e IA para roteirização em transportadoras de Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Agronegócio em Londrina", description: "Software de gestão agrícola, dashboard de safra, automação de processos, painel financeiro e IA para análise de dados no agronegócio do norte do Paraná." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Restaurantes em Londrina", description: "Sistema de pedidos, cardápio digital, site do restaurante, automação de delivery, dashboard de vendas e IA para gestão de cozinha em restaurantes de Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Academias em Londrina", description: "Software de gestão de alunos, site da academia, automação de cobranças, dashboard de frequência e agendamento inteligente para academias em Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Escritórios de Advocacia em Londrina", description: "Software jurídico sob medida, site profissional, automação de prazos e documentos, dashboard de processos e IA para pesquisa jurídica em escritórios de Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Construtoras em Londrina", description: "Software de gestão de obras, painel de projetos, automação de cronograma, dashboard de custos e integração com sistemas para construtoras em Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Oficinas Mecânicas em Londrina", description: "Sistema de ordens de serviço, site da oficina, automação de orçamentos, dashboard de peças e gestão de clientes para oficinas em Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Escolas em Londrina", description: "Software de gestão escolar, site da escola, automação de matrículas, dashboard pedagógico e comunicação automática com pais para escolas em Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Soluções para Salões e Barbearias em Londrina", description: "Sistema de agendamento online, site profissional, automação de lembretes, dashboard de clientes e gestão financeira para salões e barbearias em Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Criação de Sites em Londrina", description: "Sites institucionais, landing pages, portais corporativos e e-commerce com design profissional e performance otimizada para empresas de Londrina." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Criação de Dashboards e Painéis em Londrina", description: "Dashboards em tempo real, painéis de gestão, relatórios automatizados e business intelligence para empresas de Londrina." } },
     ],
   },
 };
@@ -225,6 +298,7 @@ fbq('track', 'PageView');
             {children}
           </main>
           <Footer />
+          <WhatsAppFloat />
         </SmoothScrollProvider>
       </body>
     </html>
