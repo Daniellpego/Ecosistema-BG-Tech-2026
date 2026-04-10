@@ -24,8 +24,8 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Gradios | Elimine processos manuais e escale sua operação B2B',
-  description: 'Automatize processos e elimine 40h/mês de retrabalho manual. Engenharia de software B2B com resultado em 14 dias. Diagnóstico gratuito.',
+  title: 'Gradios | Automação de Processos B2B e Software Sob Medida',
+  description: 'Automação de processos B2B e software sob medida. Elimine 40h/mês de retrabalho manual com integrações, dashboards e IA. Diagnóstico gratuito.',
   keywords: [
     "automação b2b", "automação de processos", "automação de processos Londrina", "desenvolvimento de software sob medida", "software sob medida Londrina",
     "integração de sistemas", "dashboards empresariais", "ia para negócios", "software empresarial", "automação Londrina", "empresa de software Londrina",
@@ -86,17 +86,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    title: "Gradios | Elimine processos manuais e escale sua operação B2B",
-    description: "Engenharia de software e IA para eliminar gargalos operacionais. Resultado em 14 dias. Diagnóstico gratuito.",
+    title: "Gradios | Automação de Processos B2B e Software Sob Medida",
+    description: "Automação de processos B2B e software sob medida. Integrações, dashboards e IA para eliminar gargalos operacionais. Diagnóstico gratuito.",
     siteName: "Gradios",
     locale: "pt_BR",
     url: "https://gradios.co",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Gradios - Elimine processos manuais e escale sua operação B2B" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Gradios - Automação de Processos B2B e Software Sob Medida" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gradios | Elimine processos manuais e escale sua operação B2B",
-    description: "Engenharia de software e IA para eliminar gargalos operacionais. Resultado em 14 dias.",
+    title: "Gradios | Automação de Processos B2B e Software Sob Medida",
+    description: "Automação de processos B2B e software sob medida. Integrações, dashboards e IA para eliminar gargalos operacionais.",
     images: ["/opengraph-image"],
   },
   robots: { index: true, follow: true },
@@ -131,6 +131,9 @@ const jsonLdOrg = {
   sameAs: [
     "https://www.instagram.com/gradios",
     "https://www.linkedin.com/company/gradios",
+    "https://www.facebook.com/gradios",
+    "https://x.com/gradiosco",
+    "https://www.youtube.com/@gradios",
   ],
   founder: [
     {
@@ -228,6 +231,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang="pt-BR">
       <head>
@@ -238,6 +243,29 @@ export default function RootLayout({
         {/* Preconnect to critical third-party origins */}
         <link rel="preconnect" href="https://connect.facebook.net" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
+        {gaId && (
+          <>
+            <link rel="preconnect" href="https://www.googletagmanager.com" />
+            <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+          </>
+        )}
+
+        {/* Google Analytics 4 — gtag.js */}
+        {gaId && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaId}', { anonymize_ip: true });
+                `.trim(),
+              }}
+            />
+          </>
+        )}
 
         {/* Meta Pixel Code */}
         <script
@@ -259,7 +287,7 @@ fbq('track', 'PageView');
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <noscript>
           <img
-            alt=""
+            alt="Meta Pixel"
             height="1"
             width="1"
             style={{ display: 'none' }}

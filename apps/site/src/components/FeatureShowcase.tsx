@@ -57,7 +57,7 @@ export function FeatureShowcase() {
               Como Funciona
             </div>
             <WordReveal
-              text="Você explica o problema. A gente resolve."
+              text="Software sob medida e automação de processos: você explica, a gente resolve."
               className="text-4xl lg:text-5xl font-bold text-text leading-tight mb-4"
             />
             <p className="text-text-muted text-lg mt-4 leading-relaxed max-w-lg">

@@ -31,8 +31,12 @@ export function Footer() {
               {/* +17 empresas seal */}
               <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-pill px-3 py-2 mb-6 inline-flex">
                 <div className="flex -space-x-1.5">
-                  {["/logo-cliente-1.webp", "/logo-cliente-2.webp", "/logo-cliente-3.webp"].map((src, i) => (
-                    <Image key={i} src={src} alt="" width={20} height={20} className="w-5 h-5 rounded-full border border-[#0A1628] object-cover bg-white" style={{ zIndex: 3 - i }} />
+                  {[
+                    { src: "/logo-cliente-1.webp", alt: "Logo de cliente Gradios — contabilidade" },
+                    { src: "/logo-cliente-2.webp", alt: "Logo de cliente Gradios — saúde" },
+                    { src: "/logo-cliente-3.webp", alt: "Logo de cliente Gradios — varejo" },
+                  ].map((logo, i) => (
+                    <Image key={i} src={logo.src} alt={logo.alt} width={20} height={20} className="w-5 h-5 rounded-full border border-[#0A1628] object-cover bg-white" style={{ zIndex: 3 - i }} />
                   ))}
                 </div>
                 <span className="text-xs text-[#94A3B8]"><span className="text-white font-semibold">+17</span> empresas atendidas</span>
@@ -50,6 +54,65 @@ export function Footer() {
                 </svg>
                 Falar com um especialista
               </a>
+
+              {/* Social links */}
+              <div className="flex items-center gap-3 mt-6">
+                <a
+                  href="https://www.instagram.com/gradios"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram da Gradios"
+                  className="w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-[#94A3B8] hover:text-white transition-all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.069 1.646.069 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.069-4.85.069s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.747 2.163 15.367 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163zm0 1.838c-3.141 0-3.495.012-4.73.068-1.043.048-1.61.218-1.987.363-.499.194-.856.426-1.231.801-.375.375-.607.732-.801 1.231-.145.377-.315.944-.363 1.987-.056 1.235-.068 1.589-.068 4.73s.012 3.495.068 4.73c.048 1.043.218 1.61.363 1.987.194.499.426.856.801 1.231.375.375.732.607 1.231.801.377.145.944.315 1.987.363 1.235.056 1.589.068 4.73.068s3.495-.012 4.73-.068c1.043-.048 1.61-.218 1.987-.363.499-.194.856-.426 1.231-.801.375-.375.607-.732.801-1.231.145-.377.315-.944.363-1.987.056-1.235.068-1.589.068-4.73s-.012-3.495-.068-4.73c-.048-1.043-.218-1.61-.363-1.987-.194-.499-.426-.856-.801-1.231-.375-.375-.732-.607-1.231-.801-.377-.145-.944-.315-1.987-.363-1.235-.056-1.589-.068-4.73-.068zm0 3.063c-2.755 0-4.987 2.232-4.987 4.987s2.232 4.987 4.987 4.987 4.987-2.232 4.987-4.987S14.755 7.064 12 7.064zm0 8.221A3.234 3.234 0 1 1 12 8.817a3.234 3.234 0 0 1 0 6.468zm5.197-8.395a1.165 1.165 0 1 1 0-2.33 1.165 1.165 0 0 1 0 2.33z"/>
+                  </svg>
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/gradios"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn da Gradios"
+                  className="w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-[#94A3B8] hover:text-white transition-all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                  </svg>
+                </a>
+                <a
+                  href="https://www.facebook.com/gradios"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook da Gradios"
+                  className="w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-[#94A3B8] hover:text-white transition-all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22.675 0h-21.35C.595 0 0 .593 0 1.325v21.351C0 23.408.595 24 1.325 24h11.495v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116C23.405 24 24 23.408 24 22.676V1.325C24 .593 23.405 0 22.675 0z"/>
+                  </svg>
+                </a>
+                <a
+                  href="https://x.com/gradiosco"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="X (Twitter) da Gradios"
+                  className="w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-[#94A3B8] hover:text-white transition-all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                </a>
+                <a
+                  href="https://www.youtube.com/@gradios"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="YouTube da Gradios"
+                  className="w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-[#94A3B8] hover:text-white transition-all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                </a>
+              </div>
             </div>
 
             {/* Soluções */}
