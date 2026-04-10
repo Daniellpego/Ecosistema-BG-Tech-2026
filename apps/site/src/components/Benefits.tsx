@@ -97,7 +97,7 @@ export function Benefits() {
             O que fazemos
           </motion.div>
           <WordReveal
-            text="Seis formas de tirar trabalho do seu time"
+            text="Seis formas de automação de processos para tirar trabalho do seu time"
             className="text-4xl lg:text-5xl font-bold text-text text-center leading-tight mb-4"
           />
           <motion.p

@@ -126,6 +126,7 @@ export function Hero() {
 
           {/* H1 — Ogilvy: fato + promessa, sem floreio */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-text leading-[1.1] mb-6 mt-2">
+            <span className="sr-only">Automação de processos B2B e software sob medida — </span>
             <span className="block">
               Seu time perde <span className="text-highlight">40h por mês</span>
             </span>

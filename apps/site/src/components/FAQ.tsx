@@ -53,7 +53,7 @@ export function FAQ() {
             Antes de decidir
           </motion.div>
           <WordReveal
-            text="As perguntas que você deveria fazer"
+            text="Automação de processos B2B: as perguntas que você deveria fazer"
             className="text-4xl lg:text-5xl font-bold text-text text-center leading-tight mb-4"
           />
           <motion.p
