@@ -133,8 +133,20 @@ const jsonLd = {
     },
   ],
   sameAs: [
-    "https://www.instagram.com/gradios",
+    "https://www.instagram.com/gradios.ai/",
     "https://www.linkedin.com/company/gradios",
+    "https://www.facebook.com/gradios",
+    "https://x.com/gradiosco",
+    "https://www.youtube.com/@gradios",
+  ],
+};
+
+const jsonLdBreadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Início", item: "https://gradios.co" },
+    { "@type": "ListItem", position: 2, name: "Sobre a Gradios", item: "https://gradios.co/sobre" },
   ],
 };
 
@@ -144,6 +156,10 @@ export default function SobrePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">

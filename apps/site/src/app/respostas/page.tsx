@@ -221,12 +221,25 @@ const jsonLdFaqRespostas = {
   })),
 };
 
+const jsonLdBreadcrumbRespostas = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Início", item: "https://gradios.co" },
+    { "@type": "ListItem", position: 2, name: "Perguntas sobre Automação", item: "https://gradios.co/respostas" },
+  ],
+};
+
 export default function RespostasPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaqRespostas) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbRespostas) }}
       />
       <div className="bg-white py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

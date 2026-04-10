@@ -83,7 +83,13 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Gradios Soluções em Tecnologia" }],
   metadataBase: new URL("https://gradios.co"),
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    languages: {
+      "pt-BR": "https://gradios.co",
+      "x-default": "https://gradios.co",
+    },
+  },
   openGraph: {
     type: "website",
     title: "Gradios | Automação de Processos B2B e Software Sob Medida",
@@ -103,33 +109,89 @@ export const metadata: Metadata = {
   other: { "theme-color": "#2546BD" },
 };
 
-/* ── JSON-LD: Organization + LocalBusiness ── */
+/* ── JSON-LD: Organization + LocalBusiness + ProfessionalService ── */
 const jsonLdOrg = {
   "@context": "https://schema.org",
-  "@type": ["Organization", "LocalBusiness"],
+  "@type": ["Organization", "LocalBusiness", "ProfessionalService"],
   "@id": "https://gradios.co/#organization",
   name: "Gradios Soluções em Tecnologia",
+  alternateName: "Gradios",
   legalName: "Gradios Soluções em Tecnologia LTDA",
   url: "https://gradios.co",
-  logo: "https://gradios.co/logo.webp",
+  logo: {
+    "@type": "ImageObject",
+    url: "https://gradios.co/logo.webp",
+    width: 200,
+    height: 183,
+  },
+  image: "https://gradios.co/logo.webp",
   description: "Empresa de engenharia de software e automação B2B especializada em eliminar processos manuais. Automação de processos, desenvolvimento sob medida, integrações de sistemas, dashboards empresariais e IA aplicada ao negócio.",
+  slogan: "Automação de processos B2B e software sob medida que eliminam retrabalho manual.",
   foundingDate: "2024",
-  areaServed: "BR",
+  taxID: "65.663.208/0001-36",
+  vatID: "65.663.208/0001-36",
+  priceRange: "R$ 3.000 - R$ 30.000",
+  currenciesAccepted: "BRL",
+  paymentAccepted: "PIX, Boleto, Cartão de Crédito, Transferência Bancária",
+  knowsLanguage: ["pt-BR", "Portuguese"],
+  knowsAbout: [
+    "Automação de Processos B2B",
+    "Software Sob Medida",
+    "Integração de Sistemas",
+    "Dashboards Empresariais",
+    "Inteligência Artificial Aplicada",
+    "Engenharia de Software",
+    "Desenvolvimento Web",
+    "APIs e Webhooks",
+    "ERP, CRM, WhatsApp Business",
+  ],
+  areaServed: [
+    { "@type": "Country", name: "Brasil" },
+    { "@type": "State", name: "Paraná" },
+    { "@type": "City", name: "Londrina" },
+    { "@type": "City", name: "Maringá" },
+    { "@type": "City", name: "Curitiba" },
+    { "@type": "City", name: "São Paulo" },
+  ],
   address: {
     "@type": "PostalAddress",
     addressLocality: "Londrina",
     addressRegion: "PR",
     addressCountry: "BR",
   },
-  contactPoint: {
-    "@type": "ContactPoint",
-    telephone: "+5543988372540",
-    contactType: "sales",
-    availableLanguage: "Portuguese",
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: -23.3045,
+    longitude: -51.1696,
   },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "08:00",
+      closes: "18:00",
+    },
+  ],
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      telephone: "+5543988372540",
+      contactType: "sales",
+      availableLanguage: ["Portuguese", "pt-BR"],
+      areaServed: "BR",
+      contactOption: "TollFree",
+    },
+    {
+      "@type": "ContactPoint",
+      telephone: "+5543988372540",
+      contactType: "customer support",
+      availableLanguage: ["Portuguese", "pt-BR"],
+      areaServed: "BR",
+    },
+  ],
   email: "contato@gradios.com.br",
   sameAs: [
-    "https://www.instagram.com/gradios",
+    "https://www.instagram.com/gradios.ai/",
     "https://www.linkedin.com/company/gradios",
     "https://www.facebook.com/gradios",
     "https://x.com/gradiosco",
@@ -219,10 +281,85 @@ const jsonLdHowTo = {
   "@type": "HowTo",
   name: "Como automatizar processos com a Gradios",
   description: "Processo em 3 etapas para eliminar processos manuais da sua empresa.",
+  totalTime: "P14D",
+  estimatedCost: { "@type": "MonetaryAmount", currency: "BRL", value: "0" },
   step: [
     { "@type": "HowToStep", position: 1, name: "Diagnóstico Gratuito", text: "Mapeamos seu processo atual, identificamos gargalos e mostramos onde a automação gera mais resultado. Antes de gastar R$ 1." },
     { "@type": "HowToStep", position: 2, name: "Solução Desenvolvida", text: "Desenvolvemos a solução sob medida: automação, software ou integração. Entregas rápidas, validadas em cada etapa." },
     { "@type": "HowToStep", position: 3, name: "Automação Rodando", text: "Colocamos em produção, treinamos seu time e acompanhamos os primeiros resultados. Suporte contínuo incluso." },
+  ],
+};
+
+/* ── JSON-LD: BreadcrumbList global (home) ── */
+const jsonLdBreadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Início", item: "https://gradios.co" },
+  ],
+};
+
+/* ── JSON-LD: Service schemas individuais ── */
+const jsonLdServices = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      "@id": "https://gradios.co/#service-automacao",
+      name: "Automação de Processos B2B",
+      serviceType: "Automação de Processos",
+      provider: { "@id": "https://gradios.co/#organization" },
+      areaServed: { "@type": "Country", name: "Brasil" },
+      description: "Automação de aprovações, cobranças, relatórios, integrações e notificações sem intervenção humana. Eliminamos retrabalho manual e devolvemos 40h/mês ao seu time.",
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "BRL",
+        priceSpecification: { "@type": "PriceSpecification", priceCurrency: "BRL", price: "3000", minPrice: "3000", maxPrice: "30000" },
+        availability: "https://schema.org/InStock",
+      },
+    },
+    {
+      "@type": "Service",
+      "@id": "https://gradios.co/#service-software",
+      name: "Desenvolvimento de Software Sob Medida",
+      serviceType: "Desenvolvimento de Software",
+      provider: { "@id": "https://gradios.co/#organization" },
+      areaServed: { "@type": "Country", name: "Brasil" },
+      description: "Sistemas customizados para a operação da sua empresa, do zero, no prazo. Web, mobile e desktop com tecnologia moderna (Next.js, TypeScript, Supabase).",
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "BRL",
+        priceSpecification: { "@type": "PriceSpecification", priceCurrency: "BRL", price: "5000", minPrice: "5000", maxPrice: "30000" },
+        availability: "https://schema.org/InStock",
+      },
+    },
+    {
+      "@type": "Service",
+      "@id": "https://gradios.co/#service-integracoes",
+      name: "Integrações de Sistemas e APIs",
+      serviceType: "Integração de Sistemas",
+      provider: { "@id": "https://gradios.co/#organization" },
+      areaServed: { "@type": "Country", name: "Brasil" },
+      description: "Conectamos ERP, CRM, planilhas, WhatsApp Business, e-mail e ferramentas legadas em um fluxo único automatizado. Webhooks, APIs REST e middleware customizado.",
+    },
+    {
+      "@type": "Service",
+      "@id": "https://gradios.co/#service-dashboards",
+      name: "Dashboards e Relatórios em Tempo Real",
+      serviceType: "Business Intelligence",
+      provider: { "@id": "https://gradios.co/#organization" },
+      areaServed: { "@type": "Country", name: "Brasil" },
+      description: "KPIs, métricas e relatórios automatizados em dashboards web responsivos. Decisões baseadas em dados, não em achismo.",
+    },
+    {
+      "@type": "Service",
+      "@id": "https://gradios.co/#service-ia",
+      name: "Inteligência Artificial Aplicada ao Negócio",
+      serviceType: "IA para Empresas",
+      provider: { "@id": "https://gradios.co/#organization" },
+      areaServed: { "@type": "Country", name: "Brasil" },
+      description: "Inteligência artificial integrada ao fluxo operacional para análise, atendimento, classificação e tomada de decisão. LLMs, RAG, agents e automação inteligente.",
+    },
   ],
 };
 
@@ -310,6 +447,14 @@ fbq('track', 'PageView');
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdHowTo) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdServices) }}
         />
       </head>
       <body className={`${inter.variable} font-sans`}>

@@ -58,10 +58,10 @@ export function Footer() {
               {/* Social links */}
               <div className="flex items-center gap-3 mt-6">
                 <a
-                  href="https://www.instagram.com/gradios"
+                  href="https://www.instagram.com/gradios.ai/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Instagram da Gradios"
+                  aria-label="Instagram da Gradios (@gradios.ai)"
                   className="w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-[#94A3B8] hover:text-white transition-all"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">

@@ -57,7 +57,7 @@ export default async function ArticlePage({ params }: Props) {
     )
     .slice(0, 2);
 
-  // JSON-LD Article schema
+  // JSON-LD Article schema (com autor Person para E-E-A-T)
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -66,20 +66,38 @@ export default async function ArticlePage({ params }: Props) {
     datePublished: article.publishedAt,
     dateModified: article.updatedAt ?? article.publishedAt,
     author: {
-      "@type": "Organization",
-      name: "Gradios Soluções em Tecnologia",
-      url: "https://gradios.co",
+      "@type": "Person",
+      name: "Daniel Pego",
+      jobTitle: "Co-fundador & Head de Engenharia",
+      url: "https://gradios.co/sobre",
+      image: "https://gradios.co/daniel-pego.webp",
+      worksFor: {
+        "@type": "Organization",
+        name: "Gradios Soluções em Tecnologia",
+        "@id": "https://gradios.co/#organization",
+      },
     },
     publisher: {
       "@type": "Organization",
       name: "Gradios",
+      "@id": "https://gradios.co/#organization",
       logo: { "@type": "ImageObject", url: "https://gradios.co/logo.webp" },
     },
-    mainEntityOfPage: `https://gradios.co/blog/${article.slug}`,
-    image: `https://gradios.co/blog/${article.slug}/opengraph-image`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://gradios.co/blog/${article.slug}`,
+    },
+    image: {
+      "@type": "ImageObject",
+      url: `https://gradios.co/blog/${article.slug}/opengraph-image`,
+      width: 1200,
+      height: 630,
+    },
+    articleSection: article.category,
     keywords: article.keywords.join(", "),
     wordCount: article.readingTime * 200,
     inLanguage: "pt-BR",
+    isAccessibleForFree: true,
   };
 
   // JSON-LD BreadcrumbList schema

@@ -33,9 +33,37 @@ const categoryColors: Record<string, string> = {
   Ferramentas: "bg-cyan-100 text-cyan-700",
 };
 
+const jsonLdBreadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Início", item: "https://gradios.co" },
+    { "@type": "ListItem", position: 2, name: "Blog", item: "https://gradios.co/blog" },
+  ],
+};
+
+const jsonLdBlog = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": "https://gradios.co/blog#blog",
+  name: "Blog Gradios",
+  description: "Conteúdo técnico e estratégico sobre automação de processos B2B, software sob medida, integração de sistemas e IA aplicada ao negócio.",
+  url: "https://gradios.co/blog",
+  inLanguage: "pt-BR",
+  publisher: { "@id": "https://gradios.co/#organization" },
+};
+
 export default function BlogPage() {
   return (
     <section className="py-16 lg:py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBlog) }}
+      />
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="max-w-3xl">
