@@ -7,9 +7,16 @@
     @apply border-slate-200/60;
   }
 
+  html {
+    /* Ensure safe areas work on iOS PWA */
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply text-text-primary font-inter antialiased;
     background: #f7f9fb;
+    /* Prevent overscroll bounce showing white behind */
+    overscroll-behavior: none;
   }
 
   ::-webkit-scrollbar {
