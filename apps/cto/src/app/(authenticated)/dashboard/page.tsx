@@ -277,7 +277,7 @@ function EmptyState({
       </div>
       <div className="space-y-0.5 sm:space-y-1">
         <p className="text-sm font-semibold text-text-secondary">{title}</p>
-        <p className="text-[11px] sm:text-xs text-text-muted max-w-[220px] leading-relaxed">{subtitle}</p>
+        <p className="text-xs text-text-muted max-w-[240px] leading-relaxed">{subtitle}</p>
       </div>
     </div>
   )
@@ -364,7 +364,7 @@ export default function DashboardPage() {
             <h1 className="text-[26px] sm:text-4xl md:text-5xl font-extrabold text-text-primary tracking-tight leading-tight">
               {greeting}, CTO.
             </h1>
-            <p className="text-text-secondary text-[13px] sm:text-sm mt-1.5 max-w-lg leading-relaxed">
+            <p className="text-text-secondary text-sm mt-1.5 max-w-lg leading-relaxed">
               Visao estrategica em tempo real dos projetos e entregas da Gradios.
             </p>
           </div>

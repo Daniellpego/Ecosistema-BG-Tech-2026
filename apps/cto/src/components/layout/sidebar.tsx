@@ -149,7 +149,7 @@ export function Sidebar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+              className="lg:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             />
             <motion.aside
               initial={{ x: -280 }}
@@ -158,10 +158,11 @@ export function Sidebar() {
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-[260px] bg-bg-card border-r border-brand-blue-deep/40"
             >
+              {/* Close button: 44px touch target */}
               <button
                 onClick={() => setMobileOpen(false)}
                 aria-label="Fechar menu"
-                className="absolute top-4 right-4 h-8 w-8 flex items-center justify-center rounded-md text-text-secondary hover:text-text-primary"
+                className="absolute top-3 right-3 h-11 w-11 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary active:bg-slate-100 transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>

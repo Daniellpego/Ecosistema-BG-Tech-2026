@@ -23,7 +23,8 @@ export function BottomNav() {
         boxShadow: '0 -4px 24px rgba(0,102,138,0.06)',
       }}
     >
-      <div className="flex items-center justify-around px-3 pt-2.5 pb-2">
+      {/* Each link is min 48px tall (py-2 = 8px top+bottom + 24px icon + text) */}
+      <div className="flex items-center justify-around px-4 pt-2 pb-1.5">
         {ITEMS.map((item) => {
           const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
           const Icon = item.icon
@@ -32,14 +33,14 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-xl transition-all duration-200 active:scale-[0.92]',
+                'flex flex-col items-center justify-center min-h-[48px] min-w-[56px] gap-0.5 py-1.5 px-3 rounded-[14px] transition-all duration-200 active:scale-[0.90]',
                 isActive
                   ? 'bg-gradient-to-br from-[#00668a] to-[#00BFFF] text-white'
-                  : 'text-slate-400 hover:text-[#00BFFF]'
+                  : 'text-slate-400'
               )}
             >
-              <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-medium leading-tight">
+              <Icon className={cn('h-5 w-5', isActive && 'h-[22px] w-[22px]')} />
+              <span className={cn('text-[10px] font-medium leading-tight', isActive && 'font-semibold')}>
                 {item.label}
               </span>
             </Link>
