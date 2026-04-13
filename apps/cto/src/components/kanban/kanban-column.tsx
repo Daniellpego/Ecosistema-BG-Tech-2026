@@ -12,21 +12,29 @@ interface KanbanColumnProps { id: ProjetoStatus; label: string; color: string; b
 export function KanbanColumn({ id, label, color, bgColor, projetos }: KanbanColumnProps) {
   const { isOver, setNodeRef } = useDroppable({ id })
   return (
-    <div ref={setNodeRef} className={cn('kanban-column flex-1 transition-all', isOver && 'ring-2 ring-brand-cyan/40')} style={{ background: isOver ? 'rgba(0,191,255,0.05)' : undefined }}>
-      <div className="flex items-center justify-between mb-4 px-1">
+    <div ref={setNodeRef} className={cn('kanban-column flex-1 transition-all', isOver && 'ring-2 ring-brand-cyan/40 bg-brand-cyan/[0.03] rounded-2xl')}>
+      <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-2">
-          <div className="h-2.5 w-2.5 rounded-full" style={{ background: color, boxShadow: `0 0 6px ${color}99` }} />
-          <h3 className="text-sm font-semibold text-text-primary">{label}</h3>
+          <div className="h-2 w-2 rounded-full" style={{ background: color }} />
+          <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wide">{label}</h3>
+          <span
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{ color, background: bgColor }}
+          >
+            {projetos.length}
+          </span>
         </div>
-        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ color, background: bgColor }}>{projetos.length}</span>
       </div>
-      <div className="h-px mb-3 mx-1 rounded-full" style={{ background: `linear-gradient(90deg, ${color}66 0%, ${color}11 100%)` }} />
+
       <SortableContext items={projetos.map((p) => p.id)} strategy={verticalListSortingStrategy}>
-        <div className="space-y-2 min-h-[120px]">
+        <div className="space-y-3 min-h-[120px]">
           {projetos.length === 0 ? (
-            <div className={cn('flex flex-col items-center justify-center min-h-[120px] rounded-xl border-2 border-dashed', isOver ? 'border-brand-cyan/50 bg-brand-cyan/5' : 'border-slate-200')}>
-              <LayoutGrid className="h-6 w-6 mb-2" style={{ color: isOver ? color : '#64748B' }} />
-              <span className="text-xs text-text-muted">{isOver ? 'Soltar aqui' : 'Nenhum projeto'}</span>
+            <div className={cn(
+              'flex flex-col items-center justify-center min-h-[100px] rounded-[14px] border-2 border-dashed transition-colors',
+              isOver ? 'border-brand-cyan/50 bg-brand-cyan/5' : 'border-slate-200/60 bg-white/30'
+            )}>
+              <LayoutGrid className="h-5 w-5 mb-1.5 opacity-30" style={{ color: isOver ? color : '#94A3B8' }} />
+              <span className="text-[11px] text-text-muted font-medium">{isOver ? 'Soltar aqui' : 'Nenhum projeto'}</span>
             </div>
           ) : projetos.map((p) => <KanbanCard key={p.id} projeto={p} />)}
         </div>

@@ -13,14 +13,12 @@ import {
   MessageSquare,
   AlertCircle,
   Flag,
-  ArrowUpRight,
   CalendarDays,
   Activity,
   Target,
   Rocket,
   ChevronRight,
   Circle,
-  Sparkles,
   BarChart3,
   Users,
   Timer,
@@ -75,29 +73,27 @@ function KPICard({
   const color = normalizeColor(accentColor)
   return (
     <StaggerItem>
-      <div className="card-glass">
-        <div className="flex items-start justify-between mb-3">
+      <div className="glass-panel p-5 sm:p-6 relative overflow-hidden group" style={{ border: alert ? `1px solid ${color}30` : '1px solid rgba(226,232,240,0.5)', boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)' }}>
+        {alert && (
+          <div className="absolute inset-0 animate-pulse" style={{ background: `${color}08` }} />
+        )}
+
+        <div className="relative flex items-center justify-between mb-4">
+          <p className="text-sm font-medium text-text-secondary">{label}</p>
           <div
-            className="h-9 w-9 rounded-[10px] flex items-center justify-center"
-            style={{ background: `${color}12`, border: `1px solid ${color}20` }}
+            className="h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center transition-transform group-hover:scale-110"
+            style={{ background: `${color}15` }}
           >
-            <Icon className="h-4 w-4" style={{ color }} />
+            <Icon className="h-5 w-5" style={{ color }} />
           </div>
-          {alert && (
-            <div className="h-2 w-2 rounded-full bg-status-negative animate-pulse" />
-          )}
         </div>
 
-        <p className="text-xl sm:text-2xl font-bold tracking-tight mb-0.5" style={{ color }}>
+        <p className="relative text-3xl font-extrabold tracking-tight" style={{ color: alert ? color : '#191c1e' }}>
           <AnimatedNumber value={value} format={format} />
         </p>
 
-        <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-text-secondary">
-          {label}
-        </p>
-
         {subtitle && (
-          <p className="text-[10px] sm:text-xs text-text-muted mt-1">{subtitle}</p>
+          <p className="relative text-[11px] sm:text-xs text-text-muted mt-1.5">{subtitle}</p>
         )}
       </div>
     </StaggerItem>
@@ -107,20 +103,34 @@ function KPICard({
 // ─── Quick Stats Bar ──────────────────────────────────────────────────────────
 
 interface QuickStatProps {
-  icon: React.ElementType
+  icon?: React.ElementType
   label: string
   value: string
   color: string
 }
 
-function QuickStat({ icon: Icon, label, value, color }: QuickStatProps) {
+function QuickStat({ label, value, color, isAlert }: QuickStatProps & { isAlert?: boolean }) {
   return (
-    <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 sm:px-4 py-2.5 sm:py-2.5 bg-white/40 sm:bg-transparent">
-      <Icon className="h-4 w-4 shrink-0" style={{ color: normalizeColor(color) }} />
-      <div className="text-center sm:text-left min-w-0">
-        <p className="text-lg sm:text-sm font-bold text-text-primary leading-none sm:order-2">{value}</p>
-        <p className="text-[9px] sm:text-xs text-text-muted leading-none mt-0.5 whitespace-nowrap">{label}</p>
-      </div>
+    <div
+      className="p-3.5 sm:p-4 rounded-[14px] transition-colors"
+      style={{
+        background: '#ffffff',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+        border: isAlert ? '1px solid rgba(239,68,68,0.15)' : '1px solid rgba(226,232,240,0.4)',
+      }}
+    >
+      <p
+        className="text-[10px] font-bold uppercase tracking-widest mb-1"
+        style={{ color: isAlert ? '#EF4444' : '#6d7981' }}
+      >
+        {label}
+      </p>
+      <p
+        className="text-2xl font-extrabold tracking-tight"
+        style={{ color: isAlert ? '#EF4444' : normalizeColor(color) }}
+      >
+        {value}
+      </p>
     </div>
   )
 }
@@ -138,20 +148,20 @@ function urgencyConfig(days: number): { color: string; bg: string; label: string
 
 function UpdateIcon({ tipo }: { tipo: string }) {
   const map: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
-    bloqueio:     { icon: AlertCircle,  color: '#EF4444', bg: 'rgba(239,68,68,0.12)' },
-    entrega:      { icon: CheckCircle2, color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
-    milestone:    { icon: Flag,         color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
-    status_change:{ icon: GitMerge,     color: '#1A6AAA', bg: 'rgba(26,106,170,0.15)' },
-    nota:         { icon: MessageSquare,color: '#94A3B8', bg: 'rgba(148,163,184,0.10)' },
+    bloqueio:     { icon: AlertCircle,  color: '#FFFFFF', bg: '#EF4444' },
+    entrega:      { icon: CheckCircle2, color: '#FFFFFF', bg: '#006c49' },
+    milestone:    { icon: Flag,         color: '#FFFFFF', bg: '#F59E0B' },
+    status_change:{ icon: GitMerge,     color: '#FFFFFF', bg: '#00668a' },
+    nota:         { icon: MessageSquare,color: '#FFFFFF', bg: '#94A3B8' },
   }
-  const cfg = map[tipo] ?? { icon: Activity, color: '#00BFFF', bg: 'rgba(0,191,255,0.10)' }
+  const cfg = map[tipo] ?? { icon: Activity, color: '#FFFFFF', bg: '#00BFFF' }
   const Ic = cfg.icon
   return (
     <div
-      className="h-8 w-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-      style={{ background: cfg.bg, border: `1px solid ${cfg.color}25` }}
+      className="h-10 w-10 rounded-full flex items-center justify-center shrink-0"
+      style={{ background: cfg.bg }}
     >
-      <Ic className="h-3.5 w-3.5" style={{ color: cfg.color }} />
+      <Ic className="h-4 w-4" style={{ color: cfg.color }} />
     </div>
   )
 }
@@ -200,14 +210,14 @@ interface SectionHeaderProps {
 
 function SectionHeader({ icon: Icon, title, iconBg, iconColor, badge }: SectionHeaderProps) {
   return (
-    <div className="flex items-center gap-2 mb-4">
+    <div className="flex items-center gap-2.5 mb-3 sm:mb-4">
       <div
-        className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0"
+        className="h-8 w-8 sm:h-7 sm:w-7 rounded-lg flex items-center justify-center shrink-0"
         style={{ background: iconBg ?? 'rgba(0,191,255,0.12)' }}
       >
-        <Icon className="h-3.5 w-3.5" style={{ color: iconColor ?? '#00BFFF' }} />
+        <Icon className="h-4 w-4 sm:h-3.5 sm:w-3.5" style={{ color: iconColor ?? '#00BFFF' }} />
       </div>
-      <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
+      <h3 className="text-[15px] sm:text-sm font-semibold text-text-primary">{title}</h3>
       {badge && <div className="ml-auto">{badge}</div>}
     </div>
   )
@@ -249,19 +259,19 @@ function EmptyState({
   accentColor?: string
 }) {
   return (
-    <div className="flex flex-col items-center justify-center py-10 text-center gap-4">
+    <div className="flex flex-col items-center justify-center py-6 sm:py-10 text-center gap-3">
       <div
-        className="h-16 w-16 rounded-2xl flex items-center justify-center"
+        className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl sm:rounded-2xl flex items-center justify-center"
         style={{
-          background: `${accentColor}08`,
-          border: `1px dashed ${accentColor}30`,
+          background: `${accentColor}0C`,
+          border: `1.5px solid ${accentColor}20`,
         }}
       >
-        <Icon className="h-6 w-6 opacity-50" style={{ color: accentColor }} />
+        <Icon className="h-5 w-5 sm:h-6 sm:w-6 opacity-60" style={{ color: accentColor }} />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-0.5 sm:space-y-1">
         <p className="text-sm font-semibold text-text-secondary">{title}</p>
-        <p className="text-xs text-text-muted max-w-[200px] leading-relaxed">{subtitle}</p>
+        <p className="text-[11px] sm:text-xs text-text-muted max-w-[220px] leading-relaxed">{subtitle}</p>
       </div>
     </div>
   )
@@ -332,80 +342,37 @@ export default function DashboardPage() {
       <div className="space-y-4 sm:space-y-6">
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
-        <div className="flex items-start justify-between gap-3">
+        <section className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="h-4 w-4 text-brand-cyan opacity-70" />
-              <span className="text-[10px] sm:text-xs font-medium text-text-muted uppercase tracking-widest">
-                {greeting}
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-negative text-white text-[10px] font-bold uppercase tracking-wider">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                Ao Vivo
               </span>
+              {urgentCount > 0 && (
+                <span className="text-status-negative font-semibold text-xs">
+                  {urgentCount} entrega{urgentCount > 1 ? 's' : ''} urgente{urgentCount > 1 ? 's' : ''}
+                </span>
+              )}
             </div>
-            <h1 className="text-lg sm:text-2xl font-bold text-text-primary tracking-tight">
-              Painel de Controle CTO
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-text-primary tracking-tight">
+              {greeting}, CTO.
             </h1>
-            <p className="text-xs sm:text-sm text-text-secondary mt-0.5 hidden sm:block">
-              Visao estrategica em tempo real dos projetos e entregas
+            <p className="text-text-secondary text-xs sm:text-sm mt-1 max-w-lg">
+              Visao estrategica em tempo real dos projetos e entregas da Gradios.
             </p>
           </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            {urgentCount > 0 && (
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold"
-                style={{
-                  background: 'rgba(239,68,68,0.1)',
-                  border: '1px solid rgba(239,68,68,0.25)',
-                  color: '#EF4444',
-                }}
-              >
-                <AlertTriangle className="h-3.5 w-3.5" />
-                {urgentCount} urgente{urgentCount > 1 ? 's' : ''}
-              </motion.div>
-            )}
-            <div
-              className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold"
-              style={{
-                background: 'rgba(0,191,255,0.08)',
-                border: '1px solid rgba(0,191,255,0.2)',
-                color: '#00BFFF',
-              }}
-            >
-              <div className="h-1.5 w-1.5 rounded-full bg-brand-cyan animate-pulse" />
-              Ao Vivo
-            </div>
-          </div>
-        </div>
+        </section>
 
         {/* ── Quick Stats Bar ──────────────────────────────────────────────── */}
         <StaggerItem>
-          <div className="card-glass !p-0 overflow-hidden">
-
-            {/* Desktop: horizontal row */}
-            <div className="hidden sm:flex divide-x divide-slate-200">
-              <QuickStat icon={BarChart3}  label="Total de Projetos"   value={String(totalProjetos)}              color="#00BFFF" />
-              <QuickStat icon={Rocket}     label="Projetos Ativos"     value={String(kpis.projetosAtivos)}        color="#1A6AAA" />
-              <QuickStat icon={Target}     label="Entregas no Mês"     value={String(kpis.entreguesMes)}          color="#10B981" />
-              <QuickStat icon={Timer}      label="Próximas Entregas"   value={String(proximasEntregas.length)}    color="#F59E0B" />
-              <QuickStat icon={Users}      label="Milestones (14d)"    value={String(proximosMilestones.length)}  color="#94A3B8" />
-              {kpis.atrasados > 0 && (
-                <QuickStat icon={AlertTriangle} label="Atrasados"      value={String(kpis.atrasados)}             color="#EF4444" />
-              )}
-            </div>
-            {/* Mobile: grid */}
-            <div className="grid grid-cols-3 gap-px sm:hidden bg-slate-100 rounded-xl overflow-hidden">
-              <QuickStat icon={BarChart3}  label="Total"          value={String(totalProjetos)}            color="#00BFFF" />
-              <QuickStat icon={Rocket}     label="Ativos"         value={String(kpis.projetosAtivos)}      color="#1A6AAA" />
-              <QuickStat icon={Target}     label="Entregas"       value={String(kpis.entreguesMes)}        color="#10B981" />
-              <QuickStat icon={Timer}      label="Proximas"       value={String(proximasEntregas.length)}  color="#F59E0B" />
-              <QuickStat icon={Users}      label="Milestones"     value={String(proximosMilestones.length)}color="#94A3B8" />
-              {kpis.atrasados > 0 ? (
-                <QuickStat icon={AlertTriangle} label="Atrasados" value={String(kpis.atrasados)}          color="#EF4444" />
-              ) : (
-                <div />
-              )}
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
+            <QuickStat icon={BarChart3}  label="Total"       value={String(totalProjetos)}              color="#00668a" />
+            <QuickStat icon={Rocket}     label="Ativos"      value={String(kpis.projetosAtivos)}        color="#00668a" />
+            <QuickStat icon={Target}     label="Entregas"    value={String(kpis.entreguesMes)}          color="#00668a" />
+            <QuickStat icon={Timer}      label="Proximas"    value={String(proximasEntregas.length)}    color="#006c49" />
+            <QuickStat icon={Users}      label="Milestones"  value={String(proximosMilestones.length)}  color="#00668a" />
+            <QuickStat icon={AlertTriangle} label="Atrasados" value={String(kpis.atrasados)}            color="#EF4444" isAlert={kpis.atrasados > 0} />
           </div>
         </StaggerItem>
 
@@ -447,7 +414,7 @@ export default function DashboardPage() {
         </StaggerContainer>
 
         {/* ── Middle row ──────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 [&>*]:min-w-0">
 
           {/* ── Status Donut ─────────────────────────────────────────────── */}
           <StaggerItem>
@@ -461,15 +428,15 @@ export default function DashboardPage() {
               />
 
               {/* Donut chart */}
-              <div className="relative mb-4">
-                <ResponsiveContainer width="100%" height={190}>
+              <div className="relative mb-3 sm:mb-4">
+                <ResponsiveContainer width="100%" height={160}>
                   <PieChart>
                     <Pie
                       data={statusDistribuicao}
                       cx="50%"
                       cy="50%"
-                      innerRadius={58}
-                      outerRadius={82}
+                      innerRadius={48}
+                      outerRadius={68}
                       dataKey="value"
                       paddingAngle={4}
                       strokeWidth={0}
@@ -489,23 +456,22 @@ export default function DashboardPage() {
                 {/* Center text */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                   <span
-                    className="text-3xl font-black leading-none text-brand-cyan"
+                    className="text-2xl sm:text-3xl font-black leading-none text-brand-cyan"
                   >
                     {totalProjetos}
                   </span>
-                  <span className="text-xs text-text-muted mt-0.5 font-medium uppercase tracking-widest">
+                  <span className="text-[10px] sm:text-xs text-text-muted mt-0.5 font-medium uppercase tracking-widest">
                     projetos
                   </span>
                 </div>
               </div>
 
               {/* Legend */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                 {statusDistribuicao.map((s: StatusEntry) => (
-                  <motion.div
+                  <div
                     key={s.name}
-                    whileHover={{ scale: 1.02 }}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 rounded-lg sm:rounded-xl"
                     style={{
                       background: `${normalizeColor(s.color)}0A`,
                       border: `1px solid ${normalizeColor(s.color)}18`,
@@ -515,14 +481,14 @@ export default function DashboardPage() {
                       className="h-2 w-2 shrink-0 fill-current"
                       style={{ color: normalizeColor(s.color) }}
                     />
-                    <span className="text-xs text-text-secondary truncate flex-1">{s.name}</span>
+                    <span className="text-[11px] sm:text-xs text-text-secondary truncate flex-1">{s.name}</span>
                     <span
-                      className="text-xs font-black ml-auto"
+                      className="text-[11px] sm:text-xs font-black ml-auto"
                       style={{ color: normalizeColor(s.color) }}
                     >
                       {s.value}
                     </span>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -567,19 +533,15 @@ export default function DashboardPage() {
                       <motion.div
                         key={p.id}
                         whileHover={{ x: 2, transition: { duration: 0.15 } }}
-                        className="relative overflow-hidden rounded-xl p-3"
+                        className="relative overflow-hidden rounded-[14px] p-3.5 sm:p-4 border-l-4 transition-shadow hover:shadow-md"
                         style={{
-                          background: urg.bg,
-                          border: `1px solid ${urg.color}20`,
+                          background: '#ffffff',
+                          borderLeftColor: urg.color,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                         }}
                       >
-                        {/* Left accent stripe */}
-                        <div
-                          className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl"
-                          style={{ background: urg.color }}
-                        />
 
-                        <div className="flex items-start justify-between gap-2 mb-2.5 pl-1">
+                        <div className="flex items-start justify-between gap-2 mb-2.5">
                           <div className="min-w-0 flex-1">
                             <p className="text-sm font-bold text-text-primary truncate leading-tight">
                               {p.titulo ?? 'Sem titulo'}
@@ -604,7 +566,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
 
-                        <div className="pl-1">
+                        <div>
                           <Progress value={p.progresso ?? 0} showLabel />
                         </div>
                       </motion.div>
@@ -708,17 +670,14 @@ export default function DashboardPage() {
         <StaggerItem>
           <div className="card-glass">
 
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
               <SectionHeader
                 icon={Zap}
                 title="Atividade Recente"
                 iconBg="rgba(0,191,255,0.12)"
                 iconColor="#00BFFF"
               />
-              <span
-                className="text-xs font-medium text-text-muted hidden sm:block"
-                style={{ marginTop: '-20px' }}
-              >
+              <span className="text-[11px] sm:text-xs font-medium text-text-muted hidden sm:block -mt-3">
                 Ultimas {recentUpdates?.length ?? 0} atualizacoes
               </span>
             </div>
@@ -731,37 +690,35 @@ export default function DashboardPage() {
                 accentColor="#00BFFF"
               />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="relative space-y-5">
+                {/* Thread line */}
+                <div
+                  className="absolute left-[19px] top-2 bottom-2 w-[2px] hidden sm:block"
+                  style={{ borderLeft: '2px dashed rgba(188,200,209,0.6)' }}
+                />
+
                 {recentUpdates.map((u, idx) => (
                   <motion.div
                     key={u.id}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.04 }}
-                    whileHover={{ x: 2, transition: { duration: 0.15 } }}
-                    className="flex items-start gap-3 p-3 rounded-xl group cursor-default"
-                    style={{
-                      background: 'rgba(226,232,240,0.12)',
-                      border: '1px solid rgba(226,232,240,0.25)',
-                    }}
+                    className="flex gap-3 sm:gap-4 relative z-10"
                   >
                     <UpdateIcon tipo={u.tipo} />
 
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-text-primary leading-snug line-clamp-2 group-hover:text-brand-cyan transition-colors">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-bold text-text-primary truncate max-w-[160px]">
+                          {u.projeto_titulo}
+                        </span>
+                        <span className="text-[10px] text-text-muted uppercase font-bold">
+                          {formatRelative(u.created_at)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-text-secondary leading-relaxed line-clamp-2">
                         {u.conteudo}
                       </p>
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <div
-                          className="flex items-center gap-1 text-xs font-semibold"
-                          style={{ color: '#00BFFF' }}
-                        >
-                          <ArrowUpRight className="h-3 w-3" />
-                          <span className="truncate max-w-[120px]">{u.projeto_titulo}</span>
-                        </div>
-                        <span className="text-text-muted text-xs">·</span>
-                        <span className="text-xs text-text-muted">{formatRelative(u.created_at)}</span>
-                      </div>
                     </div>
                   </motion.div>
                 ))}

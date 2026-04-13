@@ -8,19 +8,8 @@
   }
 
   body {
-    @apply bg-white text-text-primary font-inter antialiased;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image:
-      linear-gradient(rgba(10, 27, 92, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(10, 27, 92, 0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
+    @apply text-text-primary font-inter antialiased;
+    background: #f7f9fb;
   }
 
   ::-webkit-scrollbar {
@@ -43,18 +32,30 @@
 
 @layer components {
   .card-glass {
-    @apply bg-white border border-slate-200/60 p-5 shadow-sm;
+    @apply p-4 sm:p-5;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(226, 232, 240, 0.5);
     border-radius: 14px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
   }
 
   .card-glass-hover {
-    @apply card-glass transition-all;
+    @apply card-glass transition-all duration-200;
   }
 
   .card-glass-hover:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     border-color: rgba(0, 191, 255, 0.2);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 12px 40px rgba(0, 102, 138, 0.08);
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 14px;
   }
 
   .gradient-cyan {
@@ -97,18 +98,33 @@
   }
 
   .kanban-column {
-    @apply bg-slate-50/50 rounded-2xl p-3 min-w-[280px] max-w-[320px] flex flex-col gap-2;
-    border: 1px solid rgba(226, 232, 240, 0.6);
+    @apply rounded-2xl p-3 flex flex-col gap-3;
+    min-width: min(300px, 85vw);
+    max-width: 320px;
+    background: transparent;
+  }
+
+  @media (min-width: 640px) {
+    .kanban-column {
+      min-width: 300px;
+    }
   }
 
   .kanban-card {
-    @apply card-glass cursor-grab active:cursor-grabbing transition-all duration-150 relative overflow-hidden;
+    @apply cursor-grab active:cursor-grabbing transition-all duration-150 relative overflow-hidden p-4 sm:p-5;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(24px);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(226, 232, 240, 0.5);
   }
 
-  .kanban-card:hover {
-    border-color: rgba(0, 191, 255, 0.25);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    transform: translateY(-1px);
+  @media (hover: hover) {
+    .kanban-card:hover {
+      border-color: rgba(0, 191, 255, 0.25);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
+    }
   }
 
   .kanban-card.dragging {
@@ -140,5 +156,14 @@
 
   .section-header-icon {
     @apply h-7 w-7 rounded-lg flex items-center justify-center shrink-0;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
