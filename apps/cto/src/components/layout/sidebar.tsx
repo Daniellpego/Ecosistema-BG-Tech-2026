@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -29,6 +29,12 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user } = useCurrentUser()
+
+  useEffect(() => {
+    const handler = () => setMobileOpen(true)
+    window.addEventListener('toggle-mobile-sidebar', handler)
+    return () => window.removeEventListener('toggle-mobile-sidebar', handler)
+  }, [])
 
   async function handleLogout() {
     const supabase = createClient()
@@ -135,14 +141,6 @@ export function Sidebar() {
 
   return (
     <>
-      <button
-        onClick={() => setMobileOpen(true)}
-        aria-label="Abrir menu"
-        className="lg:hidden fixed top-[13px] left-3.5 z-30 h-8 w-8 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary active:scale-95 transition-all"
-      >
-        <Menu className="h-5 w-5" />
-      </button>
-
       <AnimatePresence>
         {mobileOpen && (
           <>

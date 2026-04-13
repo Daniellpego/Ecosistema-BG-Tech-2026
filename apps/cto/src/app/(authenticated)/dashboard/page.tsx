@@ -361,10 +361,10 @@ export default function DashboardPage() {
                 </span>
               )}
             </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-text-primary tracking-tight">
+            <h1 className="text-[26px] sm:text-4xl md:text-5xl font-extrabold text-text-primary tracking-tight leading-tight">
               {greeting}, CTO.
             </h1>
-            <p className="text-text-secondary text-xs sm:text-sm mt-1 max-w-lg">
+            <p className="text-text-secondary text-[13px] sm:text-sm mt-1.5 max-w-lg leading-relaxed">
               Visao estrategica em tempo real dos projetos e entregas da Gradios.
             </p>
           </div>
