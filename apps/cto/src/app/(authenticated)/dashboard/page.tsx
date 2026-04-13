@@ -74,32 +74,46 @@ function KPICard({
   return (
     <StaggerItem>
       <div
-        className="glass-panel p-4 sm:p-6 relative overflow-hidden group"
+        className="relative overflow-hidden rounded-2xl p-5"
         style={{
-          border: alert ? `1px solid ${color}30` : '1px solid rgba(226,232,240,0.4)',
-          boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+          background: alert
+            ? `linear-gradient(135deg, ${color}08 0%, ${color}03 100%)`
+            : 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(247,249,251,0.9) 100%)',
+          border: alert ? `1px solid ${color}25` : '1px solid rgba(226,232,240,0.5)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.02)',
         }}
       >
-        {alert && (
-          <div className="absolute inset-0 animate-pulse" style={{ background: `${color}06` }} />
-        )}
+        {/* Decorative corner gradient */}
+        <div
+          className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-[0.07]"
+          style={{ background: color }}
+        />
 
-        <div className="relative flex items-start justify-between mb-3 sm:mb-4">
-          <p className="text-sm font-medium text-text-secondary">{label}</p>
+        <div className="relative flex items-center justify-between mb-4">
           <div
-            className="h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: `${color}12` }}
+            className="h-11 w-11 rounded-2xl flex items-center justify-center"
+            style={{
+              background: `linear-gradient(135deg, ${color}18 0%, ${color}08 100%)`,
+              border: `1px solid ${color}15`,
+            }}
           >
-            <Icon className="h-[18px] w-[18px] sm:h-5 sm:w-5" style={{ color }} />
+            <Icon className="h-5 w-5" style={{ color }} />
           </div>
+          {alert && (
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{ background: `${color}12` }}>
+              <div className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: color }} />
+              <span className="text-[10px] font-bold uppercase" style={{ color }}>Alerta</span>
+            </div>
+          )}
         </div>
 
-        <p className="relative text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: alert ? color : '#0F172A' }}>
+        <p className="relative text-3xl font-extrabold tracking-tight mb-0.5" style={{ color: alert ? color : '#0F172A' }}>
           <AnimatedNumber value={value} format={format} />
         </p>
+        <p className="text-sm font-medium text-text-secondary">{label}</p>
 
         {subtitle && (
-          <p className="relative text-xs text-text-muted mt-1">{subtitle}</p>
+          <p className="text-xs text-text-muted mt-1.5 leading-relaxed">{subtitle}</p>
         )}
       </div>
     </StaggerItem>
@@ -116,24 +130,25 @@ interface QuickStatProps {
 }
 
 function QuickStat({ label, value, color, isAlert }: QuickStatProps & { isAlert?: boolean }) {
+  const c = normalizeColor(color)
   return (
     <div
-      className="p-3 sm:p-4 rounded-[14px] transition-colors hover:bg-white"
+      className="p-3.5 rounded-2xl relative overflow-hidden"
       style={{
-        background: '#ffffff',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-        border: isAlert ? '1px solid rgba(239,68,68,0.15)' : 'none',
+        background: isAlert ? 'rgba(239,68,68,0.04)' : 'rgba(255,255,255,0.9)',
+        border: isAlert ? '1px solid rgba(239,68,68,0.12)' : '1px solid rgba(226,232,240,0.4)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
       }}
     >
       <p
-        className="text-[11px] font-bold uppercase tracking-widest"
-        style={{ color: isAlert ? '#EF4444' : '#6d7981' }}
+        className="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5"
+        style={{ color: isAlert ? '#EF4444' : '#94A3B8' }}
       >
         {label}
       </p>
       <p
-        className="text-xl sm:text-2xl font-bold tracking-tight mt-0.5"
-        style={{ color: isAlert ? '#EF4444' : '#00668a' }}
+        className="text-[22px] font-extrabold tracking-tight leading-none"
+        style={{ color: isAlert ? '#EF4444' : c }}
       >
         {value}
       </p>
@@ -258,16 +273,20 @@ function EmptyState({
   title,
   subtitle,
   accentColor = '#00BFFF',
+  actionLabel,
+  actionHref,
 }: {
   icon: React.ElementType
   title: string
   subtitle: string
   accentColor?: string
+  actionLabel?: string
+  actionHref?: string
 }) {
   return (
     <div className="flex flex-col items-center justify-center py-6 sm:py-10 text-center gap-3">
       <div
-        className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl sm:rounded-2xl flex items-center justify-center"
+        className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl flex items-center justify-center"
         style={{
           background: `${accentColor}0C`,
           border: `1.5px solid ${accentColor}20`,
@@ -275,10 +294,19 @@ function EmptyState({
       >
         <Icon className="h-5 w-5 sm:h-6 sm:w-6 opacity-60" style={{ color: accentColor }} />
       </div>
-      <div className="space-y-0.5 sm:space-y-1">
+      <div className="space-y-1">
         <p className="text-sm font-semibold text-text-secondary">{title}</p>
         <p className="text-xs text-text-muted max-w-[240px] leading-relaxed">{subtitle}</p>
       </div>
+      {actionLabel && actionHref && (
+        <a
+          href={actionHref}
+          className="inline-flex items-center gap-1.5 mt-1 px-4 py-2 rounded-xl text-xs font-semibold transition-all active:scale-95"
+          style={{ background: `${accentColor}10`, color: accentColor, border: `1px solid ${accentColor}20` }}
+        >
+          {actionLabel}
+        </a>
+      )}
     </div>
   )
 }
@@ -351,13 +379,15 @@ export default function DashboardPage() {
         <section className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-negative text-white text-[10px] font-bold uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                Ao Vivo
-              </span>
-              {urgentCount > 0 && (
-                <span className="text-status-negative font-semibold text-xs">
-                  {urgentCount} entrega{urgentCount > 1 ? 's' : ''} urgente{urgentCount > 1 ? 's' : ''}
+              {urgentCount > 0 ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-negative text-white text-[10px] font-bold uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  {urgentCount} urgente{urgentCount > 1 ? 's' : ''}
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style={{ background: 'rgba(16,185,129,0.1)', color: '#10B981' }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-positive animate-pulse" />
+                  Tudo em dia
                 </span>
               )}
             </div>
@@ -372,7 +402,7 @@ export default function DashboardPage() {
 
         {/* ── Quick Stats Bar ──────────────────────────────────────────────── */}
         <StaggerItem>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 sm:gap-4">
+          <div className="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-6 gap-3">
             <QuickStat icon={BarChart3}  label="Total"       value={String(totalProjetos)}              color="#00668a" />
             <QuickStat icon={Rocket}     label="Ativos"      value={String(kpis.projetosAtivos)}        color="#00668a" />
             <QuickStat icon={Target}     label="Entregas"    value={String(kpis.entreguesMes)}          color="#00668a" />
@@ -383,7 +413,7 @@ export default function DashboardPage() {
         </StaggerItem>
 
         {/* ── KPI Cards ───────────────────────────────────────────────────── */}
-        <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           <KPICard
             icon={LayoutDashboard}
             label="Projetos Ativos"
@@ -527,8 +557,10 @@ export default function DashboardPage() {
                 <EmptyState
                   icon={CheckCircle2}
                   title="Nenhuma entrega urgente"
-                  subtitle="Sem projetos com deadline nos proximos 7 dias. Aproveite para planejar!"
+                  subtitle="Sem projetos com deadline nos proximos 7 dias."
                   accentColor="#10B981"
+                  actionLabel="Ir pro Kanban"
+                  actionHref="/kanban"
                 />
               ) : (
                 <div className="space-y-3">
@@ -610,8 +642,10 @@ export default function DashboardPage() {
                 <EmptyState
                   icon={Target}
                   title="Sem milestones proximos"
-                  subtitle="Nenhum marco previsto para os proximos 14 dias. Adicione marcos ao seu plano."
+                  subtitle="Nenhum marco previsto para os proximos 14 dias."
                   accentColor="#1A6AAA"
+                  actionLabel="Adicionar projeto"
+                  actionHref="/kanban"
                 />
               ) : (
                 <div className="relative">
@@ -692,8 +726,10 @@ export default function DashboardPage() {
               <EmptyState
                 icon={Activity}
                 title="Sem atividade recente"
-                subtitle="As atualizacoes e eventos dos projetos aparecerão aqui assim que forem registrados."
+                subtitle="As atualizacoes aparecerão aqui ao criar projetos e registrar entregas."
                 accentColor="#00BFFF"
+                actionLabel="Criar primeiro projeto"
+                actionHref="/kanban"
               />
             ) : (
               <div className="relative space-y-5">
