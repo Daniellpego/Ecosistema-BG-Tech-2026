@@ -1,105 +1,88 @@
 name: Lighthouse CI
 
-# Auditoria Lighthouse no preview Vercel do site em todo PR pra main.
+# Audita site-principal sempre que a Vercel termina um deploy Ready desse
+# projeto específico. Usa o evento deployment_status do GitHub em vez de
+# pull_request + polling — duas abordagens anteriores (#91, #92) falharam:
 #
-# Monorepo: o repo tem 4 projetos Vercel (site-principal, painel-cfo,
-# painel-crm, painel-cto). Este workflow audita APENAS site-principal.
+# #91: wait-for-vercel-preview pegou o primeiro deployment_status que
+#      chegou, sem distinguir entre os 4 projetos Vercel do monorepo.
 #
-# Estratégia: em vez de confiar em `wait-for-vercel-preview` (que pega o
-# primeiro deployment_status e não distingue projetos), parseamos o
-# comentário que o vercel[bot] posta no PR — ele tem uma linha por projeto
-# com status e URL, então extraímos determinísticamente a URL de
-# site-principal quando estiver "Ready".
+# #92: poll do comentário do vercel[bot] falhou porque o bot não atualiza
+#      o comentário confiavelmente (confirmado via Vercel API: deploy
+#      ficou Ready em 50s, comentário ficou "Building" por 10+ min).
+#
+# Esta versão usa o evento deployment_status — a fonte canônica e
+# determinística para "deploy X está Ready". Filtra pelo nome do projeto
+# via github.event.deployment.environment.
+#
+# IMPORTANTE: workflows disparados por deployment_status só rodam a partir
+# da default branch (main). Este workflow só funciona APÓS o merge em
+# main — o PR que adiciona/altera este arquivo NÃO se auto-testa.
 
 on:
-  pull_request:
-    branches: [main]
-    # Só roda quando o site (ou o próprio workflow) muda — evita gastar
-    # minutes auditando PRs de painel-*.
-    paths:
-      - 'apps/site/**'
-      - '.github/workflows/lighthouse.yml'
+  deployment_status:
 
 concurrency:
-  group: lighthouse-${{ github.ref }}
+  group: lighthouse-${{ github.event.deployment.sha }}-site-principal
   cancel-in-progress: true
 
 jobs:
   lighthouse:
     name: Auditar preview com Lighthouse
+    # Só roda quando a Vercel marca site-principal como success.
+    # Ignora painel-cfo/crm/cto e ignora states building/error/failure.
+    if: |
+      github.event.deployment_status.state == 'success' &&
+      contains(github.event.deployment.environment, 'site-principal')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       issues: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Resolver URL do preview site-principal
-        id: vercel
+      - name: Descobrir PR associado ao commit
+        id: pr
         uses: actions/github-script@v7
         with:
           script: |
-            const project = 'site-principal';
-            const timeoutMs = 10 * 60 * 1000;
-            const intervalMs = 15 * 1000;
-            const deadline = Date.now() + timeoutMs;
-
-            const findRow = (body) => body.split('\n').find(l =>
-              l.includes(`[${project}]`) && l.includes('[Preview](')
-            );
-            const extractUrl = (row) => {
-              const m = row.match(/\[Preview\]\((https:\/\/[^\s)]+)\)/);
-              return m ? m[1] : null;
-            };
-
-            while (Date.now() < deadline) {
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                per_page: 100,
-              });
-              const vercelComment = comments.find(c => c.user?.login === 'vercel[bot]');
-              if (vercelComment?.body) {
-                const row = findRow(vercelComment.body);
-                if (row && row.includes('[Ready](')) {
-                  const url = extractUrl(row);
-                  if (url) {
-                    core.setOutput('url', url);
-                    core.info(`✔ ${project} Ready → ${url}`);
-                    return;
-                  }
-                }
-                core.info(`… ${project} ainda não está Ready — aguardando ${intervalMs/1000}s`);
-              } else {
-                core.info(`… comentário do vercel[bot] ainda não postado — aguardando ${intervalMs/1000}s`);
-              }
-              await new Promise(r => setTimeout(r, intervalMs));
+            const sha = context.payload.deployment.sha;
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: sha,
+            });
+            const pr = prs.find(p => p.state === 'open');
+            if (!pr) {
+              core.info(`Sem PR aberto para ${sha} — pulando (push direto em main ou PR já mergeado).`);
+              core.setOutput('number', '');
+              return;
             }
-            core.setFailed(`Timeout (${timeoutMs/1000}s) aguardando preview Ready de ${project}.`);
+            core.info(`PR associado: #${pr.number}`);
+            core.setOutput('number', String(pr.number));
 
       - name: Rodar Lighthouse
+        if: steps.pr.outputs.number != ''
         id: lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
-          urls: ${{ steps.vercel.outputs.url }}
+          urls: ${{ github.event.deployment_status.environment_url }}
           uploadArtifacts: true
           temporaryPublicStorage: true
           runs: 1
 
       - name: Comentar scores no PR
-        if: always() && steps.lighthouse.outcome == 'success'
+        if: steps.pr.outputs.number != '' && steps.lighthouse.outcome == 'success'
         uses: actions/github-script@v7
         env:
           MANIFEST: ${{ steps.lighthouse.outputs.manifest }}
           LINKS: ${{ steps.lighthouse.outputs.links }}
-          PREVIEW_URL: ${{ steps.vercel.outputs.url }}
+          PREVIEW_URL: ${{ github.event.deployment_status.environment_url }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
         with:
           script: |
             const manifest = JSON.parse(process.env.MANIFEST);
             const links = JSON.parse(process.env.LINKS);
             const previewUrl = process.env.PREVIEW_URL;
+            const prNumber = Number(process.env.PR_NUMBER);
 
             const run = manifest.find(r => r.isRepresentativeRun) || manifest[0];
             const s = run.summary;
@@ -129,7 +112,7 @@ jobs:
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: prNumber,
             });
             const existing = comments.find(c => (c.body || '').includes(marker));
             if (existing) {
@@ -143,7 +126,7 @@ jobs:
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                issue_number: prNumber,
                 body,
               });
             }
