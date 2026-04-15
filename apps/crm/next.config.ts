@@ -1,27 +1,13 @@
 import type { NextConfig } from 'next'
 
 // Shared security headers applied to every response
+// Content-Security-Policy is intentionally absent here — it is set dynamically
+// in src/middleware.ts with a per-request nonce ('nonce-{nonce}' + 'strict-dynamic').
 const SECURITY_HEADERS = [
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  {
-    key: 'Content-Security-Policy',
-    // Next.js requires 'unsafe-inline' for its runtime CSS-in-JS and
-    // 'unsafe-eval' for its dev/HMR tooling (stripped in production builds
-    // by Webpack, but kept here for parity across envs). Tighten with
-    // nonces once the app adopts Next.js 15 strict-mode CSP support.
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https:",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
-      "frame-ancestors 'none'",
-    ].join('; '),
-  },
 ]
 
 const nextConfig: NextConfig = {
