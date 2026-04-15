@@ -63,22 +63,22 @@ KEYS rl:*
 
 ### 2. Top 10 IPs by request count on /api/diagnostico in current window
 ```
-# Pattern: rl::api:diagnostico:<ip>
+# Pattern: rl:api:diagnostico:<ip>
 # Each key holds a sorted set of timestamps.
 # In Upstash Console → CLI:
-SCAN 0 MATCH "rl::api:diagnostico:*" COUNT 1000
+SCAN 0 MATCH "rl:api:diagnostico:*" COUNT 1000
 ```
 
 ### 3. Check current count for a specific IP
 ```
 # Replace <ip> with the IP address to inspect
-ZCARD "rl::api:diagnostico:<ip>"
+ZCARD "rl:api:diagnostico:<ip>"
 ```
 
 ### 4. Manually block an IP for 1 hour (emergency)
 ```
 # Sets the key with count=9999 and 1-hour TTL — every request will 429
-SET "rl::api:diagnostico:<ip>" 9999 EX 3600
+SET "rl:api:diagnostico:<ip>" 9999 EX 3600
 ```
 
 ---
