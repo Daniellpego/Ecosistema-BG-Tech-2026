@@ -38,7 +38,7 @@ const MAX_EMAIL_VAR_LEN = 500;
 function sanitizeEmailVar(value: unknown): string {
   if (typeof value !== "string") return String(value ?? "");
   return value
-    .replace(/[<>&]/g, "")                              // remove HTML tag/entity chars
+    .replace(/[<>&]/g, "")                              // remove tag delimiters and entity prefix
     .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "") // strip non-printable control chars
     .trim()
     .slice(0, MAX_EMAIL_VAR_LEN);

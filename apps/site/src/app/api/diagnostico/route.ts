@@ -14,6 +14,8 @@ const FIXED_MAX_TOKENS = 600;
 // For a globally consistent limit, replace with an Upstash Redis check.
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 60_000;
+// Hard cap on tracked IPs to bound memory usage under sustained attack.
+const RATE_LIMIT_MAP_MAX = 10_000;
 const ipWindows = new Map<string, { count: number; windowStart: number }>();
 
 function isRateLimited(ip: string): boolean {
@@ -27,6 +29,13 @@ function isRateLimited(ip: string): boolean {
         ipWindows.delete(key);
       }
     }
+  }
+
+  // Secondary guard: if the Map is at capacity, clear it entirely.
+  // This temporarily lifts per-IP limits under extreme attack but prevents
+  // OOM from unbounded growth.
+  if (ipWindows.size >= RATE_LIMIT_MAP_MAX) {
+    ipWindows.clear();
   }
 
   const entry = ipWindows.get(ip);
