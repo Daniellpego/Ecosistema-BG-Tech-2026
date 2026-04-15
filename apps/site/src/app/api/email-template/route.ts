@@ -23,6 +23,44 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 /**
+ * Strip HTML tags and control characters from a string variable before it is
+ * interpolated into an email template.  Prevents HTML injection / phishing in
+ * outbound emails in case the n8n payload is ever manipulated or compromised.
+ */
+function sanitizeEmailVar(value: unknown): string {
+  if (typeof value !== "string") return String(value ?? "");
+  return value
+    .replace(/<[^>]*>/g, "")                // strip HTML/XML tags
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "") // strip non-printable control chars
+    .trim()
+    .slice(0, 500);
+}
+
+/** Sanitize all string fields of an EmailVariables object. */
+function sanitizeVars(vars: EmailVariables): EmailVariables {
+  return {
+    nome: sanitizeEmailVar(vars.nome),
+    empresa: sanitizeEmailVar(vars.empresa),
+    setor: sanitizeEmailVar(vars.setor),
+    cargo: sanitizeEmailVar(vars.cargo),
+    gargalo_principal: sanitizeEmailVar(vars.gargalo_principal),
+    gargalo_2: sanitizeEmailVar(vars.gargalo_2),
+    horas_semana: sanitizeEmailVar(vars.horas_semana),
+    horas_mes: sanitizeEmailVar(vars.horas_mes),
+    horas_mes_num: typeof vars.horas_mes_num === "number" ? vars.horas_mes_num : 0,
+    pct_funcionario: sanitizeEmailVar(vars.pct_funcionario),
+    roi_mensal: sanitizeEmailVar(vars.roi_mensal),
+    roi_anual: sanitizeEmailVar(vars.roi_anual),
+    tier: sanitizeEmailVar(vars.tier),
+    score: typeof vars.score === "number" ? vars.score : 0,
+    prioridade: sanitizeEmailVar(vars.prioridade),
+    sistemas: sanitizeEmailVar(vars.sistemas),
+    diagnostico_url: sanitizeEmailVar(vars.diagnostico_url),
+    whatsapp_url: sanitizeEmailVar(vars.whatsapp_url),
+  };
+}
+
+/**
  * POST /api/email-template
  *
  * Called by n8n to get the rendered email for a specific step + tier.
@@ -58,7 +96,7 @@ export async function POST(req: NextRequest) {
       vars: EmailVariables;
     };
 
-    const result = getRenderedEmail(emailIndex, tier, vars);
+    const result = getRenderedEmail(emailIndex, tier, sanitizeVars(vars));
 
     if (!result) {
       return new Response(

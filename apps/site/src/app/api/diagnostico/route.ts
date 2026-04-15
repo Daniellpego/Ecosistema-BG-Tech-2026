@@ -7,6 +7,28 @@ export const runtime = "edge";
 const FIXED_MODEL = "claude-sonnet-4-20250514";
 const FIXED_MAX_TOKENS = 600;
 
+// ── Per-IP sliding-window rate limit ───────────────────────────────────────
+// Max 5 requests per IP per 60-second window.
+// This Map is module-level and shared within one Edge instance.
+// Multiple Edge instances do not share state, so this is a per-instance limit.
+// For a globally consistent limit, replace with an Upstash Redis check.
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const ipWindows = new Map<string, { count: number; windowStart: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipWindows.get(ip);
+  if (!entry || now - entry.windowStart >= RATE_LIMIT_WINDOW_MS) {
+    ipWindows.set(ip, { count: 1, windowStart: now });
+    return false;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return true;
+  entry.count++;
+  return false;
+}
+// ── End rate limit ─────────────────────────────────────────────────────────
+
 // Maximum allowed length for free-text lead fields (prompt injection mitigation)
 const MAX_FIELD_LEN = 120;
 
@@ -155,6 +177,22 @@ function validatePayload(body: unknown): DiagnosticoPayload | null {
 }
 
 export async function POST(req: NextRequest) {
+  // ── Rate limiting ────────────────────────────────────────────
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    req.headers.get("x-real-ip") ??
+    "unknown";
+  if (isRateLimited(ip)) {
+    return new Response(JSON.stringify({ error: "Too many requests" }), {
+      status: 429,
+      headers: {
+        "Content-Type": "application/json",
+        "Retry-After": "60",
+      },
+    });
+  }
+  // ── End rate limiting ────────────────────────────────────────
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return new Response(
