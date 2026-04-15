@@ -33,7 +33,8 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  -- Validate input length (Anthropic Claude responses are ≤ 2 000 chars)
+  -- Validate input length (allow up to 4 000 chars: 2× the ~2 000-char Claude
+  -- response cap, giving a safety margin for multi-byte encoded characters)
   IF p_diagnostico_ia IS NULL OR char_length(p_diagnostico_ia) > 4000 THEN
     RAISE EXCEPTION 'diagnostico_ia: invalid value';
   END IF;

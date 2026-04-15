@@ -12,14 +12,13 @@ function timingSafeEqual(a: string, b: string): boolean {
   const enc = new TextEncoder();
   const ab = enc.encode(a);
   const bb = enc.encode(b);
-  // Pad shorter buffer so lengths match (prevents length-based timing leak)
+  // Accumulate XOR differences including a length mismatch bit,
+  // so an attacker cannot determine the secret length from timing.
+  let diff = ab.length ^ bb.length;
   const maxLen = Math.max(ab.length, bb.length);
-  const padded = new Uint8Array(maxLen);
-  let diff = ab.length ^ bb.length; // non-zero means lengths differ
   for (let i = 0; i < maxLen; i++) {
     diff |= (ab[i] ?? 0) ^ (bb[i] ?? 0);
   }
-  padded; // suppress unused warning
   return diff === 0;
 }
 
