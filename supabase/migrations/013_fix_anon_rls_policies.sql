@@ -73,6 +73,11 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
+  -- Reject empty or null diagnostico_id — prevents matching rows with diagnostico_id = ''
+  IF p_diagnostico_id IS NULL OR char_length(trim(p_diagnostico_id)) = 0 THEN
+    RAISE EXCEPTION 'diagnostico_id: valor inválido';
+  END IF;
+
   -- Validate against known whitelist — rejects anything unexpected
   IF p_janela_decisao NOT IN (
     'imediata', '30_dias', '90_dias', 'sem_prazo',

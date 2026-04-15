@@ -54,14 +54,20 @@ function buildSystemPrompt(payload: DiagnosticoPayload): string {
   const primeiroNome = nomeSanitized.split(/\s+/)[0] || "Lead";
 
   const setor = safeOption(2, answers.setor?.[0]);
-  const tempoIdx = answers.tempo?.[0] ?? 0;
+
+  // Explicit bounds-check so an out-of-range index never silently degrades
+  // to "não informado" and wastes a full LLM call with missing context.
+  const TEMPO_EXPANDIDO = [
+    "menos de 5h/semana (~20h/mês)",
+    "5 a 15h/semana (~40-60h/mês)",
+    "16 a 40h/semana (~65-160h/mês)",
+    "mais de 40h/semana (+160h/mês — equivale a uma pessoa inteira)",
+  ] as const;
+  const tempoIdx = answers.tempo?.[0];
   const tempoExpandido =
-    [
-      "menos de 5h/semana (~20h/mês)",
-      "5 a 15h/semana (~40-60h/mês)",
-      "16 a 40h/semana (~65-160h/mês)",
-      "mais de 40h/semana (+160h/mês — equivale a uma pessoa inteira)",
-    ][tempoIdx] ?? "não informado";
+    tempoIdx != null && tempoIdx >= 0 && tempoIdx < TEMPO_EXPANDIDO.length
+      ? TEMPO_EXPANDIDO[tempoIdx]
+      : "não informado";
 
   const gargalosLabels = safeMultiOptions(3, answers.gargalos);
   const impactosLabels = safeMultiOptions(7, answers.impactos);
