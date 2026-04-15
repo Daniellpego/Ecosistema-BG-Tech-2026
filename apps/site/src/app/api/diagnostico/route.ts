@@ -18,6 +18,17 @@ const ipWindows = new Map<string, { count: number; windowStart: number }>();
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+
+  // Probabilistic cleanup (~1% of calls) so the Map never grows unbounded.
+  // Entries older than 2× the window are safe to discard.
+  if (Math.random() < 0.01) {
+    for (const [key, val] of ipWindows) {
+      if (now - val.windowStart >= RATE_LIMIT_WINDOW_MS * 2) {
+        ipWindows.delete(key);
+      }
+    }
+  }
+
   const entry = ipWindows.get(ip);
   if (!entry || now - entry.windowStart >= RATE_LIMIT_WINDOW_MS) {
     ipWindows.set(ip, { count: 1, windowStart: now });

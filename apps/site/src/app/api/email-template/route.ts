@@ -22,18 +22,26 @@ function timingSafeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
+// Maximum length for any single email template variable.
+const MAX_EMAIL_VAR_LEN = 500;
+
 /**
- * Strip HTML tags and control characters from a string variable before it is
- * interpolated into an email template.  Prevents HTML injection / phishing in
- * outbound emails in case the n8n payload is ever manipulated or compromised.
+ * Strip characters that could form HTML tags or entities from a string variable
+ * before it is interpolated into an email template.
+ *
+ * We remove '<', '>', and '&' individually (character-class removal) rather
+ * than trying to parse and strip tag pairs.  This approach:
+ *   - Is not vulnerable to ReDoS (no backtracking — character class is O(n))
+ *   - Cannot be bypassed by malformed / nested tags (e.g. <<script>>)
+ *   - Is safe for plain-text email bodies where these chars have no valid use
  */
 function sanitizeEmailVar(value: unknown): string {
   if (typeof value !== "string") return String(value ?? "");
   return value
-    .replace(/<[^>]*>/g, "")                // strip HTML/XML tags
+    .replace(/[<>&]/g, "")                              // remove HTML tag/entity chars
     .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "") // strip non-printable control chars
     .trim()
-    .slice(0, 500);
+    .slice(0, MAX_EMAIL_VAR_LEN);
 }
 
 /** Sanitize all string fields of an EmailVariables object. */
