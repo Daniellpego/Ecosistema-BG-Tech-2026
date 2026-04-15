@@ -18,7 +18,7 @@ interface CapturePhaseProps {
   setLead: (fn: (prev: LeadData) => LeadData) => void;
   answers: Record<string, number[]>;
   isSubmitting: boolean;
-  onSubmit: () => void;
+  onSubmit: (honeypot: string) => void;
 }
 
 export default function CapturePhase({ lead, setLead, answers, isSubmitting, onSubmit }: CapturePhaseProps) {
@@ -34,6 +34,8 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
     whatsAppDigits.length >= 10 &&
     whatsAppDigits.length <= 13;
   const [showErrors, setShowErrors] = useState(false);
+  // Honeypot — invisible to real users; bots fill it in
+  const [honeypot, setHoneypot] = useState("");
   const whatsAppRef = useRef<HTMLInputElement>(null);
   const gargalosCount = answers.gargalos?.length ?? 0;
   const setor = answers.setor?.[0] != null ? QUESTIONS[2].opcoes[answers.setor[0]] : null;
@@ -46,7 +48,7 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
       }
       return;
     }
-    onSubmit();
+    onSubmit(honeypot);
   }
 
   return (
@@ -209,6 +211,23 @@ export default function CapturePhase({ lead, setLead, answers, isSubmitting, onS
           <p id="lead-whatsapp-hint" className="text-xs text-[#64748B] mt-1.5">
             Para recebermos seu diagnóstico mais rápido e você poder tirar dúvidas direto com a equipe.
           </p>
+        </div>
+
+        {/* Honeypot — visually hidden, not reachable by keyboard; bots fill it in */}
+        <div
+          aria-hidden="true"
+          style={{ position: "absolute", left: "-9999px", opacity: 0, pointerEvents: "none" }}
+        >
+          <label htmlFor="lead-website">Website</label>
+          <input
+            id="lead-website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
         </div>
 
         <button
