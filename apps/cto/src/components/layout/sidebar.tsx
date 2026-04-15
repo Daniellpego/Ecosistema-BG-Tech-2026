@@ -161,12 +161,12 @@ export function Sidebar() {
               dragConstraints={{ left: -SIDEBAR_WIDTH, right: 0 }}
               dragElastic={0.1}
               onDragEnd={handleDragEnd}
-              style={{ x }}
-              className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-[280px] bg-white touch-pan-y"
               style={{
+                x,
                 paddingTop: 'env(safe-area-inset-top, 0px)',
                 paddingBottom: 'env(safe-area-inset-bottom, 0px)',
               }}
+              className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-[280px] bg-white touch-pan-y"
             >
               <button
                 onClick={() => setMobileOpen(false)}
