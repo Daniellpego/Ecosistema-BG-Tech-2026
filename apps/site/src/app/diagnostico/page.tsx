@@ -227,6 +227,7 @@ export default function DiagnosticoPage() {
             score: finalScore,
             answers,
             city: city || undefined,
+            website: honeypot,
           }),
         });
 
@@ -271,7 +272,7 @@ export default function DiagnosticoPage() {
 
   /* ── Submit lead & start loading ── */
 
-  async function handleSubmitLead() {
+  async function handleSubmitLead(honeypot: string) {
     setIsSubmitting(true);
     const finalScore = calculateScore(answers);
     setScore(finalScore);

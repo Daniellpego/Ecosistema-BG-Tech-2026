@@ -143,6 +143,10 @@ function validatePayload(body: unknown): DiagnosticoPayload | null {
   if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
 
+  // Honeypot check — if the hidden `website` field is filled the sender is a bot.
+  // Return null to 400 without revealing the reason.
+  if (typeof b.website === "string" && b.website.trim() !== "") return null;
+
   if (typeof b.lead !== "object" || b.lead === null) return null;
   const lead = b.lead as Record<string, unknown>;
   if (typeof lead.nome !== "string" || typeof lead.empresa !== "string") return null;

@@ -102,23 +102,97 @@ SET "rl:api:diagnostico:<ip>" 9999 EX 3600
 ## Anthropic budget monitoring
 
 Upstash tracks Redis usage; Anthropic API spend is separate.
-Monitor Anthropic usage at:
+
+### n8n workflow (automated — every 6 hours)
+
+Import `n8n-workflows/anthropic-budget-alert.json` into your n8n instance.
+
+**Required n8n environment variables:**
+
+| Variable | Value |
+|---|---|
+| `ANTHROPIC_ADMIN_API_KEY` | Admin API key (separate from the inference key) |
+| `ANTHROPIC_MONTHLY_BUDGET_USD` | e.g. `50` |
+| `ANTHROPIC_ALERT_THRESHOLD_PCT` | e.g. `80` |
+| `SLACK_WEBHOOK_URL` | Incoming webhook URL from Slack App |
+
+**How to get the Admin API key:**  
+Anthropic Console → Settings → API Keys → Create Admin Key  
+*(Admin keys can read billing/usage; do **not** use them for inference)*
+
+**How the workflow works:**
+1. Runs every 6 h via Schedule Trigger
+2. Calls `GET /v1/organizations/costs?granularity=month` (Anthropic Billing API)
+3. Computes `spent / budget` percentage
+4. If ≥ threshold → posts a Slack rich-message with a link to the console
+
+### Manual check (curl)
+
+```bash
+curl -s "https://api.anthropic.com/v1/organizations/costs?granularity=month&start_date=$(date +%Y-%m-01)" \
+  -H "x-api-key: $ANTHROPIC_ADMIN_API_KEY" \
+  -H "anthropic-version: 2023-06-01" | jq '.data[].cost_usd | add'
+```
+
+### Console spend limit (hard cutoff)
+
+Set both a **Soft Limit** (email when you hit 80%) and a **Hard Limit**  
+(cuts the API key at 100%) in:
 
 ```
-https://console.anthropic.com/settings/billing → Usage
+Anthropic Console → Settings → Billing → Usage limits
 ```
 
-Set a spend limit at **Anthropic Console → Billing → Usage limits**:
-- Soft limit at 80% → email notification
-- Hard limit to cut off the API key at 100%
+---
 
-There is no native webhook from Anthropic today.  
-For automated alerts, run a scheduled n8n workflow (daily/hourly):
+## Honeypot — bot vs human test
 
+### Human (passes)
+```bash
+# Real user: website field empty → HTTP 200
+curl -s -o /dev/null -w "%{http_code}" \
+  -X POST https://gradios.co/api/diagnostico \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lead":{"nome":"João Silva","empresa":"ACME"},
+    "score":72,
+    "answers":{},
+    "website":""
+  }'
+# → 200
 ```
-GET https://api.anthropic.com/v1/usage
-  Authorization: Bearer $ANTHROPIC_API_KEY
+
+### Bot (rejected — 400)
+```bash
+# Bot that fills the hidden field → HTTP 400
+curl -s -o /dev/null -w "%{http_code}" \
+  -X POST https://gradios.co/api/diagnostico \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lead":{"nome":"bot","empresa":"bot"},
+    "score":50,
+    "answers":{},
+    "website":"https://evil.com"
+  }'
+# → 400
 ```
 
-Compare `total_cost` against your monthly budget and post to Slack/Discord
-if over threshold.
+---
+
+## Security headers — CFO / CRM / CTO
+
+All three dashboard apps now ship the following headers on every response
+(added to `next.config.ts` in each app):
+
+| Header | Value |
+|---|---|
+| `X-Frame-Options` | `DENY` |
+| `X-Content-Type-Options` | `nosniff` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
+| `Content-Security-Policy` | `default-src 'self'; connect-src 'self' *.supabase.co; frame-ancestors 'none'; …` |
+
+Verify with:
+```bash
+curl -s -I https://<dashboard-domain>/ | grep -Ei "x-frame|x-content|referrer|permissions|content-security"
+```
