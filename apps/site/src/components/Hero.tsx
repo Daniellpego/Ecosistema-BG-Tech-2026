@@ -9,7 +9,7 @@ import { trackCTAClick } from "@/lib/meta-pixel";
 
 export function Hero() {
   const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   const [count, setCount] = useState<number | null>(null);
   const dashRef = useRef<HTMLDivElement>(null);
@@ -25,14 +25,15 @@ export function Hero() {
   const glowOpacity = useMotionValue(0);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener("resize", handleResize);
+    const mql = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
 
     const t = setTimeout(() => setMounted(true), 150);
     return () => {
       clearTimeout(t);
-      window.removeEventListener("resize", handleResize);
+      mql.removeEventListener("change", handler);
     };
   }, []);
 
