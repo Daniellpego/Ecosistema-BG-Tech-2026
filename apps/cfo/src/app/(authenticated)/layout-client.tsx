@@ -42,11 +42,20 @@ export default function AuthenticatedLayoutClient({ children }: { children: Reac
   return (
     <PeriodProvider>
       <TaxProvider>
-        <div className="min-h-screen min-h-[100dvh]">
+        <div
+          className="min-h-screen min-h-[100dvh]"
+          style={{
+            paddingLeft: 'env(safe-area-inset-left)',
+            paddingRight: 'env(safe-area-inset-right)',
+          }}
+        >
           <Sidebar />
           <main className="lg:pl-[260px] transition-all duration-300">
             {/* Header with period filter */}
-            <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-3 sm:px-6 py-2.5 sm:py-3">
+            <header
+              className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-3 sm:px-6 py-2.5 sm:py-3"
+              style={{ paddingTop: 'max(10px, env(safe-area-inset-top))' }}
+            >
               <div className="flex items-center justify-between gap-2">
                 <div className="pl-11 lg:pl-0 flex-1 min-w-0">
                   <PeriodFilter />
@@ -58,7 +67,10 @@ export default function AuthenticatedLayoutClient({ children }: { children: Reac
             </header>
 
             {/* Content */}
-            <div className="p-3 sm:p-6 pb-20 sm:pb-6">
+            <div
+              className="p-3 sm:p-6 pb-20 sm:pb-6"
+              style={{ paddingBottom: 'max(80px, env(safe-area-inset-bottom))' }}
+            >
               {children}
             </div>
           </main>

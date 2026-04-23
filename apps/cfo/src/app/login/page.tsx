@@ -3,7 +3,6 @@
 export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -14,7 +13,6 @@ import { Label } from '@/components/ui/label'
 export default function LoginPage() {
   useEffect(() => { document.title = 'Login | Gradios CFO' }, [])
 
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -37,8 +35,11 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/dashboard')
-    router.refresh()
+    // Use a full-page navigation so the browser commits the fresh Supabase
+    // session cookies before the middleware re-evaluates them. iOS Safari in
+    // standalone PWA mode races client-side router transitions against async
+    // cookie writes, which previously caused an infinite /login redirect.
+    window.location.assign('/dashboard')
   }
 
   async function handleResetPassword(e: React.FormEvent) {
@@ -60,7 +61,15 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-bg-navy px-4">
+    <main
+      className="min-h-screen min-h-[100dvh] flex items-center justify-center bg-bg-navy px-4"
+      style={{
+        paddingTop: 'max(16px, env(safe-area-inset-top))',
+        paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+        paddingLeft: 'max(16px, env(safe-area-inset-left))',
+        paddingRight: 'max(16px, env(safe-area-inset-right))',
+      }}
+    >
       <div className="w-full max-w-sm space-y-8">
         {/* Logo */}
         <div className="flex flex-col items-center gap-4">
@@ -98,6 +107,10 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
+              inputMode="email"
             />
           </div>
 
@@ -113,6 +126,9 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                 />
                 <button
                   type="button"

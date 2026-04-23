@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -11,7 +10,6 @@ import { Label } from '@/components/ui/label'
 import { Logo } from '@/components/layout/logo'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -40,12 +38,23 @@ export default function LoginPage() {
       setLoading(false)
       return
     }
-    router.push('/dashboard')
-    router.refresh()
+    // Full-page navigation so Supabase's freshly written session cookies are
+    // sent with the next request. Avoids a known iOS Safari PWA race where
+    // client-side router.push + router.refresh run before cookies commit,
+    // causing the middleware to redirect back to /login.
+    window.location.assign('/dashboard')
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden">
+    <div
+      className="min-h-screen min-h-[100dvh] bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden"
+      style={{
+        paddingTop: 'max(16px, env(safe-area-inset-top))',
+        paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+        paddingLeft: 'max(16px, env(safe-area-inset-left))',
+        paddingRight: 'max(16px, env(safe-area-inset-right))',
+      }}
+    >
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(0, 191, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 191, 255, 0.04) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(0, 191, 255, 0.06) 0%, transparent 70%)' }} />
@@ -54,8 +63,8 @@ export default function LoginPage() {
         <div className="card-glass p-8">
           <div className="flex flex-col items-center mb-8"><Logo /><p className="text-sm text-text-secondary mt-3">Acesse o Painel do CTO</p></div>
           <form onSubmit={handleLogin} className="space-y-5">
-            <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" /></div>
-            <div className="space-y-2"><Label htmlFor="password">Senha</Label><div className="relative"><Input id="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div></div>
+            <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} inputMode="email" /></div>
+            <div className="space-y-2"><Label htmlFor="password">Senha</Label><div className="relative"><Input id="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" autoCapitalize="off" autoCorrect="off" spellCheck={false} /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}>{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div></div>
             {error && (<motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 text-sm text-status-negative bg-status-negative/10 px-3 py-2 rounded-lg"><AlertCircle className="h-4 w-4 shrink-0" />{error}</motion.div>)}
             <Button type="submit" className="w-full" disabled={loading}><LogIn className="h-4 w-4" />{loading ? 'Entrando...' : 'Entrar'}</Button>
           </form>
