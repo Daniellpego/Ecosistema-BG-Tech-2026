@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import { usePeriod } from '@/providers/period-provider'
 import type { Lead, LeadStatus, LeadTemperatura } from '@/types/database'
 
@@ -135,7 +136,7 @@ export function useCreateLead() {
     mutationFn: async (lead: LeadInsert) => {
       const { data, error } = await supabase
         .from('leads')
-        .insert(lead as unknown as Record<string, unknown>)
+        .insert(toRecord(lead))
         .select()
         .single()
 
@@ -157,7 +158,7 @@ export function useUpdateLead() {
     mutationFn: async ({ id, ...updates }: Partial<LeadInsert> & { id: string }) => {
       const { data, error } = await supabase
         .from('leads')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()
@@ -235,7 +236,7 @@ export function useCreateActivity() {
     }) => {
       const { data, error } = await supabase
         .from('atividades')
-        .insert(activity as unknown as Record<string, unknown>)
+        .insert(toRecord(activity))
         .select()
         .single()
 

@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import { logAction } from '@/lib/audit-log'
 import type { CustoFixo, CustoFixoCategoria, CustoFixoRecorrencia, CustoFixoStatus } from '@/types/database'
 
@@ -44,7 +45,7 @@ export function useCreateCustoFixo() {
     mutationFn: async (custoFixo: CustoFixoInsert) => {
       const { data, error } = await supabase
         .from('custos_fixos')
-        .insert(custoFixo as unknown as Record<string, unknown>)
+        .insert(toRecord(custoFixo))
         .select()
         .single()
 
@@ -70,7 +71,7 @@ export function useUpdateCustoFixo() {
     mutationFn: async ({ id, ...updates }: Partial<CustoFixoInsert> & { id: string }) => {
       const { data, error } = await supabase
         .from('custos_fixos')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()

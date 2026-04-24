@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import { logAction } from '@/lib/audit-log'
 import { usePeriod } from '@/providers/period-provider'
 import type { Receita, ReceitaTipo, ReceitaStatus } from '@/types/database'
@@ -114,7 +115,7 @@ export function useCreateReceita() {
       const payload = { ...receita, taxas: receita.taxas != null ? receita.taxas : 0 }
       const { data, error } = await supabase
         .from('receitas')
-        .insert(payload as unknown as Record<string, unknown>)
+        .insert(toRecord(payload))
         .select()
         .single()
 
@@ -149,11 +150,11 @@ export function useCreateReceitasBatch() {
         date.setMonth(date.getMonth() + i)
         const dateStr = date.toISOString().split('T')[0]
 
-        payloads.push({
+        payloads.push(toRecord({
           ...receita,
           data: dateStr,
           taxas: receita.taxas != null ? receita.taxas : 0,
-        } as unknown as Record<string, unknown>)
+        }))
       }
 
       const { data, error } = await supabase
@@ -186,7 +187,7 @@ export function useUpdateReceita() {
     mutationFn: async ({ id, ...updates }: Partial<ReceitaInsert> & { id: string }) => {
       const { data, error } = await supabase
         .from('receitas')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()

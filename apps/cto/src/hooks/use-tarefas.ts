@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import type { Tarefa, TarefaInsert } from '@/types/database'
 import { toast } from 'sonner'
 
@@ -49,7 +50,7 @@ export function useCreateTarefa() {
     mutationFn: async (tarefa: TarefaInsert) => {
       const { data, error } = await supabase
         .from('tarefas')
-        .insert(tarefa as unknown as Record<string, unknown>)
+        .insert(toRecord(tarefa))
         .select()
         .single()
       if (error) throw error
@@ -74,7 +75,7 @@ export function useUpdateTarefa() {
     mutationFn: async ({ id, ...updates }: Partial<Tarefa> & { id: string; projeto_id: string }) => {
       const { data, error } = await supabase
         .from('tarefas')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()

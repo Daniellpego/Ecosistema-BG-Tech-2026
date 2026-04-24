@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import { usePeriod } from '@/providers/period-provider'
 import type { Projecao } from '@/types/database'
 
@@ -236,7 +237,7 @@ export function useCreateProjecao() {
     mutationFn: async (projecao: ProjecaoInsert) => {
       const { data, error } = await supabase
         .from('projecoes')
-        .insert(projecao as unknown as Record<string, unknown>)
+        .insert(toRecord(projecao))
         .select()
         .single()
 
@@ -261,7 +262,7 @@ export function useUpdateProjecao() {
     mutationFn: async ({ id, ...updates }: Partial<ProjecaoInsert> & { id: string }) => {
       const { data, error } = await supabase
         .from('projecoes')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()

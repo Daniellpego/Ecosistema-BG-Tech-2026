@@ -120,6 +120,53 @@ const CATEGORY_LABELS: Record<string, string> = {
   api_consumo: 'API / Consumo',
 }
 
+// ── Pure calculation functions (testable) ───────────────────────────
+
+export function computeMRR(receitas: Receita[]): number {
+  return receitas
+    .filter(r => r.recorrente && r.tipo !== 'setup')
+    .reduce((s, r) => s + Number(r.valor_bruto || 0), 0)
+}
+
+export function computeBurnRate(
+  totalCustosFixos: number,
+  avgGastosVar3mSemImp: number,
+  avgImpostos3m: number
+): number {
+  return totalCustosFixos + avgGastosVar3mSemImp + avgImpostos3m
+}
+
+export function computeRunway(caixa: number, burnRate: number): number {
+  return burnRate > 0 ? caixa / burnRate : 0
+}
+
+export function computeMargem(resultadoLiquido: number, receitaTotal: number): number {
+  return receitaTotal > 0 ? (resultadoLiquido / receitaTotal) * 100 : 0
+}
+
+export function computeBreakEven(custosFixos: number, cvRatio: number): number {
+  return cvRatio < 1 ? custosFixos / (1 - cvRatio) : 0
+}
+
+export function computeMargemBruta(receitaTotal: number, totalGastosVar: number): number {
+  return receitaTotal > 0 ? ((receitaTotal - totalGastosVar) / receitaTotal) * 100 : 0
+}
+
+export function computeHealthStatus(
+  kpis: DashboardKPIs,
+  caixaDropping3m: boolean
+): HealthStatus {
+  const hasData = kpis.receitaTotal > 0 || kpis.custosFixos > 0 || kpis.custosVariaveis > 0 || kpis.caixaDisponivel > 0
+  if (!hasData) return 'sem_dados'
+  if (kpis.runway < 1 || kpis.burnRate > kpis.receitaTotal || caixaDropping3m) return 'critico'
+  if (
+    (kpis.runway >= 1 && kpis.runway < 3) ||
+    (kpis.resultadoLiquido < 0 && kpis.resultadoLiquido > -(kpis.receitaTotal * 0.1))
+  ) return 'atencao'
+  if (kpis.runway >= 3 && kpis.resultadoLiquido >= 0 && kpis.margem >= 30) return 'saudavel'
+  return 'atencao'
+}
+
 // ── Main hook ────────────────────────────────────────────────────────
 export function useDashboard(): DashboardData {
   const { month, year, startDate, endDate } = usePeriod()
@@ -277,7 +324,7 @@ export function useDashboard(): DashboardData {
 
     // Receita Bruta (valor_bruto) — mesma base da DRE
     const receitaTotal = receitas.reduce((s, r) => s + Number(r.valor_bruto || 0), 0)
-    const mrr = receitas.filter(r => r.recorrente && r.tipo !== 'setup').reduce((s, r) => s + Number(r.valor_bruto || 0), 0)
+    const mrr = computeMRR(receitas)
     const totalCustosFixos = custosFixos.reduce((s, c) => s + Number(c.valor_mensal || 0), 0)
     
     // Gastos variáveis SEM impostos (consistente com DRE)
@@ -298,7 +345,7 @@ export function useDashboard(): DashboardData {
     const impostos3m = gastos3m.filter(g => g.tipo === 'impostos')
     const avgGastosVar3mSemImp = gastos3mSemImpostos.reduce((s, g) => s + Number(g.valor || 0), 0) / 3
     const avgImpostos3m = impostos3m.reduce((s, g) => s + Number(g.valor || 0), 0) / 3
-    const burnRate = totalCustosFixos + avgGastosVar3mSemImp + avgImpostos3m
+    const burnRate = computeBurnRate(totalCustosFixos, avgGastosVar3mSemImp, avgImpostos3m)
     // DRE cascade: Receita - CV - CF - Impostos
     const margemBrutaVal = receitaTotal - totalGastosVar
     const resultadoOperacional = margemBrutaVal - totalCustosFixos
@@ -306,11 +353,11 @@ export function useDashboard(): DashboardData {
 
     // Break-even point (monthly revenue to cover fixed costs)
     const cvRatio = receitaTotal > 0 ? totalGastosVar / receitaTotal : 0
-    const breakEven = cvRatio < 1 ? totalCustosFixos / (1 - cvRatio) : 0
-    const margemBruta = receitaTotal > 0 ? ((receitaTotal - totalGastosVar) / receitaTotal) * 100 : 0
+    const breakEven = computeBreakEven(totalCustosFixos, cvRatio)
+    const margemBruta = computeMargemBruta(receitaTotal, totalGastosVar)
     const caixaDisponivel = caixaEntries.length > 0 ? Number(caixaEntries[0]?.saldo || 0) : 0
-    const runway = burnRate > 0 ? caixaDisponivel / burnRate : 0
-    const margem = receitaTotal > 0 ? (resultadoLiquido / receitaTotal) * 100 : 0
+    const runway = computeRunway(caixaDisponivel, burnRate)
+    const margem = computeMargem(resultadoLiquido, receitaTotal)
 
     const kpis: DashboardKPIs = {
       receitaTotal,

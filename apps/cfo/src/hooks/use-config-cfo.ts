@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 
 export interface ConfigCFO {
   id: string
@@ -56,7 +57,7 @@ export function useUpdateConfigCFO() {
 
       const { data, error } = await supabase
         .from('configuracoes_cfo')
-        .update({ ...updates, updated_at: new Date().toISOString() } as unknown as Record<string, unknown>)
+        .update(toRecord({ ...updates, updated_at: new Date().toISOString() }))
         .eq('id', existing.id)
         .select()
         .single()

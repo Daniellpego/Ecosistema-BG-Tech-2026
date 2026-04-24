@@ -4,6 +4,7 @@ import { useRef, useState, useCallback } from 'react'
 import { Camera } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -65,7 +66,7 @@ export function UserAvatar({ size = 'md', editable = false, className }: UserAva
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar_url: publicUrl } as Record<string, unknown>)
+        .update(toRecord({ avatar_url: publicUrl }))
         .eq('user_id', user.id)
 
       if (updateError) throw updateError

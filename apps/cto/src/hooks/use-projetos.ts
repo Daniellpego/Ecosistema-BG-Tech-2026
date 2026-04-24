@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import { normalizeProjetoStatus, type Projeto, type ProjetoInsert, type ProjetoStatus } from '@/types/database'
 import { toast } from 'sonner'
 
@@ -62,7 +63,7 @@ export function useCreateProjeto() {
     mutationFn: async (projeto: ProjetoInsert) => {
       const { data, error } = await supabase
         .from('projetos')
-        .insert(projeto as unknown as Record<string, unknown>)
+        .insert(toRecord(projeto))
         .select()
         .single()
       if (error) throw error
@@ -85,7 +86,7 @@ export function useUpdateProjeto() {
     mutationFn: async ({ id, ...updates }: Partial<Projeto> & { id: string }) => {
       const { data, error } = await supabase
         .from('projetos')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()

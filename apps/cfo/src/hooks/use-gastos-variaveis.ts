@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import { logAction } from '@/lib/audit-log'
 import { usePeriod } from '@/providers/period-provider'
 import type { GastoVariavel, GastoVariavelCategoria, GastoVariavelTipo, GastoVariavelStatus } from '@/types/database'
@@ -72,7 +73,7 @@ export function useCreateGastoVariavel() {
     mutationFn: async (gasto: GastoVariavelInsert) => {
       const { data, error } = await supabase
         .from('gastos_variaveis')
-        .insert(gasto as unknown as Record<string, unknown>)
+        .insert(toRecord(gasto))
         .select()
         .single()
 
@@ -99,7 +100,7 @@ export function useUpdateGastoVariavel() {
     mutationFn: async ({ id, ...updates }: Partial<GastoVariavelInsert> & { id: string }) => {
       const { data, error } = await supabase
         .from('gastos_variaveis')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()

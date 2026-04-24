@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import type { QuizSession } from '@/types/database'
 
 /**
@@ -58,7 +59,7 @@ export function useQuizRealtime(onNewLead?: () => void) {
 
           const { data: lead, error } = await supabase
             .from('leads')
-            .insert(leadData as unknown as Record<string, unknown>)
+            .insert(toRecord(leadData))
             .select('id')
             .single()
 
@@ -71,7 +72,7 @@ export function useQuizRealtime(onNewLead?: () => void) {
           if (lead?.id) {
             await supabase
               .from('quiz_sessions')
-              .update({ lead_id: lead.id } as unknown as Record<string, unknown>)
+              .update(toRecord({ lead_id: lead.id }))
               .eq('id', session.id)
           }
 

@@ -1,3 +1,8 @@
+-- ⚠️ DEPRECATED: Jarvis system was removed. The columns `gerada_por`,
+-- `agent_usado`, and `session_id` are no longer used. The FK to
+-- `jarvis_agents(slug)` references a deprecated table.
+-- Safe to drop these columns in a future cleanup migration.
+--
 -- ══════════════════════════════════════════════════════════════
 -- Migration 008: Extende crm_proposals com campos JARVIS
 --

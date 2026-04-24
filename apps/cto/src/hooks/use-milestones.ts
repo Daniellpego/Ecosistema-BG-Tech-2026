@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import type { ProjectMilestone, MilestoneInsert, MilestoneWithProjeto } from '@/types/database'
 import { toast } from 'sonner'
 
@@ -51,7 +52,7 @@ export function useCreateMilestone() {
     mutationFn: async (milestone: MilestoneInsert) => {
       const { data, error } = await supabase
         .from('project_milestones')
-        .insert(milestone as unknown as Record<string, unknown>)
+        .insert(toRecord(milestone))
         .select()
         .single()
       if (error) throw error
@@ -75,7 +76,7 @@ export function useUpdateMilestone() {
     mutationFn: async ({ id, ...updates }: Partial<ProjectMilestone> & { id: string; projeto_id: string }) => {
       const { data, error } = await supabase
         .from('project_milestones')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()

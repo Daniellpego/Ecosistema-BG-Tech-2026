@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import type { Presentation, PresentationRequest } from '@/types/database'
 
 export function usePresentations() {
@@ -41,7 +42,7 @@ export function useCreatePresentationRequest() {
     mutationFn: async (request: { tipo: string; notas?: string; requested_by: string }) => {
       const { data, error } = await supabase
         .from('presentation_requests')
-        .insert(request as unknown as Record<string, unknown>)
+        .insert(toRecord(request))
         .select()
         .single()
       if (error) throw error

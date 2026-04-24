@@ -193,6 +193,61 @@ describe('computeMonthDRE', () => {
     expect(result.cfTotal).toBe(7300)
   })
 
+  it('categoriza custos variáveis por tipo (marketing, comercial, freelancer, api_consumo)', () => {
+    const gastosVariaveis = [
+      makeGastoVariavel({ id: 'gv1', tipo: 'marketing', categoria: 'marketing', valor: 1000 }),
+      makeGastoVariavel({ id: 'gv2', tipo: 'comercial', categoria: 'comercial', valor: 500 }),
+      makeGastoVariavel({ id: 'gv3', tipo: 'operacional', categoria: 'freelancer', valor: 2000 }),
+      makeGastoVariavel({ id: 'gv4', tipo: 'operacional', categoria: 'api_consumo', valor: 300 }),
+      makeGastoVariavel({ id: 'gv5', tipo: 'impostos', valor: 1500 }),
+    ]
+
+    const result = computeMonthDRE([], [], gastosVariaveis)
+
+    expect(result.cvMarketing).toBe(1000)
+    expect(result.cvComercial).toBe(500)
+    expect(result.cvFreelancer).toBe(2000)
+    expect(result.cvApiConsumo).toBe(300)
+    // impostos not in custosVariaveisTotal
+    expect(result.custosVariaveisTotal).toBe(3800)
+    expect(result.impostos).toBe(1500)
+  })
+
+  it('calcula cascata completa com todos os componentes', () => {
+    const receitas = [
+      makeReceita({ id: 'r1', valor_bruto: 15000, tipo: 'mensalidade' }),
+      makeReceita({ id: 'r2', valor_bruto: 5000, tipo: 'setup' }),
+    ]
+    const custosFixos = [
+      makeCustoFixo({ id: 'cf1', categoria: 'ferramentas', valor_mensal: 1000 }),
+      makeCustoFixo({ id: 'cf2', categoria: 'pro_labore', valor_mensal: 6000 }),
+    ]
+    const gastosVariaveis = [
+      makeGastoVariavel({ id: 'gv1', tipo: 'marketing', valor: 2000 }),
+      makeGastoVariavel({ id: 'gv2', tipo: 'operacional', valor: 1000 }),
+      makeGastoVariavel({ id: 'gv3', tipo: 'impostos', valor: 2400 }),
+    ]
+
+    const result = computeMonthDRE(receitas, custosFixos, gastosVariaveis)
+
+    // Receita Bruta = 20000
+    expect(result.receitaBruta).toBe(20000)
+    // Custos Variáveis (sem impostos) = 3000
+    expect(result.custosVariaveisTotal).toBe(3000)
+    // Margem Bruta = 20000 - 3000 = 17000
+    expect(result.margemBruta).toBe(17000)
+    // Custos Fixos = 7000
+    expect(result.cfTotal).toBe(7000)
+    // Resultado Operacional = 17000 - 7000 = 10000
+    expect(result.resultadoOperacional).toBe(10000)
+    // Impostos = 2400
+    expect(result.impostos).toBe(2400)
+    // Resultado Líquido = 10000 - 2400 = 7600
+    expect(result.resultadoLiquido).toBe(7600)
+    // Margem Líquida = 7600 / 20000 * 100 = 38%
+    expect(result.pctMargemLiquida).toBeCloseTo(38, 0)
+  })
+
   it('resultado negativo (prejuízo) é calculado corretamente', () => {
     const receitas = [makeReceita({ valor_bruto: 1000 })]
     const custosFixos = [makeCustoFixo({ valor_mensal: 5000 })]

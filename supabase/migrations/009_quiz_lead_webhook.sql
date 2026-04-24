@@ -1,3 +1,7 @@
+-- ⚠️ DEPRECATED: Jarvis webhook (localhost:8001) is no longer active.
+-- The trigger function notify_jarvis_new_lead() will silently fail in production.
+-- Safe to remove this trigger in a future cleanup migration.
+
 -- ══════════════════════════════════════════════════════════════
 -- Migration 009: Webhook — quiz_leads INSERT → JARVIS CRM
 --

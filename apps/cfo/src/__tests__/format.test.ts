@@ -22,6 +22,18 @@ describe('formatCurrency', () => {
   it('formata valores grandes com separador de milhar', () => {
     expect(formatCurrency(1000000)).toBe('R$\u00a01.000.000,00')
   })
+
+  it('retorna R$ 0,00 para NaN', () => {
+    expect(formatCurrency(NaN)).toBe('R$ 0,00')
+  })
+
+  it('retorna R$ 0,00 para Infinity', () => {
+    expect(formatCurrency(Infinity)).toBe('R$ 0,00')
+  })
+
+  it('retorna R$ 0,00 para -Infinity', () => {
+    expect(formatCurrency(-Infinity)).toBe('R$ 0,00')
+  })
 })
 
 describe('formatPercent', () => {
@@ -40,6 +52,18 @@ describe('formatPercent', () => {
   it('aceita número de casas decimais personalizado', () => {
     expect(formatPercent(33.333, 2)).toBe('+33.33%')
   })
+
+  it('retorna — para NaN', () => {
+    expect(formatPercent(NaN)).toBe('—')
+  })
+
+  it('retorna — para Infinity', () => {
+    expect(formatPercent(Infinity)).toBe('—')
+  })
+
+  it('retorna — para -Infinity', () => {
+    expect(formatPercent(-Infinity)).toBe('—')
+  })
 })
 
 describe('formatDate', () => {
@@ -48,7 +72,7 @@ describe('formatDate', () => {
   })
 
   it('aceita um objeto Date', () => {
-    expect(formatDate(new Date('2026-12-25'))).toBe('25/12/2026')
+    expect(formatDate(new Date('2026-12-25T12:00:00'))).toBe('25/12/2026')
   })
 })
 

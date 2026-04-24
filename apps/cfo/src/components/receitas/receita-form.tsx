@@ -102,8 +102,8 @@ export function ReceitaForm({ open, onOpenChange, receita }: ReceitaFormProps) {
         status: receita.status,
         categoria: receita.categoria ?? '',
         observacoes: receita.observacoes ?? '',
-        nf_numero: (receita as unknown as Record<string, unknown>).nf_numero as string ?? '',
-        nf_chave_acesso: (receita as unknown as Record<string, unknown>).nf_chave_acesso as string ?? '',
+        nf_numero: (receita as any).nf_numero ?? '',
+        nf_chave_acesso: (receita as any).nf_chave_acesso ?? '',
         duracao_meses: '1',
       })
     } else {

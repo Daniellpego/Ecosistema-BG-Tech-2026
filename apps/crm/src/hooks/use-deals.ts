@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { toRecord } from '@/lib/supabase-helpers'
 import { usePeriod } from '@/providers/period-provider'
 import type { Deal, DealStatus, TipoServico } from '@/types/database'
 
@@ -80,7 +81,7 @@ export function useCreateDeal() {
     mutationFn: async (deal: DealInsert) => {
       const { data, error } = await supabase
         .from('deals')
-        .insert(deal as unknown as Record<string, unknown>)
+        .insert(toRecord(deal))
         .select()
         .single()
 
@@ -104,7 +105,7 @@ export function useUpdateDeal() {
     mutationFn: async ({ id, ...updates }: Partial<Omit<Deal, 'id' | 'created_at' | 'updated_at'>> & { id: string }) => {
       const { data, error } = await supabase
         .from('deals')
-        .update(updates as unknown as Record<string, unknown>)
+        .update(toRecord(updates))
         .eq('id', id)
         .select()
         .single()

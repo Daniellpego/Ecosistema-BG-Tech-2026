@@ -1,3 +1,7 @@
+-- ⚠️ DEPRECATED: Jarvis system was removed. These tables are no longer used.
+-- This migration is kept for history but should not be applied to new environments.
+-- If applied, the tables can be safely dropped.
+
 -- ══════════════════════════════════════════════════════════════
 -- Migration 007: JARVIS Schema (corrigido para banco real)
 --
