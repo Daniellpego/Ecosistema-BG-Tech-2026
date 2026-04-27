@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 
 const inputVariants = cva(
   [
-    'w-full rounded-md border bg-base text-fg-primary',
+    'w-full rounded-[10px] border border-[#d1d1d6] bg-base text-fg-primary',
     'placeholder:text-fg-tertiary',
     'transition-[border-color,box-shadow] duration-fast ease-standard',
     'focus-visible:outline-none focus-visible:border-focus focus-visible:shadow-focus',

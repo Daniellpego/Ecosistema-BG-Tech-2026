@@ -23,8 +23,8 @@ const buttonVariants = cva(
           'hover:bg-neutral-800 active:bg-neutral-700',
         ].join(' '),
         secondary: [
-          'border-2 border-neutral-200 bg-base text-fg-primary',
-          'hover:border-neutral-300 hover:bg-subtle active:bg-muted',
+          'border bg-base text-fg-primary',
+          'hover:bg-subtle active:bg-muted',
         ].join(' '),
         ghost: [
           'bg-transparent text-fg-primary',

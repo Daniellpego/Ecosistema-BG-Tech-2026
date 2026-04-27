@@ -10,15 +10,15 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        neutral: 'bg-subtle text-fg-secondary',
-        brand: 'bg-primary-50 text-primary-700',
+        neutral: 'bg-subtle text-fg-secondary border border-subtle',
+        brand: 'bg-primary-50 text-primary-700 border border-primary-100',
         success: 'bg-success-50 text-success-700',
         warning: 'bg-warning-50 text-warning-700',
         danger: 'bg-danger-50 text-danger-700',
         outline: 'border bg-transparent text-fg-secondary',
       },
       size: {
-        sm: 'px-2 py-0.5 text-caption',
+        sm: 'px-2 py-0.5 text-[12px] leading-[1.35]',
         md: 'px-2.5 py-0.5 text-footnote',
       },
     },

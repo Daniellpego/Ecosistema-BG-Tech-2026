@@ -39,8 +39,17 @@ type Story = StoryObj;
 
 export const Hero: Story = {
   render: () => (
-    <Section size="hero" background="base">
-      <Container width="hero">
+    <Section
+      size="hero"
+      background="base"
+      className="relative min-h-[100dvh] flex items-center overflow-hidden"
+    >
+      {/* Polimento: radial gradient sutil no canto superior direito */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_-10%,rgba(30,61,138,0.06),transparent_55%)]"
+        aria-hidden
+      />
+      <Container width="hero" className="relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 max-w-2xl">
             <Badge variant="brand" size="md" className="mb-6">
@@ -72,8 +81,8 @@ export const Hero: Story = {
           <div className="lg:col-span-5">
             <Card padding="lg" elevation="sm" className="aspect-[4/5] flex flex-col">
               <div className="flex items-center justify-between mb-4">
-                <Text size="caption" tone="tertiary" weight="semibold">
-                  PIPELINE / OPERAÇÃO
+                <Text size="caption" tone="tertiary" weight="regular">
+                  Pipeline · operação
                 </Text>
                 <Badge variant="success" size="sm">Live</Badge>
               </div>
@@ -135,7 +144,7 @@ export const Content: Story = {
     <Section size="regular" background="subtle">
       <Container>
         <div className="max-w-2xl mb-12">
-          <Heading level={2} size="title-2">
+          <Heading level={2} size="title-3">
             O que entregamos
           </Heading>
           <Text size="body-lg" tone="secondary" className="mt-4">

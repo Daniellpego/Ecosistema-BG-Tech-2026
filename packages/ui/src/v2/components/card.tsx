@@ -93,7 +93,7 @@ const CardTitle = React.forwardRef<
   return (
     <Tag
       ref={ref}
-      className={cn('text-title-3 text-fg-primary', className)}
+      className={cn('text-headline text-fg-primary', className)}
       {...props}
     />
   );
