@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { MessageCircle, Eye, ExternalLink } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@gradios/ui'
+import { Skeleton } from '@gradios/ui'
 import { formatCurrency, formatTimeAgo, formatWhatsAppUrl, formatPhone } from '@/lib/format'
 import type { Lead } from '@/types/database'
 import { LEAD_STATUS_LABELS, LEAD_STATUS_COLORS, ORIGENS_LABELS, ORIGENS_COLORS } from '@/types/database'

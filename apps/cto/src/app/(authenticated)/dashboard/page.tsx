@@ -32,7 +32,7 @@ import {
 } from 'recharts'
 import { motion } from 'framer-motion'
 import { PageTransition, StaggerContainer, StaggerItem, AnimatedNumber } from '@/components/motion'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@gradios/ui'
 import { PrioridadeBadge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { useDashboardCTO } from '@/hooks/use-dashboard-cto'

@@ -1,0 +1,34 @@
+{
+  "name": "@gradios/tailwind-config",
+  "version": "1.0.0",
+  "description": "Preset Tailwind unificado do ecossistema Gradios (CFO, CRM, CTO, Site).",
+  "private": true,
+  "type": "module",
+  "main": "./tailwind.preset.ts",
+  "types": "./tailwind.preset.ts",
+  "exports": {
+    ".": {
+      "types": "./tailwind.preset.ts",
+      "default": "./tailwind.preset.ts"
+    },
+    "./tokens": {
+      "types": "./tokens.ts",
+      "default": "./tokens.ts"
+    }
+  },
+  "files": [
+    "tailwind.preset.ts",
+    "tokens.ts",
+    "index.ts",
+    "tsconfig.json"
+  ],
+  "peerDependencies": {
+    "tailwindcss": "^3.4.0 || ^4.0.0"
+  },
+  "dependencies": {
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

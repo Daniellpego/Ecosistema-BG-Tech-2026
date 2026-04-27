@@ -22,8 +22,8 @@ import ReactMarkdown from 'react-markdown'
 import { PageTransition } from '@/components/motion'
 import { cn } from '@/lib/utils'
 import { formatCurrency, formatPercent } from '@/lib/format'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Button } from '@/components/ui/button'
+import { Skeleton } from '@gradios/ui'
+import { Button } from '@gradios/ui'
 import {
   Tooltip,
   TooltipContent,

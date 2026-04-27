@@ -7,11 +7,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@gradios/ui'
 import { useToast } from '@/components/toast-provider'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@gradios/ui'
+import { Input } from '@gradios/ui'
+import { Label } from '@gradios/ui'
 import {
   Select,
   SelectContent,

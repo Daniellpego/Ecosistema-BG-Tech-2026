@@ -1,7 +1,7 @@
 import React from 'react'
 import { Inbox } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button' // Assuming this path for Button component
+import { Button } from '@gradios/ui' // Assuming this path for Button component
 
 interface EmptyStateProps {
   title: string

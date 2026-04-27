@@ -41,7 +41,11 @@
     "recharts": "^2.15.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.0",
-    "zod": "^3.24.0"
+    "zod": "^3.24.0",
+    "@gradios/ui": "*",
+    "@gradios/tailwind-config": "*",
+    "@gradios/motion": "*",
+    "@gradios/assets": "*"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

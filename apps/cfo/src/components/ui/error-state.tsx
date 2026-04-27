@@ -1,7 +1,7 @@
 import React from 'react'
 import { AlertCircle, RefreshCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button } from '@gradios/ui'
 
 interface ErrorStateProps {
   title?: string

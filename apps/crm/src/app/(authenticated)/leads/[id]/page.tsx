@@ -12,10 +12,10 @@ import {
 } from 'lucide-react'
 import { PageTransition, StaggerContainer, StaggerItem } from '@/components/motion'
 import { PageTitle } from '@/components/page-title'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@gradios/ui'
+import { Input } from '@gradios/ui'
+import { Label } from '@gradios/ui'
+import { Skeleton } from '@gradios/ui'
 import { Separator } from '@/components/ui/separator'
 import {
   Select,
@@ -29,7 +29,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@gradios/ui'
 import {
   useLeadById,
   useLeadQuiz,

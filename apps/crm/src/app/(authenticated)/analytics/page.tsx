@@ -13,7 +13,7 @@ import {
 } from 'recharts'
 import { PageTransition, StaggerContainer, StaggerItem, AnimatedNumber, MotionCard } from '@/components/motion'
 import { PageTitle } from '@/components/page-title'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@gradios/ui'
 import { useDashboard } from '@/hooks/use-dashboard'
 import { formatCurrency } from '@/lib/format'
 import {
