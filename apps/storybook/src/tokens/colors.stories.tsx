@@ -108,7 +108,10 @@ export const Semantics: Story = {
         </Grid>
       </Section>
 
-      <Section title="Accent" description="Cores de interação. primary = azul (CTA, links). secondary = ciano (apenas accent).">
+      <Section
+        title="Accent"
+        description="primary = azul (CTA, links, ações). secondary = ciano de uso ULTRA-RESTRITO: apenas focus rings de elementos secundários e dataviz pontual. Nunca em CTA, hover, texto ou background."
+      >
         <Grid cols={3}>
           {Object.entries(semantic.accent).map(([k, v]) => (
             <Swatch

@@ -56,7 +56,7 @@ import { cssVarsLight } from '@gradios/design-tokens/css-vars';
 - **Body base** = 17px (não 16).
 - **Pesos Inter** = 400 e 600. 700 só em exceção justificada.
 - **Sem gradientes em CTAs.** Botão primário = preto sólido (`bg-fg-primary`).
-- **Ciano (`secondary`)** = só accent (hover/foco/dataviz). Nunca em CTA.
+- **Ciano (`secondary`)** = uso ultra-restrito. Apenas focus rings de elementos secundários e dataviz pontual. **Nunca** em CTA, hover, background, texto ou link em estado normal. Tem que parecer "raro" no produto.
 - **Animações** restritas à `motion.whitelist` em `tokens.ts`.
 
 ## Versionamento

@@ -30,16 +30,16 @@ export const color = {
     900: '#1D1D1F',
   },
   primary: {
-    50: '#EEF2FE',
-    100: '#DDE5FD',
-    200: '#BCC8FB',
-    300: '#94A8F6',
-    400: '#6680E8',
-    500: '#2546BD',
-    600: '#1F3CA0',
-    700: '#1A3284',
-    800: '#15296B',
-    900: '#112256',
+    50: '#EEF1FA',
+    100: '#DDE3F3',
+    200: '#BAC7E7',
+    300: '#8EA3D2',
+    400: '#5470AE',
+    500: '#1E3D8A',
+    600: '#1A3577',
+    700: '#162D63',
+    800: '#122550',
+    900: '#0D1C3D',
   },
   secondary: {
     50: '#E6F8FF',
@@ -110,14 +110,16 @@ type FontSizeEntry = [
   config: { lineHeight: string; letterSpacing: string; fontWeight: string }
 ];
 
+// display-2 e display-1 usam weight 700 — exceção justificada à regra "Inter 400/600".
+// São os únicos níveis com peso 700, reservados para hero/momentos editoriais.
 const fontSize: Record<string, FontSizeEntry> = {
-  'display-2': ['80px', { lineHeight: '1.05', letterSpacing: '-0.04em', fontWeight: '600' }],
-  'display-1': ['64px', { lineHeight: '1.05', letterSpacing: '-0.04em', fontWeight: '600' }],
-  'title-1': ['48px', { lineHeight: '1.10', letterSpacing: '-0.03em', fontWeight: '600' }],
-  'title-2': ['40px', { lineHeight: '1.15', letterSpacing: '-0.02em', fontWeight: '600' }],
-  'title-3': ['32px', { lineHeight: '1.20', letterSpacing: '-0.02em', fontWeight: '600' }],
+  'display-2': ['88px', { lineHeight: '1.00', letterSpacing: '-0.045em', fontWeight: '700' }],
+  'display-1': ['72px', { lineHeight: '1.05', letterSpacing: '-0.04em', fontWeight: '700' }],
+  'title-1': ['52px', { lineHeight: '1.08', letterSpacing: '-0.035em', fontWeight: '600' }],
+  'title-2': ['40px', { lineHeight: '1.10', letterSpacing: '-0.025em', fontWeight: '600' }],
+  'title-3': ['32px', { lineHeight: '1.15', letterSpacing: '-0.02em', fontWeight: '600' }],
   headline: ['24px', { lineHeight: '1.25', letterSpacing: '-0.01em', fontWeight: '600' }],
-  subhead: ['20px', { lineHeight: '1.40', letterSpacing: '-0.01em', fontWeight: '500' }],
+  subhead: ['20px', { lineHeight: '1.35', letterSpacing: '-0.01em', fontWeight: '600' }],
   'body-lg': ['19px', { lineHeight: '1.50', letterSpacing: '0', fontWeight: '400' }],
   body: ['17px', { lineHeight: '1.50', letterSpacing: '0', fontWeight: '400' }],
   callout: ['15px', { lineHeight: '1.45', letterSpacing: '0', fontWeight: '400' }],
@@ -204,10 +206,10 @@ export const shadow = {
   none: 'none',
   xs: '0 1px 2px rgba(0, 0, 0, 0.04)',
   sm: '0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.05)',
-  md: '0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04)',
+  md: '0 4px 10px rgba(0, 0, 0, 0.04), 0 2px 3px rgba(0, 0, 0, 0.03)',
   lg: '0 12px 24px rgba(0, 0, 0, 0.06), 0 4px 8px rgba(0, 0, 0, 0.04)',
   xl: '0 24px 48px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04)',
-  focus: '0 0 0 4px rgba(37, 70, 189, 0.15)',
+  focus: '0 0 0 4px rgba(30, 61, 138, 0.15)',
   focusAccent: '0 0 0 4px rgba(0, 191, 255, 0.20)',
 } as const;
 
