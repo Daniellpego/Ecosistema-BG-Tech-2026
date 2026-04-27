@@ -5,5 +5,9 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "devDependencies": {
+    "@storybook/builder-vite": "^8.4.0",
+    "@storybook/react-vite": "^8.4.0"
+  }
 }

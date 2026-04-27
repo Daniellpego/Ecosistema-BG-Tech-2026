@@ -1,0 +1,56 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Welcome" />
+
+# Gradios Design System v2
+
+Foundation visual do site (apps/site) — identidade Apple-style, light theme, Inter, paleta `#2546BD` / `#00BFFF` / `#1D1D1F`.
+
+Painéis CFO/CRM/CTO seguem o sistema antigo (`@gradios/tailwind-config`) — esta foundation **não os afeta** até a fase 2 do redesign.
+
+## Como navegar
+
+A barra lateral expõe os tokens em **Tokens**:
+
+- **Color** — primitives (neutral, primary, secondary, status) e semantics (bg, fg, border, accent)
+- **Typography** — escala completa Apple-style, pesos Inter
+- **Spacing** — section/block tokens + numerical scale (rhythm 8)
+- **Radius** — escala xs até 2xl + pill
+- **Shadow** — Apple-sutil, cinco níveis + focus rings
+- **Motion** — durations + easings + whitelist
+
+Componentes virão na Fase 2 do redesign. Esta build é só fundações.
+
+## Convenções não-negociáveis
+
+- Texto principal `#1D1D1F`, **nunca** preto puro. Apple HIG.
+- Body base **17px**. Apple HIG. Premium-feeling vs 16px padrão web.
+- Pesos Inter **400 e 600**. 700 só em exceção justificada.
+- **Sem gradientes em CTAs.** Apple não usa. Botão primário = preto sólido.
+- **Ciano só como accent.** Hover, foco, dataviz. Nunca em CTA.
+- **Animações restritas à whitelist.** Em `motion.whitelist` no `tokens.ts`.
+- Container 1200px padrão / 1440px hero.
+
+## Filosofia dos tokens
+
+**Primitives** (`color.neutral.500`, `color.primary.500`) são paletas brutas. Não usar diretamente em UI exceto em casos pontuais (gradientes específicos, dataviz).
+
+**Semantics** (`semantic.fg.primary`, `semantic.bg.subtle`) são tokens com **intenção**. Usar sempre que possível. Eles mapeiam para CSS vars (`--gd-semantic-*`), o que permite trocar valores em runtime — preparação para dark mode futuro sem refactor de componentes.
+
+```tsx
+// Bom
+<div className="bg-base text-fg-primary border" />
+
+// Aceitável em casos específicos
+<div className="bg-primary-500" />
+
+// Evitar
+<div className="bg-[#2546BD]" />
+```
+
+## Stack
+
+- Storybook 8 com builder Vite
+- Tailwind 3 consumindo `@gradios/design-tokens/preset`
+- CSS vars injetadas via decorator global em `.storybook/preview.tsx`
+- MDX para esta documentação
