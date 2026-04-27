@@ -73,15 +73,20 @@ export const semantic = {
   fg: {
     primary: color.neutral[900],
     secondary: color.neutral[700],
-    tertiary: color.neutral[500],
+    // tertiary deve ter diferença visível com secondary. Subimos para neutral.400
+    // (#A1A1A6) para aumentar a diferença com secondary (neutral.700 / #424245).
+    tertiary: color.neutral[400],
     onInverse: color.white,
     brand: color.primary[500],
-    accent: color.secondary[500],
+    // Sem fg.accent: ciano não faz sentido como cor de TEXTO (contraste insuficiente
+    // sobre fundo claro e desalinhado com a regra "ciano só como accent restrito").
     danger: color.danger[700],
   },
   border: {
-    default: color.neutral[200],
-    subtle: color.neutral[100],
+    // Border default mais contrastada (Apple-like #D1D1D6) para garantir definição
+    // visual. Era neutral.200 (#E8E8ED) — perdia em backgrounds brancos.
+    default: '#D1D1D6',
+    subtle: color.neutral[200],
     strong: color.neutral[300],
     focus: color.primary[500],
   },
@@ -157,16 +162,20 @@ export const typography = {
 // Tokens semânticos em complemento à scale numérica padrão do Tailwind.
 
 export const spacing = {
+  // Section sizes: 3 níveis. flagship foi removido — virava redundante com hero
+  // (escolhi reduzir para 128px que já era o valor de hero) e a presença de 4
+  // níveis incentivava decisões arbitrárias.
   'section-compact': '4rem',
   'section-regular': '6rem',
   'section-hero': '8rem',
-  'section-flagship': '10rem',
   'block-tight': '1.5rem',
   'block-normal': '2.5rem',
   'block-loose': '4rem',
+  // Container gutters. Desktop subiu de 2rem (32px) → 3rem (48px) para dar
+  // mais respiro lateral em telas largas (alinha à sensibilidade Apple).
   'gutter-mobile': '1rem',
   'gutter-tablet': '1.5rem',
-  'gutter-desktop': '2rem',
+  'gutter-desktop': '3rem',
 } as const;
 
 // ─── LAYOUT ──────────────────────────────────────────────────────────────────
@@ -189,11 +198,17 @@ export const layout = {
 
 // ─── RADIUS ──────────────────────────────────────────────────────────────────
 
+// Sistema de radius unificado por papel:
+//   pill    → Badge (rounded-full)
+//   md      → Button + Input (10px — ligeiramente arredondado, Apple-like)
+//   lg      → Card (12px — diferenciação clara do botão)
+//   xl/2xl  → superfícies grandes (modal, hero card)
+//   xs/sm   → casos pontuais
 export const radius = {
   none: '0',
   xs: '4px',
   sm: '6px',
-  md: '8px',
+  md: '10px',
   lg: '12px',
   xl: '16px',
   '2xl': '22px',
@@ -209,8 +224,10 @@ export const shadow = {
   md: '0 4px 10px rgba(0, 0, 0, 0.04), 0 2px 3px rgba(0, 0, 0, 0.03)',
   lg: '0 12px 24px rgba(0, 0, 0, 0.06), 0 4px 8px rgba(0, 0, 0, 0.04)',
   xl: '0 24px 48px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04)',
-  focus: '0 0 0 4px rgba(30, 61, 138, 0.15)',
-  focusAccent: '0 0 0 4px rgba(0, 191, 255, 0.20)',
+  // Focus ring sutil: 3px em vez de 4px, opacity 0.12 em vez de 0.15.
+  // Mantém visibilidade mas sem peso visual excessivo.
+  focus: '0 0 0 3px rgba(30, 61, 138, 0.12)',
+  focusAccent: '0 0 0 3px rgba(0, 191, 255, 0.18)',
 } as const;
 
 // ─── MOTION ──────────────────────────────────────────────────────────────────

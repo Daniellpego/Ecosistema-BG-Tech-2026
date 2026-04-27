@@ -10,7 +10,7 @@ const meta: Meta<typeof UISection> = {
     docs: {
       description: {
         component:
-          'Wrapper de seção com vertical padding semântico (compact/regular/hero/flagship) e background semântico (base/subtle/inverse). Sempre compor com Container dentro.',
+          'Wrapper de seção com vertical padding semântico (compact/regular/hero) e background semântico (base/subtle/inverse). Sempre compor com Container dentro.',
       },
     },
   },
@@ -19,7 +19,7 @@ const meta: Meta<typeof UISection> = {
 export default meta;
 type Story = StoryObj<typeof UISection>;
 
-const Demo: React.FC<{ size?: 'compact' | 'regular' | 'hero' | 'flagship'; background?: 'base' | 'subtle' | 'inverse' }> = ({
+const Demo: React.FC<{ size?: 'compact' | 'regular' | 'hero'; background?: 'base' | 'subtle' | 'inverse' }> = ({
   size = 'regular',
   background = 'base',
 }) => (
@@ -44,7 +44,27 @@ export const Sizes: Story = {
       <Demo size="compact" />
       <Demo size="regular" background="subtle" />
       <Demo size="hero" />
-      <Demo size="flagship" background="subtle" />
+    </>
+  ),
+};
+
+export const Alternation: Story = {
+  name: 'Alternância base/subtle',
+  render: () => (
+    <>
+      {(['base', 'subtle', 'base', 'subtle', 'base'] as const).map((bg, i) => (
+        <UISection key={i} size="regular" background={bg}>
+          <Container>
+            <Heading level={2} size="title-2">
+              Seção #{i + 1} · bg.{bg}
+            </Heading>
+            <Text tone="secondary" className="mt-2">
+              Alternância de backgrounds cria ritmo vertical em landings longas sem
+              precisar de divisores. Padrão do Apple.com e Linear.app.
+            </Text>
+          </Container>
+        </UISection>
+      ))}
     </>
   ),
 };

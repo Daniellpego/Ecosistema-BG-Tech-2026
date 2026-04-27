@@ -25,7 +25,7 @@ const cardVariants = cva('rounded-xl', {
       lg: 'p-8',
     },
     interactive: {
-      true: 'transition-[box-shadow,border-color,transform] duration-fast ease-standard hover:shadow-md focus-within:shadow-focus focus-within:outline-none',
+      true: 'transition-[box-shadow,border-color] duration-normal ease-standard hover:shadow-sm focus-within:shadow-focus focus-within:outline-none',
       false: '',
     },
   },
@@ -79,7 +79,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex flex-col gap-1.5 mb-4', className)}
+    className={cn('flex flex-col gap-2 mb-5', className)}
     {...props}
   />
 ));
@@ -93,7 +93,7 @@ const CardTitle = React.forwardRef<
   return (
     <Tag
       ref={ref}
-      className={cn('text-headline text-fg-primary', className)}
+      className={cn('text-title-3 text-fg-primary', className)}
       {...props}
     />
   );

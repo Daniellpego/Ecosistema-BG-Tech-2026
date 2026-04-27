@@ -43,7 +43,6 @@ export const SectionTokens: Story = {
           ['section-compact', '4rem (64px)'],
           ['section-regular', '6rem (96px) — padrão'],
           ['section-hero', '8rem (128px)'],
-          ['section-flagship', '10rem (160px) — uso pontual'],
         ] as const
       ).map(([key, label]) => (
         <Row key={key} label={key} meta={label}>

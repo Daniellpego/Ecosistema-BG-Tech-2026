@@ -63,7 +63,6 @@ const preset = {
           tertiary: 'var(--gd-semantic-fg-tertiary)',
           'on-inverse': 'var(--gd-semantic-fg-onInverse)',
           brand: 'var(--gd-semantic-fg-brand)',
-          accent: 'var(--gd-semantic-fg-accent)',
           danger: 'var(--gd-semantic-fg-danger)',
         },
         accent: {

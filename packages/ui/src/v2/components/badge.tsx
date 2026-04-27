@@ -4,7 +4,7 @@ import { cn } from '../../lib/utils';
 
 const badgeVariants = cva(
   [
-    'inline-flex items-center gap-1 rounded-md font-semibold',
+    'inline-flex items-center gap-1 rounded-full font-semibold tracking-wide',
     'whitespace-nowrap',
   ].join(' '),
   {
@@ -18,8 +18,8 @@ const badgeVariants = cva(
         outline: 'border bg-transparent text-fg-secondary',
       },
       size: {
-        sm: 'px-1.5 py-0.5 text-caption',
-        md: 'px-2 py-0.5 text-footnote',
+        sm: 'px-2 py-0.5 text-caption',
+        md: 'px-2.5 py-0.5 text-footnote',
       },
     },
     defaultVariants: {

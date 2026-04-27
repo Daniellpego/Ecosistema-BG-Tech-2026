@@ -23,8 +23,8 @@ const buttonVariants = cva(
           'hover:bg-neutral-800 active:bg-neutral-700',
         ].join(' '),
         secondary: [
-          'border border-strong bg-base text-fg-primary',
-          'hover:bg-subtle hover:border-strong active:bg-muted',
+          'border-2 border-neutral-200 bg-base text-fg-primary',
+          'hover:border-neutral-300 hover:bg-subtle active:bg-muted',
         ].join(' '),
         ghost: [
           'bg-transparent text-fg-primary',
@@ -36,9 +36,9 @@ const buttonVariants = cva(
         ].join(' '),
       },
       size: {
-        sm: 'h-9 px-4 text-callout rounded-md',
-        md: 'h-11 px-5 text-callout rounded-md',
-        lg: 'h-12 px-6 text-body rounded-md',
+        sm: 'h-9 px-4 text-callout rounded-[10px]',
+        md: 'h-11 px-5 text-callout rounded-[10px]',
+        lg: 'h-12 px-6 text-body rounded-[10px]',
       },
       block: {
         true: 'w-full',

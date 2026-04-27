@@ -56,9 +56,44 @@ export const ResponsivePadding: Story = {
             Padding lateral responsivo
           </Heading>
           <Text tone="secondary" className="mt-1">
-            Mobile: 16px (gutter-mobile) · Tablet: 24px (gutter-tablet) · Desktop: 32px
+            Mobile: 16px (gutter-mobile) · Tablet: 24px (gutter-tablet) · Desktop: 48px
             (gutter-desktop). Redimensione a janela para ver.
           </Text>
+        </div>
+      </Container>
+    </Section>
+  ),
+};
+
+export const GridDebug: Story = {
+  name: 'Debug grid 12-col',
+  render: () => (
+    <Section size="compact" background="subtle">
+      <Container>
+        {/* Overlay 12-col por trás do conteúdo. Útil para validar alinhamento. */}
+        <div className="relative">
+          <div
+            className="pointer-events-none absolute inset-0 grid grid-cols-12 gap-6"
+            aria-hidden
+          >
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="bg-primary-100/40 border border-primary-200 rounded-sm" />
+            ))}
+          </div>
+          <div className="relative grid grid-cols-12 gap-6">
+            <div className="col-span-7 bg-base border rounded-lg p-6">
+              <Heading level={3} size="headline">col-span-7</Heading>
+              <Text tone="secondary" className="mt-1">
+                Coluna principal (conteúdo).
+              </Text>
+            </div>
+            <div className="col-span-5 bg-base border rounded-lg p-6">
+              <Heading level={3} size="headline">col-span-5</Heading>
+              <Text tone="secondary" className="mt-1">
+                Coluna secundária (formulário, sidebar).
+              </Text>
+            </div>
+          </div>
         </div>
       </Container>
     </Section>
