@@ -34,6 +34,8 @@ const preview: Preview = {
             'Section',
             'Container',
           ],
+          'Examples',
+          ['Landing'],
         ],
       },
     },
