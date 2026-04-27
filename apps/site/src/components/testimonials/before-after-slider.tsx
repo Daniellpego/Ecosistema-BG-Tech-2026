@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useCallback, useMemo, useRef, useState } from "react";
+import type { KeyboardEvent, PointerEvent } from "react";
 
 /* ── Neural Network — subtle overlay on white ── */
 function NeuralNet({ chaos, side }: { chaos: number; side: "before" | "after" }) {
@@ -87,7 +88,7 @@ export function BeforeAfterSlider() {
   );
 
   const handlePointerDown = useCallback(
-    (e: React.PointerEvent) => {
+    (e: PointerEvent<HTMLDivElement>) => {
       setIsDragging(true);
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
       updatePosition(e.clientX);
@@ -96,7 +97,7 @@ export function BeforeAfterSlider() {
   );
 
   const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
+    (e: PointerEvent<HTMLDivElement>) => {
       if (!isDragging) return;
       updatePosition(e.clientX);
     },
@@ -107,6 +108,37 @@ export function BeforeAfterSlider() {
     setIsDragging(false);
   }, []);
 
+  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+    const step = event.shiftKey ? 10 : 5;
+
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      setSliderPos((current) => Math.max(8, current - step));
+      setHasInteracted(true);
+      return;
+    }
+
+    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      setSliderPos((current) => Math.min(92, current + step));
+      setHasInteracted(true);
+      return;
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault();
+      setSliderPos(8);
+      setHasInteracted(true);
+      return;
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault();
+      setSliderPos(92);
+      setHasInteracted(true);
+    }
+  }, []);
+
   // Dynamic progress widths
   const fraudWidth = 70 + chaosLevel * 20;
   const afterExecWidth = 5.5 + (1 - chaosLevel) * 10;
@@ -114,11 +146,19 @@ export function BeforeAfterSlider() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full rounded-xl overflow-hidden select-none touch-none cursor-col-resize border border-card-border"
+      role="slider"
+      tabIndex={0}
+      aria-label="Comparador antes e depois da automação"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(sliderPos)}
+      aria-valuetext={`${Math.round(sliderPos)} por cento de automação exibida`}
+      className="relative w-full rounded-xl overflow-hidden select-none touch-none cursor-col-resize border border-card-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00BFFF]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
       style={{ aspectRatio: "2/1" }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      onKeyDown={handleKeyDown}
     >
       {/* ═══ DEPOIS — fundo branco limpo + rede neural cyan sutil ═══ */}
       <div className="absolute inset-0 bg-white">
