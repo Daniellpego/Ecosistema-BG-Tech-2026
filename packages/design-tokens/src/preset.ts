@@ -50,13 +50,8 @@ const preset = {
         warning: color.warning,
         danger: color.danger,
 
-        bg: {
-          base: 'var(--gd-semantic-bg-base)',
-          surface: 'var(--gd-semantic-bg-surface)',
-          subtle: 'var(--gd-semantic-bg-subtle)',
-          muted: 'var(--gd-semantic-bg-muted)',
-          inverse: 'var(--gd-semantic-bg-inverse)',
-        },
+        // fg.* funciona em colors porque o utility "text-" não conflita
+        // com o nome do group. Gera text-fg-primary, bg-fg-primary, etc.
         fg: {
           primary: 'var(--gd-semantic-fg-primary)',
           secondary: 'var(--gd-semantic-fg-secondary)',
@@ -73,6 +68,18 @@ const preset = {
           secondary: 'var(--gd-semantic-accent-secondary)',
           'secondary-hover': 'var(--gd-semantic-accent-secondaryHover)',
         },
+      },
+
+      // backgroundColor SEPARADO de colors.bg.* para evitar bug do "duplo bg":
+      // colors.bg.subtle gera "bg-bg-subtle" (ninguém usa) em vez de "bg-subtle".
+      // Definindo aqui, geramos bg-base, bg-subtle, bg-surface, bg-muted, bg-inverse
+      // diretamente — exatamente como os componentes consomem.
+      backgroundColor: {
+        base: 'var(--gd-semantic-bg-base)',
+        surface: 'var(--gd-semantic-bg-surface)',
+        subtle: 'var(--gd-semantic-bg-subtle)',
+        muted: 'var(--gd-semantic-bg-muted)',
+        inverse: 'var(--gd-semantic-bg-inverse)',
       },
 
       borderColor: {
