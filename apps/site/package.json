@@ -19,7 +19,11 @@
     "lenis": "^1.3.20",
     "next": "^15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@gradios/ui": "*",
+    "@gradios/tailwind-config": "*",
+    "@gradios/motion": "*",
+    "@gradios/assets": "*"
   },
   "devDependencies": {
     "@types/node": "^20",

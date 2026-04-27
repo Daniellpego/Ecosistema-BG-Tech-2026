@@ -2,7 +2,7 @@
 
 import { Calendar } from 'lucide-react'
 import { usePeriod } from '@/providers/period-provider'
-import { Button } from '@/components/ui/button'
+import { Button } from '@gradios/ui'
 
 const PRESETS = [
   { value: '7d' as const, label: '7 dias' },

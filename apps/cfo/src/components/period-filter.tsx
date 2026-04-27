@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
 import { usePeriod } from '@/providers/period-provider'
-import { Button } from '@/components/ui/button'
+import { Button } from '@gradios/ui'
 
 const MONTHS = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',

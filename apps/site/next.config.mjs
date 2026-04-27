@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compress: true,
+  transpilePackages: ['@gradios/ui', '@gradios/tailwind-config', '@gradios/motion'],
   experimental: {
     optimizePackageImports: [
       'framer-motion',

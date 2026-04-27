@@ -17,7 +17,7 @@ import {
   Receipt,
   BarChart3,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@gradios/ui'
 import { PageTransition } from '@/components/motion'
 import { usePeriod } from '@/providers/period-provider'
 import { useDRE } from '@/hooks/use-dre'

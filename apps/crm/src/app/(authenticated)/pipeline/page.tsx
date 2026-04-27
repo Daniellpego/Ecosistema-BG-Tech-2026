@@ -9,7 +9,7 @@ import { PIPELINE_STAGES, LEAD_STATUS_LABELS, LEAD_STATUS_COLORS } from '@/types
 import type { Lead, LeadStatus } from '@/types/database'
 import { PageTransition } from '@/components/motion'
 import { PageTitle } from '@/components/page-title'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@gradios/ui'
 import { useToast } from '@/components/toast-provider'
 import { formatCurrency, formatTimeAgo } from '@/lib/format'
 import {

@@ -2,11 +2,10 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { AlertCircle, Eye, EyeOff, LogIn } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button, Input } from '@gradios/ui'
+import { Label } from '@gradios/ui'
 import { Logo } from '@/components/layout/logo'
 
 export default function LoginPage() {
@@ -66,7 +65,10 @@ export default function LoginPage() {
             <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} inputMode="email" /></div>
             <div className="space-y-2"><Label htmlFor="password">Senha</Label><div className="relative"><Input id="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" autoCapitalize="off" autoCorrect="off" spellCheck={false} /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}>{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div></div>
             {error && (<motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 text-sm text-status-negative bg-status-negative/10 px-3 py-2 rounded-lg"><AlertCircle className="h-4 w-4 shrink-0" />{error}</motion.div>)}
-            <Button type="submit" className="w-full" disabled={loading}><LogIn className="h-4 w-4" />{loading ? 'Entrando...' : 'Entrar'}</Button>
+            <Button type="submit" className="w-full" loading={loading}>
+              {!loading && <LogIn className="h-4 w-4 mr-2" />}
+              {loading ? 'Entrando...' : 'Entrar'}
+            </Button>
           </form>
           <p className="text-xs text-text-muted text-center mt-6">Gradios Ecosystem · Confidencial</p>
         </div>

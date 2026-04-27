@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { Plus, Trash2, ListTodo } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@gradios/ui'
+import { Input } from '@gradios/ui'
 import { PrioridadeBadge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@gradios/ui'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { TASK_COLUMNS } from '@/lib/kanban-config'

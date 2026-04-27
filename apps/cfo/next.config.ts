@@ -18,6 +18,9 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Os packages do monorepo são consumidos a partir do source TS (sem build
+  // intermediário). Next precisa transpilá-los como se fossem código local.
+  transpilePackages: ['@gradios/ui', '@gradios/tailwind-config', '@gradios/motion'],
   eslint: {
     ignoreDuringBuilds: false,
   },

@@ -20,6 +20,7 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  transpilePackages: ['@gradios/ui', '@gradios/tailwind-config', '@gradios/motion'],
   eslint: { ignoreDuringBuilds: false },
   typescript: { ignoreBuildErrors: false },
   experimental: {

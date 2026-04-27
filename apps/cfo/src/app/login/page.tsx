@@ -6,9 +6,9 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@gradios/ui'
+import { Input } from '@gradios/ui'
+import { Label } from '@gradios/ui'
 
 export default function LoginPage() {
   useEffect(() => { document.title = 'Login | Gradios CFO' }, [])

@@ -1,8 +1,8 @@
 'use client'
 
 import { Search, X } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Input } from '@gradios/ui'
+import { Button } from '@gradios/ui'
 import {
   Select,
   SelectContent,

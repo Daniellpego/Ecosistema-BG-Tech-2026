@@ -4,7 +4,7 @@
 // autenticada sem derrubar a app toda. O root layout e os providers
 // continuam montados; reset() re-renderiza so o segmento com o erro.
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@gradios/ui'
 import { AlertCircle } from 'lucide-react'
 
 export default function AuthenticatedError({

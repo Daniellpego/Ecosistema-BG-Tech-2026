@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef, useState, useCallback } from 'react'
+import Image from 'next/image'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Camera } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
@@ -20,6 +21,11 @@ export function UserAvatar({ size = 'md', editable = false, className }: UserAva
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
+  const [imageError, setImageError] = useState(false)
+
+  useEffect(() => {
+    setImageError(false)
+  }, [user.avatar_url])
 
   const initials = user.nome
     .split(' ')
@@ -93,11 +99,14 @@ export function UserAvatar({ size = 'md', editable = false, className }: UserAva
           color: user.avatar_url ? undefined : '#FFFFFF',
         }}
       >
-        {user.avatar_url ? (
-          <img
+        {user.avatar_url && !imageError ? (
+          <Image
             src={user.avatar_url}
             alt={user.nome}
+            width={56}
+            height={56}
             className="h-full w-full object-cover"
+            onError={() => setImageError(true)}
           />
         ) : (
           initials
@@ -106,16 +115,20 @@ export function UserAvatar({ size = 'md', editable = false, className }: UserAva
 
       {editable && (
         <>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="absolute -bottom-0.5 -right-0.5 h-6 w-6 rounded-full bg-brand-cyan text-white flex items-center justify-center shadow-md active:scale-90 transition-transform"
+          <label
+            htmlFor="file-upload"
+            aria-disabled={uploading}
+            className={cn(
+              'absolute -bottom-0.5 -right-0.5 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-brand-cyan text-white shadow-md active:scale-90 transition-transform',
+              uploading && 'pointer-events-none opacity-70'
+            )}
             aria-label="Trocar foto de perfil"
           >
-            <Camera className="h-3 w-3" />
-          </button>
+            <Camera className="h-4 w-4" />
+          </label>
           <input
             ref={fileInputRef}
+            id="file-upload"
             type="file"
             accept="image/*"
             onChange={handleUpload}

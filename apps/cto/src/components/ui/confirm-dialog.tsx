@@ -1,7 +1,7 @@
 'use client'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@gradios/ui'
+import { Button } from '@gradios/ui'
 
 interface ConfirmDialogProps {
   open: boolean
