@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Button } from "@gradios/ui";
 
 const CONSENT_KEY = "gradios-cookie-consent";
 
@@ -28,6 +29,7 @@ export function CookieBanner() {
     } catch {
       // noop
     }
+    window.dispatchEvent(new CustomEvent("gradios-cookie-consent-change", { detail: value }));
     setVisible(false);
   };
 
@@ -48,20 +50,21 @@ export function CookieBanner() {
         .
       </p>
       <div className="flex flex-col sm:flex-row gap-2.5">
-        <button
+        <Button
           type="button"
           onClick={() => persist("accepted")}
-          className="flex-1 rounded-pill bg-brand-gradient py-2.5 px-4 text-sm font-bold text-white hover:shadow-lg hover:shadow-[#0A1B5C]/25 transition-all"
+          className="flex-1 rounded-full text-sm py-2.5 px-4 font-bold bg-gradient-primary border-none shadow-none text-white hover:shadow-lg hover:shadow-[#0A1B5C]/25 transition-all text-white"
         >
           Aceitar
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="outline"
           onClick={() => persist("rejected")}
-          className="flex-1 rounded-pill border border-card-border bg-white py-2.5 px-4 text-sm font-semibold text-text-muted hover:bg-bg-alt transition-colors"
+          className="flex-1 rounded-full text-sm font-semibold border-card-border bg-white text-text-muted hover:bg-bg-alt hover:text-text-muted"
         >
           Recusar
-        </button>
+        </Button>
       </div>
     </div>
   );
