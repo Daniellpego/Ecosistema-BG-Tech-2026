@@ -72,7 +72,7 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             {/* Hamburger — mobile only */}
             <button
-              className="p-2 rounded-lg hover:bg-bg-alt transition text-text lg:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-full p-0 hover:bg-bg-alt transition text-text lg:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
               aria-expanded={menuOpen}
