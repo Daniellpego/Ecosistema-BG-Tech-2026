@@ -66,12 +66,6 @@ const preset = {
           accent: 'var(--gd-semantic-fg-accent)',
           danger: 'var(--gd-semantic-fg-danger)',
         },
-        border: {
-          DEFAULT: 'var(--gd-semantic-border-default)',
-          subtle: 'var(--gd-semantic-border-subtle)',
-          strong: 'var(--gd-semantic-border-strong)',
-          focus: 'var(--gd-semantic-border-focus)',
-        },
         accent: {
           DEFAULT: 'var(--gd-semantic-accent-primary)',
           hover: 'var(--gd-semantic-accent-primaryHover)',
@@ -80,6 +74,13 @@ const preset = {
           secondary: 'var(--gd-semantic-accent-secondary)',
           'secondary-hover': 'var(--gd-semantic-accent-secondaryHover)',
         },
+      },
+
+      borderColor: {
+        DEFAULT: 'var(--gd-semantic-border-default)',
+        subtle: 'var(--gd-semantic-border-subtle)',
+        strong: 'var(--gd-semantic-border-strong)',
+        focus: 'var(--gd-semantic-border-focus)',
       },
 
       fontFamily: { ...typography.fontFamily },
