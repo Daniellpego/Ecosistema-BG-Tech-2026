@@ -7,6 +7,7 @@ out/
 dist/
 tsconfig.tsbuildinfo
 *.log
+build_errors.txt
 
 # Test
 test-results/
