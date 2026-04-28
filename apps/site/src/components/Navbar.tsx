@@ -3,7 +3,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Menu } from "lucide-react";
+import {
+  Button,
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetClose,
+} from "@gradios/ui/v2";
 
 const NAV_ITEMS = [
   { href: "#solucoes", label: "Soluções" },
@@ -15,112 +24,121 @@ const NAV_ITEMS = [
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const mql = window.matchMedia("(min-width: 1024px)");
-    const handler = (e: MediaQueryListEvent) => {
-      if (e.matches) setMenuOpen(false);
-    };
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
-
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-card-border" : "bg-transparent border-b border-transparent"
+      className={`fixed top-0 w-full z-40 transition-[background-color,border-color,box-shadow] duration-normal ease-standard ${
+        scrolled
+          ? "bg-base/80 backdrop-blur-md border-b shadow-sm"
+          : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <div className="flex-shrink-0 flex items-center gap-2.5">
-            <Image src="/logo.webp" alt="Gradios Logo" width={200} height={183} className="w-11 h-auto drop-shadow-md" priority />
-            <Link href="/" className="font-bold text-[22px] tracking-tight text-text font-display">
+      <div className="mx-auto w-full max-w-container-default px-gutter-mobile sm:px-gutter-tablet lg:px-gutter-desktop">
+        <div className="flex items-center justify-between h-20">
+          {/* Brand */}
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 shrink-0 focus-visible:outline-none focus-visible:shadow-focus rounded-md"
+            aria-label="Gradios — início"
+          >
+            <Image
+              src="/logo.webp"
+              alt=""
+              width={200}
+              height={183}
+              className="w-10 h-auto"
+              priority
+            />
+            <span className="text-headline text-fg-primary font-semibold">
               Gradios
-            </Link>
-          </div>
+            </span>
+          </Link>
 
-          {/* Desktop nav links */}
-          <nav className="hidden lg:flex items-center gap-8">
+          {/* Desktop nav */}
+          <nav
+            className="hidden lg:flex items-center gap-8"
+            aria-label="Navegação principal"
+          >
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-medium text-text-muted hover:text-primary transition-colors link-underline"
+                className="text-callout font-medium text-fg-secondary hover:text-fg-primary transition-colors duration-fast ease-standard focus-visible:outline-none focus-visible:shadow-focus rounded-md"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
 
-          {/* Right side: hamburger (mobile only) + CTA */}
-          <div className="flex items-center gap-3">
-            {/* Hamburger — mobile only */}
-            <button
-              className="flex h-11 w-11 items-center justify-center rounded-full p-0 hover:bg-bg-alt transition text-text lg:hidden"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
-              aria-expanded={menuOpen}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d={menuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-              </svg>
-            </button>
+          {/* Right side: hamburger (mobile) + CTA */}
+          <div className="flex items-center gap-2">
+            {/* Hamburger — mobile only, abre Sheet à esquerda */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <button
+                  type="button"
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-fg-primary hover:bg-subtle transition-colors duration-fast ease-standard focus-visible:outline-none focus-visible:shadow-focus lg:hidden"
+                  aria-label="Abrir menu"
+                >
+                  <Menu className="h-5 w-5" aria-hidden />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="flex flex-col">
+                <SheetHeader>
+                  <SheetTitle>
+                    <span className="flex items-center gap-2.5">
+                      <Image
+                        src="/logo.webp"
+                        alt=""
+                        width={200}
+                        height={183}
+                        className="w-9 h-auto"
+                      />
+                      <span className="text-headline text-fg-primary font-semibold">
+                        Gradios
+                      </span>
+                    </span>
+                  </SheetTitle>
+                </SheetHeader>
+                <nav
+                  className="flex flex-col mt-2"
+                  aria-label="Navegação mobile"
+                >
+                  {NAV_ITEMS.map((item) => (
+                    <SheetClose key={item.href} asChild>
+                      <Link
+                        href={item.href}
+                        className="block py-3 text-body text-fg-primary hover:text-fg-brand transition-colors duration-fast ease-standard border-b border-subtle last:border-b-0 focus-visible:outline-none focus-visible:shadow-focus rounded-md"
+                      >
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                </nav>
+                <div className="mt-auto pt-6">
+                  <SheetClose asChild>
+                    <Button asChild block size="lg">
+                      <Link href="/diagnostico">Diagnóstico gratuito</Link>
+                    </Button>
+                  </SheetClose>
+                </div>
+              </SheetContent>
+            </Sheet>
 
-            {/* CTA */}
-            <Link
-              href="/diagnostico"
-              className="bg-brand-gradient text-white rounded-pill py-3 px-6 font-bold text-center text-sm sm:text-base relative overflow-hidden hover:shadow-lg hover:shadow-[#0A1B5C]/25 transition-all before:absolute before:inset-0 before:bg-white/20 before:-translate-x-full before:skew-x-12 hover:before:translate-x-[200%] before:transition-transform before:duration-700"
-            >
-              Diagnóstico Gratuito
-            </Link>
+            {/* CTA — desktop e mobile (mas mobile compacto) */}
+            <Button asChild size="md" className="hidden sm:inline-flex">
+              <Link href="/diagnostico">Diagnóstico gratuito</Link>
+            </Button>
           </div>
         </div>
       </div>
-
-      {/* Dropdown menu — mobile only */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            className="absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-b border-card-border shadow-lg overflow-hidden lg:hidden"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{
-              height: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 },
-            }}
-          >
-            <div className="py-4 px-6 max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
-              {NAV_ITEMS.map((item, i) => (
-                <Link
-                  key={i}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="font-medium py-2 sm:py-0 border-b border-card-border/50 sm:border-0 last:border-0 text-text hover:text-primary transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </header>
   );
 }
