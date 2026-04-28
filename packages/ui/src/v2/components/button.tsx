@@ -10,7 +10,7 @@ const buttonVariants = cva(
   [
     'inline-flex items-center justify-center gap-2 whitespace-nowrap',
     'font-semibold select-none touch-manipulation',
-    'transition-[background-color,color,border-color,box-shadow,opacity] duration-fast ease-standard',
+    'transition-[background-color,color,border-color,box-shadow,opacity,transform] duration-fast ease-standard',
     'focus-visible:outline-none focus-visible:shadow-focus',
     'disabled:pointer-events-none disabled:opacity-50',
     'data-[loading=true]:cursor-wait',
@@ -22,7 +22,11 @@ const buttonVariants = cva(
           // text-white explícito (não depende de CSS var) garante visibilidade
           // total do label sobre o fundo neutral-900.
           'bg-fg-primary text-white',
-          'hover:bg-neutral-800 active:bg-neutral-700',
+          // Hover: variação sutil de cor + leve elevação (1px) + shadow.
+          // Cria sensação de "ação importante" no contexto do hero.
+          'hover:bg-neutral-800 hover:-translate-y-px hover:shadow-md',
+          // Active devolve ao chão e escurece um nível mais.
+          'active:translate-y-0 active:bg-neutral-700 active:shadow-sm',
         ].join(' '),
         secondary: [
           'border bg-base text-fg-primary',
@@ -40,7 +44,12 @@ const buttonVariants = cva(
       size: {
         sm: 'h-9 px-4 text-callout rounded-[10px]',
         md: 'h-11 px-5 text-callout rounded-[10px]',
-        lg: 'h-12 px-6 text-body rounded-[10px]',
+        // lg: paddingX reduzido (px-6 → px-5) para evitar aspecto de "barra".
+        // tracking-tight reforça presença do label em tamanhos maiores.
+        lg: 'h-12 px-5 text-body tracking-tight rounded-[10px]',
+        // xl: tamanho específico para hero CTAs. 52px de altura dá peso
+        // visual sem virar truncão. Usar APENAS no hero.
+        xl: 'h-[52px] px-6 text-body tracking-tight rounded-[10px]',
       },
       block: {
         true: 'w-full',

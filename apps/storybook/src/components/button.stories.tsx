@@ -18,7 +18,7 @@ const meta: Meta<typeof Button> = {
   },
   argTypes: {
     variant: { control: 'select', options: ['primary', 'secondary', 'ghost', 'link'] },
-    size: { control: 'select', options: ['sm', 'md', 'lg'] },
+    size: { control: 'select', options: ['sm', 'md', 'lg', 'xl'] },
     block: { control: 'boolean' },
     loading: { control: 'boolean' },
     disabled: { control: 'boolean' },
@@ -48,9 +48,10 @@ export const Sizes: Story = {
   render: () => (
     <Section title="Sizes">
       <div className="flex flex-wrap items-center gap-3">
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium (default)</Button>
-        <Button size="lg">Large</Button>
+        <Button size="sm">Small (36px)</Button>
+        <Button size="md">Medium (44px, default)</Button>
+        <Button size="lg">Large (48px)</Button>
+        <Button size="xl">Extra (52px) — hero only</Button>
       </div>
     </Section>
   ),

@@ -119,10 +119,10 @@ export const Hero: Story = {
             </Text>
 
             <div className="mt-12 flex flex-wrap gap-3">
-              <Button size="lg" rightIcon={<ArrowRight className="h-4 w-4" />}>
+              <Button size="xl" rightIcon={<ArrowRight className="h-4 w-4" />}>
                 Falar com a gente
               </Button>
-              <Button size="lg" variant="secondary">
+              <Button size="xl" variant="secondary">
                 Ver casos reais
               </Button>
             </div>
