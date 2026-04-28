@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { cssVarsLight } from "@gradios/design-tokens/css-vars";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -11,6 +12,10 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 });
+
+// CSS vars do design system v2. Geradas em build-time (cssVarsLight é função
+// pura sobre tokens estáticos) e injetadas no <head> via <style>.
+const designTokensCss = cssVarsLight();
 
 export const viewport = {
   width: 'device-width',
@@ -324,6 +329,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
+        {/* CSS vars do design system v2 (injetadas em :root). */}
+        <style dangerouslySetInnerHTML={{ __html: designTokensCss }} />
+
         <meta name="google-site-verification" content="7nYceyn4iiumWyr4hgV86mujYqaRa3Ni_qNShP5S67E" />
         <link rel="alternate" type="application/rss+xml" title="Blog Gradios" href="/blog/feed.xml" />
         <meta name="theme-color" content="#2546BD" />
