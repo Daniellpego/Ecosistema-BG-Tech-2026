@@ -83,9 +83,10 @@ export const semantic = {
     danger: color.danger[700],
   },
   border: {
-    // Border default mais contrastada (Apple-like #D1D1D6) para garantir definição
-    // visual. Era neutral.200 (#E8E8ED) — perdia em backgrounds brancos.
-    default: '#D1D1D6',
+    // Border default contrastada (#C7C7CC, iOS system gray3). Era #D1D1D6 e
+    // antes neutral.200 (#E8E8ED) — cada subida foi pra ganhar definição
+    // sem perder a delicadeza Apple.
+    default: '#C7C7CC',
     subtle: color.neutral[200],
     strong: color.neutral[300],
     focus: color.primary[500],
@@ -119,7 +120,7 @@ type FontSizeEntry = [
 // São os únicos níveis com peso 700, reservados para hero/momentos editoriais.
 const fontSize: Record<string, FontSizeEntry> = {
   'display-2': ['88px', { lineHeight: '1.00', letterSpacing: '-0.045em', fontWeight: '700' }],
-  'display-1': ['72px', { lineHeight: '1.05', letterSpacing: '-0.04em', fontWeight: '700' }],
+  'display-1': ['72px', { lineHeight: '1.02', letterSpacing: '-0.04em', fontWeight: '700' }],
   'title-1': ['52px', { lineHeight: '1.08', letterSpacing: '-0.035em', fontWeight: '600' }],
   'title-2': ['40px', { lineHeight: '1.10', letterSpacing: '-0.025em', fontWeight: '600' }],
   'title-3': ['32px', { lineHeight: '1.15', letterSpacing: '-0.02em', fontWeight: '600' }],

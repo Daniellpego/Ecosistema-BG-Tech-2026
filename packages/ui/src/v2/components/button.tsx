@@ -19,7 +19,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: [
-          'bg-fg-primary text-fg-on-inverse',
+          // text-white explícito (não depende de CSS var) garante visibilidade
+          // total do label sobre o fundo neutral-900.
+          'bg-fg-primary text-white',
           'hover:bg-neutral-800 active:bg-neutral-700',
         ].join(' '),
         secondary: [

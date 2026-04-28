@@ -84,7 +84,7 @@ export const Hero: Story = {
     <Section
       size="hero"
       background="base"
-      className="relative min-h-[100dvh] flex items-center overflow-hidden"
+      className="relative min-h-[100dvh] flex items-center overflow-hidden lg:pb-44"
     >
       {/* Polimento: 2 radial gradients sutis, sensação de luz natural */}
       <div
@@ -251,7 +251,7 @@ export const Content: Story = {
               padding="lg"
               interactive
               tabIndex={0}
-              className="flex flex-col"
+              className="group flex flex-col"
             >
               <CardHeader>
                 <div className="h-10 w-10 rounded-md bg-primary-50 flex items-center justify-center mb-3">
@@ -268,9 +268,13 @@ export const Content: Story = {
               </CardHeader>
               <CardContent className="flex-1" />
               <CardFooter className="mt-auto pt-4 border-t">
-                <Text size="callout" tone="brand" weight="semibold">
-                  Saber mais →
-                </Text>
+                <span className="inline-flex items-center gap-1.5 text-callout font-semibold text-primary-700">
+                  Saber mais
+                  <ArrowRight
+                    className="h-3.5 w-3.5 transition-transform duration-fast ease-standard group-hover:translate-x-0.5"
+                    aria-hidden
+                  />
+                </span>
               </CardFooter>
             </Card>
           ))}
