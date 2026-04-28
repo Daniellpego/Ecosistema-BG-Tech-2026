@@ -256,6 +256,7 @@ export const motion = {
     'dialog-exit',
     'accordion-expand',
     'accordion-collapse',
+    'shimmer-slow',
   ],
 } as const;
 

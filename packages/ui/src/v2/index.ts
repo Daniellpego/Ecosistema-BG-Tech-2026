@@ -33,3 +33,50 @@ export {
 export { Input, inputVariants, type InputProps } from './components/input';
 export { Textarea, type TextareaProps } from './components/textarea';
 export { Badge, badgeVariants, type BadgeProps } from './components/badge';
+
+// Tier 2 — Overlays
+export {
+  Dialog,
+  DialogTrigger,
+  DialogPortal,
+  DialogClose,
+  DialogOverlay,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from './components/dialog';
+
+export {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetPortal,
+  SheetOverlay,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+  sheetVariants,
+  type SheetContentProps,
+} from './components/sheet';
+
+// Tier 2 — Navigation & disclosure
+export {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from './components/tabs';
+
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from './components/accordion';
+
+// Tier 2 — Loading
+export { Skeleton, type SkeletonProps } from './components/skeleton';

@@ -139,6 +139,11 @@ const preset = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        // Shimmer lento para Skeletons (decisão E5: 3s+, sutil, sem chamar atenção)
+        'shimmer': {
+          '0%, 100%': { opacity: '0.6' },
+          '50%': { opacity: '0.9' },
+        },
       },
       animation: {
         'fade-in': `fade-in ${motion.duration.normal} ${motion.easing.out}`,
@@ -146,6 +151,7 @@ const preset = {
         'navbar-shrink': `navbar-shrink ${motion.duration.fast} ${motion.easing.standard}`,
         'accordion-expand': `accordion-expand ${motion.duration.fast} ${motion.easing.out}`,
         'accordion-collapse': `accordion-collapse ${motion.duration.fast} ${motion.easing.out}`,
+        'shimmer-slow': `shimmer 3s ${motion.easing.standard} infinite`,
       },
     },
   },
