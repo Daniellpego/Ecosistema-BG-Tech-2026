@@ -47,6 +47,11 @@ const RECIPES = {
     faviconsFrom: 'site',
     splashFrom: null,
   },
+  servicos: {
+    logos: ['logo.webp'],
+    faviconsFrom: null,
+    splashFrom: null,
+  },
 };
 
 async function copyDir(srcDir, destDir) {

@@ -4,7 +4,8 @@
 
 @layer base {
   html {
-    scroll-padding-top: 72px;
+    scroll-padding-top: 56px;
+    background-color: #ffffff;
   }
   body {
     @apply bg-bg-alt text-text antialiased;
