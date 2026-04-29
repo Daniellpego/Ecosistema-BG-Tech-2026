@@ -93,6 +93,34 @@ CONFIGURE ANTES DO DEPLOY:
     color: var(--primary);
     margin-bottom: 16px;
   }
+  .about-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 24px auto 0;
+    padding: 12px 16px;
+    color: var(--text-subtle);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 200ms var(--ease, ease);
+    align-self: center;
+    min-height: 48px;
+  }
+  .about-link svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
+    transition: transform 200ms var(--ease, ease);
+  }
+  .about-link:hover {
+    color: var(--primary);
+  }
+  .about-link:hover svg {
+    transform: translateX(2px);
+  }
+
   .footer {
     display: flex;
     flex-direction: column;
@@ -142,12 +170,11 @@ CONFIGURE ANTES DO DEPLOY:
   }
   .footer-legal {
     font-size: 11px;
-    opacity: 0.85;
     margin-top: 4px;
   }
   .footer-copy {
     font-size: 11px;
-    color: #94A3B8;
+    color: #64748B;
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -305,6 +332,10 @@ CONFIGURE ANTES DO DEPLOY:
       </a>
     </nav>
 
+    <a class="about-link" href="/servicos/sobre">
+      Conhecer os 3 sócios da Gradios
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
 
     <footer class="footer">
       <div class="footer-main">
