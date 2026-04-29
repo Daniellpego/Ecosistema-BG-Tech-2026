@@ -15,6 +15,16 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     minimumCacheTTL: 31536000,
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // /servicos é servido pelo projeto Vercel `bio-instagram` (apps/servicos).
+        // Esses rewrites proxiam transparentemente sem mudar a URL no browser.
+        { source: '/servicos', destination: 'https://bio-instagram-iota.vercel.app/servicos' },
+        { source: '/servicos/:path*', destination: 'https://bio-instagram-iota.vercel.app/servicos/:path*' },
+      ],
+    };
+  },
   async headers() {
     return [
       {
