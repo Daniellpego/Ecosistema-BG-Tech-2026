@@ -92,23 +92,57 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: 32px 20px 24px;
+    gap: 8px;
+    padding: 40px 20px 32px;
     margin-top: auto;
     color: #64748B;
     font-size: 12px;
     letter-spacing: 0.01em;
     text-align: center;
   }
-  .footer-line {
+  .footer-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .footer-location {
     display: inline-flex;
     align-items: center;
     gap: 6px;
   }
-  .footer-line svg {
+  .footer-location svg {
     width: 14px;
     height: 14px;
     stroke-width: 2;
+    flex-shrink: 0;
+  }
+  .footer-contact {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .footer-contact a {
+    color: #475569;
+    text-decoration: none;
+    transition: color 200ms var(--ease, ease);
+  }
+  .footer-contact a:hover {
+    text-decoration: underline;
+  }
+  .footer-contact .dot {
+    opacity: 0.5;
+  }
+  .footer-legal {
+    font-size: 11px;
+    opacity: 0.85;
+    margin-top: 4px;
+  }
+  .footer-copy {
+    font-size: 11px;
+    color: #94A3B8;
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -349,14 +383,26 @@
 
 
     <footer class="footer">
-      <div class="footer-line">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-        Londrina, PR · Brasil
+      <div class="footer-main">
+        <div class="footer-location">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          Londrina, PR · Brasil
+        </div>
+        <div class="footer-contact">
+          <a href="mailto:contato@gradios.com.br">contato@gradios.com.br</a>
+          <span class="dot">·</span>
+          <a href="tel:+5543988372540">(43) 98837-2540</a>
+        </div>
       </div>
-      <div class="footer-copy">© 2026 Gradios</div>
+      <div class="footer-legal">
+        Gradios Soluções em Tecnologia LTDA · CNPJ 65.663.208/0001-36
+      </div>
+      <div class="footer-copy">
+        © 2026 Gradios. Todos os direitos reservados.
+      </div>
     </footer>
   </main>
 <!--
