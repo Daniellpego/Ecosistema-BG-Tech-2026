@@ -7,6 +7,17 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200],
     minimumCacheTTL: 31536000,
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        { source: '/', destination: '/index.html' },
+        { source: '/sites', destination: '/sites/index.html' },
+        { source: '/apps', destination: '/apps/index.html' },
+        { source: '/sistemas', destination: '/sistemas/index.html' },
+        { source: '/automacoes', destination: '/automacoes/index.html' },
+      ],
+    };
+  },
   async headers() {
     return [
       {
