@@ -180,6 +180,15 @@
   @media (min-width: 480px) {
     .mockup { padding: 48px; }
   }
+  .mockup a {
+    display: block;
+    line-height: 0;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mockup a {
+      cursor: zoom-in;
+    }
+  }
   .mockup img {
     width: 100%;
     height: auto;
@@ -215,7 +224,16 @@
       margin-right: -20px;
       /* edge-bleed: full viewport width on mobile */
     }
-    .mockup img {
+    .mockup a {
+    display: block;
+    line-height: 0;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mockup a {
+      cursor: zoom-in;
+    }
+  }
+  .mockup img {
       transform: none;
       animation: none;
     }
@@ -367,7 +385,7 @@
     </section>
 
     <div class="mockup">
-      <img src="/servicos/mockups/sistemas.webp" alt="Exemplo de dashboard de sistema sob medida desenvolvido pela Gradios" width="1600" height="1000" loading="lazy" decoding="async" />
+      <a href="/servicos/mockups/sistemas.webp" target="_blank" rel="noopener" aria-label="Ampliar imagem do exemplo"><img src="/servicos/mockups/sistemas.webp" alt="Exemplo de dashboard de sistema sob medida desenvolvido pela Gradios" width="1600" height="1000" loading="lazy" decoding="async" /></a>
     </div>
 
     <section class="section">

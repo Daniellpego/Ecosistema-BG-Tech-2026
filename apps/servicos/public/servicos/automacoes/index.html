@@ -180,6 +180,15 @@
   @media (min-width: 480px) {
     .mockup { padding: 48px; }
   }
+  .mockup a {
+    display: block;
+    line-height: 0;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mockup a {
+      cursor: zoom-in;
+    }
+  }
   .mockup img {
     width: 100%;
     height: auto;
@@ -215,11 +224,29 @@
       margin-right: -20px;
       /* edge-bleed: full viewport width on mobile */
     }
-    .mockup img {
+    .mockup a {
+    display: block;
+    line-height: 0;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mockup a {
+      cursor: zoom-in;
+    }
+  }
+  .mockup img {
       transform: none;
       animation: none;
     }
-    .mockup img {
+    .mockup a {
+    display: block;
+    line-height: 0;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mockup a {
+      cursor: zoom-in;
+    }
+  }
+  .mockup img {
       aspect-ratio: 1 / 1;
     }
   }
@@ -370,7 +397,7 @@
     </section>
 
     <div class="mockup">
-      <img src="/servicos/mockups/automacoes.webp" alt="Exemplo de atendimento automatizado no WhatsApp com IA" width="1600" height="1000" loading="lazy" decoding="async" />
+      <a href="/servicos/mockups/automacoes.webp" target="_blank" rel="noopener" aria-label="Ampliar imagem do exemplo"><img src="/servicos/mockups/automacoes.webp" alt="Exemplo de atendimento automatizado no WhatsApp com IA" width="1600" height="1000" loading="lazy" decoding="async" /></a>
     </div>
 
     <section class="section">
