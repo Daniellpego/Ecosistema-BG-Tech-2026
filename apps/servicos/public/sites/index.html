@@ -49,7 +49,7 @@
     background:
       radial-gradient(600px circle at 100% 0%, rgba(37, 70, 189, 0.04), transparent 60%),
       radial-gradient(600px circle at 0% 100%, rgba(0, 191, 255, 0.04), transparent 60%);
-    filter: blur(80px);
+    filter: blur(120px);
     transform: translate3d(0, 0, 0);
   }
   body::after {
@@ -59,8 +59,8 @@
     z-index: -1;
     pointer-events: none;
     background-image:
-      linear-gradient(rgba(10, 27, 61, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(10, 27, 61, 0.04) 1px, transparent 1px);
+      linear-gradient(rgba(10, 27, 61, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10, 27, 61, 0.022) 1px, transparent 1px);
     background-size: 80px 80px;
     animation: gridPan 60s linear infinite;
     will-change: transform;
@@ -88,26 +88,16 @@
     color: var(--primary);
     margin-bottom: 16px;
   }
-  .meta-strip {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--text-subtle);
-    letter-spacing: 0.02em;
-    margin: 48px 0 24px;
-  }
-  .meta-strip .dot { opacity: 0.5; }
   .footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 32px 20px;
-    color: var(--text-muted);
-    font-size: 13px;
+    gap: 6px;
+    padding: 32px 20px 24px;
+    margin-top: auto;
+    color: #64748B;
+    font-size: 12px;
+    letter-spacing: 0.01em;
     text-align: center;
   }
   .footer-line {
@@ -115,8 +105,11 @@
     align-items: center;
     gap: 6px;
   }
-  .footer-line svg { width: 14px; height: 14px; stroke-width: 2; }
-  .footer-signature { font-style: italic; opacity: 0.85; }
+  .footer-line svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
@@ -180,6 +173,14 @@
     filter: blur(20px);
     z-index: -1;
     pointer-events: none;
+  }
+
+  @media (max-width: 480px) {
+    .mockup {
+      margin-left: -20px;
+      margin-right: -20px;
+      /* edge-bleed: full viewport width on mobile */
+    }
   }
   @keyframes float {
     0%, 100% { transform: perspective(1000px) rotateX(2deg) translateY(0); }
@@ -346,20 +347,16 @@
       Ver outros serviços
     </a>
 
-    <div class="meta-strip">
-      <span>Desenvolvido em Londrina</span>
-      <span class="dot">·</span>
-      <span>Stack moderno com IA</span>
-      <span class="dot">·</span>
-      <span>Feito à mão</span>
-    </div>
 
     <footer class="footer">
       <div class="footer-line">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Londrina, PR
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        Londrina, PR · Brasil
       </div>
-      <div class="footer-signature">Feito por 3 sócios com cuidado, Next.js e muito café.</div>
+      <div class="footer-copy">© 2026 Gradios</div>
     </footer>
   </main>
 <!--
