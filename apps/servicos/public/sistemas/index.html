@@ -15,15 +15,17 @@
     --primary: #2546BD;
     --primary-deep: #1E3FA8;
     --secondary: #00BFFF;
-    --bg: #F5F5F7;
+    --bg: #FAFBFC;
     --surface: #FFFFFF;
     --chip: #EEF1F6;
     --text: #0A1B3D;
     --text-muted: #475569;
+    --text-subtle: #64748B;
     --border: #E2E8F0;
     --shadow-cta: 0 10px 24px -8px rgba(37, 70, 189, 0.45);
     --shadow-card: 0 1px 2px rgba(10, 27, 61, 0.04);
-    --shadow-mockup: 0 12px 32px -12px rgba(10, 27, 61, 0.18);
+    --shadow-hover: 0 8px 24px rgba(10, 27, 61, 0.06), 0 2px 6px rgba(10, 27, 61, 0.04);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -35,6 +37,37 @@
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
     min-height: 100dvh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(600px circle at 100% 0%, rgba(37, 70, 189, 0.04), transparent 60%),
+      radial-gradient(600px circle at 0% 100%, rgba(0, 191, 255, 0.04), transparent 60%);
+    filter: blur(80px);
+    transform: translate3d(0, 0, 0);
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: -10vh -10vw;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(10, 27, 61, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10, 27, 61, 0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: gridPan 60s linear infinite;
+    will-change: transform;
+  }
+  @keyframes gridPan {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(80px, 80px, 0); }
   }
   .page {
     max-width: 440px;
@@ -42,18 +75,60 @@
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: 32px 20px 24px;
+    padding: 32px 20px 0;
+    position: relative;
+    z-index: 1;
+  }
+  .kicker {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 16px;
+  }
+  .meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-subtle);
+    letter-spacing: 0.02em;
+    margin: 48px 0 24px;
+  }
+  .meta-strip .dot { opacity: 0.5; }
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  .footer-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .footer-line svg { width: 14px; height: 14px; stroke-width: 2; }
+  .footer-signature { font-style: italic; opacity: 0.85; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
   }
   .header { text-align: center; margin-bottom: 32px; }
   .logo { display: block; height: 56px; width: auto; margin: 0 auto; }
-
   .hero { text-align: left; margin-bottom: 24px; }
   .hero h1 {
-    margin: 0 0 10px;
-    font-size: 24px;
-    line-height: 1.2;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    font-size: clamp(36px, 9vw, 48px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
     color: var(--text);
   }
   .hero p {
@@ -63,19 +138,21 @@
     color: var(--text-muted);
     font-weight: 400;
   }
-
   .mockup {
-    width: 100%;
+    position: relative;
     background: linear-gradient(135deg, #F8FAFC 0%, #EEF1F6 100%);
-    padding: 24px;
-    border-radius: 20px;
-    border: 1px solid rgba(226, 232, 240, 0.6);
-    box-shadow: 0 8px 24px rgba(10, 27, 61, 0.08), 0 2px 6px rgba(10, 27, 61, 0.04);
-    overflow: hidden;
+    padding: 32px;
+    border-radius: 24px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow:
+      0 24px 48px rgba(10, 27, 61, 0.08),
+      0 8px 16px rgba(10, 27, 61, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
     margin: 32px 0;
+    overflow: visible;
   }
   @media (min-width: 480px) {
-    .mockup { padding: 32px; }
+    .mockup { padding: 48px; }
   }
   .mockup img {
     width: 100%;
@@ -85,8 +162,29 @@
     aspect-ratio: 8 / 5;
     object-fit: cover;
     object-position: center;
+    box-shadow:
+      0 16px 32px rgba(37, 70, 189, 0.12),
+      0 4px 8px rgba(10, 27, 61, 0.06);
+    transform: perspective(1000px) rotateX(2deg);
+    animation: float 8s ease-in-out infinite;
+    will-change: transform;
   }
-
+  .mockup::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 10%;
+    right: 10%;
+    height: 40px;
+    background: radial-gradient(ellipse at center, rgba(37, 70, 189, 0.15) 0%, transparent 70%);
+    filter: blur(20px);
+    z-index: -1;
+    pointer-events: none;
+  }
+  @keyframes float {
+    0%, 100% { transform: perspective(1000px) rotateX(2deg) translateY(0); }
+    50% { transform: perspective(1000px) rotateX(2deg) translateY(-6px); }
+  }
   .section { margin-bottom: 28px; }
   .section h2 {
     margin: 0 0 16px;
@@ -96,17 +194,19 @@
     text-transform: uppercase;
     color: var(--text-muted);
   }
-
   .features { display: flex; flex-direction: column; gap: 10px; }
   .feature {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     padding: 12px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px) saturate(180%);
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    border: 1px solid rgba(226, 232, 240, 0.6);
     border-radius: 12px;
     box-shadow: var(--shadow-card);
+    transition: transform 200ms var(--ease), border-color 200ms var(--ease), box-shadow 200ms var(--ease);
   }
   .feature .icon {
     flex-shrink: 0;
@@ -118,6 +218,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: background 200ms var(--ease), color 200ms var(--ease);
   }
   .feature .icon svg { width: 16px; height: 16px; stroke-width: 2; }
   .feature p {
@@ -127,7 +228,17 @@
     color: var(--text);
     padding-top: 6px;
   }
-
+  @media (hover: hover) and (pointer: fine) {
+    .feature:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37, 70, 189, 0.2);
+      box-shadow: var(--shadow-hover);
+    }
+    .feature:hover .icon {
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+  }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip {
     background: var(--chip);
@@ -138,7 +249,6 @@
     border-radius: 999px;
     line-height: 1;
   }
-
   .cta-primary {
     display: flex;
     align-items: center;
@@ -152,7 +262,7 @@
     font-weight: 600;
     text-decoration: none;
     box-shadow: var(--shadow-cta);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
     margin-top: 8px;
   }
   .cta-primary:active {
@@ -160,7 +270,6 @@
     box-shadow: 0 6px 16px -8px rgba(37, 70, 189, 0.45);
   }
   .cta-primary svg { width: 22px; height: 22px; stroke-width: 2; }
-
   .cta-secondary {
     display: inline-flex;
     align-items: center;
@@ -177,26 +286,6 @@
   }
   .cta-secondary svg { width: 14px; height: 14px; stroke-width: 2; }
   .cta-secondary:hover { color: var(--text); }
-
-  .footer {
-    margin-top: auto;
-    padding-top: 32px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 12px;
-    opacity: 1;
-  }
-  .footer p {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin: 0;
-  }
-  .footer svg { width: 14px; height: 14px; stroke-width: 2; }
-
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
-  }
 </style>
 </head>
 <body>
@@ -208,6 +297,7 @@
     </header>
 
     <section class="hero">
+      <span class="kicker">SERVIÇO 03</span>
       <h1>Sistemas sob medida</h1>
       <p>Quando planilha não dá mais conta e o software pronto não atende, a gente constrói o sistema certo pra sua operação. Do laboratório à indústria, do consultório ao comércio.</p>
     </section>
@@ -256,12 +346,26 @@
       Ver outros serviços
     </a>
 
+    <div class="meta-strip">
+      <span>Desenvolvido em Londrina</span>
+      <span class="dot">·</span>
+      <span>Stack moderno com IA</span>
+      <span class="dot">·</span>
+      <span>Feito à mão</span>
+    </div>
+
     <footer class="footer">
-      <p>
+      <div class="footer-line">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        De Londrina pra todo o Brasil
-      </p>
+        Londrina, PR
+      </div>
+      <div class="footer-signature">Feito por 3 sócios com cuidado, Next.js e muito café.</div>
     </footer>
   </main>
+<!--
+  Construído à mão em Londrina, PR.
+  Se você está lendo isso, provavelmente é dev.
+  Vamos conversar: contato@gradios.co
+-->
 </body>
 </html>

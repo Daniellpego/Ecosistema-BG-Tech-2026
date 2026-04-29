@@ -20,18 +20,20 @@ CONFIGURE ANTES DO DEPLOY:
     --primary: #2546BD;
     --primary-deep: #1E3FA8;
     --secondary: #00BFFF;
-    --bg: #F5F5F7;
+    --bg: #FAFBFC;
     --surface: #FFFFFF;
+    --chip: #EEF1F6;
     --text: #0A1B3D;
     --text-muted: #475569;
+    --text-subtle: #64748B;
     --border: #E2E8F0;
     --shadow-cta: 0 10px 24px -8px rgba(37, 70, 189, 0.45);
     --shadow-card: 0 1px 2px rgba(10, 27, 61, 0.04);
+    --shadow-hover: 0 8px 24px rgba(10, 27, 61, 0.06), 0 2px 6px rgba(10, 27, 61, 0.04);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
-
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
-
   body {
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
     background: var(--bg);
@@ -40,44 +42,111 @@ CONFIGURE ANTES DO DEPLOY:
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
     min-height: 100dvh;
+    position: relative;
+    overflow-x: hidden;
   }
-
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(600px circle at 100% 0%, rgba(37, 70, 189, 0.04), transparent 60%),
+      radial-gradient(600px circle at 0% 100%, rgba(0, 191, 255, 0.04), transparent 60%);
+    filter: blur(80px);
+    transform: translate3d(0, 0, 0);
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: -10vh -10vw;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(10, 27, 61, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10, 27, 61, 0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: gridPan 60s linear infinite;
+    will-change: transform;
+  }
+  @keyframes gridPan {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(80px, 80px, 0); }
+  }
   .page {
     max-width: 440px;
     margin: 0 auto;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: 32px 20px 24px;
+    padding: 32px 20px 0;
+    position: relative;
+    z-index: 1;
   }
-
-  .header {
+  .kicker {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 16px;
+  }
+  .meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-subtle);
+    letter-spacing: 0.02em;
+    margin: 48px 0 24px;
+  }
+  .meta-strip .dot { opacity: 0.5; }
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  .footer-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .footer-line svg { width: 14px; height: 14px; stroke-width: 2; }
+  .footer-signature { font-style: italic; opacity: 0.85; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  .header { text-align: center; margin-bottom: 32px; }
+  .logo { display: block; height: 56px; width: auto; margin: 0 auto 24px; }
+  .hero {
     text-align: center;
     margin-bottom: 28px;
   }
-
-  .logo {
-    display: block;
-    height: 56px;
-    width: auto;
-    margin: 0 auto 18px;
+  .hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(36px, 9vw, 48px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: var(--text);
   }
-
-  .tagline {
+  .hero p {
     margin: 0;
     font-size: 15px;
-    line-height: 1.45;
+    line-height: 1.5;
     color: var(--text-muted);
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-weight: 400;
   }
-
-  .stack {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
+  .stack { display: flex; flex-direction: column; gap: 12px; }
   .cta-primary {
     display: flex;
     align-items: center;
@@ -91,19 +160,14 @@ CONFIGURE ANTES DO DEPLOY:
     font-weight: 600;
     text-decoration: none;
     box-shadow: var(--shadow-cta);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
     margin-bottom: 16px;
   }
   .cta-primary:active {
     transform: translateY(1px);
     box-shadow: 0 6px 16px -8px rgba(37, 70, 189, 0.45);
   }
-  .cta-primary svg {
-    width: 22px;
-    height: 22px;
-    stroke-width: 2;
-  }
-
+  .cta-primary svg { width: 22px; height: 22px; stroke-width: 2; }
   .link {
     display: flex;
     align-items: center;
@@ -111,19 +175,19 @@ CONFIGURE ANTES DO DEPLOY:
     height: 56px;
     padding: 0 18px;
     border-radius: 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px) saturate(180%);
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    border: 1px solid rgba(226, 232, 240, 0.6);
     color: var(--text);
     text-decoration: none;
     font-size: 15px;
     font-weight: 500;
     box-shadow: var(--shadow-card);
-    transition: border-color 0.15s ease, transform 0.15s ease;
+    transition: transform 200ms var(--ease), border-color 200ms var(--ease), box-shadow 200ms var(--ease);
     min-height: 48px;
   }
   .link:active { transform: translateY(1px); }
-  .link:hover { border-color: #C7D2E2; }
-
   .link .icon {
     width: 36px;
     height: 36px;
@@ -134,35 +198,19 @@ CONFIGURE ANTES DO DEPLOY:
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: background 200ms var(--ease), color 200ms var(--ease);
   }
-  .link .icon svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2;
-  }
-
-  .footer {
-    margin-top: auto;
-    padding-top: 32px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 12px;
-    opacity: 1;
-  }
-  .footer p {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin: 0;
-  }
-  .footer svg {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
+  .link .icon svg { width: 18px; height: 18px; stroke-width: 2; }
+  @media (hover: hover) and (pointer: fine) {
+    .link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37, 70, 189, 0.2);
+      box-shadow: var(--shadow-hover);
+    }
+    .link:hover .icon {
+      background: var(--primary);
+      color: #FFFFFF;
+    }
   }
 </style>
 </head>
@@ -170,8 +218,13 @@ CONFIGURE ANTES DO DEPLOY:
   <main class="page">
     <header class="header">
       <img src="/logo.webp" alt="Gradios" class="logo" height="56" width="61" />
-      <p class="tagline">A gente constrói a tecnologia da sua empresa.</p>
     </header>
+
+    <section class="hero">
+      <span class="kicker">GRADIOS</span>
+      <h1>A gente constrói a tecnologia da sua empresa.</h1>
+      <p>Sites, apps, sistemas e automações sob medida.</p>
+    </section>
 
     <a class="cta-primary"
        href="https://wa.me/5543988372540?text=Vim%20pelo%20Instagram%20da%20Gradios.%20Quero%20falar%20com%20voc%C3%AAs."
@@ -225,15 +278,26 @@ CONFIGURE ANTES DO DEPLOY:
       </a>
     </nav>
 
+    <div class="meta-strip">
+      <span>Desenvolvido em Londrina</span>
+      <span class="dot">·</span>
+      <span>Stack moderno com IA</span>
+      <span class="dot">·</span>
+      <span>Feito à mão</span>
+    </div>
+
     <footer class="footer">
-      <p>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-        De Londrina pra todo o Brasil
-      </p>
+      <div class="footer-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Londrina, PR
+      </div>
+      <div class="footer-signature">Feito por 3 sócios com cuidado, Next.js e muito café.</div>
     </footer>
   </main>
+<!--
+  Construído à mão em Londrina, PR.
+  Se você está lendo isso, provavelmente é dev.
+  Vamos conversar: contato@gradios.co
+-->
 </body>
 </html>
