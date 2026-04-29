@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: "/servicos",
   compress: true,
   transpilePackages: ['@gradios/tailwind-config'],
   images: {
