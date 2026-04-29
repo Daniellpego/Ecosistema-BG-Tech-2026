@@ -1,9 +1,4 @@
 <!doctype html>
-<!--
-CONFIGURE ANTES DO DEPLOY:
-- WhatsApp number: substitua "5543988372540" pelo número real
-  no formato 55 + DDD + número (sem espaços, sem traços)
--->
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
@@ -93,6 +88,45 @@ CONFIGURE ANTES DO DEPLOY:
     color: var(--primary);
     margin-bottom: 16px;
   }
+  .proof {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 0 0 20px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px) saturate(180%);
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    border-radius: 9999px;
+    box-shadow: var(--shadow-card);
+  }
+  .proof-logos {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .proof-logos img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+    object-fit: cover;
+    background: var(--chip);
+    margin-left: -8px;
+  }
+  .proof-logos img:first-child { margin-left: 0; }
+  .proof-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .proof-text strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
   .about-link {
     display: inline-flex;
     align-items: center;
@@ -276,9 +310,20 @@ CONFIGURE ANTES DO DEPLOY:
 
     <section class="hero">
       <span class="kicker">GRADIOS</span>
-      <h1>A gente constrói a tecnologia da sua empresa.</h1>
-      <p>Sites, apps, sistemas e automações sob medida.</p>
+      <h1>Software sob medida pra empresas que cresceram demais pro Excel.</h1>
+      <p>Sites, apps, sistemas e automações pensados pra resolver, não pra impressionar.</p>
     </section>
+
+    <div class="proof">
+      <div class="proof-logos" aria-hidden="true">
+        <img src="/clients/logo-cliente-1.webp" alt="" width="32" height="32" loading="lazy" decoding="async" />
+        <img src="/clients/logo-cliente-2.webp" alt="" width="32" height="32" loading="lazy" decoding="async" />
+        <img src="/clients/logo-cliente-3.webp" alt="" width="32" height="32" loading="lazy" decoding="async" />
+      </div>
+      <div class="proof-text">
+        <strong>+17 empresas</strong> já usam Gradios pra escalar sem contratar
+      </div>
+    </div>
 
     <a class="cta-primary"
        href="https://wa.me/5543988372540?text=Vim%20pelo%20Instagram%20da%20Gradios.%20Quero%20falar%20com%20voc%C3%AAs."
