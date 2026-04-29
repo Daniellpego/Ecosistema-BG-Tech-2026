@@ -15,6 +15,11 @@ const nextConfig = {
         { source: '/apps', destination: '/apps/index.html' },
         { source: '/sistemas', destination: '/sistemas/index.html' },
         { source: '/automacoes', destination: '/automacoes/index.html' },
+        { source: '/servicos', destination: '/index.html' },
+        { source: '/servicos/sites', destination: '/sites/index.html' },
+        { source: '/servicos/apps', destination: '/apps/index.html' },
+        { source: '/servicos/sistemas', destination: '/sistemas/index.html' },
+        { source: '/servicos/automacoes', destination: '/automacoes/index.html' },
       ],
     };
   },
