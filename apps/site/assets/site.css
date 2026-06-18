@@ -642,10 +642,29 @@ a:focus-visible { outline-offset: 3px; }
 }
 .seg:hover i { color: #2563EB; transform: scale(1.12); }
 
-/* hero visual: stack of floating screens */
+/* hero visual: imagem premium */
 .hero-visual {
   position: relative;
-  height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-img {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  /* sombra única e sutil — o mockup já traz sombras embutidas */
+  filter: drop-shadow(0 16px 38px rgba(10,27,61,0.10));
+}
+@media (min-width: 1280px) {
+  /* desktop: presença forte, mas contida na coluna (sem corte) */
+  .hero-img { max-width: 640px; }
 }
 .fscreen {
   position: absolute;
@@ -3021,7 +3040,8 @@ body[data-primary="hybrid"] .section-title em {
 @media (max-width: 1024px) {
   .hero-grid { grid-template-columns: 1fr; gap: 48px; }
   .hero-title { font-size: 52px; }
-  .hero-visual { height: 480px; }
+  /* coluna única: imagem abaixo da copy, centralizada */
+  .hero-img { max-width: 520px; transform: none; }
   .timeline { grid-template-columns: 1fr; gap: 40px; }
   .process-panel { position: static; }
   .tline-step { grid-template-columns: 40px 1fr; gap: 18px; padding: 18px 0; }
@@ -3040,7 +3060,7 @@ body[data-primary="hybrid"] .section-title em {
   .hero { padding: 64px 0 80px; }
   .hero-title { font-size: 40px; line-height: 1.05; }
   .hero-lead { font-size: 17px; line-height: 26px; }
-  .hero-visual { height: 420px; }
+  .hero-img { max-width: 420px; }
   .section-title { font-size: 32px; line-height: 38px; }
   .nav { display: none; }
   .menu-toggle { display: inline-flex; }
