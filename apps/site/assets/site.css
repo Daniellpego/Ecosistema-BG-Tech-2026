@@ -652,20 +652,19 @@ a:focus-visible { outline-offset: 3px; }
 .hero-img {
   display: block;
   width: 100%;
-  max-width: 640px;
+  max-width: 560px;
   height: auto;
   object-fit: contain;
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
-  filter:
-    drop-shadow(0 30px 60px rgba(10,27,61,0.18))
-    drop-shadow(0 10px 22px rgba(37,70,189,0.10));
+  /* sombra única e sutil — o mockup já traz sombras embutidas */
+  filter: drop-shadow(0 16px 38px rgba(10,27,61,0.10));
 }
 @media (min-width: 1280px) {
-  /* desktop: presença forte, leve sangria para a direita */
-  .hero-img { max-width: 700px; transform: translateX(3%); }
+  /* desktop: presença forte, mas contida na coluna (sem corte) */
+  .hero-img { max-width: 640px; }
 }
 .fscreen {
   position: absolute;
